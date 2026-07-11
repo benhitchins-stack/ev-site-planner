@@ -22,7 +22,7 @@ No Node? Any static server works, pointed at the `public/` folder:
 python3 -m http.server 8000 --directory public
 ```
 
-On first load the pages pull web fonts and three libraries from public CDNs (see Runtime dependencies), so keep the device online the first time.
+Every font and library is served from the site itself (`public/vendor/`), so it runs with no external requests at all, including fully offline hosting.
 
 ## Deploy it
 
@@ -76,14 +76,14 @@ netlify.toml       Static publish config (publish = public)
 
 ## Runtime dependencies
 
-Loaded from public CDNs on demand, cached by the browser after first use:
+All self-hosted in `public/vendor/` (versions and licences in `vendor/NOTICE.md`); the site makes no CDN or font-service requests:
 
-- Google Fonts: Bricolage Grotesque, Hanken Grotesk, Space Grotesk.
-- pdf.js (`pdfjs-dist`): reads PDF drawings dropped onto the canvas.
+- Fonts: Bricolage Grotesque, Hanken Grotesk, Space Grotesk, IBM Plex Mono (variable woff2, SIL OFL 1.1).
+- pdf.js: reads PDF drawings dropped onto the canvas.
 - heic2any: converts iPhone HEIC photos to a usable format.
 - qrcode-generator: builds the QR code on shareable decision packs.
-
-Everything else is in the repo. If you need a fully offline build, self-host these four and rewrite the `<script>` and font `@import` references.
+- three.js: the 3D equipment showroom.
+- React, ReactDOM and Babel standalone: the runtime for the design-system pages, loaded by `support.js`.
 
 ## Data and storage
 

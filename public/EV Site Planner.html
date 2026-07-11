@@ -7,7 +7,7 @@
 <title>EV Site Planner</title>
 <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><radialGradient id="b" gradientUnits="userSpaceOnUse" cx="24" cy="16" r="78"><stop offset="0" stop-color="%231E3346"/><stop offset="1" stop-color="%230A141F"/></radialGradient><linearGradient id="l" gradientUnits="userSpaceOnUse" x1="40" y1="11" x2="40" y2="69"><stop offset="0" stop-color="%235D9BFF"/><stop offset="1" stop-color="%231E6BFF"/></linearGradient><clipPath id="c"><rect x="2" y="2" width="76" height="76" rx="19"/></clipPath></defs><rect x="2" y="2" width="76" height="76" rx="19" fill="url(%23b)"/><g clip-path="url(%23c)"><path d="M27.5 2V78M52.5 2V78M2 27.5H78M2 52.5H78" fill="none" stroke="%23EFE7D7" stroke-opacity=".16" stroke-width="1.5"/></g><rect x="3" y="3" width="74" height="74" rx="18" fill="none" stroke="%23FFFFFF" stroke-opacity=".08" stroke-width="1.6"/><path d="M43 11 14 45.8H40L37 69 66 34.2H40Z" fill="url(%23l)"/></svg>'>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('vendor/fonts.css');
 :root{
   /* EV Site Planner - cool light chrome + deep slate canvas */
   --font:"Hanken Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -1742,7 +1742,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 <script>
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
-<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script src="vendor/heic2any.min.js"></script>
 <script>
 "use strict";
 /* ============================================================ EV Site Planner - domestic & commercial - self-contained ============================================================ */
@@ -13194,8 +13194,8 @@ function ensurePdfJs(){
   if(_pdfjsP) return _pdfjsP;
   _pdfjsP=new Promise((res,rej)=>{
     const s=document.createElement("script");
-    s.src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js";
-    s.onload=()=>{ try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js"; res(window.pdfjsLib); }catch(e){ _pdfjsP=null; rej(e); } };
+    s.src="vendor/pdf.min.js";
+    s.onload=()=>{ try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc="vendor/pdf.worker.min.js"; res(window.pdfjsLib); }catch(e){ _pdfjsP=null; rej(e); } };
     s.onerror=()=>{ _pdfjsP=null; rej(new Error("pdfjs load failed")); };
     document.head.appendChild(s);
   });
@@ -14709,7 +14709,7 @@ async function boot(){
   if(booting) return;
   if(T&&renderer){ loadEl.style.display="none"; resize3d(); setModel(); startLoop(); return; }
   booting=true; loadEl.style.display="flex"; loadEl.innerHTML='<span class="sp"></span>Loading the 3D engine…';
-  try{ T=T||await import("https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"); }
+  try{ T=T||await import("./vendor/three.module.js"); }
   catch(err){ booting=false; T=null; fail("The 3D engine could not load. Check your connection and try again."); return; }
   try{
     renderer=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true,powerPreference:"high-performance",preserveDrawingBuffer:true});
@@ -14727,7 +14727,7 @@ const sprCache=new Map(); let sprR=null,sprScene=null,sprCam=null,sprBooting=fal
 async function ensureSpriteEngine(){
   if(sprR||sprBooting||sprFailed) return;
   sprBooting=true;
-  try{ T=T||await import("https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"); }
+  try{ T=T||await import("./vendor/three.module.js"); }
   catch(err){ sprBooting=false; sprFailed=true; try{ toast("3D charger artwork needs a connection · showing illustrated units"); }catch(_){ } return; }
   try{
     sprR=new T.WebGLRenderer({antialias:true,alpha:true});
