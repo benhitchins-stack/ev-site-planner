@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/base.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { background: var(--cream-200); -webkit-font-smoothing: antialiased; font-family: var(--font-sans); }
+    input, select, textarea, button { font-family: inherit; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    input::placeholder, textarea::placeholder { color: var(--ink-400); }
+    .scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+    .scroll::-webkit-scrollbar-track { background: transparent; }
+    .scroll::-webkit-scrollbar-thumb { background: var(--cream-border-strong); border-radius: 8px; border: 2px solid var(--cream-100); }
+    @supports (height:100dvh){ .app{ height:100dvh !important; } }
+    .pdoc-sheet { width: 210mm; min-height: 260mm; margin: 18px auto 60px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(22,35,46,0.08), 0 14px 40px rgba(22,35,46,0.14); padding: 16mm 15mm 18mm; }
+    @page { size: A4; margin: 13mm 13mm 18mm; }
+    @media print {
+      html, body { height: auto !important; background: #FFFFFF !important; }
+      .no-print { display: none !important; }
+      .app { display: none !important; }
+      .pdoc-wrap { display: block !important; position: static !important; height: auto !important; overflow: visible !important; background: #FFFFFF !important; padding: 0 !important; }
+      .pdoc-sheet { width: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; }
+      .pfoot { position: fixed; bottom: -12mm; left: 0; right: 0; display: flex !important; }
+    }
+    @media (max-width: 1060px){
+      .rb-outline { display: none !important; }
+      .rb-secjump { display: flex !important; }
+    }
+    @media (max-width: 720px){
+      .rb-topbar { flex-wrap: wrap; row-gap: 8px; }
+      .rb-docbar { flex-wrap: wrap; row-gap: 8px; }
+      .rb-grid2, .rb-grid3 { grid-template-columns: 1fr !important; }
+      .rb-hzhead { flex-wrap: wrap; }
+    }
+  </style>
+</helmet>
+
+<sc-if value="{{ gated }}" hint-placeholder-val="{{ true }}">
+<div class="no-print" data-screen-label="Coming soon" style="position:fixed; inset:0; z-index:600; background:var(--cream-200); display:flex; align-items:center; justify-content:center; padding:24px;">
+  <div style="max-width:520px; width:100%; background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:18px; padding:34px 36px; box-shadow:var(--shadow-lg);">
+    <div style="display:flex; align-items:center; gap:11px;">
+      <svg width="34" height="34" viewBox="0 0 80 80" fill="none" role="img" aria-label="EV Infrastructure Tools" style="flex:none;">
+        <circle cx="40" cy="40" r="38" fill="#16232E"></circle>
+        <circle cx="40" cy="40" r="37" fill="none" stroke="#1E6BFF" stroke-width="2.5"></circle>
+        <path d="M45.5 18.5 L27 44 H37.5 L34.5 61.5 L53 36 H42.5 Z" fill="#3D86FF"></path>
+      </svg>
+      <div>
+        <div style="font-family:var(--font-data); font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-700);">RAMS Builder</div>
+        <span style="display:inline-flex; margin-top:4px; font-size:10px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; background:#F7EDD8; color:#9A6403; border-radius:999px; padding:3px 9px;">Coming soon</span>
+      </div>
+    </div>
+    <h1 style="font-family:var(--font-display); font-weight:800; font-size:26px; letter-spacing:-0.02em; line-height:1.15; color:var(--ink-900); margin:18px 0 0;">Site-specific RAMS, drafted from your plan.</h1>
+    <p style="font-size:13.5px; line-height:1.6; color:var(--ink-500); margin:12px 0 0; text-wrap:pretty;">Import a saved site plan and the hazards, method sequence and scope will be drafted for you to review, adapt and issue. The builder is being finalised and is not open yet.</p>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:22px; flex-wrap:wrap;">
+      <a href="EV Site Planner.html" style="display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:9px; padding:9px 15px; text-decoration:none;" style-hover="background:var(--accent-600);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"></path></svg>
+        <span>Back to the planner</span>
+      </a>
+      <a href="Quotes &amp; Invoices.dc.html" style="display:inline-flex; font-size:12.5px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:9px 15px; text-decoration:none;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Quotes &amp; invoices</a>
+    </div>
+    <p style="font-size:11px; line-height:1.55; color:var(--ink-400); margin:20px 0 0;">It will appear here and in the planner's Tools menu when it opens.</p>
+  </div>
+</div>
+</sc-if>
+
+<div class="app" style="height:100vh; display:flex; flex-direction:column; background:var(--cream-200); color:var(--text-primary);">
+
+  <!-- ░░ TOP BAR ░░ -->
+  <header class="rb-topbar no-print" data-screen-label="Top bar" style="flex:none; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 18px; background:var(--cream-100); border-bottom:1px solid var(--cream-border-strong);">
+    <div style="display:flex; align-items:center; gap:11px; min-width:0;">
+      <a href="EV Site Planner.html" title="Back to the Site Planner" style="display:flex; align-items:center; gap:6px; text-decoration:none; font-size:11px; font-weight:600; color:var(--ink-500); padding:6px 8px; border:1px solid var(--cream-border-strong); border-radius:8px; background:var(--color-surface);" style-hover="color:var(--accent-700); border-color:var(--accent-400);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"></path></svg>
+        <span>Planner</span>
+      </a>
+      <details style="position:relative;">
+        <summary title="More Site Planner features" style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--ink-500); padding:6px 8px; border:1px solid var(--cream-border-strong); border-radius:8px; background:var(--color-surface); cursor:pointer; list-style:none;" style-hover="color:var(--accent-700); border-color:var(--accent-400);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+          <span>Features</span>
+        </summary>
+        <div style="position:absolute; left:0; top:calc(100% + 6px); z-index:130; min-width:190px; background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:12px; box-shadow:var(--shadow-lg); padding:5px; display:flex; flex-direction:column; gap:1px;">
+          <a href="Quotes &amp; Invoices.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Quotes &amp; invoices</a>
+          <a href="Project Support.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Project Support</a>
+          <a href="Learning Hub.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Learning hub</a>
+          <a href="Guide Library.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Guide library</a>
+          <a href="Council Estate Review.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Estate review</a>
+        </div>
+      </details>
+      <svg width="30" height="30" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EV Infrastructure Tools" style="flex:none;">
+        <circle cx="40" cy="40" r="38" fill="#16232E"></circle>
+        <circle cx="40" cy="40" r="37" fill="none" stroke="#1E6BFF" stroke-width="2.5"></circle>
+        <circle cx="40" cy="40" r="30" fill="none" stroke="#4D82FF" stroke-width="2" stroke-dasharray="1.4 4.1" stroke-linecap="round" opacity="0.85"></circle>
+        <path d="M45.5 18.5 L27 44 H37.5 L34.5 61.5 L53 36 H42.5 Z" fill="#3D86FF"></path>
+      </svg>
+      <div style="min-width:0;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:15px; letter-spacing:-0.015em; color:var(--ink-900); line-height:1;">RAMS</div>
+        <div style="font-size:10.5px; color:var(--ink-500); margin-top:3px;">Site Planner · risk assessments &amp; method statements</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <sc-if value="{{ isDoc }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ goHome }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 11px; cursor:pointer; white-space:nowrap;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Documents</button>
+      </sc-if>
+      <button onClick="{{ openCompany }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 11px; cursor:pointer; white-space:nowrap;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-4h6v4"></path></svg>
+        <span>Company profile</span>
+      </button>
+      <button onClick="{{ openImport }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:8px; padding:7px 13px; cursor:pointer; white-space:nowrap;" style-hover="background:var(--accent-600);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"></path></svg>
+        <span>New RAMS</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ░░ HOME ░░ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div class="scroll" data-screen-label="Documents home" style="flex:1; overflow-y:auto; padding:26px 22px 60px;">
+      <div style="max-width:880px; margin:0 auto;">
+        <div style="max-width:620px;">
+          <div style="font-family:var(--font-data); font-size:10.5px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-700);">RAMS Builder</div>
+          <h1 style="font-family:var(--font-display); font-weight:800; font-size:30px; letter-spacing:-0.02em; line-height:1.12; color:var(--ink-900); margin:10px 0 0;">Site-specific RAMS, drafted from the plan.</h1>
+          <p style="font-size:13.5px; line-height:1.6; color:var(--ink-500); margin:11px 0 0; text-wrap:pretty;">Import a saved plan and the hazards, method sequence and scope are drafted from what you actually drew - trenches, containment, supply works, the lot. Review it, adapt it, issue it.</p>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin:26px 0 10px;">
+          <div style="font-family:var(--font-data); font-size:10.5px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-500);">Documents</div>
+          <sc-if value="{{ hasDocs }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:11px; color:var(--ink-400);">{{ docCountLabel }}</div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ hasDocs }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <sc-for list="{{ docRows }}" as="d" hint-placeholder-count="2">
+              <div onClick="{{ d.onOpen }}" style="display:flex; align-items:center; gap:12px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 16px; cursor:pointer;" style-hover="border-color:var(--accent-400); box-shadow:var(--shadow-sm);">
+                <div style="flex:none; width:34px; height:34px; border-radius:9px; background:var(--cream-100); border:1px solid var(--cream-border-strong); display:flex; align-items:center; justify-content:center;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink-600)" stroke-width="2"><path d="M9 12h6M9 16h6M9 8h1M6 3h9l4 4v14H6z"></path></svg>
+                </div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13px; font-weight:700; color:var(--ink-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ d.title }}</div>
+                  <div style="font-size:11px; color:var(--ink-500); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ d.sub }}</div>
+                </div>
+                <sc-if value="{{ d.stale }}" hint-placeholder-val="{{ false }}">
+                  <span title="The linked plan has been saved again since this RAMS was derived - open it and re-derive" style="flex:none; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; background:#FBF3DC; border:1px solid #E8D9A8; color:#7A5A10;">Plan moved on</span>
+                </sc-if>
+                <div style="flex:none; font-family:var(--font-data); font-size:10.5px; color:var(--ink-500);">Rev {{ d.rev }}</div>
+                <div style="flex:none; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; background:{{ d.stBg }}; color:{{ d.stInk }};">{{ d.stLabel }}</div>
+                <button onClick="{{ d.onDel }}" title="Delete" style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:7px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--color-danger);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"></path></svg>
+                </button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ noDocs }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--color-surface); border:1px dashed var(--cream-border-strong); border-radius:12px; padding:34px 20px; text-align:center;">
+            <div style="font-size:13px; font-weight:650; color:var(--ink-700);">No RAMS yet</div>
+            <div style="font-size:12px; color:var(--ink-500); margin-top:5px;">Start from a saved plan - the document drafts itself from your markup.</div>
+            <button onClick="{{ openImport }}" style="margin-top:14px; font-size:12px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:8px; padding:8px 14px; cursor:pointer;" style-hover="background:var(--accent-600);">New RAMS</button>
+          </div>
+        </sc-if>
+
+        <p style="font-size:11px; line-height:1.55; color:var(--ink-400); margin:22px 0 0; max-width:640px;">Drafts are written from your site plan as a starting point. Review, adapt and approve every section before issue - responsibility for the risk assessment and the safe system of work stays with you as the duty holder.</p>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ░░ BUILDER ░░ -->
+  <sc-if value="{{ isDoc }}" hint-placeholder-val="{{ false }}">
+    <div class="rb-docbar no-print" data-screen-label="Document bar" style="flex:none; display:flex; align-items:center; gap:10px; padding:9px 18px; background:var(--cream-100); border-bottom:1px solid var(--cream-border-strong);">
+      <div style="flex:1; min-width:0; display:flex; align-items:center; gap:9px;">
+        <input value="{{ docTitle }}" onChange="{{ det.onTitle }}" placeholder="Document title" style="flex:0 1 340px; min-width:120px; font-family:var(--font-display); font-weight:700; font-size:14.5px; letter-spacing:-0.01em; color:var(--ink-900); background:transparent; border:1px solid transparent; border-radius:8px; padding:6px 8px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+        <span style="flex:none; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; background:var(--cream-200); border:1px solid var(--cream-border-strong); color:var(--ink-600);">{{ modeLabel }}</span>
+        <span style="flex:none; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; background:{{ stBg }}; color:{{ stInk }};">{{ stLabel }}</span>
+        <span style="flex:none; font-family:var(--font-data); font-size:10.5px; color:var(--ink-500);">{{ revLabel }}</span>
+        <sc-if value="{{ hasPlanLink }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ planStale }}" hint-placeholder-val="{{ false }}">
+            <span title="The linked plan has been saved again since this RAMS was derived" style="flex:none; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; background:#FBF3DC; border:1px solid #E8D9A8; color:#7A5A10;">Plan moved on</span>
+          </sc-if>
+          <button onClick="{{ reDerive }}" title="Pull the latest quantities from the linked plan. Items you've edited or added are kept." style="flex:none; display:flex; align-items:center; gap:6px; font-size:11px; font-weight:650; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:8px; padding:5px 10px; cursor:pointer;" style-hover="border-color:var(--accent-400);">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v6h-6"></path></svg>
+            <span>Re-derive from plan</span>
+          </button>
+        </sc-if>
+      </div>
+      <div style="display:flex; align-items:center; background:var(--cream-200); border:1px solid var(--cream-border-strong); border-radius:9px; padding:2px; gap:2px;">
+        <button onClick="{{ onTabEdit }}" style="font-size:11px; font-weight:650; border:none; border-radius:7px; padding:5px 11px; cursor:pointer; background:{{ tabEditBg }}; color:{{ tabEditInk }};">Edit</button>
+        <button onClick="{{ onTabPrev }}" style="font-size:11px; font-weight:650; border:none; border-radius:7px; padding:5px 11px; cursor:pointer; background:{{ tabPrevBg }}; color:{{ tabPrevInk }};">Document</button>
+      </div>
+      <button onClick="{{ openLib }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 11px; cursor:pointer; white-space:nowrap;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"></path></svg>
+        <span>Library</span>
+      </button>
+      <button onClick="{{ onPrint }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 11px; cursor:pointer; white-space:nowrap;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"></path></svg>
+        <span>Print / PDF</span>
+      </button>
+      <sc-if value="{{ isDraft }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ openIssue }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:8px; padding:7px 13px; cursor:pointer; white-space:nowrap;" style-hover="background:var(--accent-600);">Review &amp; issue</button>
+      </sc-if>
+      <sc-if value="{{ isIssued }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openAccept }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--accent-contrast); background:var(--ink-900); border:1px solid var(--ink-900); border-radius:8px; padding:7px 13px; cursor:pointer; white-space:nowrap;" style-hover="background:var(--ink-700);">Record acceptance</button>
+      </sc-if>
+    </div>
+    <div style="flex:1; display:flex; min-height:0;">
+      <nav class="rb-outline no-print" style="flex:none; width:224px; border-right:1px solid var(--cream-border-strong); background:var(--cream-100); overflow-y:auto; padding:14px 10px;">
+        <div style="font-family:var(--font-data); font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-500); padding:0 10px 8px;">Sections</div>
+        <sc-for list="{{ outline }}" as="o" hint-placeholder-count="8">
+          <button onClick="{{ o.onClick }}" style="position:relative; display:flex; align-items:center; gap:8px; width:100%; text-align:left; font-size:12px; font-weight:600; color:{{ o.ink }}; background:{{ o.bg }}; border:none; border-radius:8px; padding:8px 10px 8px 14px; margin:1px 0; cursor:pointer;" style-hover="color:var(--ink-900);">
+            <span style="position:absolute; left:4px; top:8px; bottom:8px; width:3px; border-radius:3px; background:{{ o.bar }};"></span>
+            <span style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ o.label }}</span>
+            <sc-if value="{{ o.count }}" hint-placeholder-val="{{ false }}">
+              <span style="flex:none; font-family:var(--font-data); font-size:10px; color:var(--ink-400);">{{ o.count }}</span>
+            </sc-if>
+          </button>
+        </sc-for>
+      </nav>
+      <div class="scroll" style="flex:1; min-width:0; overflow-y:auto; background:var(--cream-200);">
+        <sc-if value="{{ isEditTab }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="Section editor" style="max-width:860px; margin:0 auto; padding:20px 22px 80px; pointer-events:{{ editPe }};">
+            <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+              <div style="pointer-events:auto; display:flex; align-items:center; gap:10px; background:#FBF3DC; border:1px solid #E8D9A8; border-radius:10px; padding:10px 13px; margin:0 0 16px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A5A10" stroke-width="2.2" style="flex:none;"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+                <div style="flex:1; font-size:12px; color:#7A5A10; font-weight:600;">{{ lockMsg }}</div>
+                <button onClick="{{ openAmend }}" style="pointer-events:auto; font-size:11.5px; font-weight:700; color:#7A5A10; background:#FFFFFF; border:1px solid #E8D9A8; border-radius:8px; padding:6px 11px; cursor:pointer;">Amend - new revision</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ sDetails }}" hint-placeholder-val="{{ true }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Project &amp; site details</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">These fill the cover and section 1.1 of the printed pack.</p>
+              </div>
+              <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:16px;">
+                <div class="rb-grid2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                  <div style="grid-column:1 / -1;">
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Document title</label>
+                    <input value="{{ det.title }}" onChange="{{ det.onTitle }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div style="grid-column:1 / -1;">
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Site address</label>
+                    <textarea value="{{ det.siteAddress }}" onChange="{{ det.onSiteAddress }}" rows="2" placeholder="Full address including postcode" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.5; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);"></textarea>
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Location of works</label>
+                    <input value="{{ det.location }}" onChange="{{ det.onLocation }}" placeholder="e.g. Car park, plant room" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Client</label>
+                    <input value="{{ det.client }}" onChange="{{ det.onClient }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Project reference</label>
+                    <input value="{{ det.projectRef }}" onChange="{{ det.onProjectRef }}" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Client reference</label>
+                    <input value="{{ det.clientRef }}" onChange="{{ det.onClientRef }}" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Start date</label>
+                    <input type="date" value="{{ det.start }}" onChange="{{ det.onStart }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">End date</label>
+                    <input type="date" value="{{ det.end }}" onChange="{{ det.onEnd }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Supervisor on site</label>
+                    <input value="{{ det.supervisor }}" onChange="{{ det.onSupervisor }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Site contact</label>
+                    <input value="{{ det.siteContact }}" onChange="{{ det.onSiteContact }}" placeholder="Client / PC contact &amp; phone" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div style="display:{{ cdmDisp }};">
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Principal designer (CDM)</label>
+                    <input value="{{ det.pd }}" onChange="{{ det.onPd }}" placeholder="Name / company" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div style="display:{{ cdmDisp }};">
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Principal contractor (CDM)</label>
+                    <input value="{{ det.pc }}" onChange="{{ det.onPc }}" placeholder="Name / company" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Supply</label>
+                    <input value="{{ det.supply }}" onChange="{{ det.onSupply }}" placeholder="e.g. 100 A single phase" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Earthing arrangement</label>
+                    <input value="{{ det.earthing }}" onChange="{{ det.onEarthing }}" placeholder="e.g. TN-C-S (PME), TT island" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+                  </div>
+                  <div style="grid-column:1 / -1;">
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Nearest A&amp;E</label>
+                    <textarea value="{{ det.ae }}" onChange="{{ det.onAe }}" rows="2" placeholder="Hospital name, address, 24 hr?, phone - goes on the emergency page" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.5; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);"></textarea>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ sScope }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Scope of works</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">One bullet per line - printed as section 1.2, Description of works. Drafted from the plan's quantities.</p>
+              </div>
+              <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:16px;">
+                <textarea value="{{ scopeVal }}" onChange="{{ onScope }}" rows="14" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.65; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:10px 12px; outline:none;" style-focus="border-color:var(--accent-400);"></textarea>
+                <sc-if value="{{ hasPlanLink }}" hint-placeholder-val="{{ false }}">
+                  <p style="font-size:11px; color:var(--ink-400); margin:8px 0 0;">Quantities out of date? <b>Re-derive from plan</b> in the bar above rewrites this list from the latest saved plan.</p>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ sMethod }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Method statement</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">The sequence of operations, in install order. One step per line inside each block.</p>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ methodRows }}" as="m" hint-placeholder-count="3">
+                  <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 14px;">
+                    <div class="rb-hzhead" style="display:flex; align-items:center; gap:8px;">
+                      <span style="flex:none; font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-400); width:24px;">{{ m.n }}</span>
+                      <input value="{{ m.t }}" onChange="{{ m.onT }}" style="flex:1; min-width:140px; font-size:13px; font-weight:700; color:var(--ink-900); background:transparent; border:1px solid transparent; border-radius:7px; padding:5px 7px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                      <sc-if value="{{ m.whyShow }}" hint-placeholder-val="{{ false }}">
+                        <span title="Why this block was auto-included" style="flex:none; font-family:var(--font-data); font-size:9.5px; font-weight:600; letter-spacing:0.02em; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:20px; padding:2px 8px; white-space:nowrap; max-width:220px; overflow:hidden; text-overflow:ellipsis;">{{ m.whyShow }}</span>
+                      </sc-if>
+                      <button onClick="{{ m.onUp }}" title="Move up" style="flex:none; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--ink-800);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5m-6 6 6-6 6 6"></path></svg></button>
+                      <button onClick="{{ m.onDown }}" title="Move down" style="flex:none; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--ink-800);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14m6-6-6 6-6-6"></path></svg></button>
+                      <button onClick="{{ m.onDel }}" title="Remove" style="flex:none; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--color-danger);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                    </div>
+                    <textarea value="{{ m.steps }}" onChange="{{ m.onSteps }}" rows="3" style="width:100%; margin-top:8px; resize:vertical; font-size:12px; line-height:1.6; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:12px;">
+                <button onClick="{{ addBlankMethod }}" style="font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px dashed var(--cream-border-strong); border-radius:8px; padding:8px 13px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">+ Blank block</button>
+                <button onClick="{{ openLib }}" style="font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 13px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Add from library</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ sRisks }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Risk register</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">5×5 scoring: likelihood × severity, before and after controls. One control per line.</p>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ hzRows }}" as="h" hint-placeholder-count="3">
+                  <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 14px;">
+                    <div class="rb-hzhead" style="display:flex; align-items:center; gap:8px;">
+                      <span style="flex:none; font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-400); width:30px;">{{ h.n }}</span>
+                      <input value="{{ h.t }}" onChange="{{ h.onT }}" style="flex:1; min-width:140px; font-size:13px; font-weight:700; color:var(--ink-900); background:transparent; border:1px solid transparent; border-radius:7px; padding:5px 7px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                      <sc-if value="{{ h.whyShow }}" hint-placeholder-val="{{ false }}">
+                        <span title="Why this hazard was auto-included" style="flex:none; font-family:var(--font-data); font-size:9.5px; font-weight:600; letter-spacing:0.02em; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:20px; padding:2px 8px; white-space:nowrap; max-width:220px; overflow:hidden; text-overflow:ellipsis;">{{ h.whyShow }}</span>
+                      </sc-if>
+                      <button onClick="{{ h.onUp }}" title="Move up" style="flex:none; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--ink-800);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5m-6 6 6-6 6 6"></path></svg></button>
+                      <button onClick="{{ h.onDown }}" title="Move down" style="flex:none; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--ink-800);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14m6-6-6 6-6-6"></path></svg></button>
+                      <button onClick="{{ h.onDel }}" title="Remove" style="flex:none; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--color-danger);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                    </div>
+                    <div class="rb-grid2" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:9px;">
+                      <div>
+                        <label style="display:block; font-size:10.5px; font-weight:650; color:var(--ink-500); margin:0 0 4px;">Task</label>
+                        <input value="{{ h.task }}" onChange="{{ h.onTask }}" style="width:100%; font-size:12px; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                      </div>
+                      <div>
+                        <label style="display:block; font-size:10.5px; font-weight:650; color:var(--ink-500); margin:0 0 4px;">Persons at risk</label>
+                        <input value="{{ h.p }}" onChange="{{ h.onP }}" style="width:100%; font-size:12px; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                      </div>
+                    </div>
+                    <div style="margin-top:9px;">
+                      <label style="display:block; font-size:10.5px; font-weight:650; color:var(--ink-500); margin:0 0 4px;">Hazard &amp; potential harm</label>
+                      <textarea value="{{ h.hz }}" onChange="{{ h.onHz }}" rows="2" style="width:100%; resize:vertical; font-size:12px; line-height:1.55; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+                    </div>
+                    <div style="margin-top:9px;">
+                      <label style="display:block; font-size:10.5px; font-weight:650; color:var(--ink-500); margin:0 0 4px;">Control measures - one per line</label>
+                      <textarea value="{{ h.ctl }}" onChange="{{ h.onCtl }}" rows="4" style="width:100%; resize:vertical; font-size:12px; line-height:1.6; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:10px;">
+                      <div style="display:flex; align-items:center; gap:7px;">
+                        <span style="font-size:10.5px; font-weight:650; color:var(--ink-500);">Initial</span>
+                        <select value="{{ h.li }}" onChange="{{ h.onLi }}" title="Likelihood" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
+                          <option value="1">L 1</option><option value="2">L 2</option><option value="3">L 3</option><option value="4">L 4</option><option value="5">L 5</option>
+                        </select>
+                        <select value="{{ h.si }}" onChange="{{ h.onSi }}" title="Severity" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
+                          <option value="1">S 1</option><option value="2">S 2</option><option value="3">S 3</option><option value="4">S 4</option><option value="5">S 5</option>
+                        </select>
+                        <span style="font-family:var(--font-data); font-size:11px; font-weight:700; border-radius:7px; padding:4px 8px; background:{{ h.bgI }}; color:{{ h.inkI }};">{{ h.scoreI }} · {{ h.bandI }}</span>
+                      </div>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink-400)" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+                      <div style="display:flex; align-items:center; gap:7px;">
+                        <span style="font-size:10.5px; font-weight:650; color:var(--ink-500);">Residual</span>
+                        <select value="{{ h.lr }}" onChange="{{ h.onLr }}" title="Likelihood after controls" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
+                          <option value="1">L 1</option><option value="2">L 2</option><option value="3">L 3</option><option value="4">L 4</option><option value="5">L 5</option>
+                        </select>
+                        <select value="{{ h.sr }}" onChange="{{ h.onSr }}" title="Severity after controls" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
+                          <option value="1">S 1</option><option value="2">S 2</option><option value="3">S 3</option><option value="4">S 4</option><option value="5">S 5</option>
+                        </select>
+                        <span style="font-family:var(--font-data); font-size:11px; font-weight:700; border-radius:7px; padding:4px 8px; background:{{ h.bgR }}; color:{{ h.inkR }};">{{ h.scoreR }} · {{ h.bandR }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:12px;">
+                <button onClick="{{ addBlankHazard }}" style="font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px dashed var(--cream-border-strong); border-radius:8px; padding:8px 13px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">+ Blank hazard</button>
+                <button onClick="{{ openLib }}" style="font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 13px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Add from library</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ sPpe }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">PPE &amp; COSHH</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">Baseline PPE for the job and the hazardous substances in use.</p>
+              </div>
+              <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:16px; margin-bottom:12px;">
+                <div style="font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 9px;">Minimum PPE on site - tap to toggle</div>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                  <sc-for list="{{ ppeChips }}" as="p" hint-placeholder-count="6">
+                    <button onClick="{{ p.onToggle }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:{{ p.ink }}; background:{{ p.bg }}; border:1px solid {{ p.border }}; border-radius:20px; padding:6px 13px; cursor:pointer;">{{ p.label }}</button>
+                  </sc-for>
+                </div>
+                <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:14px 0 5px;">PPE note</label>
+                <textarea value="{{ ppeNote }}" onChange="{{ onPpeNote }}" rows="2" style="width:100%; resize:vertical; font-size:12px; line-height:1.55; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+              </div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin:0 0 9px;">
+                <div style="font-size:13px; font-weight:700; color:var(--ink-900);">COSHH - substances in use</div>
+                <span style="font-size:11px; color:var(--ink-400);">Controls summary; keep the full SDS with the pack</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ coshhRows }}" as="x" hint-placeholder-count="2">
+                  <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 14px;">
+                    <div class="rb-hzhead" style="display:flex; align-items:center; gap:8px;">
+                      <input value="{{ x.s }}" onChange="{{ x.onS }}" style="flex:1; min-width:140px; font-size:13px; font-weight:700; color:var(--ink-900); background:transparent; border:1px solid transparent; border-radius:7px; padding:5px 7px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                      <sc-if value="{{ x.whyShow }}" hint-placeholder-val="{{ false }}">
+                        <span style="flex:none; font-family:var(--font-data); font-size:9.5px; font-weight:600; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:20px; padding:2px 8px; white-space:nowrap; max-width:200px; overflow:hidden; text-overflow:ellipsis;">{{ x.whyShow }}</span>
+                      </sc-if>
+                      <button onClick="{{ x.onDel }}" title="Remove" style="flex:none; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--color-danger);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                    </div>
+                    <div style="margin-top:8px;">
+                      <label style="display:block; font-size:10.5px; font-weight:650; color:var(--ink-500); margin:0 0 4px;">Hazard / risk</label>
+                      <input value="{{ x.r }}" onChange="{{ x.onR }}" style="width:100%; font-size:12px; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                    </div>
+                    <div style="margin-top:8px;">
+                      <label style="display:block; font-size:10.5px; font-weight:650; color:var(--ink-500); margin:0 0 4px;">Controls</label>
+                      <textarea value="{{ x.ctl }}" onChange="{{ x.onCtl }}" rows="2" style="width:100%; resize:vertical; font-size:12px; line-height:1.55; color:var(--ink-800); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <button onClick="{{ addBlankCoshh }}" style="margin-top:12px; font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px dashed var(--cream-border-strong); border-radius:8px; padding:8px 13px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">+ Add substance</button>
+            </sc-if>
+
+            <sc-if value="{{ sRules }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Permits, site rules &amp; welfare</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">One item per line for permits and rules.</p>
+              </div>
+              <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:16px;">
+                <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Permits to work</label>
+                <textarea value="{{ permitsVal }}" onChange="{{ onPermits }}" rows="4" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.6; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+                <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:14px 0 5px;">Site rules</label>
+                <textarea value="{{ rulesVal }}" onChange="{{ onRules }}" rows="5" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.6; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+                <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:14px 0 5px;">Welfare</label>
+                <textarea value="{{ welfareVal }}" onChange="{{ onWelfare }}" rows="3" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.6; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ sEmergency }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Emergency &amp; first aid</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">Arrangements printed on the emergency page and briefed at sign-on.</p>
+              </div>
+              <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:16px;">
+                <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Nearest A&amp;E</label>
+                <textarea value="{{ emgAe }}" onChange="{{ onEmgAe }}" rows="2" placeholder="Hospital, address, 24 hr?, phone" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.55; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+                <div class="rb-grid2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Appointed first aider</label>
+                    <input value="{{ emgFirstAider }}" onChange="{{ onEmgFirstAider }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Assembly point</label>
+                    <input value="{{ emgAssembly }}" onChange="{{ onEmgAssembly }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                  </div>
+                </div>
+                <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:12px 0 5px;">First aid provision</label>
+                <input value="{{ emgKit }}" onChange="{{ onEmgKit }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:12px 0 5px;">Reporting &amp; procedure</label>
+                <textarea value="{{ emgNotes }}" onChange="{{ onEmgNotes }}" rows="3" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.6; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ sTraining }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Training &amp; competence</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">One qualification per line. Defaults come from your company profile.</p>
+              </div>
+              <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:16px;">
+                <textarea value="{{ trainingVal }}" onChange="{{ onTraining }}" rows="8" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.65; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:8px; padding:10px 12px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);"></textarea>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ sPeople }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Operatives &amp; sign-on</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">Named operatives print onto the sign-on sheet. Leave blank for a fill-on-site sheet.</p>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <sc-for list="{{ opRows }}" as="o" hint-placeholder-count="2">
+                  <div style="display:flex; align-items:center; gap:8px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:10px; padding:9px 11px;">
+                    <input value="{{ o.name }}" onChange="{{ o.onName }}" placeholder="Name" style="flex:2; min-width:100px; font-size:12.5px; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                    <input value="{{ o.role }}" onChange="{{ o.onRole }}" placeholder="Role" style="flex:1.4; min-width:80px; font-size:12.5px; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                    <input value="{{ o.phone }}" onChange="{{ o.onPhone }}" placeholder="Phone" style="flex:1.2; min-width:80px; font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:7px; padding:7px 9px; outline:none;" style-focus="border-color:var(--accent-400); background:var(--color-surface);">
+                    <button onClick="{{ o.onDel }}" title="Remove" style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:6px; color:var(--ink-400); cursor:pointer;" style-hover="background:var(--cream-200); color:var(--color-danger);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                  </div>
+                </sc-for>
+              </div>
+              <button onClick="{{ addOp }}" style="margin-top:10px; font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px dashed var(--cream-border-strong); border-radius:8px; padding:8px 13px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">+ Add operative</button>
+            </sc-if>
+
+            <sc-if value="{{ sRevs }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 0 14px;">
+                <h2 style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Revisions &amp; issue</h2>
+                <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">Status, revision history and the audit trail for this document.</p>
+              </div>
+              <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:16px; margin-bottom:12px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:11px; font-weight:700; border-radius:20px; padding:4px 11px; background:{{ stBg }}; color:{{ stInk }};">{{ stLabel }}</span>
+                  <span style="font-family:var(--font-data); font-size:12px; color:var(--ink-600);">Revision {{ revLabel }}</span>
+                </div>
+                <sc-if value="{{ issueRecord }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12px; color:var(--ink-600); margin-top:10px;">{{ issueRecord }}</div>
+                </sc-if>
+                <sc-if value="{{ acceptRecord }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12px; color:var(--ink-600); margin-top:4px;">{{ acceptRecord }}</div>
+                </sc-if>
+                <div style="display:flex; gap:8px; margin-top:14px;">
+                  <sc-if value="{{ isDraft }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ openIssue }}" style="font-size:12px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:8px; padding:8px 14px; cursor:pointer;" style-hover="background:var(--accent-600);">Review &amp; issue</button>
+                  </sc-if>
+                  <sc-if value="{{ isIssued }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ openAccept }}" style="font-size:12px; font-weight:700; color:var(--cream-50); background:var(--ink-900); border:1px solid var(--ink-900); border-radius:8px; padding:8px 14px; cursor:pointer;" style-hover="background:var(--ink-700);">Record acceptance</button>
+                  </sc-if>
+                  <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ openAmend }}" style="font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 14px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Amend - {{ nextRevLabel }}</button>
+                  </sc-if>
+                </div>
+              </div>
+              <div style="font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 8px;">Revision history</div>
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <sc-for list="{{ revRows }}" as="r" hint-placeholder-count="1">
+                  <div style="display:flex; align-items:baseline; gap:12px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:9px; padding:9px 12px;">
+                    <span style="flex:none; font-family:var(--font-data); font-size:12px; font-weight:700; color:var(--ink-900); width:40px;">Rev {{ r.rev }}</span>
+                    <span style="flex:none; font-family:var(--font-data); font-size:11px; color:var(--ink-500); width:82px;">{{ r.date }}</span>
+                    <span style="flex:1; font-size:12px; color:var(--ink-700);">{{ r.note }}</span>
+                    <span style="flex:none; font-size:11px; color:var(--ink-400);">{{ r.by }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="pointer-events:auto; display:flex; justify-content:space-between; gap:10px; margin-top:22px;">
+              <button onClick="{{ prevSec }}" style="font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 13px; cursor:pointer; visibility:{{ prevVis }};" style-hover="border-color:var(--accent-400);">← {{ prevLabel }}</button>
+              <button onClick="{{ nextSec }}" style="font-size:12px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:8px; padding:8px 13px; cursor:pointer; visibility:{{ nextVis }};" style-hover="background:var(--accent-600);">{{ nextLabel }} →</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isPrevTab }}" hint-placeholder-val="{{ false }}"><div style="height:1px;"></div></sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- toast -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div class="no-print" style="position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--ink-900); color:var(--cream-50); font-size:12px; font-weight:600; border-radius:10px; padding:9px 16px; box-shadow:var(--shadow-lg); z-index:80;">{{ toast }}</div>
+  </sc-if>
+
+  <!-- IMPORT MODAL -->
+  <sc-if value="{{ importOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="no-print" onClick="{{ closeImport }}" style="position:fixed; inset:0; background:rgba(22,35,46,0.44); backdrop-filter:blur(2px); z-index:90; display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:560px; max-width:100%; max-height:88vh; overflow-y:auto; background:var(--cream-100); border:1px solid var(--cream-border-strong); border-radius:16px; box-shadow:var(--shadow-lg); padding:22px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+          <div>
+            <h3 style="font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">New RAMS</h3>
+            <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">Draft from a saved plan, or start blank.</p>
+          </div>
+          <button onClick="{{ closeImport }}" style="flex:none; width:30px; height:30px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:8px; color:var(--ink-500); cursor:pointer;" style-hover="background:var(--cream-200);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+        </div>
+
+        <div style="font-family:var(--font-data); font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-500); margin:18px 0 8px;">Saved plans on this device</div>
+        <sc-if value="{{ hasPlans }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <sc-for list="{{ planRows }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.onPick }}" style="display:flex; align-items:center; gap:11px; text-align:left; background:{{ p.bg }}; border:1.5px solid {{ p.border }}; border-radius:11px; padding:12px 14px; cursor:pointer;">
+                <div style="flex:none; width:32px; height:32px; border-radius:9px; background:var(--cream-200); border:1px solid var(--cream-border-strong); display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink-600)" stroke-width="2"><path d="M9 3v18m6-18v18M3 9h18M3 15h18"></path></svg></div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13px; font-weight:700; color:var(--ink-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ p.name }}</div>
+                  <div style="font-size:11px; color:var(--ink-500);">Saved {{ p.at }}</div>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noPlans }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--color-surface); border:1px dashed var(--cream-border-strong); border-radius:11px; padding:18px; text-align:center; font-size:12px; color:var(--ink-500);">No saved plans found on this device. Save a project in the Site Planner first, or start a blank RAMS below.</div>
+        </sc-if>
+
+        <sc-if value="{{ hasImportSel }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:flex-start; gap:9px; background:var(--accent-50); border:1px solid var(--accent-200); border-radius:11px; padding:12px 14px; margin-top:12px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-700)" stroke-width="2.2" style="flex:none; margin-top:1px;"><path d="M13 2 3 14h7l-1 8 10-12h-7z"></path></svg>
+            <div style="flex:1;">
+              <div style="font-size:11.5px; font-weight:700; color:var(--accent-700);">Will draft:</div>
+              <div style="font-size:12px; color:var(--ink-700); margin-top:2px; line-height:1.5;">{{ importSummary }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex; align-items:center; gap:10px; margin-top:18px;">
+          <button onClick="{{ doImport }}" style="flex:1; font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:{{ importBtnBg }}; border:none; border-radius:9px; padding:11px; cursor:{{ importBtnCursor }};">Draft RAMS from plan</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin:14px 0;">
+          <div style="flex:1; height:1px; background:var(--cream-border-strong);"></div>
+          <span style="font-size:10.5px; color:var(--ink-400);">or start blank</span>
+          <div style="flex:1; height:1px; background:var(--cream-border-strong);"></div>
+        </div>
+        <div style="display:flex; gap:9px;">
+          <button onClick="{{ newBlankCom }}" style="flex:1; font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:10px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Blank - commercial</button>
+          <button onClick="{{ newBlankDom }}" style="flex:1; font-size:12px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:10px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Blank - domestic</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- COMPANY MODAL -->
+  <sc-if value="{{ companyOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="no-print" onClick="{{ closeCompany }}" style="position:fixed; inset:0; background:rgba(22,35,46,0.44); backdrop-filter:blur(2px); z-index:90; display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:600px; max-width:100%; max-height:88vh; overflow-y:auto; background:var(--cream-100); border:1px solid var(--cream-border-strong); border-radius:16px; box-shadow:var(--shadow-lg); padding:22px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+          <div>
+            <h3 style="font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Company profile</h3>
+            <p style="font-size:12px; color:var(--ink-500); margin:4px 0 0;">Saved once and reused on every RAMS. Stored on this device.</p>
+          </div>
+          <button onClick="{{ closeCompany }}" style="flex:none; width:30px; height:30px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:8px; color:var(--ink-500); cursor:pointer;" style-hover="background:var(--cream-200);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+        </div>
+        <div class="rb-grid2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px;">
+          <div style="grid-column:1 / -1;">
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Company name</label>
+            <input value="{{ co.name }}" onChange="{{ co.onName }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div style="grid-column:1 / -1;">
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Registered address</label>
+            <textarea value="{{ co.address }}" onChange="{{ co.onAddress }}" rows="2" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.5; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);"></textarea>
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Phone</label>
+            <input value="{{ co.phone }}" onChange="{{ co.onPhone }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Email</label>
+            <input value="{{ co.email }}" onChange="{{ co.onEmail }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Prepared by (name)</label>
+            <input value="{{ co.preparedBy }}" onChange="{{ co.onPreparedBy }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Position</label>
+            <input value="{{ co.position }}" onChange="{{ co.onPosition }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div style="grid-column:1 / -1;">
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Appointed first aider (default)</label>
+            <input value="{{ co.firstAider }}" onChange="{{ co.onFirstAider }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Insurer</label>
+            <input value="{{ co.insurer }}" onChange="{{ co.onInsurer }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div>
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Policy number</label>
+            <input value="{{ co.policy }}" onChange="{{ co.onPolicy }}" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div style="grid-column:1 / -1;">
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Accreditations</label>
+            <input value="{{ co.accreds }}" onChange="{{ co.onAccreds }}" placeholder="e.g. NICEIC Approved, CHAS, NAPIT" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+          </div>
+          <div style="grid-column:1 / -1;">
+            <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Standard training &amp; competence (one per line)</label>
+            <textarea value="{{ co.training }}" onChange="{{ co.onTraining }}" rows="6" style="width:100%; resize:vertical; font-size:12px; line-height:1.6; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400);"></textarea>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+          <button onClick="{{ closeCompany }}" style="font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:none; border-radius:9px; padding:10px 18px; cursor:pointer;" style-hover="background:var(--accent-600);">Done</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ISSUE MODAL -->
+  <sc-if value="{{ issueOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="no-print" onClick="{{ closeIssue }}" style="position:fixed; inset:0; background:rgba(22,35,46,0.44); backdrop-filter:blur(2px); z-index:90; display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:480px; max-width:100%; background:var(--cream-100); border:1px solid var(--cream-border-strong); border-radius:16px; box-shadow:var(--shadow-lg); padding:22px;">
+        <h3 style="font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Review &amp; issue</h3>
+        <p style="font-size:12px; color:var(--ink-500); margin:5px 0 0; line-height:1.5;">Issuing locks the document at its current revision so it can't be changed after it's sent. Amend later to raise a new revision.</p>
+        <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:10px; padding:12px 14px; margin:16px 0; font-size:12px; color:var(--ink-700);">{{ issueSummary }}</div>
+        <label style="display:flex; align-items:flex-start; gap:9px; cursor:pointer; user-select:none;">
+          <span onClick="{{ onIssueTick }}" style="flex:none; width:20px; height:20px; border-radius:6px; border:1.5px solid {{ issueTickBorder }}; background:{{ issueTickBg }}; display:flex; align-items:center; justify-content:center; margin-top:1px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" style="display:{{ issueTickMark }};"><path d="M20 6 9 17l-5-5"></path></svg></span>
+          <span style="font-size:12px; color:var(--ink-700); line-height:1.5;">I confirm I have reviewed every section, the hazards and controls are suitable and sufficient for this site, and this RAMS is fit to issue.</span>
+        </label>
+        <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:16px 0 5px;">Issued by</label>
+        <input value="{{ issueName }}" onChange="{{ onIssueName }}" placeholder="Your name" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+        <div style="display:flex; gap:9px; margin-top:18px;">
+          <button onClick="{{ closeIssue }}" style="flex:none; font-size:12.5px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:10px 16px; cursor:pointer;">Cancel</button>
+          <button onClick="{{ doIssue }}" style="flex:1; font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:{{ issueBtnBg }}; border:none; border-radius:9px; padding:10px; cursor:{{ issueBtnCursor }};">Issue at {{ revLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ACCEPT MODAL -->
+  <sc-if value="{{ acceptOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="no-print" onClick="{{ closeAccept }}" style="position:fixed; inset:0; background:rgba(22,35,46,0.44); backdrop-filter:blur(2px); z-index:90; display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:460px; max-width:100%; background:var(--cream-100); border:1px solid var(--cream-border-strong); border-radius:16px; box-shadow:var(--shadow-lg); padding:22px;">
+        <h3 style="font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Record acceptance</h3>
+        <p style="font-size:12px; color:var(--ink-500); margin:5px 0 0; line-height:1.5;">Log the client or principal contractor sign-off for your records.</p>
+        <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:16px 0 5px;">Name</label>
+        <input value="{{ acceptName }}" onChange="{{ onAcceptName }}" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+        <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:12px 0 5px;">Role / organisation</label>
+        <input value="{{ acceptRole }}" onChange="{{ onAcceptRole }}" placeholder="e.g. Site manager, Fleetway Ltd" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
+        <div style="display:flex; gap:9px; margin-top:18px;">
+          <button onClick="{{ closeAccept }}" style="flex:none; font-size:12.5px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:10px 16px; cursor:pointer;">Cancel</button>
+          <button onClick="{{ doAccept }}" style="flex:1; font-size:12.5px; font-weight:700; color:var(--cream-50); background:var(--ink-900); border:none; border-radius:9px; padding:10px; cursor:pointer;">Save acceptance</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- AMEND MODAL -->
+  <sc-if value="{{ amendOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="no-print" onClick="{{ closeAmend }}" style="position:fixed; inset:0; background:rgba(22,35,46,0.44); backdrop-filter:blur(2px); z-index:90; display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:460px; max-width:100%; background:var(--cream-100); border:1px solid var(--cream-border-strong); border-radius:16px; box-shadow:var(--shadow-lg); padding:22px;">
+        <h3 style="font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Amend - raise {{ nextRevLabel }}</h3>
+        <p style="font-size:12px; color:var(--ink-500); margin:5px 0 0; line-height:1.5;">This reopens the document for editing at {{ nextRevLabel }}. Note what's changing for the revision history.</p>
+        <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:16px 0 5px;">Reason for revision</label>
+        <textarea value="{{ amendNote }}" onChange="{{ onAmendNote }}" rows="3" placeholder="e.g. Added rapid charger; updated traffic management" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.5; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:9px 11px; outline:none;" style-focus="border-color:var(--accent-400);"></textarea>
+        <div style="display:flex; gap:9px; margin-top:18px;">
+          <button onClick="{{ closeAmend }}" style="flex:none; font-size:12.5px; font-weight:650; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:10px 16px; cursor:pointer;">Cancel</button>
+          <button onClick="{{ doAmend }}" style="flex:1; font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:none; border-radius:9px; padding:10px; cursor:pointer;" style-hover="background:var(--accent-600);">Start {{ nextRevLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- LIBRARY DRAWER -->
+  <sc-if value="{{ libOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="no-print" onClick="{{ closeLib }}" style="position:fixed; inset:0; background:rgba(22,35,46,0.44); backdrop-filter:blur(2px); z-index:90; display:flex; justify-content:flex-end;">
+      <div onClick="{{ stop }}" style="width:420px; max-width:100%; height:100%; background:var(--cream-100); border-left:1px solid var(--cream-border-strong); box-shadow:var(--shadow-lg); display:flex; flex-direction:column;">
+        <div style="flex:none; padding:18px 20px 12px; border-bottom:1px solid var(--cream-border-strong);">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+              <h3 style="font-family:var(--font-display); font-weight:800; font-size:17px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Library</h3>
+              <p style="font-size:11.5px; color:var(--ink-500); margin:3px 0 0;">Add extra items to this document.</p>
+            </div>
+            <button onClick="{{ closeLib }}" style="flex:none; width:30px; height:30px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:8px; color:var(--ink-500); cursor:pointer;" style-hover="background:var(--cream-200);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+          </div>
+          <div style="display:flex; gap:3px; background:var(--cream-200); border:1px solid var(--cream-border-strong); border-radius:9px; padding:3px; margin-top:12px;">
+            <button onClick="{{ onLibHz }}" style="flex:1; font-size:11.5px; font-weight:650; border:none; border-radius:7px; padding:6px; cursor:pointer; background:{{ tabHzBg }}; color:{{ tabHzInk }};">Hazards</button>
+            <button onClick="{{ onLibM }}" style="flex:1; font-size:11.5px; font-weight:650; border:none; border-radius:7px; padding:6px; cursor:pointer; background:{{ tabMBg }}; color:{{ tabMInk }};">Method</button>
+            <button onClick="{{ onLibC }}" style="flex:1; font-size:11.5px; font-weight:650; border:none; border-radius:7px; padding:6px; cursor:pointer; background:{{ tabCBg }}; color:{{ tabCInk }};">COSHH</button>
+          </div>
+        </div>
+        <div class="scroll" style="flex:1; overflow-y:auto; padding:14px 20px 30px;">
+          <sc-if value="{{ libIsHz }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <sc-for list="{{ libHz }}" as="i" hint-placeholder-count="8">
+                <div style="display:flex; align-items:center; gap:10px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:9px; padding:9px 12px;">
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:12.5px; font-weight:650; color:var(--ink-900);">{{ i.t }}</div>
+                    <div style="font-size:10px; color:var(--ink-400);">{{ i.grp }}</div>
+                  </div>
+                  <sc-if value="{{ i.inDoc }}" hint-placeholder-val="{{ false }}"><span style="flex:none; font-size:10.5px; font-weight:650; color:var(--ink-400);">Added</span></sc-if>
+                  <sc-if value="{{ i.notInDoc }}" hint-placeholder-val="{{ true }}"><button onClick="{{ i.onAdd }}" style="flex:none; font-size:11px; font-weight:700; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:7px; padding:5px 11px; cursor:pointer;" style-hover="border-color:var(--accent-400);">Add</button></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ libIsM }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <sc-for list="{{ libM }}" as="i" hint-placeholder-count="6">
+                <div style="display:flex; align-items:center; gap:10px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:9px; padding:9px 12px;">
+                  <div style="flex:1; min-width:0; font-size:12.5px; font-weight:650; color:var(--ink-900);">{{ i.t }}</div>
+                  <sc-if value="{{ i.inDoc }}" hint-placeholder-val="{{ false }}"><span style="flex:none; font-size:10.5px; font-weight:650; color:var(--ink-400);">Added</span></sc-if>
+                  <sc-if value="{{ i.notInDoc }}" hint-placeholder-val="{{ true }}"><button onClick="{{ i.onAdd }}" style="flex:none; font-size:11px; font-weight:700; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:7px; padding:5px 11px; cursor:pointer;" style-hover="border-color:var(--accent-400);">Add</button></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ libIsC }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <sc-for list="{{ libC }}" as="i" hint-placeholder-count="4">
+                <div style="display:flex; align-items:center; gap:10px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:9px; padding:9px 12px;">
+                  <div style="flex:1; min-width:0; font-size:12.5px; font-weight:650; color:var(--ink-900);">{{ i.t }}</div>
+                  <sc-if value="{{ i.inDoc }}" hint-placeholder-val="{{ false }}"><span style="flex:none; font-size:10.5px; font-weight:650; color:var(--ink-400);">Added</span></sc-if>
+                  <sc-if value="{{ i.notInDoc }}" hint-placeholder-val="{{ true }}"><button onClick="{{ i.onAdd }}" style="flex:none; font-size:11px; font-weight:700; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:7px; padding:5px 11px; cursor:pointer;" style-hover="border-color:var(--accent-400);">Add</button></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+<!-- ░░ PRINTED DOCUMENT ░░ -->
+<sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
+  <div class="pdoc-wrap scroll" data-screen-label="Document preview" style="display:{{ pdocDisp }}; position:fixed; inset:0; top:{{ pdocTop }}; overflow-y:auto; background:var(--cream-300); z-index:5;">
+    <div class="pdoc-sheet" style="font-family:var(--font-sans); color:#1B2733; font-size:10.5pt; line-height:1.5;">
+      <!-- COVER -->
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; border-bottom:2.5px solid #16232E; padding-bottom:12px;">
+        <div style="min-width:0;">
+          <div style="font-family:var(--font-data); font-size:8pt; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#1E6BFF;">Risk Assessment &amp; Method Statement</div>
+          <div style="font-family:var(--font-display); font-weight:800; font-size:20pt; letter-spacing:-0.01em; line-height:1.12; color:#16232E; margin-top:6px;">{{ pTitle }}</div>
+          <div style="font-size:10pt; color:#5A6672; margin-top:5px;">{{ pMode }} · {{ pRefLine }}</div>
+        </div>
+        <div style="flex:none; text-align:right;">
+          {{ pLogoNode }}
+          <div style="font-weight:700; font-size:11pt; color:#16232E;">{{ pCoName }}</div>
+          <div style="font-size:8.5pt; color:#5A6672; white-space:pre-line; line-height:1.4; margin-top:2px;">{{ pCoAddress }}</div>
+          <div style="font-size:8.5pt; color:#5A6672; margin-top:2px;">{{ pCoPhone }}</div>
+          <div style="font-size:8.5pt; color:#5A6672;">{{ pCoEmail }}</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <div style="flex:1; border:1px solid #E3DECF; border-radius:7px; padding:9px 11px;">
+          <div style="font-family:var(--font-data); font-size:7pt; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#8A8375;">Revision</div>
+          <div style="font-size:11pt; font-weight:700; color:#16232E; margin-top:2px;">{{ pRev }}</div>
+        </div>
+        <div style="flex:1; border:1px solid #E3DECF; border-radius:7px; padding:9px 11px;">
+          <div style="font-family:var(--font-data); font-size:7pt; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#8A8375;">Status</div>
+          <div style="font-size:11pt; font-weight:700; color:#16232E; margin-top:2px;">{{ pStatus }}</div>
+        </div>
+        <div style="flex:1; border:1px solid #E3DECF; border-radius:7px; padding:9px 11px;">
+          <div style="font-family:var(--font-data); font-size:7pt; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#8A8375;">Prepared by</div>
+          <div style="font-size:10pt; font-weight:700; color:#16232E; margin-top:2px;">{{ pPrepBy }}</div>
+          <div style="font-size:8pt; color:#5A6672;">{{ pPrepPos }}</div>
+        </div>
+        <div style="flex:1; border:1px solid #E3DECF; border-radius:7px; padding:9px 11px;">
+          <div style="font-family:var(--font-data); font-size:7pt; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#8A8375;">Issued</div>
+          <sc-if value="{{ pIssued }}" hint-placeholder-val="{{ false }}"><div style="font-size:9.5pt; font-weight:700; color:#16232E; margin-top:2px;">{{ pIssueBy }}</div><div style="font-size:8pt; color:#5A6672;">{{ pIssueDate }}</div></sc-if>
+          <sc-if value="{{ isDraft }}" hint-placeholder-val="{{ true }}"><div style="font-size:9.5pt; color:#B8322A; margin-top:2px;">Draft - not issued</div></sc-if>
+        </div>
+      </div>
+
+      <!-- 1.1 DETAILS -->
+      <div style="margin-top:20px; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">1.1 Project &amp; site details</div>
+        <table style="width:100%; border-collapse:collapse; margin-top:9px; font-size:9pt;">
+          <tbody>
+            <tr>
+              <td style="width:22%; background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Site address</td>
+              <td style="width:28%; border:1px solid #E3DECF; padding:6px 9px; color:#16232E; white-space:pre-line;">{{ pSiteAddress }}</td>
+              <td style="width:22%; background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Location of works</td>
+              <td style="width:28%; border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pLocation }}</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Client</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pClient }}</td>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Project ref</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pProjectRef }}</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Programme dates</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pDates }}</td>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Client ref</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pClientRef }}</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Supervisor</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pSupervisor }}</td>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Site contact</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pSiteContact }}</td>
+            </tr>
+            <tr style="display:{{ pdRowDisp }};">
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Principal designer</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pPd }}</td>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Principal contractor</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pPc }}</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Supply</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pSupply }}</td>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Earthing</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pEarthing }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 1.2 SCOPE -->
+      <div style="margin-top:18px; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">1.2 Description of works</div>
+        <ul style="margin:9px 0 0; padding-left:20px; font-size:9.5pt; line-height:1.6; color:#1B2733;">
+          <sc-for list="{{ pScope }}" as="s" hint-placeholder-count="4"><li style="margin-bottom:3px;">{{ s.t }}</li></sc-for>
+        </ul>
+      </div>
+
+      <!-- 1.3 METHOD -->
+      <div style="margin-top:18px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">1.3 Method statement - sequence of works</div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+          <sc-for list="{{ pMethod }}" as="m" hint-placeholder-count="4">
+            <div style="break-inside:avoid; border:1px solid #E3DECF; border-radius:7px; overflow:hidden;">
+              <div style="background:#F2EFE4; padding:6px 11px; font-weight:700; font-size:9.5pt; color:#16232E;">{{ m.n }}  {{ m.t }}</div>
+              <ol style="margin:7px 0; padding-left:28px; font-size:9pt; line-height:1.55; color:#1B2733;">
+                <sc-for list="{{ m.stepList }}" as="st" hint-placeholder-count="2"><li style="margin-bottom:2px;">{{ st }}</li></sc-for>
+              </ol>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 2. RISK REGISTER -->
+      <div style="margin-top:20px; break-before:page;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">2. Risk assessment</div>
+        <p style="font-size:8.5pt; color:#5A6672; margin:7px 0 10px; line-height:1.5;">Risk rating = likelihood (1–5) × severity (1–5). Initial rating assumes no controls; residual rating is with the controls below applied. See the matrix at the end of this section.</p>
+        <div style="display:flex; flex-direction:column; gap:9px;">
+          <sc-for list="{{ pHz }}" as="h" hint-placeholder-count="4">
+            <div style="break-inside:avoid; border:1px solid #D9D3C4; border-radius:7px; overflow:hidden;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; background:#16232E; color:#FFFFFF; padding:6px 11px;">
+                <div style="font-weight:700; font-size:9.5pt;">{{ h.n }}  {{ h.t }}</div>
+                <div style="display:flex; gap:6px; align-items:center; flex:none;">
+                  <span style="font-family:var(--font-data); font-size:7.5pt; opacity:0.75;">Initial</span>
+                  <span style="font-family:var(--font-data); font-size:8.5pt; font-weight:700; border-radius:4px; padding:2px 7px; background:{{ h.bgI }}; color:{{ h.inkI }};">{{ h.scoreI }}</span>
+                  <span style="opacity:0.5;">→</span>
+                  <span style="font-family:var(--font-data); font-size:7.5pt; opacity:0.75;">Residual</span>
+                  <span style="font-family:var(--font-data); font-size:8.5pt; font-weight:700; border-radius:4px; padding:2px 7px; background:{{ h.bgR }}; color:{{ h.inkR }};">{{ h.scoreR }}</span>
+                </div>
+              </div>
+              <div style="padding:8px 11px;">
+                <div style="display:flex; gap:14px; font-size:8.5pt; color:#5A6672; margin-bottom:5px;">
+                  <div><b style="color:#16232E;">Task:</b> {{ h.task }}</div>
+                  <div><b style="color:#16232E;">Persons at risk:</b> {{ h.p }}</div>
+                </div>
+                <div style="font-size:9pt; color:#1B2733; margin-bottom:6px;"><b style="color:#B8322A;">Hazard:</b> {{ h.hz }}</div>
+                <div style="font-size:8pt; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A8375; margin-bottom:3px;">Control measures</div>
+                <ul style="margin:0; padding-left:18px; font-size:9pt; line-height:1.5; color:#1B2733;">
+                  <sc-for list="{{ h.ctlList }}" as="c" hint-placeholder-count="3"><li style="margin-bottom:2px;">{{ c }}</li></sc-for>
+                </ul>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- matrix -->
+        <div style="break-inside:avoid; margin-top:14px;">
+          <div style="font-weight:700; font-size:9.5pt; color:#16232E; margin-bottom:6px;">Risk matrix - likelihood × severity</div>
+          <div style="display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap;">
+            <table style="border-collapse:collapse; font-family:var(--font-data); font-size:8pt;">
+              <tbody>
+                <tr>
+                  <td style="border:none;"></td>
+                  <td colspan="5" style="text-align:center; font-weight:700; color:#5A6672; padding:2px;">Likelihood →</td>
+                </tr>
+                <sc-for list="{{ pMatrixRows }}" as="row" hint-placeholder-count="5">
+                  <tr>
+                    <td style="font-weight:700; color:#5A6672; padding:2px 6px; text-align:right;">{{ row.sev }}</td>
+                    <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+                      <td style="width:26px; height:22px; text-align:center; font-weight:700; border:1px solid #FFFFFF; background:{{ cell.bg }}; color:{{ cell.ink }};">{{ cell.v }}</td>
+                    </sc-for>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <div style="font-size:8pt; color:#5A6672; line-height:1.7;">
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:3px; background:#E4F2E7; display:inline-block;"></span> 1–4 Low - proceed</div>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:3px; background:#FBF3DC; display:inline-block;"></span> 5–9 Medium - controls required</div>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:3px; background:#FDEBDD; display:inline-block;"></span> 10–15 High - review before work</div>
+              <div style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:3px; background:#FBE3E3; display:inline-block;"></span> 16–25 Very high - do not proceed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. PPE -->
+      <div style="margin-top:20px; break-before:page; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">3. Personal protective equipment</div>
+        <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:10px;">
+          <sc-for list="{{ pPpe }}" as="p" hint-placeholder-count="5">
+            <span style="font-size:9pt; font-weight:650; color:#16232E; background:#F2EFE4; border:1px solid #E3DECF; border-radius:5px; padding:5px 11px;">{{ p.label }}</span>
+          </sc-for>
+        </div>
+        <p style="font-size:8.5pt; color:#5A6672; margin:9px 0 0; line-height:1.5;">{{ pPpeNote }}</p>
+      </div>
+
+      <!-- 4. COSHH -->
+      <sc-if value="{{ pHasCoshh }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:18px; break-inside:avoid;">
+          <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">4. COSHH - substances in use</div>
+          <table style="width:100%; border-collapse:collapse; margin-top:9px; font-size:8.5pt;">
+            <thead>
+              <tr style="background:#16232E; color:#FFFFFF;">
+                <th style="text-align:left; padding:6px 9px; width:22%; font-weight:700;">Substance</th>
+                <th style="text-align:left; padding:6px 9px; width:34%; font-weight:700;">Hazard / risk</th>
+                <th style="text-align:left; padding:6px 9px; font-weight:700;">Controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ pCoshh }}" as="x" hint-placeholder-count="2">
+                <tr>
+                  <td style="border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#16232E; vertical-align:top;">{{ x.s }}</td>
+                  <td style="border:1px solid #E3DECF; padding:6px 9px; color:#1B2733; vertical-align:top;">{{ x.r }}</td>
+                  <td style="border:1px solid #E3DECF; padding:6px 9px; color:#1B2733; vertical-align:top;">{{ x.ctl }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <p style="font-size:8pt; color:#8A8375; margin:6px 0 0;">Manufacturers' safety data sheets are held with the site pack.</p>
+        </div>
+      </sc-if>
+
+      <!-- 5. PERMITS & RULES -->
+      <div style="margin-top:18px; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">5. Permits, site rules &amp; welfare</div>
+        <div style="display:flex; gap:16px; margin-top:9px;">
+          <div style="flex:1;">
+            <div style="font-size:8pt; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A8375; margin-bottom:4px;">Permits to work</div>
+            <ul style="margin:0; padding-left:18px; font-size:9pt; line-height:1.55; color:#1B2733;"><sc-for list="{{ pPermits }}" as="p" hint-placeholder-count="2"><li style="margin-bottom:2px;">{{ p.t }}</li></sc-for></ul>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:8pt; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A8375; margin-bottom:4px;">Site rules</div>
+            <ul style="margin:0; padding-left:18px; font-size:9pt; line-height:1.55; color:#1B2733;"><sc-for list="{{ pRules }}" as="r" hint-placeholder-count="3"><li style="margin-bottom:2px;">{{ r.t }}</li></sc-for></ul>
+          </div>
+        </div>
+        <p style="font-size:8.5pt; color:#5A6672; margin:9px 0 0; line-height:1.5;"><b style="color:#16232E;">Welfare:</b> {{ pWelfare }}</p>
+      </div>
+
+      <!-- 6. EMERGENCY -->
+      <div style="margin-top:18px; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">6. Emergency arrangements &amp; first aid</div>
+        <table style="width:100%; border-collapse:collapse; margin-top:9px; font-size:9pt;">
+          <tbody>
+            <tr>
+              <td style="width:22%; background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Emergency services</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E; font-weight:700;">999 (112 from mobile)</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Nearest A&amp;E</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E; white-space:pre-line;">{{ pEmgAe }}</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Appointed first aider</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pEmgFirstAider }}</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">First aid provision</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pEmgKit }}</td>
+            </tr>
+            <tr>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Assembly point</td>
+              <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pEmgAssembly }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:8.5pt; color:#5A6672; margin:8px 0 0; line-height:1.5;">{{ pEmgNotes }}</p>
+      </div>
+
+      <!-- 7. TRAINING -->
+      <div style="margin-top:18px; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">7. Training &amp; competence</div>
+        <ul style="margin:9px 0 0; padding-left:20px; font-size:9.5pt; line-height:1.6; color:#1B2733; columns:2; column-gap:26px;">
+          <sc-for list="{{ pTraining }}" as="t" hint-placeholder-count="4"><li style="margin-bottom:3px; break-inside:avoid;">{{ t.t }}</li></sc-for>
+        </ul>
+      </div>
+
+      <!-- 8. LEGISLATION -->
+      <div style="margin-top:18px; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">8. Legislation &amp; guidance</div>
+        <div style="display:flex; gap:16px; margin-top:9px;">
+          <div style="flex:1;">
+            <div style="font-size:8pt; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A8375; margin-bottom:4px;">Statutory</div>
+            <ul style="margin:0; padding-left:18px; font-size:8.5pt; line-height:1.5; color:#1B2733;"><sc-for list="{{ pLegis }}" as="l" hint-placeholder-count="5"><li style="margin-bottom:2px;">{{ l.t }}</li></sc-for></ul>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:8pt; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A8375; margin-bottom:4px;">Standards &amp; guidance</div>
+            <ul style="margin:0; padding-left:18px; font-size:8.5pt; line-height:1.5; color:#1B2733;"><sc-for list="{{ pCodes }}" as="c" hint-placeholder-count="4"><li style="margin-bottom:2px;">{{ c.t }}</li></sc-for></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. SIGN-ON -->
+      <div style="margin-top:20px; break-before:page;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">9. Operative briefing &amp; sign-on</div>
+        <p style="font-size:8.5pt; color:#5A6672; margin:7px 0 10px; line-height:1.5;">By signing below I confirm I have read and understood this RAMS, I am briefed on the hazards and control measures, and I agree to work in accordance with it.</p>
+        <table style="width:100%; border-collapse:collapse; font-size:8.5pt;">
+          <thead>
+            <tr style="background:#F2EFE4;">
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:6px 8px; width:26%; font-weight:700; color:#16232E;">Name</th>
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:6px 8px; width:20%; font-weight:700; color:#16232E;">Role</th>
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:6px 8px; width:18%; font-weight:700; color:#16232E;">Phone</th>
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:6px 8px; width:22%; font-weight:700; color:#16232E;">Signature</th>
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:6px 8px; font-weight:700; color:#16232E;">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ pOps }}" as="o" hint-placeholder-count="6">
+              <tr>
+                <td style="border:1px solid #D9D3C4; padding:9px 8px; color:#16232E;">{{ o.name }}</td>
+                <td style="border:1px solid #D9D3C4; padding:9px 8px; color:#16232E;">{{ o.role }}</td>
+                <td style="border:1px solid #D9D3C4; padding:9px 8px; color:#16232E;">{{ o.phone }}</td>
+                <td style="border:1px solid #D9D3C4; padding:9px 8px;"></td>
+                <td style="border:1px solid #D9D3C4; padding:9px 8px;"></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 10. REVISIONS + APPROVAL -->
+      <div style="margin-top:18px; break-inside:avoid;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:12.5pt; color:#16232E; border-left:3px solid #1E6BFF; padding-left:9px;">10. Revision history &amp; approval</div>
+        <table style="width:100%; border-collapse:collapse; margin-top:9px; font-size:8.5pt;">
+          <thead>
+            <tr style="background:#F2EFE4;">
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:5px 8px; width:12%; font-weight:700; color:#16232E;">Rev</th>
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:5px 8px; width:18%; font-weight:700; color:#16232E;">Date</th>
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:5px 8px; font-weight:700; color:#16232E;">Description</th>
+              <th style="text-align:left; border:1px solid #D9D3C4; padding:5px 8px; width:20%; font-weight:700; color:#16232E;">By</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ pRevs }}" as="r" hint-placeholder-count="1">
+              <tr>
+                <td style="border:1px solid #D9D3C4; padding:5px 8px; font-weight:700; color:#16232E;">{{ r.rev }}</td>
+                <td style="border:1px solid #D9D3C4; padding:5px 8px; color:#16232E;">{{ r.date }}</td>
+                <td style="border:1px solid #D9D3C4; padding:5px 8px; color:#16232E;">{{ r.note }}</td>
+                <td style="border:1px solid #D9D3C4; padding:5px 8px; color:#16232E;">{{ r.by }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <div style="display:flex; gap:12px; margin-top:14px;">
+          <div style="flex:1; border:1px solid #D9D3C4; border-radius:7px; padding:11px 13px;">
+            <div style="font-size:8pt; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A8375;">Prepared &amp; issued by</div>
+            <div style="font-size:10.5pt; font-weight:700; color:#16232E; margin-top:8px;">{{ pIssueBy }}</div>
+            <div style="font-size:8.5pt; color:#5A6672;">{{ pCoName }} {{ pIssueDate }}</div>
+            <div style="border-top:1px solid #D9D3C4; margin-top:20px; padding-top:4px; font-size:8pt; color:#8A8375;">Signature</div>
+          </div>
+          <div style="flex:1; border:1px solid #D9D3C4; border-radius:7px; padding:11px 13px;">
+            <div style="font-size:8pt; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A8375;">Client / principal contractor acceptance</div>
+            <sc-if value="{{ pAccepted }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:10.5pt; font-weight:700; color:#16232E; margin-top:8px;">{{ pAcceptName }}</div>
+              <div style="font-size:8.5pt; color:#5A6672;">{{ pAcceptRole }}</div>
+            </sc-if>
+            <sc-if value="{{ pNotAccepted }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:9pt; color:#8A8375; margin-top:8px;">Name / role:</div>
+              <div style="border-top:1px solid #D9D3C4; margin-top:24px; padding-top:4px; font-size:8pt; color:#8A8375;">Signature &amp; date</div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px; border-top:1px solid #E3DECF; padding-top:8px; font-size:7.5pt; color:#A8A290; line-height:1.5;">
+        This document is specific to the works and site named above and is valid for this project only. It must be reviewed if the works, site conditions or personnel change. Prepared by {{ pCoName }}. Registered accreditations: {{ pCoAccreds }}. Insurance: {{ pCoInsurer }} - policy {{ pCoPolicy }}.
+      </div>
+    </div>
+    <div class="pfoot" style="display:none; font-family:var(--font-sans); font-size:8pt; color:#8A8375; justify-content:space-between; padding:0 2mm;">
+      <span>{{ pTitle }} · {{ pRefLine }}</span>
+      <span>Rev {{ pRev }} · {{ pUpdated }}</span>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;showWhy&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Builder&quot;, &quot;description&quot;: &quot;Show 'from plan' chips on auto-derived items&quot; },
+  &quot;signRows&quot;: { &quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 6, &quot;min&quot;: 2, &quot;max&quot;: 14, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Printed document&quot;, &quot;description&quot;: &quot;Rows on the printed sign-on sheet&quot; },
+  &quot;lockOnIssue&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Builder&quot;, &quot;description&quot;: &quot;Lock editing once a document is issued (amend to revise)&quot; },
+  &quot;previewUnlocked&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Release&quot;, &quot;description&quot;: &quot;Bypass the coming-soon gate to preview the builder&quot; }
+}">
+class Component extends DCLogic {
+  KEY = 'evsp_rams_v1';
+
+  state = {
+    view: 'home', activeId: null, docs: {}, order: [],
+    section: 'details', docTab: 'edit',
+    company: null, companyOpen: false,
+    importOpen: false, importSel: '', plans: [],
+    issueOpen: false, issueTick: false, issueName: '',
+    acceptOpen: false, acceptName: '', acceptRole: '',
+    amendOpen: false, amendNote: '',
+    libOpen: false, libTab: 'hazards',
+    stale: {},
+    toast: ''
+  };
+
+  /* which docs' linked plan has been saved again since they were derived (computed once, not per render) */
+  computeStale() {
+    const map = {};
+    try {
+      (this.state.order || []).forEach((id) => {
+        const d = this.state.docs[id]; if (!d || !d.planId || !d.planAt) return;
+        const blob = this.readBlob(d.planId);
+        const at = (blob && blob.budget && blob.budget.at) || '';
+        if (at && at > d.planAt) map[id] = true;
+      });
+    } catch (e) { /* ignore */ }
+    this.setState({ stale: map });
+  }
+
+  /* ================= content libraries ================= */
+
+  LEGIS = [
+    'Health and Safety at Work etc. Act 1974',
+    'The Management of Health and Safety at Work Regulations 1999',
+    'Electricity at Work Regulations 1989',
+    'The Construction (Design and Management) Regulations 2015',
+    'Provision and Use of Work Equipment Regulations 1998 (PUWER)',
+    'The Work at Height Regulations 2005',
+    'The Manual Handling Operations Regulations 1992',
+    'Control of Substances Hazardous to Health Regulations 2002 (COSHH)',
+    'The Control of Asbestos Regulations 2012',
+    'The Personal Protective Equipment at Work Regulations 2022',
+    'The Reporting of Injuries, Diseases and Dangerous Occurrences Regulations 2013 (RIDDOR)',
+    'Workplace (Health, Safety and Welfare) Regulations 1992'
+  ];
+
+  CODES = [
+    'BS 7671:2018+A3:2024 (18th Edition) - Requirements for Electrical Installations',
+    'IET Code of Practice for Electric Vehicle Charging Equipment Installation',
+    'HSE GS38 - Electrical test equipment for use on low voltage systems',
+    'HSE HSG47 - Avoiding danger from underground services',
+    'HSE INDG163 - Risk assessment: a brief guide'
+  ];
+
+  TRAINING_DEFAULT = '18th Edition (BS 7671) qualified\nEV charging equipment installation course (C&G 2921-31 or equivalent)\nECS / JIB card held\nAsbestos awareness (Cat A)\nManual handling awareness\nEmergency first aid at work (EFAW)';
+
+  PPE_DEFS = [
+    { k: 'boots',    label: 'Safety boots',        on: (c) => true },
+    { k: 'gloves',   label: 'Gloves',              on: (c) => true },
+    { k: 'glasses',  label: 'Safety glasses',      on: (c) => true },
+    { k: 'hivis',    label: 'Hi-vis',              on: (c) => c.com || c.dig || c.q.bay > 0 },
+    { k: 'hardhat',  label: 'Hard hat',            on: (c) => c.com || c.dig },
+    { k: 'cutgloves',label: 'Cut-3 gloves',        on: (c) => c.q.swa > 0 || c.q.contain > 0 },
+    { k: 'hearing',  label: 'Hearing protection',  on: (c) => c.chargers > 0 || c.q.evdb > 0 },
+    { k: 'ffp3',     label: 'FFP3 dust mask',      on: (c) => c.chargers > 0 || c.q.evdb > 0 },
+    { k: 'knees',    label: 'Knee pads',           on: (c) => !c.com }
+  ];
+
+  HZLIB = [
+    { k: 'safeiso', grp: 'Electrical', t: 'Safe isolation & proving dead',
+      task: 'Isolating supplies before connection and alteration works',
+      hz: 'Electric shock or burns from conductors assumed dead, or from re-energisation while work is in progress',
+      p: 'Operatives', li: 4, si: 5, lr: 1, sr: 5,
+      ctl: ['Isolation by a competent person to the Electricity at Work Regulations 1989 and HSE GS38',
+        'Agree the shutdown window with the client / principal contractor before starting; permit to work where the site operates one',
+        'Lock off with a unique lock and retained key; warning tags at the point of isolation',
+        'Prove dead with a proving unit: prove tester - test - re-prove, on every conductor',
+        'Treat all conductors as live until proven dead; no live working under any circumstances',
+        'Only the person who applied the lock removes it'],
+      on: (c) => true, why: (c) => 'Every job: supply connection works' },
+    { k: 'liveadj', grp: 'Electrical', t: 'Working adjacent to live equipment',
+      task: 'Connection works at or near the incoming supply, metering and live switchgear',
+      hz: 'Shock or arc-flash injury from contact with live cut-out terminals, busbars or metering equipment that cannot be isolated',
+      p: 'Operatives', li: 4, si: 5, lr: 1, sr: 5,
+      ctl: ['Work on the DNO cut-out or service head is carried out by the DNO / MOP only - never by installation operatives',
+        'Temporary shrouding / barriers over adjacent live parts before starting',
+        'Insulated tools; metal jewellery and lanyards removed',
+        'Work area dry and well lit; second operative present where the task requires it',
+        'Warning notices on equipment that must remain live'],
+      on: (c) => true, why: (c) => 'Supply / metering position on the plan' },
+    { k: 'dbwork', grp: 'Electrical', t: 'Installing distribution equipment',
+      task: 'Mounting and populating the EVDB, load-management board or feeder pillar',
+      hz: 'Shock from the incoming supply; injury from heavy boards, sharp gland plates and swarf',
+      p: 'Operatives', li: 3, si: 5, lr: 1, sr: 5,
+      ctl: ['Confirm isolation of the incoming supply before terminating (see safe isolation)',
+        'Two-person lift for boards; mechanical aids for feeder pillar shells',
+        'De-burr drilled gland plates; file sharp edges before cabling',
+        'Blanking pieces fitted to unused ways; covers on before energising',
+        'Terminals torqued to manufacturer settings; circuits labelled with a schedule in the board'],
+      on: (c) => c.q.evdb > 0 || c.q.lmboard > 0 || c.fp,
+      why: (c) => (c.q.evdb ? c.q.evdb + ' × EVDB' : 'Distribution equipment') + ' on the plan' },
+    { k: 'evcp', grp: 'Electrical', t: 'Installing & terminating charge points',
+      task: 'Mounting charge points / pedestals and terminating supply and data cables',
+      hz: 'Shock from unexpected energisation; injury from drilling and lifting units',
+      p: 'Operatives', li: 3, si: 5, lr: 1, sr: 5,
+      ctl: ['Verify circuit isolation and lock off before termination; prove dead at the charge point',
+        'Scan fixing positions for hidden services before drilling',
+        'Manufacturer template and fixings; dust extraction while drilling',
+        'Terminations torqued to spec; glands and seals fitted to maintain the IP rating',
+        'No energisation until dead testing is complete and the unit is fully assembled'],
+      on: (c) => c.chargers > 0, why: (c) => c.chargers + ' charging socket' + (c.chargers === 1 ? '' : 's') + ' on the plan' },
+    { k: 'testcom', grp: 'Electrical', t: 'Testing, energisation & commissioning',
+      task: 'Dead testing, initial energisation and live functional testing',
+      hz: 'Shock during live testing; danger to others from circuits energised without warning',
+      p: 'Operatives & site staff', li: 4, si: 4, lr: 1, sr: 4,
+      ctl: ['All dead tests complete and recorded before energising: continuity, insulation resistance, polarity',
+        'GS38-compliant leads and calibrated instruments',
+        'Energisation announced to the site contact; warning notice at the board during live testing',
+        'Live tests (Ze / Zs, RCD and RDC-DD) by a competent person with a second means of isolation identified',
+        'Charge points locked / unavailable to users until commissioning is complete'],
+      on: (c) => true, why: (c) => 'Every job: new circuits' },
+    { k: 'openpen', grp: 'Electrical', t: 'PME supplies & open-PEN risk',
+      task: 'EV charging supplied from a PME (TN-C-S) arrangement',
+      hz: 'Electric shock from touch voltage on the vehicle or charge point if the supply neutral (PEN) is lost',
+      p: 'Operatives, users & public', li: 3, si: 5, lr: 1, sr: 5,
+      ctl: ['Confirm the earthing arrangement at the origin before the design is finalised',
+        "Use the charge point's built-in open-PEN protection where its declaration covers BS 7671 722.411.4.1, or",
+        'Install a TT island with electrode(s), maintaining separation from buried metalwork and PME earths',
+        'Do not bond the TT island to PME-earthed metalwork; verify separation distances',
+        'Record the chosen open-PEN measure on the EIC'],
+      on: (c) => c.pme || c.q.openpeni > 0 || (c.tt && c.chargers > 0),
+      why: (c) => c.earthing ? 'Earthing on the plan: ' + c.earthing : 'Open-PEN measure on the plan' },
+    { k: 'earthrod', grp: 'Electrical', t: 'Driving earth electrodes',
+      task: 'Installing and testing earth electrodes for a TT arrangement',
+      hz: 'Striking buried services when driving rods; hand-arm injury from driving tools',
+      p: 'Operatives', li: 3, si: 4, lr: 1, sr: 4,
+      ctl: ['CAT & genny scan of the electrode position; service drawings checked first',
+        'Hand-dig a pilot hole; stop if any obstruction is met',
+        'Driving tool / SDS adaptor rather than sledgehammer where possible',
+        'Electrode resistance tested and recorded; rod head protected in an inspection pit'],
+      on: (c) => c.q.earthrod > 0, why: (c) => c.q.earthrod + ' × earth rod on the plan' },
+    { k: 'buried', grp: 'Ground & outdoor', t: 'Buried services',
+      task: 'Breaking ground for trenching, ducting and electrode positions',
+      hz: 'Striking buried electricity, gas or water services - burns, explosion, flooding',
+      p: 'Operatives & public', li: 4, si: 5, lr: 1, sr: 5,
+      ctl: ['Service records and private services drawings obtained before excavation',
+        'CAT & genny sweep along the route; findings marked on the surface',
+        'Trial holes dug by hand to confirm any indication; hand-dig within 500 mm of known services',
+        'Stop work and refer to the supervisor if an unidentified service is found',
+        'HSE HSG47 followed throughout'],
+      on: (c) => c.dig, why: (c) => c.digLen + ' m of trench / duct on the plan' },
+    { k: 'excav', grp: 'Ground & outdoor', t: 'Open excavations',
+      task: 'Excavating and leaving open trenches during the works',
+      hz: 'Falls into excavations; edge collapse; plant striking operatives',
+      p: 'Operatives & public', li: 3, si: 4, lr: 1, sr: 3,
+      ctl: ['All open excavations barriered and signed; road plates over crossings',
+        'Spoil and materials kept back from the trench edge',
+        'Backfill as soon as ducting is inspected - trenches are not left open overnight in public areas without covers and lighting',
+        'Escalate to the supervisor if depth beyond the design is needed'],
+      on: (c) => c.q.trench > 0, why: (c) => c.q.trench + ' m of trench on the plan' },
+    { k: 'outdoor', grp: 'Ground & outdoor', t: 'Working outdoors',
+      task: 'External works: cable routes, pillars, bays and external chargers',
+      hz: 'Exposure to weather and UV; slips on wet or uneven ground; poor light',
+      p: 'Operatives', li: 3, si: 3, lr: 1, sr: 3,
+      ctl: ['Forecast checked; external cabling and terminations postponed in heavy rain',
+        'Weather-appropriate clothing; sun protection in summer',
+        'Task lighting for early / late working; no live terminations in the wet',
+        'Leads and tools kept tidy along external routes'],
+      on: (c) => c.dig || c.fp || c.q.bay > 0 || (c.com && c.chargers > 0),
+      why: (c) => 'External works on the plan' },
+    { k: 'vehicles', grp: 'Site & access', t: 'Vehicle movements & car-park working',
+      task: 'Working in a live car park or delivery yard',
+      hz: 'Operatives struck by moving vehicles; collision with plant during deliveries',
+      p: 'Operatives & public', li: 4, si: 5, lr: 2, sr: 4,
+      ctl: ['Traffic management agreed with the client: bay suspensions, coned work zones, signed pedestrian routes',
+        'Physical barriers between work areas and live traffic lanes',
+        'Hi-vis worn at all times; vehicle movements into the zone under marshal control',
+        'Deliveries to a designated area at agreed times',
+        'Work zone re-walked after breaks before restarting'],
+      on: (c) => c.com, why: (c) => 'Commercial site - live car park' },
+    { k: 'occupied', grp: 'Site & access', t: 'Occupied premises & the public',
+      task: 'Working in and around a building in normal use',
+      hz: 'Members of the public entering work areas; injury from tools, cables and openings',
+      p: 'Public & site staff', li: 3, si: 4, lr: 1, sr: 3,
+      ctl: ['Induction with the site contact; working areas, routes and timings agreed',
+        'Work areas cordoned; fire exits and escape routes kept clear at all times',
+        'Tools, open boards and excavations never left unattended',
+        'Signage at each work front; work above walkways only when segregated'],
+      on: (c) => c.com, why: (c) => 'Commercial site in normal use' },
+    { k: 'domocc', grp: 'Site & access', t: 'Working in an occupied home',
+      task: 'Domestic installation with householders present',
+      hz: 'Injury to householders, children or pets from tools, leads, dust and loss of supply',
+      p: 'Householders & operatives', li: 3, si: 4, lr: 1, sr: 3,
+      ctl: ['Route walked with the customer; access, parking and where children / pets will be during works agreed',
+        'Floors and finishes protected; tools and leads kept out of walkways',
+        'Power-off window agreed in advance; medical equipment and home-working needs checked before isolating',
+        'Work area made good and cleaned before leaving; no exposed conductors at any break'],
+      on: (c) => !c.com, why: (c) => 'Domestic installation' },
+    { k: 'lone', grp: 'Site & access', t: 'Lone working',
+      task: 'Single-operative site visits',
+      hz: 'Injury or sudden illness while working alone, with delayed help',
+      p: 'Operatives', li: 3, si: 4, lr: 1, sr: 4,
+      ctl: ['Whereabouts and expected finish logged with the office / buddy; check-in on arrival and completion',
+        'Charged phone carried; job address shared',
+        'No live testing or work at height beyond agreed limits while alone',
+        'First aid kit in the van; two-person visit where the survey flags it'],
+      on: (c) => !c.com, why: (c) => 'Typical single-operative visit' },
+    { k: 'arrival', grp: 'Site & access', t: 'Deliveries & unloading',
+      task: 'Taking deliveries of switchgear, pillars, cable drums and units',
+      hz: 'Falling loads, crush injuries, moving delivery vehicles',
+      p: 'Operatives & public', li: 3, si: 5, lr: 1, sr: 4,
+      ctl: ['Deliveries to the designated area agreed at induction; public kept clear',
+        'Tail-lift and pallet-truck moves on firm, level ground only',
+        'Drums chocked; boards and pillars strapped until positioned',
+        'Two-person handling for boards and pillar shells; mechanical aids above that'],
+      on: (c) => c.com, why: (c) => 'Commercial delivery quantities' },
+    { k: 'slips', grp: 'Site & access', t: 'Slips, trips & housekeeping',
+      task: 'General site presence and movement of materials',
+      hz: 'Slips and trips on leads, offcuts, packaging and wet surfaces',
+      p: 'All on site', li: 3, si: 3, lr: 1, sr: 2,
+      ctl: ['Work areas kept tidy as work proceeds; waste cleared at each break',
+        'Leads routed at high level or covered; none across walkways',
+        'Spills cleaned immediately; wet-floor signage where needed',
+        'Materials stored flat and stable, out of pedestrian routes'],
+      on: (c) => true, why: (c) => 'Every job' },
+    { k: 'wah', grp: 'Site & access', t: 'Work at height',
+      task: 'Installing containment and cabling at high level',
+      hz: 'Falls from steps or podiums; dropped tools and materials onto persons below',
+      p: 'Operatives & those below', li: 3, si: 5, lr: 1, sr: 4,
+      ctl: ['Podium steps or platform in preference to leaning ladders; ladders only for short-duration light work',
+        'Access equipment inspected before use; footwear clean and dry',
+        'Exclusion zone below overhead work; tools tethered or holstered',
+        'Three points of contact on ladders; move the access rather than overreach'],
+      on: (c) => c.q.contain > 0, why: (c) => c.q.contain + ' m of containment on the plan' },
+    { k: 'mh', grp: 'Handling, tools & health', t: 'Manual handling',
+      task: 'Moving boards, drums, units and materials',
+      hz: 'Musculoskeletal injury from lifting, carrying and pulling cable',
+      p: 'Operatives', li: 3, si: 4, lr: 1, sr: 3,
+      ctl: ['Lift planned: route clear, set-down point ready; manual handling avoided where an aid will do',
+        '25 kg individual limit; two-person lift or mechanical aid above it',
+        'Cable pulled off rollers / drum stands, not dragged; long runs pulled in stages',
+        'Trained technique: load close, back straight, no twisting'],
+      on: (c) => true, why: (c) => 'Every job: drums, boards & units' },
+    { k: 'heavy', grp: 'Handling, tools & health', t: 'Heavy units: pedestals, pillars & rapids',
+      task: 'Positioning pedestal chargers, feeder pillars and DC units',
+      hz: 'Crush and strain injuries from very heavy units; toppling before fixing',
+      p: 'Operatives', li: 3, si: 5, lr: 1, sr: 4,
+      ctl: ['Unit weights confirmed before delivery; route from vehicle to base planned',
+        'Pallet truck / skates on firm ground; never manhandled down steps',
+        'Units stood on cured bases only and fixed immediately - never left free-standing',
+        'Minimum two operatives; banksman for reversing delivery vehicles'],
+      on: (c) => c.q.chargerDC > 0 || c.fp, why: (c) => 'Heavy floor-standing units on the plan' },
+    { k: 'drill', grp: 'Handling, tools & health', t: 'Drilling & fixing into structure',
+      task: 'Drilling masonry for charge points, boards and containment',
+      hz: 'Hidden cables or pipes in walls; silica dust; hand-arm vibration; noise; eye injury',
+      p: 'Operatives & occupants', li: 3, si: 4, lr: 1, sr: 3,
+      ctl: ['Scan before drilling; both sides of the wall checked where accessible',
+        'On-tool extraction or dust suppression; FFP3 where extraction is impracticable',
+        'Sharp bits, lowest effective hammer setting, job rotation to limit vibration exposure',
+        'Eye protection always; hearing protection for prolonged drilling'],
+      on: (c) => c.chargers > 0 || c.q.evdb > 0 || c.q.contain > 0, why: (c) => 'Fixings into structure' },
+    { k: 'asbestos', grp: 'Handling, tools & health', t: 'Asbestos-containing materials',
+      task: 'Drilling, chasing or routing through existing building fabric',
+      hz: 'Release of asbestos fibres from AIB, soffits, cement garage roofs, textured coatings or old boards',
+      p: 'Operatives & occupants', li: 3, si: 5, lr: 1, sr: 5,
+      ctl: ['Commercial: site asbestos register consulted before any drilling or fixing',
+        'Domestic pre-2000: likely materials presumed and checked before disturbance',
+        'No drilling of cement roofs, AIB panels or textured coatings without confirmation',
+        'Stop work immediately if suspect material is found or damaged; isolate the area and inform the duty holder',
+        'Asbestos-awareness trained operatives only'],
+      on: (c) => true, why: (c) => 'Existing building fabric' }
+  ];
+
+  METHODS = [
+    { k: 'arrive', t: 'Arrival, induction & set-up',
+      steps: (c) => c.com
+        ? ['Report to the principal contractor / site contact and complete the site induction', 'Confirm permits, the isolation window, welfare and the agreed work / storage areas', 'Unload in the designated area; barrier and sign the first work zone before starting']
+        : ['Introduce the team, confirm parking and access, and walk the route with the customer', 'Protect floors and finishes along internal routes; dust protection where drilling indoors', 'Agree the power-off window; check for medical or home-working needs before any isolation'],
+      on: (c) => true, why: (c) => 'Every job' },
+    { k: 'scan', t: 'Scan & mark out',
+      steps: (c) => ['Obtain service drawings; CAT & genny sweep along every marked route and electrode position', 'Mark out routes, trench lines and equipment positions on the surface', 'Hand-dig trial holes where the scan shows indications or near known services'],
+      on: (c) => c.dig || c.q.earthrod > 0, why: (c) => 'Ground works on the plan' },
+    { k: 'civils', t: 'Excavation, ducting & bases',
+      steps: (c) => ['Excavate marked runs to the design depth; sand bed and lay ducting with draw cords', 'Warning tape 150 mm above ducts; photograph every run before backfill', 'Form / pour concrete bases and plinths; cure before any equipment is stood'],
+      on: (c) => c.dig || c.q.base > 0, why: (c) => 'Trench / duct / bases on the plan' },
+    { k: 'contain', t: 'Containment installation',
+      steps: (c) => ['Set out containment at the agreed heights; confirm fixings suit the structure', 'Install tray / basket / trunking from podium steps; de-burr cut edges, fit lids where specified', 'Maintain segregation from existing services and data cabling'],
+      on: (c) => c.q.contain > 0, why: (c) => c.q.contain + ' m of containment on the plan' },
+    { k: 'cable', t: 'Cable installation',
+      steps: (c) => ['Pull cables from drum stands / rollers in stages - no dragging over edges', 'Observe minimum bend radii; support and cleat at the spacings for the cable type', 'Gland SWA with the correct kits; earth tag / banjo connections made off', 'Label both ends of every cable; coil 2 m spare at each charge point position'],
+      on: (c) => c.q.swa > 0 || c.q.gencable > 0 || c.q.datacab > 0, why: (c) => 'Cable runs on the plan' },
+    { k: 'iso', t: 'Safe isolation & supply connection',
+      steps: (c) => ['Agree the shutdown with the client (and DNO where required); permit to work if the site operates one', 'Isolate, lock off with a unique key and tag; prove dead (prove - test - re-prove) with a GS38 tester', 'Make the supply connection at the agreed point: cut-out by DNO / MOP only; Henley blocks / switchgear per the design', 'Restore supplies only when all connections are complete and covers refitted'],
+      on: (c) => true, why: (c) => 'Every job' },
+    { k: 'board', t: 'Distribution equipment',
+      steps: (c) => ['Mount the EVDB / load-management board / feeder pillar at the design position', 'Fit outgoing devices to the schedule; blank unused ways; torque all terminations', 'Fit labels and a circuit schedule inside the board'],
+      on: (c) => c.q.evdb > 0 || c.q.lmboard > 0 || c.fp, why: (c) => 'Distribution equipment on the plan' },
+    { k: 'earthing', t: 'Earthing works',
+      steps: (c) => ['Install electrode(s) at the scanned position; connect with the specified conductor', 'Test electrode resistance and record the result', 'Confirm the open-PEN measure (built-in device per declaration, or TT island) and label at the origin'],
+      on: (c) => c.q.earthrod > 0 || c.pme || c.q.openpeni > 0, why: (c) => 'Earthing arrangement on the plan' },
+    { k: 'mount', t: 'Charge point installation',
+      steps: (c) => ["Fix charge points / pedestals using the manufacturer's template and fixings", 'Terminate supply and data cables; glands and seals fitted to maintain the IP rating', 'Fit guard rails / protection where specified; leave units locked off pending testing'],
+      on: (c) => c.chargers > 0, why: (c) => c.chargers + ' charging socket' + (c.chargers === 1 ? '' : 's') + ' on the plan' },
+    { k: 'test', t: 'Inspection, testing & energisation',
+      steps: (c) => ['Complete dead tests on every new circuit: continuity, insulation resistance, polarity', 'Energise in agreement with the site contact; complete live tests (Ze / Zs, RCD and RDC-DD)', 'Record all results for the Electrical Installation Certificate'],
+      on: (c) => true, why: (c) => 'Every job' },
+    { k: 'commission', t: 'Commissioning & handover',
+      steps: (c) => ['Connect units to the back office / app; apply load-management limits from the design', 'Functional charge test on every socket; label each unit with its circuit reference', 'Demonstrate operation to the customer / client representative'],
+      on: (c) => c.chargers > 0, why: (c) => 'Charge points on the plan' },
+    { k: 'reinstate', t: 'Backfill & reinstatement',
+      steps: (c) => ['Backfill in compacted layers with warning tape in place', 'Reinstate surfaces like-for-like; remove spoil from site', 'Photograph completed reinstatement for the handover pack'],
+      on: (c) => c.q.trench > 0 || c.q.area > 0, why: (c) => 'Reinstatement on the plan' },
+    { k: 'bays', t: 'Bay marking & signage',
+      steps: (c) => ['Mask and apply bay markings, lettering and any accessible-bay layouts', 'Install signage and wheel stops; allow cure time before opening bays to traffic'],
+      on: (c) => c.q.bay > 0, why: (c) => c.q.bay + ' × bay marking on the plan' },
+    { k: 'demob', t: 'Snagging & demobilisation',
+      steps: (c) => ['Walk the completed works with the customer / site contact; record any snags', 'Remove waste (packaging, offcuts, WEEE) and leave work areas clean', 'Remove barriers last; sign out; certification and handover documents to follow'],
+      on: (c) => true, why: (c) => 'Every job' }
+  ];
+
+  COSHH_LIB = [
+    { k: 'silica', s: 'Silica / masonry dust', r: 'Respirable dust from drilling and coring - lung damage with repeated exposure',
+      ctl: 'On-tool extraction or wet suppression; FFP3 where extraction is impracticable; work outdoors where possible; short drilling runs.',
+      on: (c) => c.chargers > 0 || c.q.evdb > 0 || c.q.contain > 0, why: (c) => 'Drilling / fixing works' },
+    { k: 'cement', s: 'Cement & concrete', r: 'Skin burns and dermatitis from wet cement; dust during mixing',
+      ctl: 'Waterproof gloves and covered skin; splashes washed off immediately; mix in ventilated areas; eye protection when mixing.',
+      on: (c) => c.q.base > 0 || c.q.area > 0, why: (c) => 'Bases / reinstatement on the plan' },
+    { k: 'paint', s: 'Bay-marking paint', r: 'Solvent vapours and skin contact during line marking',
+      ctl: 'Apply in open air; nitrile gloves; no ignition sources nearby; product SDS followed for cure times.',
+      on: (c) => c.q.bay > 0, why: (c) => 'Bay marking on the plan' },
+    { k: 'lube', s: 'Cable-pulling lubricant', r: 'Slip hazard and mild skin irritation',
+      ctl: 'Gloves during use; spills wiped immediately; stored sealed.',
+      on: (c) => c.q.swa >= 40, why: (c) => 'Long SWA pulls on the plan' },
+    { k: 'sealant', s: 'Duct sealant / expanding foam', r: 'Isocyanate vapour and skin bonding during application',
+      ctl: 'Gloves and eye protection; ventilate; cure fully before backfilling; wipes carried for skin contact.',
+      on: (c) => c.q.duct > 0, why: (c) => 'Ducting on the plan' }
+  ];
+
+  SECTIONS = [
+    { id: 'details', label: 'Project & site details' },
+    { id: 'scope', label: 'Scope of works' },
+    { id: 'method', label: 'Method statement' },
+    { id: 'risks', label: 'Risk register' },
+    { id: 'ppe', label: 'PPE & COSHH' },
+    { id: 'rules', label: 'Permits, site rules & welfare' },
+    { id: 'emergency', label: 'Emergency & first aid' },
+    { id: 'training', label: 'Training & competence' },
+    { id: 'people', label: 'Operatives & sign-on' },
+    { id: 'revs', label: 'Revisions & issue' }
+  ];
+
+  /* ================= persistence ================= */
+
+  componentDidMount() {
+    let st = null;
+    try { st = JSON.parse(localStorage.getItem(this.KEY) || 'null'); } catch (e) { st = null; }
+    const company = (st && st.company) || this.defaultCompany();
+    let docs = (st && st.docs) || {}, order = (st && st.order) || [];
+    if (!order.length) {
+      const demo = this.demoDoc(company);
+      docs = { [demo.id]: demo }; order = [demo.id];
+    }
+    this.setState({ docs, order, company }, () => this.afterMountSync());
+  }
+
+  /* Coming-soon gate: while gated the tool is read-only - no hash imports, no
+     storage writes. Re-runs when the gate opens (previewUnlocked flips on). */
+  gated() { return !(this.props.previewUnlocked ?? false); }
+
+  afterMountSync() {
+    if (this.gated()) return;
+    const m = (location.hash || '').match(/from=([^&]+)/);
+    if (m) this.importFromHash(decodeURIComponent(m[1]));
+    this.save();
+    this.computeStale();
+  }
+
+  componentDidUpdate(prevProps) {
+    const was = !!(prevProps && (prevProps.previewUnlocked ?? false));
+    const now = !!(this.props.previewUnlocked ?? false);
+    if (!was && now) this.afterMountSync();
+  }
+
+  defaultCompany() {
+    let brand = {}; try { brand = JSON.parse(localStorage.getItem('evsp_brand') || '{}') || {}; } catch (e) { brand = {}; }
+    return { name: brand.name || '', address: '', phone: '', email: brand.email || '', logo: brand.logo || '',
+      preparedBy: '', position: 'Installation manager', firstAider: '',
+      insurer: '', policy: '', accreds: '', training: this.TRAINING_DEFAULT };
+  }
+
+  save = () => {
+    if (this.gated()) return; /* never persist from behind the coming-soon gate */
+    try {
+      const { docs, order, company } = this.state;
+      localStorage.setItem(this.KEY, JSON.stringify({ docs, order, company }));
+    } catch (e) { /* ignore */ }
+  };
+
+  /* ================= plan import & derivation ================= */
+
+  readIndex() { try { return JSON.parse(localStorage.getItem('evsp_projects') || '[]') || []; } catch (e) { return []; } }
+  readBlob(id) { try { return JSON.parse(localStorage.getItem('evsp_proj_' + id) || 'null'); } catch (e) { return null; } }
+
+  ctxOf(blob) {
+    const q = {};
+    (((blob || {}).budget || {}).lines || []).forEach((l) => { if (l && l.k) q[l.k] = l.qty || 0; });
+    const pack = (blob || {}).pack || {};
+    const bud = (blob || {}).budget || {};
+    const mode = (pack.mode === 'domestic' || bud.mode === 'domestic') ? 'domestic' : 'commercial';
+    const earthing = String(pack.earthing || '');
+    const chargers = (q.charger7 || 0) + (q.charger11 || 0) + (q.charger22 || 0) + (q.chargerDC || 0);
+    return {
+      q, mode, com: mode === 'commercial', earthing,
+      tt: /\btt\b/i.test(earthing), pme: /pme|tn-?c-?s/i.test(earthing),
+      enabling: pack.enablingWorks || [],
+      chargers, fp: (q.fpwired || 0) + (q.fpshell || 0) > 0,
+      dig: (q.trench || 0) > 0 || (q.duct || 0) > 0,
+      digLen: Math.round(Math.max(q.trench || 0, q.duct || 0)),
+      name: pack.name || bud.name || '', jobRef: pack.jobRef || bud.jobRef || '',
+      custName: pack.custName || bud.custName || '',
+      cdm: (pack.cdm && typeof pack.cdm === 'object') ? pack.cdm : {},
+      supplyRating: pack.supplyRating || '', mainFuse: pack.mainFuse || '', dnoRef: pack.dnoRef || ''
+    };
+  }
+
+  emptyCtx(mode) {
+    return this.ctxOf({ pack: { mode }, budget: { lines: [] } });
+  }
+
+  scopeOf(c) {
+    const q = c.q, B = [];
+    const n = (v) => Math.round((v || 0) * 10) / 10;
+    if (c.fp) B.push('Install ' + ((q.fpwired || 0) + (q.fpshell || 0)) + ' × feeder pillar' + (((q.fpwired || 0) + (q.fpshell || 0)) === 1 ? '' : 's') + ((q.fpshell || 0) > 0 ? ' (fitted out on site)' : '') + ' on plinths');
+    if (q.evdb) B.push('Install ' + q.evdb + ' × EV distribution board' + (q.evdb === 1 ? '' : 's') + ' with outgoing protective devices');
+    if (q.lmboard) B.push('Install ' + q.lmboard + ' × load-management board' + (q.lmboard === 1 ? '' : 's'));
+    if (q.iso) B.push('Fit ' + q.iso + ' × isolator / main switch');
+    if (q.henley) B.push('Fit Henley blocks at the supply position');
+    if (q.mcbi) B.push('Fit ' + q.mcbi + ' × MCB in the existing board');
+    if (q.trench) B.push('Excavate ' + n(q.trench) + ' m of trench along the marked routes, lay ducting with draw cords and reinstate');
+    else if (q.duct) B.push('Install ' + n(q.duct) + ' m of ducting along the marked routes');
+    if (q.base) B.push('Form ' + q.base + ' × concrete base / plinth');
+    if (q.contain) B.push('Install ' + n(q.contain) + ' m of containment (tray / trunking / basket) along the marked runs');
+    if (q.swa) B.push('Run and connect ' + n(q.swa) + ' m of SWA armoured cable from the supply position to the charge points');
+    if (q.gencable) B.push('Run ' + n(q.gencable) + ' m of cabling (type confirmed at design)');
+    if (q.datacab) B.push('Run ' + n(q.datacab) + ' m of data / comms cabling');
+    if (q.earthrod) B.push('Install ' + q.earthrod + ' × earth electrode' + (q.earthrod === 1 ? '' : 's') + ' and test');
+    ['7', '11', '22'].forEach((kw) => { const v = q['charger' + kw] || 0; if (v) B.push('Install ' + v + ' × ' + kw + ' kW charging socket' + (v === 1 ? '' : 's') + ', terminate and protect'); });
+    if (q.chargerDC) B.push('Install ' + q.chargerDC + ' × DC rapid charger' + (q.chargerDC === 1 ? '' : 's'));
+    if (q.spdi) B.push('Fit surge protection at the new board');
+    if (q.bay) B.push('Mark ' + q.bay + ' × EV bay' + (q.bay === 1 ? '' : 's') + ' with signage / wheel stops as specified');
+    if (!B.length) B.push(c.com ? 'Install EV charge points and associated supply works (add detail here or re-derive from a plan)' : 'Install a domestic EV charge point and associated supply works');
+    B.push('Inspect, test, energise and commission all new circuits to BS 7671; certification to follow');
+    return B.join('\n');
+  }
+
+  deriveParts(c) {
+    const uid = this.uid;
+    return {
+      scope: this.scopeOf(c),
+      method: this.METHODS.filter((m) => m.on(c)).map((m) => ({ id: uid(), k: m.k, t: m.t, steps: m.steps(c).join('\n'), auto: true, why: m.why(c) })),
+      hazards: this.HZLIB.filter((h) => h.on(c)).map((h) => ({ id: uid(), k: h.k, t: h.t, task: h.task, hz: h.hz, p: h.p, li: h.li, si: h.si, lr: h.lr, sr: h.sr, ctl: h.ctl.join('\n'), auto: true, why: h.why(c) })),
+      coshh: this.COSHH_LIB.filter((x) => x.on(c)).map((x) => ({ id: uid(), k: x.k, s: x.s, r: x.r, ctl: x.ctl, auto: true, why: x.why(c) })),
+      ppe: { keys: this.PPE_DEFS.filter((p) => p.on(c)).map((p) => p.k), note: c.com ? 'Site rules take precedence where they require more. Task-specific PPE per the risk assessments below.' : 'Task-specific PPE per the risk assessments below.' }
+    };
+  }
+
+  uid() { return Math.random().toString(36).slice(2, 10); }
+  today() { return new Date().toLocaleDateString('en-GB'); }
+
+  mkDoc(blob, planId, company) {
+    const c = this.ctxOf(blob);
+    const parts = this.deriveParts(c);
+    const com = c.com;
+    return {
+      id: this.uid(), planId: planId || '', planName: c.name, planAt: (blob && blob.budget && blob.budget.at) || '', mode: c.mode,
+      status: 'draft', rev: 'A',
+      revs: [{ rev: 'A', date: this.today(), by: (company && company.preparedBy) || '', note: planId ? 'Drafted from the site plan' : 'Document created' }],
+      created: Date.now(), updated: Date.now(),
+      det: {
+        title: c.name || 'EV charge point installation',
+        siteAddress: '', location: com ? 'Car park / external areas' : 'Dwelling - driveway / garage',
+        client: c.custName || '', clientRef: '', projectRef: c.jobRef || '',
+        start: '', end: '', ae: '', supervisor: '', siteContact: '',
+        pd: String((c.cdm && c.cdm.pd) || ''), pc: String((c.cdm && c.cdm.pc) || ''),
+        supply: c.supplyRating || c.mainFuse || '', earthing: c.earthing || '', dnoRef: c.dnoRef || ''
+      },
+      scope: parts.scope, method: parts.method, hazards: parts.hazards, coshh: parts.coshh, ppe: parts.ppe,
+      permits: com
+        ? 'Permit to work for isolations, where the site operates a permit system\nAccess to switch rooms / risers arranged with the site contact\nHot works - not anticipated on this installation\nFurther permits per the site induction'
+        : 'No formal permits anticipated - isolation agreed directly with the customer',
+      rules: com
+        ? 'Site induction before starting work\nPPE per site rules and this assessment\nSign in / out daily at the agreed point\nWork areas barriered and signed before starting\nWelfare facilities as designated at induction'
+        : 'Working hours agreed with the customer\nCustomer told before any isolation of supply\nTools and leads kept tidy; no unattended exposed conductors\nWork area cleaned and made good before leaving',
+      welfare: com
+        ? 'Welfare (toilets, washing, rest area, drinking water) is provided by the client / principal contractor in line with CDM 2015 Schedule 2, as confirmed at induction.'
+        : 'Welfare by arrangement with the householder.',
+      emg: {
+        ae: '', firstAider: (company && company.firstAider) || '',
+        kit: 'First aid kit in each van; eye-wash and burns dressing included',
+        assembly: com ? 'Confirmed at induction / on arrival' : 'Front of the property',
+        notes: 'All accidents and near misses are recorded and reported to the office the same day. RIDDOR-reportable events are escalated immediately.'
+      },
+      training: (company && company.training) || this.TRAINING_DEFAULT,
+      ops: [], acceptance: null, issue: null
+    };
+  }
+
+  demoDoc(company) {
+    const blob = {
+      pack: { mode: 'commercial', earthing: 'TT island (new electrode)', enablingWorks: ['isolation', 'parking'], name: 'Riverside Depot - 6 × twin 22 kW', jobRef: 'RD-241', custName: 'Fleetway Parking Ltd', supplyRating: '400 A TP&N' },
+      budget: { lines: [
+        { k: 'charger22', qty: 12 }, { k: 'evdb', qty: 1 }, { k: 'fpwired', qty: 1 },
+        { k: 'swa', qty: 123 }, { k: 'duct', qty: 46 }, { k: 'trench', qty: 46 },
+        { k: 'base', qty: 7 }, { k: 'bay', qty: 12 }, { k: 'contain', qty: 3 }, { k: 'earthrod', qty: 2 }, { k: 'spdi', qty: 1 }
+      ] }
+    };
+    const d = this.mkDoc(blob, '', company);
+    d.det.title = 'Example - Riverside Depot, 6 × twin 22 kW';
+    d.det.siteAddress = 'Riverside Depot, Wharf Road, Reading RG1 8QT';
+    d.det.client = 'Fleetway Parking Ltd';
+    d.det.clientRef = 'FP-2088';
+    d.det.start = '2026-07-20'; d.det.end = '2026-07-28';
+    d.det.ae = 'Royal Berkshire Hospital, Craven Road, Reading RG1 5AN - 24 hr A&E - 0118 322 5111';
+    d.det.supervisor = 'T. Mercer';
+    d.planName = 'Sample plan';
+    d.revs[0].note = 'Example document - drafted from a sample plan';
+    return d;
+  }
+
+  importFromHash(pid) {
+    const existing = this.state.order.find((id) => this.state.docs[id] && this.state.docs[id].planId === pid);
+    if (existing) {
+      this.setState({ view: 'doc', activeId: existing, section: 'details', docTab: 'edit' });
+      this.flash('Opened the RAMS for this plan - use Re-derive to pull the latest quantities');
+      return;
+    }
+    const blob = this.readBlob(pid);
+    if (!blob) { this.setState({ importOpen: true, plans: this.readIndex() }); return; }
+    const doc = this.mkDoc(blob, pid, this.state.company);
+    this.adopt(doc, 'Drafted from the plan - review every section before issue');
+  }
+
+  adopt(doc, msg) {
+    this.setState((s) => ({
+      docs: { ...s.docs, [doc.id]: doc }, order: [doc.id, ...s.order],
+      activeId: doc.id, view: 'doc', section: 'details', docTab: 'edit', importOpen: false
+    }), () => { this.save(); if (msg) this.flash(msg); });
+  }
+
+  flash(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 3400);
+  }
+
+  /* ================= doc mutation helpers ================= */
+
+  doc() { return this.state.docs[this.state.activeId] || null; }
+
+  upDoc(patch) {
+    const id = this.state.activeId;
+    this.setState((s) => ({ docs: { ...s.docs, [id]: { ...s.docs[id], ...patch, updated: Date.now() } } }), this.save);
+  }
+
+  edDet = (f) => (e) => { const d = this.doc(); this.upDoc({ det: { ...d.det, [f]: e.target.value } }); };
+  edDoc = (f) => (e) => { this.upDoc({ [f]: e.target.value }); };
+  edEmg = (f) => (e) => { const d = this.doc(); this.upDoc({ emg: { ...d.emg, [f]: e.target.value } }); };
+
+  edRow = (list, id, f) => (e) => {
+    const d = this.doc();
+    this.upDoc({ [list]: d[list].map((r) => r.id === id ? { ...r, [f]: e.target.value, auto: false } : r) });
+  };
+  delRow = (list, id) => () => {
+    const d = this.doc();
+    this.upDoc({ [list]: d[list].filter((r) => r.id !== id) });
+  };
+  moveRow = (list, id, dir) => () => {
+    const d = this.doc(); const arr = d[list].slice();
+    const i = arr.findIndex((r) => r.id === id); const j = i + dir;
+    if (i < 0 || j < 0 || j >= arr.length) return;
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    this.upDoc({ [list]: arr });
+  };
+
+  addHazard = (k) => () => {
+    const src = this.HZLIB.find((h) => h.k === k); if (!src) return;
+    const c = this.emptyCtx(this.doc().mode);
+    const row = { id: this.uid(), k: src.k, t: src.t, task: src.task, hz: src.hz, p: src.p, li: src.li, si: src.si, lr: src.lr, sr: src.sr, ctl: src.ctl.join('\n'), auto: false, why: '' };
+    this.upDoc({ hazards: [...this.doc().hazards, row] }); this.flash('Added: ' + src.t);
+  };
+  addMethod = (k) => () => {
+    const src = this.METHODS.find((m) => m.k === k); if (!src) return;
+    const c = this.emptyCtx(this.doc().mode);
+    this.upDoc({ method: [...this.doc().method, { id: this.uid(), k: src.k, t: src.t, steps: src.steps(c).join('\n'), auto: false, why: '' }] });
+    this.flash('Added: ' + src.t);
+  };
+  addCoshh = (k) => () => {
+    const src = this.COSHH_LIB.find((x) => x.k === k); if (!src) return;
+    this.upDoc({ coshh: [...this.doc().coshh, { id: this.uid(), k: src.k, s: src.s, r: src.r, ctl: src.ctl, auto: false, why: '' }] });
+    this.flash('Added: ' + src.s);
+  };
+  addBlankHazard = () => {
+    this.upDoc({ hazards: [...this.doc().hazards, { id: this.uid(), k: 'custom', t: 'New hazard', task: '', hz: '', p: 'Operatives', li: 3, si: 3, lr: 1, sr: 2, ctl: '', auto: false, why: '' }] });
+  };
+  addBlankMethod = () => {
+    this.upDoc({ method: [...this.doc().method, { id: this.uid(), k: 'custom', t: 'New activity', steps: '', auto: false, why: '' }] });
+  };
+  addBlankCoshh = () => {
+    this.upDoc({ coshh: [...this.doc().coshh, { id: this.uid(), k: 'custom', s: 'New substance', r: '', ctl: '', auto: false, why: '' }] });
+  };
+  addOp = () => { this.upDoc({ ops: [...this.doc().ops, { id: this.uid(), name: '', role: '', phone: '' }] }); };
+
+  togglePpe = (k) => () => {
+    const d = this.doc(); const has = d.ppe.keys.includes(k);
+    this.upDoc({ ppe: { ...d.ppe, keys: has ? d.ppe.keys.filter((x) => x !== k) : [...d.ppe.keys, k] } });
+  };
+
+  reDerive = () => {
+    const d = this.doc(); if (!d || !d.planId) return;
+    const blob = this.readBlob(d.planId);
+    if (!blob) { this.flash("Couldn't find that plan on this device"); return; }
+    const parts = this.deriveParts(this.ctxOf(blob));
+    const keepM = d.method.filter((r) => !r.auto), keepH = d.hazards.filter((r) => !r.auto), keepC = d.coshh.filter((r) => !r.auto);
+    this.upDoc({ scope: parts.scope, method: [...parts.method, ...keepM], hazards: [...parts.hazards, ...keepH], coshh: [...parts.coshh, ...keepC], ppe: { ...parts.ppe, keys: Array.from(new Set([...parts.ppe.keys, ...d.ppe.keys])) }, planAt: (blob.budget && blob.budget.at) || '' });
+    setTimeout(() => this.computeStale(), 0);
+    this.flash('Re-derived from the plan - your edited and added items were kept');
+  };
+
+  /* ================= lifecycle actions ================= */
+
+  doIssue = () => {
+    const name = (this.state.issueName || '').trim();
+    if (!this.state.issueTick || !name) return;
+    this.upDoc({ status: 'issued', issue: { by: name, date: this.today() } });
+    this.setState({ issueOpen: false, issueTick: false });
+    this.flash('Issued at Rev ' + (this.doc() || {}).rev);
+  };
+  doAccept = () => {
+    const name = (this.state.acceptName || '').trim(); if (!name) return;
+    this.upDoc({ status: 'accepted', acceptance: { name, role: (this.state.acceptRole || '').trim(), date: this.today() } });
+    this.setState({ acceptOpen: false });
+    this.flash('Acceptance recorded');
+  };
+  doAmend = () => {
+    const note = (this.state.amendNote || '').trim(); if (!note) return;
+    const d = this.doc();
+    const rev = String.fromCharCode((d.rev || 'A').charCodeAt(0) + 1);
+    this.upDoc({ status: 'draft', rev, issue: null, acceptance: null, revs: [...d.revs, { rev, date: this.today(), by: (this.state.company || {}).preparedBy || '', note }] });
+    this.setState({ amendOpen: false, amendNote: '' });
+    this.flash('Now editing Rev ' + rev);
+  };
+
+  edCompany = (f) => (e) => {
+    const v = e.target.value;
+    if (f === 'name' || f === 'email') {
+      try { const b = JSON.parse(localStorage.getItem('evsp_brand') || '{}') || {}; b[f] = v; localStorage.setItem('evsp_brand', JSON.stringify(b)); } catch (err) { /* ignore */ }
+    }
+    this.setState((s) => ({ company: { ...s.company, [f]: v } }), this.save);
+  };
+  edState = (f) => (e) => { this.setState({ [f]: e.target.value }); };
+
+  onPrint = () => {
+    this.setState({ docTab: 'preview' }, () => setTimeout(() => window.print(), 380));
+  };
+
+  /* ================= render ================= */
+
+  score(l, s) { return l * s; }
+  band(v) {
+    if (v <= 4) return { bg: '#E4F2E7', ink: '#1F5C31', label: 'Low' };
+    if (v <= 9) return { bg: '#FBF3DC', ink: '#7A5A10', label: 'Medium' };
+    if (v <= 15) return { bg: '#FDEBDD', ink: '#8A430F', label: 'High' };
+    return { bg: '#FBE3E3', ink: '#9E1B1B', label: 'Very high' };
+  }
+  stBadge(status) {
+    if (status === 'issued') return { label: 'Issued', bg: 'var(--accent-50)', ink: 'var(--accent-700)' };
+    if (status === 'accepted') return { label: 'Accepted', bg: '#E4F2E7', ink: '#1F5C31' };
+    return { label: 'Draft', bg: '#FBF3DC', ink: '#7A5A10' };
+  }
+  fmtDate(v) {
+    if (!v) return '';
+    const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m ? (m[3] + '/' + m[2] + '/' + m[1]) : String(v);
+  }
+  lines(v) { return String(v || '').split('\n').map((x) => x.trim()).filter(Boolean); }
+
+  renderVals() {
+    const vals = this.mainVals();
+    vals.gated = !(this.props.previewUnlocked ?? false);
+    return vals;
+  }
+
+  mainVals() {
+    const S = this.state;
+    const company = S.company || this.defaultCompany();
+    const d = this.doc();
+    const showWhy = this.props.showWhy ?? true;
+    const signRows = Math.max(2, Math.min(14, this.props.signRows ?? 6));
+    const lockOnIssue = this.props.lockOnIssue ?? true;
+
+    const isDoc = S.view === 'doc' && !!d;
+    const locked = !!d && d.status !== 'draft' && lockOnIssue;
+
+    /* home rows */
+    const docRows = S.order.map((id) => S.docs[id]).filter(Boolean).map((doc) => {
+      const b = this.stBadge(doc.status);
+      return {
+        id: doc.id, title: doc.det.title || 'Untitled RAMS',
+        sub: [doc.mode === 'domestic' ? 'Domestic' : 'Commercial', doc.det.client, doc.hazards.length + ' hazards', new Date(doc.updated).toLocaleDateString('en-GB')].filter(Boolean).join(' · '),
+        rev: doc.rev, stLabel: b.label, stBg: b.bg, stInk: b.ink,
+        stale: !!(S.stale && S.stale[doc.id]),
+        onOpen: () => this.setState({ view: 'doc', activeId: doc.id, section: 'details', docTab: 'edit' }),
+        onDel: (e) => { e.stopPropagation(); if (window.confirm('Delete "' + (doc.det.title || 'this RAMS') + '"?')) { this.setState((s) => { const docs = { ...s.docs }; delete docs[doc.id]; return { docs, order: s.order.filter((x) => x !== doc.id), activeId: s.activeId === doc.id ? null : s.activeId, view: s.activeId === doc.id ? 'home' : s.view }; }, this.save); } }
+      };
+    });
+
+    /* import modal rows */
+    const planRows = (S.plans || []).map((p) => {
+      const on = S.importSel === p.id;
+      return { id: p.id, name: p.name || 'Untitled plan', at: p.date || (p.at ? new Date(p.at).toLocaleDateString('en-GB') : ''),
+        border: on ? 'var(--accent-500)' : 'var(--cream-border-strong)', bg: on ? 'var(--accent-50)' : 'var(--color-surface)',
+        onPick: () => this.setState({ importSel: p.id }) };
+    });
+    let importSummary = '';
+    if (S.importSel) {
+      const blob = this.readBlob(S.importSel);
+      if (blob) {
+        const c = this.ctxOf(blob); const parts = this.deriveParts(c);
+        const bits = [];
+        if (c.chargers) bits.push(c.chargers + ' charging socket' + (c.chargers === 1 ? '' : 's'));
+        if (c.q.swa) bits.push(Math.round(c.q.swa) + ' m SWA');
+        if (c.q.trench) bits.push(Math.round(c.q.trench) + ' m trench');
+        if (c.q.contain) bits.push(Math.round(c.q.contain) + ' m containment');
+        importSummary = (bits.length ? bits.join(' · ') + '  →  ' : '') + parts.hazards.length + ' hazards · ' + parts.method.length + ' method blocks · ' + parts.coshh.length + ' COSHH entries';
+      }
+    }
+
+    /* builder VMs */
+    let det = {}, outline = [], methodRows = [], hzRows = [], coshhRows = [], ppeChips = [], opRows = [], revRows = [];
+    let secFlags = {}, stBadge = { label: '', bg: '', ink: '' };
+    if (d) {
+      const mk = (f) => ({ v: d.det[f] || '', on: this.edDet(f) });
+      det = {
+        title: d.det.title, onTitle: this.edDet('title'),
+        siteAddress: mk('siteAddress').v, onSiteAddress: this.edDet('siteAddress'),
+        location: d.det.location || '', onLocation: this.edDet('location'),
+        client: d.det.client || '', onClient: this.edDet('client'),
+        clientRef: d.det.clientRef || '', onClientRef: this.edDet('clientRef'),
+        projectRef: d.det.projectRef || '', onProjectRef: this.edDet('projectRef'),
+        start: d.det.start || '', onStart: this.edDet('start'),
+        end: d.det.end || '', onEnd: this.edDet('end'),
+        ae: d.det.ae || '', onAe: this.edDet('ae'),
+        supervisor: d.det.supervisor || '', onSupervisor: this.edDet('supervisor'),
+        siteContact: d.det.siteContact || '', onSiteContact: this.edDet('siteContact'),
+        pd: d.det.pd || '', onPd: this.edDet('pd'),
+        pc: d.det.pc || '', onPc: this.edDet('pc'),
+        supply: d.det.supply || '', onSupply: this.edDet('supply'),
+        earthing: d.det.earthing || '', onEarthing: this.edDet('earthing'),
+        dnoRef: d.det.dnoRef || '', onDnoRef: this.edDet('dnoRef')
+      };
+      const counts = { details: '', scope: '', method: d.method.length, risks: d.hazards.length, ppe: d.ppe.keys.length + d.coshh.length, rules: '', emergency: '', training: '', people: d.ops.length || '', revs: d.revs.length };
+      outline = this.SECTIONS.filter((s) => d.mode === 'commercial' || s.id !== 'rules').map((s) => ({
+        id: s.id, label: s.label, count: counts[s.id] === '' ? '' : String(counts[s.id]),
+        on: S.section === s.id,
+        bg: S.section === s.id ? 'var(--color-surface)' : 'transparent',
+        ink: S.section === s.id ? 'var(--ink-900)' : 'var(--ink-600)',
+        bar: S.section === s.id ? 'var(--accent-500)' : 'transparent',
+        onClick: () => this.setState({ section: s.id })
+      }));
+      this._outlineIds = outline.map((o) => o.id);
+      secFlags = {
+        sDetails: S.section === 'details', sScope: S.section === 'scope', sMethod: S.section === 'method',
+        sRisks: S.section === 'risks', sPpe: S.section === 'ppe', sRules: S.section === 'rules',
+        sEmergency: S.section === 'emergency', sTraining: S.section === 'training', sPeople: S.section === 'people', sRevs: S.section === 'revs'
+      };
+      methodRows = d.method.map((m, i) => ({
+        ...m, n: (i + 1) + '.', whyShow: showWhy && m.auto && m.why ? m.why : '',
+        onT: this.edRow('method', m.id, 't'), onSteps: this.edRow('method', m.id, 'steps'),
+        onUp: this.moveRow('method', m.id, -1), onDown: this.moveRow('method', m.id, 1), onDel: this.delRow('method', m.id)
+      }));
+      hzRows = d.hazards.map((h, i) => {
+        const vi = this.score(h.li, h.si), vr = this.score(h.lr, h.sr);
+        const bi = this.band(vi), br = this.band(vr);
+        return {
+          ...h, n: '2.' + (i + 1), whyShow: showWhy && h.auto && h.why ? h.why : '',
+          li: String(h.li), si: String(h.si), lr: String(h.lr), sr: String(h.sr),
+          scoreI: h.li + ' × ' + h.si + ' = ' + vi, scoreR: h.lr + ' × ' + h.sr + ' = ' + vr,
+          bgI: bi.bg, inkI: bi.ink, bgR: br.bg, inkR: br.ink, bandI: bi.label, bandR: br.label,
+          onT: this.edRow('hazards', h.id, 't'), onTask: this.edRow('hazards', h.id, 'task'), onHz: this.edRow('hazards', h.id, 'hz'),
+          onP: this.edRow('hazards', h.id, 'p'), onCtl: this.edRow('hazards', h.id, 'ctl'),
+          onLi: this.edRow('hazards', h.id, 'li'), onSi: this.edRow('hazards', h.id, 'si'),
+          onLr: this.edRow('hazards', h.id, 'lr'), onSr: this.edRow('hazards', h.id, 'sr'),
+          onUp: this.moveRow('hazards', h.id, -1), onDown: this.moveRow('hazards', h.id, 1), onDel: this.delRow('hazards', h.id)
+        };
+      });
+      coshhRows = d.coshh.map((x) => ({
+        ...x, whyShow: showWhy && x.auto && x.why ? x.why : '',
+        onS: this.edRow('coshh', x.id, 's'), onR: this.edRow('coshh', x.id, 'r'), onCtl: this.edRow('coshh', x.id, 'ctl'), onDel: this.delRow('coshh', x.id)
+      }));
+      ppeChips = this.PPE_DEFS.map((p) => {
+        const on = d.ppe.keys.includes(p.k);
+        return { k: p.k, label: p.label, onToggle: this.togglePpe(p.k),
+          bg: on ? 'var(--ink-900)' : 'var(--color-surface)', ink: on ? 'var(--cream-50)' : 'var(--ink-600)',
+          border: on ? 'var(--ink-900)' : 'var(--cream-border-strong)' };
+      });
+      opRows = d.ops.map((o) => ({
+        ...o, onName: this.edRow('ops', o.id, 'name'), onRole: this.edRow('ops', o.id, 'role'), onPhone: this.edRow('ops', o.id, 'phone'), onDel: this.delRow('ops', o.id)
+      }));
+      revRows = d.revs.slice().reverse().map((r) => ({ ...r }));
+      stBadge = this.stBadge(d.status);
+    }
+
+    const ids = this._outlineIds || [];
+    const secIdx = ids.indexOf(S.section);
+    const prevSec = () => { if (secIdx > 0) this.setState({ section: ids[secIdx - 1] }); };
+    const nextSec = () => { if (secIdx < ids.length - 1) this.setState({ section: ids[secIdx + 1] }); };
+    const secLabel = (i) => { const o = this.SECTIONS.find((s) => s.id === ids[i]); return o ? o.label : ''; };
+
+    /* library drawer */
+    const dHz = d ? d.hazards.map((h) => h.k) : [];
+    const dM = d ? d.method.map((m) => m.k) : [];
+    const dC = d ? d.coshh.map((x) => x.k) : [];
+    const libHz = this.HZLIB.map((h) => ({ k: h.k, t: h.t, grp: h.grp, inDoc: dHz.includes(h.k), notInDoc: !dHz.includes(h.k), onAdd: this.addHazard(h.k) }));
+    const libM = this.METHODS.map((m) => ({ k: m.k, t: m.t, inDoc: dM.includes(m.k), notInDoc: !dM.includes(m.k), onAdd: this.addMethod(m.k) }));
+    const libC = this.COSHH_LIB.map((x) => ({ k: x.k, t: x.s, inDoc: dC.includes(x.k), notInDoc: !dC.includes(x.k), onAdd: this.addCoshh(x.k) }));
+
+    /* print VM */
+    let P = { pLogoNode: null, pScope: [], pMethod: [], pHz: [], pRegister: [], pPpe: [], pCoshh: [], pHasCoshh: false, pPermits: [], pRules: [], pTraining: [], pLegis: [], pCodes: [], pOps: [], pRevs: [], pMatrixRows: [] };
+    if (d) {
+      const com = d.mode === 'commercial';
+      const dt = d.det;
+      const pHz = hzRows.map((h) => ({ ...h, ctlList: this.lines(h.ctl) }));
+      const pMethod = methodRows.map((m, i) => ({ ...m, n: '1.3.' + (i + 1), stepList: this.lines(m.steps) }));
+      const ppeLabels = this.PPE_DEFS.filter((p) => d.ppe.keys.includes(p.k)).map((p) => ({ k: p.k, label: p.label }));
+      const opsPad = d.ops.slice(0, signRows).map((o) => ({ name: o.name, role: o.role, phone: o.phone }));
+      while (opsPad.length < signRows) opsPad.push({ name: '', role: '', phone: '' });
+      const matrixRows = [];
+      for (let s = 5; s >= 1; s--) {
+        const cells = [];
+        for (let l = 1; l <= 5; l++) { const v = l * s; const b = this.band(v); cells.push({ v: String(v), bg: b.bg, ink: b.ink }); }
+        matrixRows.push({ sev: 'S' + s, cells });
+      }
+      P = {
+        pTitle: dt.title || 'RAMS', pMode: com ? 'Commercial installation' : 'Domestic installation',
+        pRefLine: ['Project ref: ' + (dt.projectRef || '-'), dt.clientRef ? 'Client ref: ' + dt.clientRef : ''].filter(Boolean).join(' · '),
+        pRev: d.rev, pUpdated: this.today(),
+        pCoName: company.name || 'Company name - set in Company profile', pCoAddress: company.address, pCoPhone: company.phone, pCoEmail: company.email,
+        pCoAccreds: company.accreds, pCoInsurer: company.insurer, pCoPolicy: company.policy,
+        pLogoNode: company.logo ? React.createElement('img', { src: company.logo, alt: '', style: { maxHeight: '44px', maxWidth: '150px', objectFit: 'contain', marginBottom: '6px' } }) : null,
+        pPrepBy: company.preparedBy || '-', pPrepPos: company.position || '',
+        pStatus: this.stBadge(d.status).label,
+        pSiteAddress: dt.siteAddress || '-', pLocation: dt.location || '-', pClient: dt.client || '-',
+        pClientRef: dt.clientRef || '-', pProjectRef: dt.projectRef || '-',
+        pDates: (dt.start || dt.end) ? (this.fmtDate(dt.start) + (dt.end ? ' to ' + this.fmtDate(dt.end) : '')) : '-',
+        pAe: dt.ae || '-', pSupervisor: dt.supervisor || '-', pSiteContact: dt.siteContact || '-',
+        pPd: dt.pd || 'TBC', pPc: dt.pc || 'TBC', pdRowDisp: com ? 'table-row' : 'none',
+        pSupply: dt.supply || '-', pEarthing: dt.earthing || '-', pDnoRef: dt.dnoRef,
+        pScope: this.lines(d.scope).map((t) => ({ t })),
+        pMethod, pHz,
+        pRegister: pHz.map((h) => ({ n: h.n, t: h.t })),
+        pPpe: ppeLabels, pPpeNote: d.ppe.note,
+        pCoshh: coshhRows.map((x) => ({ ...x })), pHasCoshh: coshhRows.length > 0,
+        pPermits: this.lines(d.permits).map((t) => ({ t })),
+        pRules: this.lines(d.rules).map((t) => ({ t })),
+        pWelfare: d.welfare, pCom: com,
+        pEmgAe: dt.ae || '-', pEmgFirstAider: d.emg.firstAider || 'Confirmed at induction', pEmgKit: d.emg.kit, pEmgAssembly: d.emg.assembly, pEmgNotes: d.emg.notes,
+        pTraining: this.lines(d.training).map((t) => ({ t })),
+        pLegis: this.LEGIS.map((t) => ({ t })), pCodes: this.CODES.map((t) => ({ t })),
+        pOps: opsPad, pRevs: d.revs.map((r) => ({ ...r })),
+        pMatrixRows: matrixRows,
+        pIssued: !!d.issue, pIssueBy: d.issue ? d.issue.by : (company.preparedBy || '-'),
+        pIssueDate: d.issue ? (' · ' + d.issue.date) : '',
+        pAccepted: !!d.acceptance, pNotAccepted: !d.acceptance,
+        pAcceptName: d.acceptance ? d.acceptance.name : '',
+        pAcceptRole: d.acceptance ? (d.acceptance.role ? d.acceptance.role + ' · ' + d.acceptance.date : d.acceptance.date) : ''
+      };
+    }
+
+    const issueReady = !!(S.issueTick && (S.issueName || '').trim());
+
+    return {
+      /* chrome */
+      isHome: S.view === 'home', isDoc, hasActive: !!d,
+      stop: (e) => e.stopPropagation(),
+      importBtnBg: S.importSel ? 'var(--accent-500)' : 'var(--cream-border-strong)',
+      importBtnCursor: S.importSel ? 'pointer' : 'default',
+      issueTickBg: S.issueTick ? 'var(--accent-500)' : 'var(--color-surface)',
+      issueTickBorder: S.issueTick ? 'var(--accent-500)' : 'var(--cream-border-strong)',
+      issueTickMark: S.issueTick ? 'block' : 'none',
+      goHome: () => this.setState({ view: 'home' }),
+      openCompany: () => this.setState({ companyOpen: true }),
+      openImport: () => this.setState({ importOpen: true, importSel: '', plans: this.readIndex() }),
+      closeImport: () => this.setState({ importOpen: false }),
+      importOpen: S.importOpen, planRows, hasPlans: planRows.length > 0, noPlans: planRows.length === 0,
+      importSummary, hasImportSel: !!importSummary,
+      doImport: () => { const blob = this.readBlob(S.importSel); if (!blob) { this.flash("Couldn't read that plan"); return; } this.adopt(this.mkDoc(blob, S.importSel, company), 'Drafted from the plan - review every section before issue'); },
+      newBlankCom: () => this.adopt(this.mkDoc({ pack: { mode: 'commercial' }, budget: {} }, '', company), 'Blank commercial RAMS created'),
+      newBlankDom: () => this.adopt(this.mkDoc({ pack: { mode: 'domestic' }, budget: {} }, '', company), 'Blank domestic RAMS created'),
+
+      /* home */
+      docRows, hasDocs: docRows.length > 0, noDocs: docRows.length === 0,
+      docCountLabel: docRows.length + ' document' + (docRows.length === 1 ? '' : 's'),
+
+      /* builder chrome */
+      det, outline, ...secFlags,
+      docTitle: d ? (d.det.title || 'Untitled RAMS') : '',
+      modeLabel: d ? (d.mode === 'domestic' ? 'Domestic' : 'Commercial') : '',
+      revLabel: d ? 'Rev ' + d.rev : '',
+      stLabel: stBadge.label, stBg: stBadge.bg, stInk: stBadge.ink,
+      hasPlanLink: !!(d && d.planId), planName: d ? (d.planName || 'Site plan') : '',
+      planStale: !!(d && S.stale && S.stale[d.id]),
+      reDerive: this.reDerive,
+      locked, editPe: locked ? 'none' : 'auto', lockMsg: d ? (d.status === 'accepted' ? 'Accepted - Rev ' + d.rev + ' is locked. Amend to make changes as a new revision.' : 'Issued - Rev ' + d.rev + ' is locked. Amend to make changes as a new revision.') : '',
+      isEditTab: S.docTab === 'edit', isPrevTab: S.docTab === 'preview',
+      tabEditBg: S.docTab === 'edit' ? 'var(--ink-900)' : 'transparent', tabEditInk: S.docTab === 'edit' ? 'var(--cream-50)' : 'var(--ink-600)',
+      tabPrevBg: S.docTab === 'preview' ? 'var(--ink-900)' : 'transparent', tabPrevInk: S.docTab === 'preview' ? 'var(--cream-50)' : 'var(--ink-600)',
+      onTabEdit: () => this.setState({ docTab: 'edit' }), onTabPrev: () => this.setState({ docTab: 'preview' }),
+      onPrint: this.onPrint,
+      pdocDisp: (isDoc && S.docTab === 'preview') ? 'block' : 'none', pdocTop: '108px',
+      openLib: () => this.setState({ libOpen: true }),
+      closeLib: () => this.setState({ libOpen: false }),
+      libOpen: S.libOpen,
+      libTab: S.libTab, libHz, libM, libC,
+      libIsHz: S.libTab === 'hazards', libIsM: S.libTab === 'method', libIsC: S.libTab === 'coshh',
+      onLibHz: () => this.setState({ libTab: 'hazards' }), onLibM: () => this.setState({ libTab: 'method' }), onLibC: () => this.setState({ libTab: 'coshh' }),
+      tabHzBg: S.libTab === 'hazards' ? 'var(--ink-900)' : 'transparent', tabHzInk: S.libTab === 'hazards' ? 'var(--cream-50)' : 'var(--ink-600)',
+      tabMBg: S.libTab === 'method' ? 'var(--ink-900)' : 'transparent', tabMInk: S.libTab === 'method' ? 'var(--cream-50)' : 'var(--ink-600)',
+      tabCBg: S.libTab === 'coshh' ? 'var(--ink-900)' : 'transparent', tabCInk: S.libTab === 'coshh' ? 'var(--cream-50)' : 'var(--ink-600)',
+
+      /* sections */
+      methodRows, hzRows, coshhRows, ppeChips, opRows, revRows,
+      ppeNote: d ? d.ppe.note : '', onPpeNote: (e) => { const doc = this.doc(); this.upDoc({ ppe: { ...doc.ppe, note: e.target.value } }); },
+      scopeVal: d ? d.scope : '', onScope: this.edDoc('scope'),
+      permitsVal: d ? d.permits : '', onPermits: this.edDoc('permits'),
+      rulesVal: d ? d.rules : '', onRules: this.edDoc('rules'),
+      welfareVal: d ? d.welfare : '', onWelfare: this.edDoc('welfare'),
+      trainingVal: d ? d.training : '', onTraining: this.edDoc('training'),
+      emgAe: d ? d.det.ae : '', onEmgAe: this.edDet('ae'),
+      emgFirstAider: d ? d.emg.firstAider : '', onEmgFirstAider: this.edEmg('firstAider'),
+      emgKit: d ? d.emg.kit : '', onEmgKit: this.edEmg('kit'),
+      emgAssembly: d ? d.emg.assembly : '', onEmgAssembly: this.edEmg('assembly'),
+      emgNotes: d ? d.emg.notes : '', onEmgNotes: this.edEmg('notes'),
+      addBlankHazard: this.addBlankHazard, addBlankMethod: this.addBlankMethod, addBlankCoshh: this.addBlankCoshh, addOp: this.addOp,
+      isCommercial: d ? d.mode === 'commercial' : true,
+      cdmDisp: (d && d.mode === 'commercial') ? 'block' : 'none',
+
+      /* nav */
+      prevSec, nextSec,
+      prevVis: secIdx > 0 ? 'visible' : 'hidden', nextVis: (secIdx >= 0 && secIdx < ids.length - 1) ? 'visible' : 'hidden',
+      prevLabel: secIdx > 0 ? secLabel(secIdx - 1) : '', nextLabel: (secIdx >= 0 && secIdx < ids.length - 1) ? secLabel(secIdx + 1) : '',
+
+      /* lifecycle */
+      isDraft: d ? d.status === 'draft' : false,
+      isIssued: d ? d.status === 'issued' : false,
+      isAccepted: d ? d.status === 'accepted' : false,
+      openIssue: () => this.setState({ issueOpen: true, issueName: company.preparedBy || '' }),
+      closeIssue: () => this.setState({ issueOpen: false }),
+      issueOpen: S.issueOpen, issueTick: S.issueTick,
+      onIssueTick: () => this.setState((s) => ({ issueTick: !s.issueTick })),
+      issueName: S.issueName, onIssueName: this.edState('issueName'),
+      issueSummary: d ? (d.hazards.length + ' hazards · ' + d.method.length + ' method blocks · ' + d.coshh.length + ' COSHH entries · Rev ' + d.rev) : '',
+      doIssue: this.doIssue,
+      issueBtnBg: (S.issueTick && (S.issueName || '').trim()) ? 'var(--accent-500)' : 'var(--cream-border-strong)',
+      issueBtnCursor: (S.issueTick && (S.issueName || '').trim()) ? 'pointer' : 'default',
+      openAccept: () => this.setState({ acceptOpen: true, acceptName: '', acceptRole: '' }),
+      closeAccept: () => this.setState({ acceptOpen: false }),
+      acceptOpen: S.acceptOpen, acceptName: S.acceptName, onAcceptName: this.edState('acceptName'),
+      acceptRole: S.acceptRole, onAcceptRole: this.edState('acceptRole'), doAccept: this.doAccept,
+      openAmend: () => this.setState({ amendOpen: true, amendNote: '' }),
+      closeAmend: () => this.setState({ amendOpen: false }),
+      amendOpen: S.amendOpen, amendNote: S.amendNote, onAmendNote: this.edState('amendNote'), doAmend: this.doAmend,
+      nextRevLabel: d ? 'Rev ' + String.fromCharCode((d.rev || 'A').charCodeAt(0) + 1) : '',
+      issueRecord: d && d.issue ? ('Issued Rev ' + d.rev + ' · ' + d.issue.by + ' · ' + d.issue.date) : '',
+      acceptRecord: d && d.acceptance ? ('Accepted · ' + d.acceptance.name + (d.acceptance.role ? ' (' + d.acceptance.role + ')' : '') + ' · ' + d.acceptance.date) : '',
+
+      /* company modal */
+      companyOpen: S.companyOpen,
+      closeCompany: () => this.setState({ companyOpen: false }),
+      co: {
+        name: company.name || '', onName: this.edCompany('name'),
+        address: company.address || '', onAddress: this.edCompany('address'),
+        phone: company.phone || '', onPhone: this.edCompany('phone'),
+        email: company.email || '', onEmail: this.edCompany('email'),
+        preparedBy: company.preparedBy || '', onPreparedBy: this.edCompany('preparedBy'),
+        position: company.position || '', onPosition: this.edCompany('position'),
+        firstAider: company.firstAider || '', onFirstAider: this.edCompany('firstAider'),
+        insurer: company.insurer || '', onInsurer: this.edCompany('insurer'),
+        policy: company.policy || '', onPolicy: this.edCompany('policy'),
+        accreds: company.accreds || '', onAccreds: this.edCompany('accreds'),
+        training: company.training || '', onTraining: this.edCompany('training')
+      },
+
+      toast: S.toast,
+      ...P
+    };
+  }
+}
+</script>
+</body>
+</html>

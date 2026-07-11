@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/base.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { background: var(--cream-200); -webkit-font-smoothing: antialiased; font-family: var(--font-sans); }
+    input, select, textarea, button { font-family: inherit; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    input::placeholder, textarea::placeholder { color: var(--ink-400); }
+    .scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+    .scroll::-webkit-scrollbar-track { background: transparent; }
+    .scroll::-webkit-scrollbar-thumb { background: var(--cream-border-strong); border-radius: 8px; border: 2px solid var(--cream-100); }
+    @supports (height:100dvh){ .app{ height:100dvh !important; } }
+    @media (max-width:1040px){
+      .ps-opbody{ flex-direction:column !important; }
+      .ps-opbody > div:first-child{ flex:1 1 auto !important; min-height:0 !important; }
+      .ps-opside{ width:auto !important; border-left:none !important; border-top:1px solid var(--cream-border-strong); flex:none !important; max-height:38vh !important; max-height:38dvh !important; }
+      .ps-kpis{ grid-template-columns:repeat(2,1fr) !important; }
+    }
+    @media (max-width:920px){
+      .ps-tiers{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+      .ps-qrow{ grid-template-columns:64px minmax(0,1fr) 90px !important; }
+      .ps-qrow .ps-qcol-client, .ps-qrow .ps-qcol-due, .ps-qrow .ps-qcol-upd{ display:none !important; }
+    }
+    @media (max-width:720px){
+      .ps-topbar{ flex-wrap:wrap; row-gap:8px; }
+      .ps-actions{ flex-wrap:wrap; row-gap:6px; }
+      .ps-hero h1{ font-size:26px !important; }
+      .ps-how{ flex-direction:column !important; align-items:stretch !important; }
+      .ps-form2{ grid-template-columns:1fr !important; }
+      .ps-det-head{ flex-direction:column !important; align-items:flex-start !important; }
+    }
+    @media (max-width:560px){
+      .ps-tiers{ grid-template-columns:1fr !important; }
+      .ps-pminc{ grid-template-columns:1fr !important; }
+      .ps-body-pad{ padding:14px 10px 40px !important; }
+      .ps-kpis{ grid-template-columns:repeat(2,1fr) !important; }
+    }
+  </style>
+</helmet>
+
+<div class="app" style="height:100vh; display:flex; flex-direction:column; background:var(--cream-200); color:var(--text-primary);">
+
+  <!-- ░░ TOP BAR ░░ -->
+  <header class="ps-topbar" data-screen-label="Top bar" style="flex:none; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 18px; background:var(--cream-100); border-bottom:1px solid var(--cream-border-strong);">
+    <div style="display:flex; align-items:center; gap:11px; min-width:0;">
+      <a href="EV Site Planner.html" title="Back to the Site Planner" style="display:flex; align-items:center; gap:6px; text-decoration:none; font-size:11px; font-weight:600; color:var(--ink-500); padding:6px 8px; border:1px solid var(--cream-border-strong); border-radius:8px; background:var(--color-surface);" style-hover="color:var(--accent-700); border-color:var(--accent-400);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"></path></svg>
+        <span>Planner</span>
+      </a>
+      <details style="position:relative;">
+        <summary title="More Site Planner features" style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--ink-500); padding:6px 8px; border:1px solid var(--cream-border-strong); border-radius:8px; background:var(--color-surface); cursor:pointer; list-style:none;" style-hover="color:var(--accent-700); border-color:var(--accent-400);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+          <span>Features</span>
+        </summary>
+        <div style="position:absolute; left:0; top:calc(100% + 6px); z-index:130; min-width:190px; background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:12px; box-shadow:var(--shadow-lg); padding:5px; display:flex; flex-direction:column; gap:1px;">
+          <a href="Quotes &amp; Invoices.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Quotes &amp; invoices</a>
+          <a href="RAMS Builder.dc.html" title="Coming soon" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-500);" style-hover="background:var(--cream-100); color:var(--accent-700);"><span>RAMS builder</span><span style="font-size:8.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; background:#F7EDD8; color:#9A6403; border-radius:999px; padding:2px 7px; flex:none;">Soon</span></a>
+          <a href="Learning Hub.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Learning hub</a>
+          <a href="Guide Library.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Guide library</a>
+          <a href="Council Estate Review.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Estate review</a>
+        </div>
+      </details>
+      <svg width="30" height="30" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EV Infrastructure Tools" style="flex:none;">
+        <circle cx="40" cy="40" r="38" fill="#16232E"></circle>
+        <circle cx="40" cy="40" r="37" fill="none" stroke="#1E6BFF" stroke-width="2.5"></circle>
+        <circle cx="40" cy="40" r="30" fill="none" stroke="#4D82FF" stroke-width="2" stroke-dasharray="1.4 4.1" stroke-linecap="round" opacity="0.85"></circle>
+        <path d="M45.5 18.5 L27 44 H37.5 L34.5 61.5 L53 36 H42.5 Z" fill="#3D86FF"></path>
+      </svg>
+      <div style="min-width:0;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:15px; letter-spacing:-0.015em; color:var(--ink-900); line-height:1;">Project Support</div>
+        <div style="font-size:10.5px; color:var(--ink-500); margin-top:3px;">Site Planner · workplace project management, bespoke-quoted</div>
+      </div>
+    </div>
+    <div class="ps-actions" style="display:flex; align-items:center; gap:8px;">
+      <sc-if value="{{ isCustomer }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ navHome }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 11px; cursor:pointer; white-space:nowrap;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Services</button>
+        <button onClick="{{ navReqs }}" style="position:relative; display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 11px; cursor:pointer; white-space:nowrap;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">
+          <span>My requests</span>
+          <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:var(--font-data); font-size:10px; font-weight:700; background:var(--accent-500); color:var(--accent-contrast); border-radius:20px; padding:1px 6px;">{{ unreadBadge }}</span>
+          </sc-if>
+        </button>
+        <button onClick="{{ navNew }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:8px; padding:7px 13px; cursor:pointer; white-space:nowrap;" style-hover="background:var(--accent-600);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"></path></svg>
+          <span>New request</span>
+        </button>
+      </sc-if>
+      <sc-if value="{{ isOperator }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ navQueue }}" style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-700); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:7px 11px; cursor:pointer; white-space:nowrap;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Queue</button>
+      </sc-if>
+      <div style="width:1px; height:24px; background:var(--cream-border-strong); margin:0 2px;"></div>
+      <div title="Prototype only: preview the service as the customer or as you (the operator)" style="display:flex; align-items:center; background:var(--cream-200); border:1px solid var(--cream-border-strong); border-radius:9px; padding:2px; gap:2px;">
+        <button onClick="{{ setCust }}" style="font-size:11px; font-weight:650; border:none; border-radius:7px; padding:5px 10px; cursor:pointer; background:{{ segCustBg }}; color:{{ segCustInk }};">Customer</button>
+        <button onClick="{{ setOp }}" style="font-size:11px; font-weight:650; border:none; border-radius:7px; padding:5px 10px; cursor:pointer; background:{{ segOpBg }}; color:{{ segOpInk }};">Operator</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ░░ LANDING ░░ -->
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+    <div class="scroll ps-body-pad" data-screen-label="Service landing" style="flex:1; overflow-y:auto; padding:26px 22px 60px;">
+      <div style="max-width:1080px; margin:0 auto;">
+
+        <div class="ps-hero" style="max-width:640px;">
+          <div style="font-family:var(--font-data); font-size:10.5px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-700);">Project Support</div>
+          <h1 style="font-family:var(--font-display); font-weight:800; font-size:32px; letter-spacing:-0.02em; line-height:1.12; color:var(--ink-900); margin:10px 0 0;">Workplace charging, project-managed for you.</h1>
+          <p style="font-size:14px; line-height:1.6; color:var(--ink-500); margin:12px 0 0; text-wrap:pretty;">Full project management for workplace EV charging: offices, depots, fleet yards and destination car parks. Every project is scoped on a call and priced as a bespoke fixed quote. Built and run by EV installers.</p>
+        </div>
+
+        <div class="ps-how" style="display:flex; align-items:center; gap:10px; margin:22px 0 26px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:9px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:10px; padding:9px 13px;">
+            <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:6px; padding:2px 7px;">1</span>
+            <span style="font-size:12.5px; font-weight:600; color:var(--ink-800);">Send your pack, photos &amp; brief</span>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-400)" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+          <div style="display:flex; align-items:center; gap:9px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:10px; padding:9px 13px;">
+            <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:6px; padding:2px 7px;">2</span>
+            <span style="font-size:12.5px; font-weight:600; color:var(--ink-800);">Scoping call with a qualified installer &amp; PM</span>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-400)" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+          <div style="display:flex; align-items:center; gap:9px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:10px; padding:9px 13px;">
+            <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:6px; padding:2px 7px;">3</span>
+            <span style="font-size:12.5px; font-weight:600; color:var(--ink-800);">Fixed quote, then we run it to handover</span>
+          </div>
+        </div>
+
+        <div class="ps-tiers" style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:12px; align-items:stretch;">
+          <div style="position:relative; display:flex; flex-direction:column; background:var(--color-surface); border:1.5px solid var(--accent-500); border-radius:14px; padding:20px 18px 16px; box-shadow:var(--shadow-accent-lg, 0 8px 24px rgba(30,107,255,.18));">
+            <div style="position:absolute; top:-9px; left:16px; font-family:var(--font-data); font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:var(--accent-500); color:var(--accent-contrast); border-radius:20px; padding:3px 9px; white-space:nowrap;">Workplace only</div>
+            <div style="font-size:15px; font-weight:700; color:var(--ink-900);">Full project management</div>
+            <div style="display:flex; align-items:baseline; gap:8px; margin-top:8px; flex-wrap:wrap;">
+              <span style="font-family:var(--font-data); font-size:24px; font-weight:700; letter-spacing:-0.01em; color:var(--ink-900);">Bespoke quote</span>
+              <span style="font-size:11px; color:var(--ink-400);">fixed price per project · nothing to pay today</span>
+            </div>
+            <p style="font-size:12.5px; line-height:1.55; color:var(--ink-500); margin:10px 0 0; text-wrap:pretty;">Offices, depots, fleet yards and destination car parks. We take the project off your plate: design, DNO, contractors, CDM paperwork and programme, through to commissioning and handover.</p>
+            <div class="ps-pminc" style="display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; margin:14px 0 16px; padding-top:14px; border-top:1px solid var(--cream-border);">
+              <sc-for list="{{ pmInc }}" as="line" hint-placeholder-count="6">
+                <div style="display:flex; gap:7px; align-items:flex-start;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green-600)" stroke-width="2.6" style="flex:none; margin-top:2px;"><path d="M5 13l4 4 10-11"></path></svg>
+                  <span style="font-size:11.5px; line-height:1.45; color:var(--ink-700);">{{ line }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <button onClick="{{ pmStart }}" style="font-size:12.5px; font-weight:700; border-radius:9px; padding:10px 18px; cursor:pointer; background:var(--accent-500); color:var(--accent-contrast); border:1px solid var(--accent-500);" style-hover="background:var(--accent-600);">Request a quote</button>
+              <span style="font-size:11px; color:var(--ink-400);">Reply within 1 working day</span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; background:var(--cream-50); border:1px solid var(--cream-border); border-radius:14px; padding:18px;">
+            <div style="font-family:var(--font-data); font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-500);">How the quote is built</div>
+            <div style="display:flex; flex-direction:column; gap:12px; margin-top:12px;">
+              <sc-for list="{{ pmSteps }}" as="st" hint-placeholder-count="3">
+                <div style="display:flex; gap:10px; align-items:flex-start;">
+                  <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--accent-700); background:var(--accent-50); border:1px solid var(--accent-200); border-radius:6px; padding:2px 7px; flex:none;">{{ st.n }}</span>
+                  <span style="min-width:0;">
+                    <span style="display:block; font-size:12.5px; font-weight:700; color:var(--ink-900);">{{ st.t }}</span>
+                    <span style="display:block; font-size:11.5px; line-height:1.5; color:var(--ink-500); margin-top:2px;">{{ st.d }}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:auto; padding-top:14px; font-size:11px; line-height:1.55; color:var(--ink-400); border-top:1px solid var(--cream-border);">Domestic and single-charger jobs aren't quoted here: the planner, guides and quote tools cover those end to end.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:22px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:14px; overflow:hidden;">
+          <div style="display:flex; gap:15px; padding:17px 20px 15px; align-items:flex-start;">
+            <svg width="34" height="34" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Reviewer mark" style="flex:none; margin-top:2px;">
+              <circle cx="40" cy="40" r="38" fill="#16232E"></circle>
+              <circle cx="40" cy="40" r="37" fill="none" stroke="#1E6BFF" stroke-width="2.5"></circle>
+              <circle cx="40" cy="40" r="30" fill="none" stroke="#4D82FF" stroke-width="2" stroke-dasharray="1.4 4.1" stroke-linecap="round" opacity="0.85"></circle>
+              <path d="M45.5 18.5 L27 44 H37.5 L34.5 61.5 L53 36 H42.5 Z" fill="#3D86FF"></path>
+            </svg>
+            <div style="min-width:0; flex:1;">
+              <div style="font-family:var(--font-data); font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-700);">Who runs your project</div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--ink-900); margin-top:5px;">A qualified installer and commercial PM - in-house, not farmed out.</div>
+              <p style="font-size:12.5px; line-height:1.6; color:var(--ink-500); margin:6px 0 0; max-width:660px; text-wrap:pretty;">Your project is run by someone who&rsquo;s pulled the cable and run the programme: 10+ years installing and project-managing EV charging, up to national multi-site rollouts - NHS estates, secure MoD and MoJ sites, Premier League clubs, royal and heritage estates. We also wrote the install documentation contractors work to across a national charging network.</p>
+              <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:11px;">
+                <span style="font-family:var(--font-data); font-size:10.5px; font-weight:600; color:var(--ink-700); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 8px; white-space:nowrap;">Level 3 qualified</span>
+                <span style="font-family:var(--font-data); font-size:10.5px; font-weight:600; color:var(--ink-700); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 8px; white-space:nowrap;">18th Edition · BS 7671</span>
+                <span style="font-family:var(--font-data); font-size:10.5px; font-weight:600; color:var(--ink-700); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 8px; white-space:nowrap;">SMSTS</span>
+                <span style="font-family:var(--font-data); font-size:10.5px; font-weight:600; color:var(--ink-700); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 8px; white-space:nowrap;">10+ years EV installs</span>
+                <span style="font-family:var(--font-data); font-size:10.5px; font-weight:600; color:var(--ink-700); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 8px; white-space:nowrap;">Domestic &amp; commercial</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:10px 20px; background:var(--cream-50); border-top:1px solid var(--cream-border);">
+            <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:600; color:var(--ink-600);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg>
+                <span>Professional indemnity insured</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:600; color:var(--ink-600);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2"><path d="M9 3h6v4H9zM5 7h14v14H5zM9 13h6M9 17h4"></path></svg>
+                <span>CDM 2015 aware - duties agreed in writing</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:600; color:var(--ink-600);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                <span>Advice informs your design - sign-off stays with you</span>
+              </div>
+            </div>
+            <sc-if value="{{ hasRequests }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ navReqs }}" style="font-size:12px; font-weight:700; color:var(--accent-700); background:none; border:none; cursor:pointer; padding:4px 2px;" style-hover="text-decoration:underline;">View your requests →</button>
+            </sc-if>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ░░ WIZARD ░░ -->
+  <sc-if value="{{ isWizard }}" hint-placeholder-val="{{ false }}">
+    <div class="scroll ps-body-pad" data-screen-label="Submission wizard" style="flex:1; overflow-y:auto; padding:24px 22px 60px;">
+      <div style="max-width:720px; margin:0 auto;">
+
+        <sc-if value="{{ wiz.hasBanner }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px; padding:10px 13px; background:var(--accent-50); border:1px solid var(--accent-200); border-radius:10px; font-size:12px; color:var(--accent-700); font-weight:600;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.4 11.6 12.4 2.6a2 2 0 0 0-2.8 0l-7 7a2 2 0 0 0 0 2.8l9 9a2 2 0 0 0 2.8 0l7-7a2 2 0 0 0 0-2.8z"></path><circle cx="7.5" cy="7.5" r="0.5" fill="currentColor"></circle></svg>
+            <span>{{ wiz.banner }}</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ wiz.notDone }}" hint-placeholder-val="{{ true }}">
+          <!-- stepper -->
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px;">
+            <sc-for list="{{ wiz.steps }}" as="st" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; gap:7px;">
+                <span style="display:grid; place-items:center; width:22px; height:22px; border-radius:50%; font-family:var(--font-data); font-size:11px; font-weight:700; background:{{ st.dotBg }}; color:{{ st.dotInk }}; border:1.5px solid {{ st.dotBorder }};">{{ st.n }}</span>
+                <span style="font-size:11.5px; font-weight:650; color:{{ st.lblInk }};">{{ st.label }}</span>
+              </div>
+              <sc-if value="{{ st.notLast }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1; height:1.5px; background:var(--cream-border-strong); min-width:12px;"></div>
+              </sc-if>
+            </sc-for>
+          </div>
+
+          <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:14px; padding:20px;">
+
+            <!-- STEP 1 · tier -->
+            <sc-if value="{{ wiz.s1 }}" hint-placeholder-val="{{ true }}">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; color:var(--ink-900);">What kind of workplace is it?</div>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+                <sc-for list="{{ wiz.tierOpts }}" as="t" hint-placeholder-count="4">
+                  <button onClick="{{ t.onPick }}" style="display:flex; align-items:center; gap:12px; text-align:left; background:{{ t.bg }}; border:1.5px solid {{ t.border }}; border-radius:11px; padding:12px 14px; cursor:pointer;" style-hover="border-color:var(--accent-400);">
+                    <span style="display:grid; place-items:center; width:18px; height:18px; border-radius:50%; border:1.5px solid {{ t.rBorder }}; background:{{ t.rBg }}; flex:none;">
+                      <sc-if value="{{ t.isSel }}" hint-placeholder-val="{{ false }}">
+                        <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-contrast); display:block;"></span>
+                      </sc-if>
+                    </span>
+                    <span style="flex:1; min-width:0;">
+                      <span style="display:block; font-size:13px; font-weight:700; color:var(--ink-900);">{{ t.name }}</span>
+                      <span style="display:block; font-size:11.5px; color:var(--ink-500); margin-top:2px;">{{ t.line }}</span>
+                    </span>
+                    <span style="text-align:right; flex:none;">
+                      <span style="display:block; font-family:var(--font-data); font-size:14px; font-weight:700; color:var(--ink-900);">{{ t.price }}</span>
+                      <span style="display:block; font-family:var(--font-data); font-size:10px; color:var(--ink-400); margin-top:2px; white-space:nowrap;">{{ t.turn }}</span>
+                    </span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <!-- STEP 2 · attach pack -->
+            <sc-if value="{{ wiz.s2 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; color:var(--ink-900);">Attach your project</div>
+              <p style="font-size:12.5px; color:var(--ink-500); margin:6px 0 0; line-height:1.5;">{{ wiz.packHint }}</p>
+              <sc-if value="{{ wiz.hasPacks }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+                  <sc-for list="{{ wiz.packs }}" as="p" hint-placeholder-count="2">
+                    <button onClick="{{ p.onPick }}" style="display:flex; align-items:center; gap:12px; text-align:left; background:{{ p.bg }}; border:1.5px solid {{ p.border }}; border-radius:11px; padding:10px 12px; cursor:pointer;" style-hover="border-color:var(--accent-400);">
+                      <sc-if value="{{ p.hasThumb }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:block; width:52px; height:40px; border-radius:7px; border:1px solid var(--cream-border-strong); flex:none; background-size:cover; background-position:center; background-image:{{ p.thumbBg }};"></span>
+                      </sc-if>
+                      <sc-if value="{{ p.noThumb }}" hint-placeholder-val="{{ true }}">
+                        <span style="display:block; width:52px; height:40px; border-radius:7px; border:1px solid var(--cream-border-strong); flex:none; background:repeating-linear-gradient(-45deg, var(--cream-100), var(--cream-100) 5px, var(--cream-200) 5px, var(--cream-200) 10px);"></span>
+                      </sc-if>
+                      <span style="flex:1; min-width:0;">
+                        <span style="display:block; font-size:13px; font-weight:700; color:var(--ink-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ p.name }}</span>
+                        <span style="display:block; font-family:var(--font-data); font-size:10.5px; color:var(--ink-400); margin-top:2px;">{{ p.meta }}</span>
+                      </span>
+                      <sc-if value="{{ p.isSel }}" hint-placeholder-val="{{ false }}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2.6" style="flex:none;"><path d="M5 13l4 4 10-11"></path></svg>
+                      </sc-if>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ wiz.noPacks }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:14px; padding:16px; border:1.5px dashed var(--cream-border-strong); border-radius:11px; text-align:center; font-size:12px; color:var(--ink-400); line-height:1.5;">No saved plans on this device yet - mark a site up in the planner and it will appear here.</div>
+              </sc-if>
+              <button onClick="{{ wiz.onNoPack }}" style="display:flex; align-items:center; gap:10px; width:100%; text-align:left; margin-top:8px; background:{{ wiz.npBg }}; border:1.5px solid {{ wiz.npBorder }}; border-radius:11px; padding:11px 12px; cursor:pointer;" style-hover="border-color:var(--accent-400);">
+                <span style="display:grid; place-items:center; width:18px; height:18px; border-radius:50%; border:1.5px solid {{ wiz.npRBorder }}; background:{{ wiz.npRBg }}; flex:none;">
+                  <sc-if value="{{ wiz.noPack }}" hint-placeholder-val="{{ false }}">
+                    <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-contrast); display:block;"></span>
+                  </sc-if>
+                </span>
+                <span>
+                  <span style="display:block; font-size:12.5px; font-weight:700; color:var(--ink-900);">No pack - I'll describe it instead</span>
+                  <span style="display:block; font-size:11px; color:var(--ink-500); margin-top:2px;">Fine for quick questions. You can always send a pack later in the thread.</span>
+                </span>
+              </button>
+              <sc-if value="{{ wiz.videoTip }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; gap:10px; margin-top:12px; padding:12px 14px; background:var(--blue-50); border:1px solid var(--blue-100); border-radius:11px; font-size:12px; line-height:1.55; color:var(--blue-700);">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none; margin-top:1px;"><rect x="3" y="6" width="12" height="12" rx="2"></rect><path d="m15 10 6-3v10l-6-3z"></path></svg>
+                  <span><b>Get a sharper markup:</b> alongside photos and a written description, record a short walkthrough video of the site explaining what you want - it's the fastest way to get us on the same page.</span>
+                </div>
+              </sc-if>
+            </sc-if>
+
+            <!-- STEP 3 · details -->
+            <sc-if value="{{ wiz.s3 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; color:var(--ink-900);">Site &amp; contact details</div>
+              <div class="ps-form2" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;">
+                <div style="grid-column:1 / -1;">
+                  <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">{{ wiz.siteLabel }}</label>
+                  <input data-f="site" value="{{ wiz.site }}" onChange="{{ wiz.onField }}" placeholder="e.g. The Old Dairy, Bakewell - 2× 7kW" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                </div>
+                <div>
+                  <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Your name</label>
+                  <input data-f="cname" value="{{ wiz.cname }}" onChange="{{ wiz.onField }}" placeholder="Name" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                </div>
+                <div>
+                  <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Email</label>
+                  <input data-f="cemail" value="{{ wiz.cemail }}" onChange="{{ wiz.onField }}" placeholder="you@example.co.uk" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                </div>
+                <div>
+                  <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Supply</label>
+                  <div style="display:flex; gap:4px; background:var(--cream-200); border:1px solid var(--cream-border-strong); border-radius:9px; padding:3px;">
+                    <sc-for list="{{ wiz.supplyOpts }}" as="o" hint-placeholder-count="3">
+                      <button onClick="{{ o.onPick }}" style="flex:1; font-size:11px; font-weight:650; border:none; border-radius:7px; padding:6px 4px; cursor:pointer; background:{{ o.bg }}; color:{{ o.ink }};">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Timescale</label>
+                  <div style="display:flex; gap:4px; background:var(--cream-200); border:1px solid var(--cream-border-strong); border-radius:9px; padding:3px;">
+                    <sc-for list="{{ wiz.timeOpts }}" as="o" hint-placeholder-count="3">
+                      <button onClick="{{ o.onPick }}" style="flex:1; font-size:11px; font-weight:650; border:none; border-radius:7px; padding:6px 4px; cursor:pointer; background:{{ o.bg }}; color:{{ o.ink }};">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+                <sc-if value="{{ wiz.isPm }}" hint-placeholder-val="{{ false }}">
+                  <div>
+                    <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Charge points (approx.)</label>
+                    <input data-f="bays" value="{{ wiz.bays }}" onChange="{{ wiz.onField }}" placeholder="e.g. 12 bays now + ducting for 12 more" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Target date</label>
+                    <input data-f="target" value="{{ wiz.target }}" onChange="{{ wiz.onField }}" placeholder="e.g. end of March" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                  </div>
+                </sc-if>
+                <div style="grid-column:1 / -1;">
+                  <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">{{ wiz.briefLabel }}</label>
+                  <textarea data-f="brief" value="{{ wiz.brief }}" onChange="{{ wiz.onField }}" rows="5" placeholder="{{ wiz.briefPh }}" style="width:100%; resize:vertical; font-size:12.5px; line-height:1.55; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:9px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);"></textarea>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- STEP 4 · confirm & pay -->
+            <sc-if value="{{ wiz.s4 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; color:var(--ink-900);">{{ wiz.payTitle }}</div>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:14px; padding:12px 14px; background:var(--cream-50); border:1px solid var(--cream-border); border-radius:11px;">
+                <div style="min-width:0;">
+                  <div style="font-size:13px; font-weight:700; color:var(--ink-900);">{{ wiz.sumTier }}</div>
+                  <div style="font-size:11.5px; color:var(--ink-500); margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ wiz.sumLine }}</div>
+                </div>
+                <div style="text-align:right; flex:none;">
+                  <div style="font-family:var(--font-data); font-size:18px; font-weight:700; color:var(--ink-900);">{{ wiz.sumPrice }}</div>
+                  <div style="font-family:var(--font-data); font-size:10px; color:var(--ink-400); margin-top:2px; white-space:nowrap;">{{ wiz.sumTurn }}</div>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:8px; align-items:flex-start; margin-top:10px; padding:0 2px; font-size:11.5px; line-height:1.55; color:var(--ink-500);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2" style="flex:none; margin-top:2px;"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                <span>Your request goes straight to a <b style="color:var(--ink-700);">qualified installer &amp; commercial PM</b> - Level 3, 18th Edition (BS 7671), SMSTS, 10+ years across domestic and commercial EV installs.</span>
+              </div>
+
+              <sc-if value="{{ wiz.payCard }}" hint-placeholder-val="{{ false }}">
+                <div class="ps-form2" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;">
+                  <div style="grid-column:1 / -1;">
+                    <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Name on card</label>
+                    <input data-f="cardName" value="{{ wiz.cardName }}" onChange="{{ wiz.onField }}" placeholder="Name on card" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                  </div>
+                  <div style="grid-column:1 / -1;">
+                    <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Card number</label>
+                    <input data-f="cardNo" value="{{ wiz.cardNo }}" onChange="{{ wiz.onField }}" placeholder="4242 4242 4242 4242" inputMode="numeric" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">Expiry</label>
+                    <input data-f="cardExp" value="{{ wiz.cardExp }}" onChange="{{ wiz.onField }}" placeholder="MM/YY" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:9.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400); margin-bottom:5px;">CVC</label>
+                    <input data-f="cardCvc" value="{{ wiz.cardCvc }}" onChange="{{ wiz.onField }}" placeholder="123" inputMode="numeric" style="width:100%; font-family:var(--font-data); font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);">
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:7px; margin-top:10px; font-size:11px; color:var(--ink-400);">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+                  <span>Demo checkout - no card is charged in this prototype.</span>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ wiz.payInvoice }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; gap:10px; margin-top:14px; padding:12px 14px; background:var(--blue-50); border:1px solid var(--blue-100); border-radius:11px; font-size:12px; line-height:1.55; color:var(--blue-700);">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none; margin-top:1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M12 11v5"></path></svg>
+                  <span>Nothing to pay today. We confirm scope first, then invoice through <b>Quotes &amp; invoices</b> - work starts on acceptance.</span>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ wiz.payQuote }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; gap:10px; margin-top:14px; padding:12px 14px; background:var(--blue-50); border:1px solid var(--blue-100); border-radius:11px; font-size:12px; line-height:1.55; color:var(--blue-700);">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none; margin-top:1px;"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.9 2.2z"></path></svg>
+                  <span>Every workplace project is quoted individually. Submit and we'll arrange a <b>scoping call</b>, then send a fixed quote covering scope, programme and exclusions - nothing to pay today.</span>
+                </div>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{ wiz.hasErr }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:12px; padding:9px 12px; background:var(--color-danger-bg); border:1px solid var(--red-100); border-radius:9px; font-size:12px; font-weight:600; color:var(--color-danger);">{{ wiz.err }}</div>
+            </sc-if>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:18px; padding-top:14px; border-top:1px solid var(--cream-border);">
+              <sc-if value="{{ wiz.canBack }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ wiz.onBack }}" style="font-size:12.5px; font-weight:600; color:var(--ink-600); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:9px 14px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Back</button>
+              </sc-if>
+              <sc-if value="{{ wiz.noBack }}" hint-placeholder-val="{{ true }}">
+                <span></span>
+              </sc-if>
+              <button onClick="{{ wiz.onNext }}" style="font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:9px; padding:9px 18px; cursor:pointer;" style-hover="background:var(--accent-600);">{{ wiz.nextLabel }}</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- DONE -->
+        <sc-if value="{{ wiz.isDone }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:14px; padding:34px 26px; text-align:center;">
+            <div style="display:grid; place-items:center; width:52px; height:52px; margin:0 auto; border-radius:50%; background:var(--green-100);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green-600)" stroke-width="2.6"><path d="M5 13l4 4 10-11"></path></svg>
+            </div>
+            <div style="font-family:var(--font-display); font-weight:800; font-size:20px; letter-spacing:-0.015em; color:var(--ink-900); margin-top:14px;">Request {{ wiz.doneRef }} submitted</div>
+            <p style="font-size:13px; line-height:1.6; color:var(--ink-500); margin:8px auto 0; max-width:400px;">{{ wiz.doneLine }}</p>
+            <div style="display:flex; justify-content:center; gap:8px; margin-top:18px;">
+              <button onClick="{{ wiz.onViewReq }}" style="font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:9px; padding:9px 16px; cursor:pointer;" style-hover="background:var(--accent-600);">View request</button>
+              <button onClick="{{ navHome }}" style="font-size:12.5px; font-weight:600; color:var(--ink-600); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:9px; padding:9px 16px; cursor:pointer;" style-hover="border-color:var(--accent-400); color:var(--accent-700);">Back to services</button>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ░░ MY REQUESTS (customer) ░░ -->
+  <sc-if value="{{ isRequests }}" hint-placeholder-val="{{ false }}">
+    <div class="scroll ps-body-pad" data-screen-label="My requests" style="flex:1; overflow-y:auto; padding:24px 22px 60px;">
+      <div style="max-width:760px; margin:0 auto;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px;">
+          <div style="font-family:var(--font-display); font-weight:800; font-size:20px; letter-spacing:-0.015em; color:var(--ink-900);">My requests</div>
+          <button onClick="{{ navNew }}" style="font-size:12px; font-weight:700; color:var(--accent-700); background:none; border:none; cursor:pointer; white-space:nowrap;" style-hover="text-decoration:underline;">+ New request</button>
+        </div>
+        <sc-if value="{{ reqEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:16px; padding:34px 20px; background:var(--color-surface); border:1.5px dashed var(--cream-border-strong); border-radius:14px; text-align:center; font-size:12.5px; color:var(--ink-400);">No requests yet - pick a service to get started.</div>
+        </sc-if>
+        <div style="display:flex; flex-direction:column; gap:9px; margin-top:16px;">
+          <sc-for list="{{ reqRows }}" as="r" hint-placeholder-count="3">
+            <button onClick="{{ r.onOpen }}" style="display:flex; align-items:center; gap:12px; text-align:left; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 15px; cursor:pointer;" style-hover="border-color:var(--accent-400); box-shadow:var(--shadow-sm);">
+              <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-500); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 7px; flex:none; white-space:nowrap;">{{ r.ref }}</span>
+              <span style="flex:1; min-width:0;">
+                <span style="display:flex; align-items:center; gap:7px;">
+                  <span style="font-size:13px; font-weight:700; color:var(--ink-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.title }}</span>
+                  <sc-if value="{{ r.unread }}" hint-placeholder-val="{{ false }}">
+                    <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-500); flex:none;"></span>
+                  </sc-if>
+                </span>
+                <span style="display:block; font-size:11px; color:var(--ink-400); margin-top:3px;">{{ r.tierName }} · updated {{ r.when }}</span>
+              </span>
+              <span style="text-align:right; flex:none;">
+                <span style="display:inline-block; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; white-space:nowrap; background:{{ r.chipBg }}; color:{{ r.chipInk }};">{{ r.chipLabel }}</span>
+                <sc-if value="{{ r.hasDue }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:block; font-family:var(--font-data); font-size:10px; margin-top:4px; white-space:nowrap; color:{{ r.dueInk }};">{{ r.dueText }}</span>
+                </sc-if>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ░░ REQUEST DETAIL (customer) ░░ -->
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <div class="scroll" data-screen-label="Request thread" style="flex:1; overflow-y:auto; padding:20px 22px 30px;">
+      <div style="max-width:760px; margin:0 auto;">
+        <button onClick="{{ navReqs }}" style="display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; color:var(--ink-500); background:none; border:none; cursor:pointer; padding:2px 0; white-space:nowrap;" style-hover="color:var(--accent-700);">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"></path></svg>
+          <span>My requests</span>
+        </button>
+
+        <div class="ps-det-head" style="display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:10px; padding:16px 18px; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:14px;">
+          <div style="min-width:0;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-500); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 7px; white-space:nowrap;">{{ det.ref }}</span>
+              <span style="font-size:11px; font-weight:650; color:var(--ink-500);">{{ det.tierName }}</span>
+              <span style="display:inline-block; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; white-space:nowrap; background:{{ det.chipBg }}; color:{{ det.chipInk }};">{{ det.chipLabel }}</span>
+            </div>
+            <div style="font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; color:var(--ink-900); margin-top:7px;">{{ det.title }}</div>
+            <sc-if value="{{ det.hasDue }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:var(--font-data); font-size:11px; margin-top:5px; white-space:nowrap; color:{{ det.dueInk }};">{{ det.dueText }}</div>
+            </sc-if>
+          </div>
+          <div style="display:flex; align-items:center; gap:0; flex:none;">
+            <sc-for list="{{ det.timeline }}" as="tl" hint-placeholder-count="4">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:5px; width:74px;">
+                <span style="display:grid; place-items:center; width:20px; height:20px; border-radius:50%; background:{{ tl.dotBg }}; border:1.5px solid {{ tl.dotBorder }};">
+                  <sc-if value="{{ tl.done }}" hint-placeholder-val="{{ false }}">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent-contrast)" stroke-width="3"><path d="M5 13l4 4 10-11"></path></svg>
+                  </sc-if>
+                </span>
+                <span style="font-size:9.5px; font-weight:650; color:{{ tl.ink }}; text-align:center;">{{ tl.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ det.needsInfo }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; gap:9px; margin-top:10px; padding:11px 14px; background:var(--amber-50); border:1px solid var(--amber-100); border-radius:11px; font-size:12px; line-height:1.5; color:var(--amber-700); font-weight:600;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none; margin-top:1px;"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+            <span>We need a bit more from you before the review can carry on - see the latest message below.</span>
+          </div>
+        </sc-if>
+
+        <!-- thread -->
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
+          <sc-for list="{{ det.msgs }}" as="m" hint-placeholder-count="3">
+            <sc-if value="{{ m.isSys }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:center; font-family:var(--font-data); font-size:10px; font-weight:600; color:var(--ink-400); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:20px; padding:3px 11px;">{{ m.text }} · {{ m.when }}</div>
+            </sc-if>
+            <sc-if value="{{ m.isOp }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-start; max-width:86%; display:flex; gap:9px;">
+                <span style="display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--ink-900); color:var(--cream-50); font-family:var(--font-data); font-size:10px; font-weight:700; flex:none; margin-top:2px;">{{ opInitials }}</span>
+                <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:3px 13px 13px 13px; padding:11px 14px;">
+                  <div style="display:flex; align-items:baseline; gap:7px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--ink-900);">{{ opName }}</span>
+                    <span style="font-family:var(--font-data); font-size:9.5px; color:var(--ink-400);">{{ m.when }}</span>
+                  </div>
+                  <div style="font-size:12.5px; line-height:1.6; color:var(--ink-800); margin-top:5px; white-space:pre-wrap;">{{ m.text }}</div>
+                  <sc-if value="{{ m.hasAtt }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; flex-direction:column; gap:6px; margin-top:9px;">
+                      <sc-for list="{{ m.att }}" as="a" hint-placeholder-count="1">
+                        <div style="display:flex; align-items:center; gap:10px; background:var(--cream-50); border:1px solid var(--cream-border-strong); border-radius:9px; padding:8px 10px;">
+                          <span style="display:block; width:44px; height:32px; border-radius:6px; flex:none; border:1px solid var(--cream-border-strong); background:repeating-linear-gradient(-45deg, var(--accent-50), var(--accent-50) 5px, var(--accent-100) 5px, var(--accent-100) 10px);"></span>
+                          <span style="flex:1; min-width:0;">
+                            <span style="display:block; font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-800); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ a.name }}</span>
+                            <span style="display:block; font-size:10px; color:var(--ink-400); margin-top:1px;">{{ a.meta }}</span>
+                          </span>
+                          <span style="font-size:10.5px; font-weight:700; color:var(--accent-700); flex:none;">Download</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ m.isMe }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-end; max-width:86%;">
+                <div style="background:var(--accent-500); color:var(--accent-contrast); border-radius:13px 3px 13px 13px; padding:11px 14px;">
+                  <div style="font-size:12.5px; line-height:1.6; white-space:pre-wrap;">{{ m.text }}</div>
+                  <sc-if value="{{ m.hasAtt }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; flex-direction:column; gap:6px; margin-top:9px;">
+                      <sc-for list="{{ m.att }}" as="a" hint-placeholder-count="1">
+                        <div style="display:flex; align-items:center; gap:9px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:9px; padding:7px 10px;">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;"><path d="m21.4 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                          <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            <span style="font-family:var(--font-data); font-size:11px; font-weight:700;">{{ a.name }}</span>
+                            <span style="font-size:10px; opacity:.75;"> · {{ a.meta }}</span>
+                          </span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="font-family:var(--font-data); font-size:9.5px; color:var(--ink-400); text-align:right; margin-top:3px;">You · {{ m.when }}</div>
+              </div>
+            </sc-if>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <!-- composer -->
+    <div style="flex:none; border-top:1px solid var(--cream-border-strong); background:var(--cream-100); padding:12px 22px calc(12px + env(safe-area-inset-bottom, 0px));">
+      <div style="max-width:760px; margin:0 auto; display:flex; gap:9px; align-items:flex-end;">
+        <textarea value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" rows="2" placeholder="Reply to {{ opName }}… (Enter to send)" style="flex:1; resize:none; font-size:12.5px; line-height:1.5; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:11px; padding:10px 12px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);"></textarea>
+        <button onClick="{{ onSend }}" title="Send" style="display:grid; place-items:center; width:40px; height:40px; flex:none; background:var(--accent-500); color:var(--accent-contrast); border:1px solid var(--accent-500); border-radius:11px; cursor:pointer;" style-hover="background:var(--accent-600);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4z"></path><path d="M22 2 11 13"></path></svg>
+        </button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ░░ OPERATOR QUEUE ░░ -->
+  <sc-if value="{{ isOpQueue }}" hint-placeholder-val="{{ false }}">
+    <div class="scroll ps-body-pad" data-screen-label="Operator queue" style="flex:1; overflow-y:auto; padding:22px 22px 60px;">
+      <div style="max-width:1080px; margin:0 auto;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px;">
+          <div style="font-family:var(--font-display); font-weight:800; font-size:20px; letter-spacing:-0.015em; color:var(--ink-900);">Review queue</div>
+          <div style="font-size:11px; color:var(--ink-400);">Signed in as {{ opName }} · operator view</div>
+        </div>
+
+        <div class="ps-kpis" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px;">
+          <sc-for list="{{ op.kpis }}" as="k" hint-placeholder-count="4">
+            <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 15px;">
+              <div style="font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">{{ k.label }}</div>
+              <div style="font-family:var(--font-data); font-size:24px; font-weight:700; letter-spacing:-0.01em; color:{{ k.ink }}; margin-top:6px;">{{ k.val }}</div>
+              <div style="font-size:10.5px; color:var(--ink-400); margin-top:2px;">{{ k.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:16px; flex-wrap:wrap;">
+          <sc-for list="{{ op.filters }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.onPick }}" style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:650; border-radius:20px; padding:6px 12px; cursor:pointer; white-space:nowrap; background:{{ f.bg }}; color:{{ f.ink }}; border:1px solid {{ f.border }};">
+              <span>{{ f.label }}</span>
+              <span style="font-family:var(--font-data); font-size:10px; font-weight:700; opacity:.75;">{{ f.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
+          <sc-for list="{{ op.rows }}" as="r" hint-placeholder-count="4">
+            <button onClick="{{ r.onOpen }}" class="ps-qrow" style="display:grid; grid-template-columns:64px minmax(0,2fr) minmax(0,1.1fr) 108px 104px 84px; gap:12px; align-items:center; text-align:left; background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:12px 15px; cursor:pointer;" style-hover="border-color:var(--accent-400); box-shadow:var(--shadow-sm);">
+              <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-500); white-space:nowrap;">{{ r.ref }}</span>
+              <span style="min-width:0;">
+                <span style="display:flex; align-items:center; gap:7px;">
+                  <span style="font-size:12.5px; font-weight:700; color:var(--ink-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.title }}</span>
+                  <sc-if value="{{ r.unread }}" hint-placeholder-val="{{ false }}">
+                    <span style="width:8px; height:8px; border-radius:50%; background:var(--signal); flex:none;" title="Awaiting your reply"></span>
+                  </sc-if>
+                </span>
+                <span style="display:block; font-size:10.5px; color:var(--ink-400); margin-top:2px;">{{ r.tierName }}</span>
+              </span>
+              <span class="ps-qcol-client" style="font-size:11.5px; color:var(--ink-600); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.client }}</span>
+              <span><span style="display:inline-block; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; white-space:nowrap; background:{{ r.chipBg }}; color:{{ r.chipInk }};">{{ r.chipLabel }}</span></span>
+              <span class="ps-qcol-due" style="font-family:var(--font-data); font-size:10.5px; white-space:nowrap; color:{{ r.dueInk }};">{{ r.dueText }}</span>
+              <span class="ps-qcol-upd" style="font-family:var(--font-data); font-size:10.5px; color:var(--ink-400); text-align:right;">{{ r.updated }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ op.empty }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:12px; padding:30px 20px; background:var(--color-surface); border:1.5px dashed var(--cream-border-strong); border-radius:14px; text-align:center; font-size:12.5px; color:var(--ink-400);">Nothing in this bucket.</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ░░ OPERATOR DETAIL ░░ -->
+  <sc-if value="{{ isOpDetail }}" hint-placeholder-val="{{ false }}">
+    <div class="ps-opbody" data-screen-label="Operator request detail" style="flex:1; display:flex; min-height:0;">
+      <div style="flex:1; min-width:0; display:flex; flex-direction:column; min-height:0;">
+        <div class="scroll" style="flex:1; overflow-y:auto; padding:18px 22px 24px;">
+          <div style="max-width:720px; margin:0 auto;">
+            <button onClick="{{ navQueue }}" style="display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; color:var(--ink-500); background:none; border:none; cursor:pointer; padding:2px 0; white-space:nowrap;" style-hover="color:var(--accent-700);">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"></path></svg>
+              <span>Queue</span>
+            </button>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px;">
+              <span style="font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-500); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:6px; padding:3px 7px; white-space:nowrap;">{{ opd.ref }}</span>
+              <span style="font-size:11px; font-weight:650; color:var(--ink-500);">{{ opd.tierName }}</span>
+              <span style="display:inline-block; font-size:10.5px; font-weight:700; border-radius:20px; padding:3px 9px; white-space:nowrap; background:{{ opd.chipBg }}; color:{{ opd.chipInk }};">{{ opd.chipLabel }}</span>
+              <sc-if value="{{ opd.hasDue }}" hint-placeholder-val="{{ false }}">
+                <span style="font-family:var(--font-data); font-size:10.5px; white-space:nowrap; color:{{ opd.dueInk }};">{{ opd.dueText }}</span>
+              </sc-if>
+            </div>
+            <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:-0.01em; color:var(--ink-900); margin-top:7px;">{{ opd.title }}</div>
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+              <sc-for list="{{ opd.msgs }}" as="m" hint-placeholder-count="3">
+                <sc-if value="{{ m.isSys }}" hint-placeholder-val="{{ false }}">
+                  <div style="align-self:center; font-family:var(--font-data); font-size:10px; font-weight:600; color:var(--ink-400); background:var(--cream-100); border:1px solid var(--cream-border); border-radius:20px; padding:3px 11px;">{{ m.text }} · {{ m.when }}</div>
+                </sc-if>
+                <sc-if value="{{ m.isMe }}" hint-placeholder-val="{{ false }}">
+                  <div style="align-self:flex-start; max-width:86%; display:flex; gap:9px;">
+                    <span style="display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--accent-100); color:var(--accent-700); font-family:var(--font-data); font-size:10px; font-weight:700; flex:none; margin-top:2px;">{{ opd.clientInitials }}</span>
+                    <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:3px 13px 13px 13px; padding:11px 14px;">
+                      <div style="display:flex; align-items:baseline; gap:7px;">
+                        <span style="font-size:11px; font-weight:700; color:var(--ink-900);">{{ opd.clientName }}</span>
+                        <span style="font-family:var(--font-data); font-size:9.5px; color:var(--ink-400);">{{ m.when }}</span>
+                      </div>
+                      <div style="font-size:12.5px; line-height:1.6; color:var(--ink-800); margin-top:5px; white-space:pre-wrap;">{{ m.text }}</div>
+                      <sc-if value="{{ m.hasAtt }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex; flex-direction:column; gap:6px; margin-top:9px;">
+                          <sc-for list="{{ m.att }}" as="a" hint-placeholder-count="1">
+                            <div style="display:flex; align-items:center; gap:10px; background:var(--cream-50); border:1px solid var(--cream-border-strong); border-radius:9px; padding:8px 10px;">
+                              <span style="display:block; width:44px; height:32px; border-radius:6px; flex:none; border:1px solid var(--cream-border-strong); background:repeating-linear-gradient(-45deg, var(--cream-100), var(--cream-100) 5px, var(--cream-200) 5px, var(--cream-200) 10px);"></span>
+                              <span style="flex:1; min-width:0;">
+                                <span style="display:block; font-family:var(--font-data); font-size:11px; font-weight:700; color:var(--ink-800); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ a.name }}</span>
+                                <span style="display:block; font-size:10px; color:var(--ink-400); margin-top:1px;">{{ a.meta }}</span>
+                              </span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isOp }}" hint-placeholder-val="{{ false }}">
+                  <div style="align-self:flex-end; max-width:86%;">
+                    <div style="background:var(--ink-900); color:var(--cream-50); border-radius:13px 3px 13px 13px; padding:11px 14px;">
+                      <div style="font-size:12.5px; line-height:1.6; white-space:pre-wrap;">{{ m.text }}</div>
+                      <sc-if value="{{ m.hasAtt }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex; flex-direction:column; gap:6px; margin-top:9px;">
+                          <sc-for list="{{ m.att }}" as="a" hint-placeholder-count="1">
+                            <div style="display:flex; align-items:center; gap:9px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); border-radius:9px; padding:7px 10px;">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;"><path d="m21.4 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                              <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                <span style="font-family:var(--font-data); font-size:11px; font-weight:700;">{{ a.name }}</span>
+                                <span style="font-size:10px; opacity:.75;"> · {{ a.meta }}</span>
+                              </span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="font-family:var(--font-data); font-size:9.5px; color:var(--ink-400); text-align:right; margin-top:3px;">{{ opName }} (you) · {{ m.when }}</div>
+                  </div>
+                </sc-if>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <!-- operator composer -->
+        <div style="flex:none; border-top:1px solid var(--cream-border-strong); background:var(--cream-100); padding:10px 22px calc(12px + env(safe-area-inset-bottom, 0px));">
+          <div style="max-width:720px; margin:0 auto;">
+            <sc-if value="{{ op.attachMark }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:7px 11px; background:var(--accent-50); border:1px solid var(--accent-200); border-radius:9px; font-size:11.5px; font-weight:600; color:var(--accent-700);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.4 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                <span style="flex:1;">The quote &amp; proposal will be attached - sending will mark this enquiry <b>Quote sent</b>.</span>
+                <button onClick="{{ op.onToggleAttach }}" style="font-size:11px; font-weight:700; color:var(--accent-700); background:none; border:none; cursor:pointer;">Remove</button>
+              </div>
+            </sc-if>
+            <div style="display:flex; gap:9px; align-items:flex-end;">
+              <textarea value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" rows="2" placeholder="Reply to {{ opd.clientName }}… (Enter to send)" style="flex:1; resize:none; font-size:12.5px; line-height:1.5; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:11px; padding:10px 12px; outline:none;" style-focus="border-color:var(--accent-500); box-shadow:var(--focus-ring);"></textarea>
+              <button onClick="{{ onSend }}" title="Send" style="display:grid; place-items:center; width:40px; height:40px; flex:none; background:var(--ink-900); color:var(--cream-50); border:1px solid var(--ink-900); border-radius:11px; cursor:pointer;" style-hover="background:var(--ink-800);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4z"></path><path d="M22 2 11 13"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- side panel -->
+      <aside class="ps-opside scroll" style="width:300px; flex:none; overflow-y:auto; background:var(--cream-100); border-left:1px solid var(--cream-border-strong); padding:16px 16px 30px; display:flex; flex-direction:column; gap:12px;">
+        <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 14px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">Client</div>
+          <div style="font-size:13px; font-weight:700; color:var(--ink-900); margin-top:7px;">{{ opd.clientName }}</div>
+          <div style="font-size:11.5px; color:var(--ink-500); margin-top:3px;">{{ opd.clientEmail }}</div>
+          <div style="font-family:var(--font-data); font-size:11.5px; color:var(--ink-500); margin-top:2px;">{{ opd.clientPhone }}</div>
+        </div>
+        <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 14px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">Project pack</div>
+          <div style="display:flex; align-items:center; gap:10px; margin-top:9px;">
+            <span style="display:block; width:46px; height:34px; border-radius:7px; flex:none; border:1px solid var(--cream-border-strong); background:repeating-linear-gradient(-45deg, var(--cream-100), var(--cream-100) 5px, var(--cream-200) 5px, var(--cream-200) 10px);"></span>
+            <span style="min-width:0;">
+              <span style="display:block; font-size:12px; font-weight:700; color:var(--ink-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ opd.packName }}</span>
+              <span style="display:block; font-family:var(--font-data); font-size:10px; color:var(--ink-400); margin-top:2px;">{{ opd.packMeta }}</span>
+            </span>
+          </div>
+          <div style="font-size:11px; color:var(--ink-500); line-height:1.5; margin-top:9px; padding-top:9px; border-top:1px solid var(--cream-border);">{{ opd.supplyLine }}</div>
+        </div>
+        <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 14px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">Payment</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px;">
+            <span style="font-family:var(--font-data); font-size:15px; font-weight:700; color:var(--ink-900);">{{ opd.payAmount }}</span>
+            <span style="display:inline-block; font-size:10px; font-weight:700; border-radius:20px; padding:3px 9px; white-space:nowrap; background:{{ opd.payBg }}; color:{{ opd.payInk }};">{{ opd.payLabel }}</span>
+          </div>
+          <sc-if value="{{ opd.showInvoiceLink }}" hint-placeholder-val="{{ false }}">
+            <a href="Quotes & Invoices.dc.html" style="display:block; margin-top:9px; font-size:11.5px; font-weight:700; color:var(--accent-700); text-decoration:none;" style-hover="text-decoration:underline;">Raise the invoice in Quotes &amp; invoices →</a>
+          </sc-if>
+        </div>
+        <div style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:12px; padding:13px 14px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">Actions</div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:9px;">
+            <sc-for list="{{ opd.actions }}" as="a" hint-placeholder-count="3">
+              <button onClick="{{ a.onClick }}" style="text-align:left; font-size:12px; font-weight:650; border-radius:9px; padding:8px 11px; cursor:pointer; background:{{ a.bg }}; color:{{ a.ink }}; border:1px solid {{ a.border }};" style-hover="filter:brightness(0.97);">{{ a.label }}</button>
+            </sc-for>
+          </div>
+          <div style="font-size:10.5px; color:var(--ink-400); line-height:1.5; margin-top:9px;">Sending the quote attaches the proposal document and notifies the client.</div>
+        </div>
+      </aside>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;operatorName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Ben&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Service&quot;}}">
+class Component extends DCLogic {
+  KEY = 'evsp_ps_v2';
+
+  state = {
+    ready: false,
+    mode: 'customer',
+    view: 'landing',
+    data: { requests: [], nextRef: 13 },
+    activeId: null,
+    opFilter: 'open',
+    draft: '',
+    attachMark: false,
+    wiz: this.freshWiz()
+  };
+
+  freshWiz() {
+    return {
+      step: 1, tier: 'pm', wtype: 'office', packId: null, noPack: false,
+      site: '', cname: '', cemail: '', supply: 'single', timescale: 'weeks',
+      brief: '', bays: '', target: '',
+      cardName: '', cardNo: '', cardExp: '', cardCvc: '',
+      err: '', doneRef: null, banner: ''
+    };
+  }
+
+  // ---------- static defs ----------
+  TIERS = {
+    pm: { name: 'Full project management', price: 0, turn: 'Scoping call → fixed quote', slaH: 0, pay: 'quote',
+      line: 'We run the project: design, DNO, contractors, paperwork and programme.',
+      blurb: 'Workplace charging handed over and run properly: offices, depots, fleet yards and destination car parks.',
+      inc: ['Workplace & commercial sites only', 'Design review, load & capacity assessment', 'DNO application & liaison', 'CDM 2015 duties support', 'Construction phase plan & RAMS', 'Contractor tendering & management', 'Progress reporting to handover', 'Commissioning & handover pack'] }
+  };
+  // legacy tier names - requests created before the workplace-only pivot still render
+  LEGACY_TIERS = { quick: { name: 'Quick question' }, review: { name: 'Markup review' }, design: { name: 'Design & spec' } };
+  tierName(id) { return (this.TIERS[id] || this.LEGACY_TIERS[id] || { name: 'Project support' }).name; }
+  WTYPES = { office: 'Office & HQ car park', depot: 'Depot & fleet yard', dest: 'Retail & destination', other: 'Other workplace' };
+
+  STATUS = {
+    submitted:  { label: 'New enquiry', bg: 'var(--blue-100)',  ink: 'var(--blue-700)' },
+    in_review:  { label: 'Scoping',     bg: 'var(--amber-100)', ink: 'var(--amber-700)' },
+    needs_info: { label: 'Needs info',  bg: 'var(--signal-soft)', ink: 'var(--orange-700)' },
+    returned:   { label: 'Quote sent',  bg: 'var(--green-100)', ink: 'var(--green-700)' },
+    closed:     { label: 'Closed',      bg: 'var(--ink-100)',   ink: 'var(--ink-700)' }
+  };
+
+  // ---------- lifecycle ----------
+  componentDidMount() {
+    let data = null;
+    try { data = JSON.parse(localStorage.getItem(this.KEY) || 'null'); } catch (e) { data = null; }
+    if (!data || !Array.isArray(data.requests)) data = this.seed();
+    const next = { data, ready: true };
+    // hash: #from=<planner projId> and/or #tier=<id>
+    try {
+      const h = String(location.hash || '');
+      const mReq = h.match(/req=([A-Za-z0-9]+)/);
+      const rq = mReq ? (data.requests || []).find(x => x.id === mReq[1]) : null;
+      if (rq) {
+        rq.unreadC = 0;
+        next.view = 'detail'; next.activeId = rq.id; next.mode = 'customer';
+        history.replaceState('', '', location.pathname);
+      }
+      const mFrom = h.match(/from=([A-Za-z0-9]+)/);
+      const mTier = h.match(/tier=(quick|review|design|pm)/);
+      if (!rq && (mFrom || mTier)) {
+        const wiz = this.freshWiz();
+        if (mTier) wiz.tier = 'pm'; // legacy tier links all land on the workplace PM offering
+        if (mFrom) {
+          const p = this.readIndex().find(x => x.id === mFrom[1]);
+          if (p) { wiz.packId = p.id; wiz.banner = 'Pack "' + (p.name || 'Untitled') + '" attached from the planner.'; }
+        }
+        next.wiz = wiz; next.view = 'wizard';
+        history.replaceState('', '', location.pathname);
+      }
+    } catch (e) { /* ignore */ }
+    this.setState(next);
+  }
+
+  persist(data) {
+    try { localStorage.setItem(this.KEY, JSON.stringify(data)); } catch (e) { /* ignore */ }
+  }
+
+  // ---------- seed (worked examples) ----------
+  seed() {
+    const H = 3600000, now = Date.now();
+    const t = (h) => now - h * H;
+    const requests = [
+      {
+        id: 'sd1', ref: 'PS-0007', tier: 'pm', status: 'returned',
+        title: 'Hartwell Foods HQ, Leeds - 10 bays + 6 passive', client: { name: 'J. Barrett - Hartwell Foods', email: 'j.barrett@hartwell-foods.example', phone: '0113 496 0210' },
+        packName: 'Hartwell HQ - staff car park', packMeta: '5 plans · 14 photos', supplyLine: 'Office & HQ car park · three-phase · 400 A TP&N · target Q4 · landlord consent in place.',
+        payment: { amount: 0, status: 'quote', paidAt: null },
+        createdAt: t(96), updatedAt: t(18), due: null, unreadC: 1, unreadO: 0,
+        msgs: [
+          { k: 'sys', text: 'Enquiry submitted · Full project management · scoping', at: t(96) },
+          { k: 'me', at: t(96), text: 'Facilities want 10 live bays for staff this year and ducting for 6 more. HR wants tariff-billed charging, finance wants it off our maintenance plate. Happy to hand the whole thing over.', att: [{ name: 'hartwell-hq.evsp', meta: 'Project pack · 5 plans · 14 photos' }] },
+          { k: 'op', at: t(42), text: 'Good call on Tuesday - thanks. Confirmed against the half-hourly data: 92 kVA spare at the intake, so 10\u00d7 7 kW with load management fits without a DNO upgrade. Quote follows covering phased civils, back-office setup and the passive ducting.' },
+          { k: 'op', at: t(18), att: [{ name: 'hartwell-hq-QUOTE.pdf', meta: 'Fixed quote · scope, programme & exclusions', mark: true }],
+            text: 'Fixed quote attached: \u00a368,400 + VAT on a six-week programme, run in two phases so the car park never fully closes. Exclusions are on page 2 (resurfacing, landlord legal fees). Valid 30 days - shout with questions.' },
+          { k: 'sys', text: 'Status changed to Quote sent', at: t(18) }
+        ]
+      },
+      {
+        id: 'sd2', ref: 'PS-0011', tier: 'pm', status: 'needs_info',
+        title: 'Kestrel Logistics depot, Wednesbury - 12 bays', client: { name: 'M. Osei - Kestrel Logistics', email: 'm.osei@kestrel-logistics.example', phone: '0121 496 0733' },
+        packName: 'Kestrel depot - phase 1', packMeta: '6 plans · 18 photos', supplyLine: 'Depot & fleet yard · three-phase · 800 kVA shared with warehouse · target March · landlord consent TBC.',
+        payment: { amount: 0, status: 'quote', paidAt: null },
+        createdAt: t(70), updatedAt: t(23), due: null, unreadC: 1, unreadO: 0,
+        msgs: [
+          { k: 'sys', text: 'Enquiry submitted · Full project management · scoping', at: t(70) },
+          { k: 'me', at: t(70), text: '12 bays now with ducting for 12 more. Target is end of March. We\u2019re on an 800 kVA supply shared with the warehouse - no idea what\u2019s spare. Happy to hand over the DNO side entirely.', att: [{ name: 'kestrel-depot-phase1.evsp', meta: 'Project pack · 6 plans · 18 photos' }] },
+          { k: 'op', at: t(23), text: 'Thanks - good detail in the pack. Before Friday\u2019s scoping call, can you dig out:\n\n1. A half-hourly consumption export from your energy portal (12 months if possible)\n2. The DNO budget letter, if one exists\n3. Where landlord consent has got to for the trenching route\n\nWith the HH data I can tell you whether 12\u00d7 22 kW fits inside the spare capacity or we\u2019re into an ICP/new-connection conversation - that swings the quote and programme more than anything else.' },
+          { k: 'sys', text: 'Status changed to Needs info', at: t(23) }
+        ]
+      },
+      {
+        id: 'sd3', ref: 'PS-0012', tier: 'pm', status: 'in_review',
+        title: 'Marsh House Business Park - 24 bays, 3 buildings', client: { name: 'Tom Ellery - Marsh House FM', email: 'tom@marshhouse-fm.example', phone: '07700 900218' },
+        packName: 'No pack - described in thread', packMeta: '6 photos', supplyLine: 'Office & HQ car park · three supplies, one per building · flexible timing.',
+        payment: { amount: 0, status: 'quote', paidAt: null },
+        createdAt: t(8), updatedAt: t(3), due: null, unreadC: 1, unreadO: 0,
+        msgs: [
+          { k: 'sys', text: 'Enquiry submitted · Full project management · scoping', at: t(8) },
+          { k: 'me', at: t(8), text: 'Three buildings with three landlords on one park - 24 bays total, tenants splitting the cost. Can you run it as one project? Photos of the car parks attached.', att: [{ name: 'marsh-house-photos', meta: '6 photos' }] },
+          { k: 'op', at: t(3), text: 'Yes - one programme, three consents. Scoping call booked for Thursday 10am; I\u2019ll bring a consent tracker and a draft phasing plan so each landlord signs off their own block, and we\u2019ll walk the supply intakes on the same visit.' },
+          { k: 'sys', text: 'Status changed to Scoping', at: t(3) }
+        ]
+      },
+      {
+        id: 'sd4', ref: 'PS-0003', tier: 'pm', status: 'closed',
+        title: 'Riverside Garden Centre - 8× 22 kW customer bays', client: { name: 'Priya Nair - Riverside Leisure', email: 'p.nair@riverside-leisure.example', phone: '01332 496 118' },
+        packName: 'Riverside customer car park', packMeta: '5 plans · 14 photos', supplyLine: 'Retail & destination · three-phase · 100 A/phase headroom · delivered over the spring closure.',
+        payment: { amount: 84600, status: 'paid', paidAt: t(24 * 42) },
+        createdAt: t(24 * 60), updatedAt: t(24 * 14), due: null, unreadC: 0, unreadO: 0,
+        msgs: [
+          { k: 'sys', text: 'Enquiry submitted · Full project management · scoping', at: t(24 * 60) },
+          { k: 'op', at: t(24 * 45), att: [{ name: 'riverside-QUOTE.pdf', meta: 'Fixed quote · scope, programme & exclusions', mark: true }], text: 'Quote sent after Tuesday\u2019s site visit: \u00a384,600 + VAT including the DNO upgrade and payment terminals, programmed over your quiet season.' },
+          { k: 'me', at: t(24 * 42), text: 'Board approved - go ahead.' },
+          { k: 'op', at: t(24 * 15), att: [{ name: 'riverside-handover-pack.pdf', meta: 'Commissioning records · EIC · O&M manual', mark: true }], text: 'All eight bays commissioned and live on the network. Handover pack attached: commissioning records, EIC references, O&M manual and the DNO acceptance. Utilisation dashboard access has gone to your email.' },
+          { k: 'sys', text: 'Request closed', at: t(24 * 14) }
+        ]
+      }
+    ];
+    const data = { requests, nextRef: 13 };
+    this.persist(data);
+    return data;
+  }
+
+  // ---------- planner packs ----------
+  readIndex() { try { return JSON.parse(localStorage.getItem('evsp_projects') || '[]') || []; } catch (e) { return []; } }
+
+  // ---------- helpers ----------
+  uid() { return Math.random().toString(36).slice(2, 10); }
+  rel(ts) {
+    if (!ts) return '';
+    const d = Date.now() - ts;
+    if (d < 90000) return 'just now';
+    if (d < 3600000) return Math.round(d / 60000) + 'm ago';
+    if (d < 86400000) return Math.round(d / 3600000) + 'h ago';
+    if (d < 7 * 86400000) return Math.round(d / 86400000) + 'd ago';
+    return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+  dueInfo(r) {
+    if (!r.due || r.status === 'returned' || r.status === 'closed') return { text: '', ink: 'var(--ink-400)', has: false };
+    const d = r.due - Date.now();
+    if (d < 0) return { text: 'Overdue by ' + Math.max(1, Math.round(-d / 3600000)) + 'h', ink: 'var(--color-danger)', has: true };
+    if (d < 24 * 3600000) return { text: 'Due in ' + Math.max(1, Math.round(d / 3600000)) + 'h', ink: 'var(--amber-700)', has: true };
+    return { text: 'Due in ' + Math.round(d / 86400000) + 'd', ink: 'var(--ink-400)', has: true };
+  }
+  chip(r) { return this.STATUS[r.status] || this.STATUS.submitted; }
+  active() { return (this.state.data.requests || []).find(x => x.id === this.state.activeId) || null; }
+
+  mutate(fn) {
+    const data = JSON.parse(JSON.stringify(this.state.data));
+    fn(data);
+    this.persist(data);
+    this.setState({ data });
+  }
+
+  addSys(req, text) { req.msgs.push({ k: 'sys', text, at: Date.now() }); req.updatedAt = Date.now(); }
+
+  // ---------- nav ----------
+  go = (view) => this.setState({ view, draft: '', attachMark: false });
+
+  openReq = (id, mode) => {
+    this.mutate(d => {
+      const r = d.requests.find(x => x.id === id);
+      if (r) { if (mode === 'op') r.unreadO = 0; else r.unreadC = 0; }
+    });
+    this.setState({ activeId: id, view: mode === 'op' ? 'opdetail' : 'detail', draft: '', attachMark: false });
+  };
+
+  // ---------- messaging ----------
+  send = () => {
+    const text = (this.state.draft || '').trim();
+    const isOp = this.state.view === 'opdetail';
+    if (!text && !(isOp && this.state.attachMark)) return;
+    const attach = isOp && this.state.attachMark;
+    this.mutate(d => {
+      const r = d.requests.find(x => x.id === this.state.activeId);
+      if (!r) return;
+      const msg = { k: isOp ? 'op' : 'me', text: text || 'Fixed quote attached - scope, programme and exclusions are in the document.', at: Date.now() };
+      if (attach) msg.att = [{ name: (r.packName || 'project').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 28) + '-QUOTE.pdf', meta: 'Fixed quote · scope, programme & exclusions', mark: true }];
+      r.msgs.push(msg);
+      r.updatedAt = Date.now();
+      if (isOp) {
+        r.unreadC = (r.unreadC || 0) + 1;
+        if (attach && r.status !== 'closed') { r.status = 'returned'; this.addSys(r, 'Status changed to Quote sent'); }
+        else if (r.status === 'submitted') { r.status = 'in_review'; this.addSys(r, 'Status changed to Scoping'); }
+      } else {
+        r.unreadO = (r.unreadO || 0) + 1;
+        if (r.status === 'needs_info') { r.status = 'in_review'; this.addSys(r, 'Info provided - back in scoping'); }
+      }
+    });
+    this.setState({ draft: '', attachMark: false });
+  };
+
+  setStatus = (status) => {
+    this.mutate(d => {
+      const r = d.requests.find(x => x.id === this.state.activeId);
+      if (!r || r.status === status) return;
+      r.status = status;
+      this.addSys(r, status === 'closed' ? 'Request closed' : 'Status changed to ' + this.STATUS[status].label);
+      r.unreadC = (r.unreadC || 0) + 1;
+    });
+  };
+
+  // ---------- wizard ----------
+  wizSet(patch) { this.setState({ wiz: { ...this.state.wiz, ...patch, err: '' } }); }
+
+  wizNext = () => {
+    const w = this.state.wiz;
+    if (w.step === 1) return this.wizSet({ step: 2 });
+    if (w.step === 2) {
+      if (!w.packId && !w.noPack) return this.wizSet({ err: 'Pick a saved plan pack, or choose "No pack" and describe the job instead.' });
+      return this.wizSet({ step: 3 });
+    }
+    if (w.step === 3) {
+      if (!w.site.trim()) return this.wizSet({ err: 'Give the site a name so we can find it in the thread.' });
+      if (!w.cname.trim() || !/.+@.+\..+/.test(w.cemail)) return this.wizSet({ err: 'Add your name and a valid email - it\u2019s where the reply lands.' });
+      if (!w.brief.trim()) return this.wizSet({ err: 'Tell us about the project - scale, site and what you want taken off your plate.' });
+      return this.wizSet({ step: 4 });
+    }
+    // step 4 - submit
+    const tier = this.TIERS[w.tier] || this.TIERS.pm;
+    if (tier.pay === 'card') {
+      const digits = (w.cardNo || '').replace(/\D/g, '');
+      if (!w.cardName.trim() || digits.length < 15 || !/^\d\d\/\d\d$/.test(w.cardExp.trim()) || (w.cardCvc || '').trim().length < 3) {
+        return this.wizSet({ err: 'Card details look incomplete - this is a demo, any well-formed card will do.' });
+      }
+    }
+    const packs = this.readIndex();
+    const pack = packs.find(p => p.id === w.packId);
+    const ref = 'PS-' + String(this.state.data.nextRef).padStart(4, '0');
+    const now = Date.now();
+    const req = {
+      id: this.uid(), ref, tier: w.tier, status: 'submitted',
+      title: w.site.trim(), client: { name: w.cname.trim(), email: w.cemail.trim(), phone: '' },
+      packId: pack ? pack.id : '',
+      packName: pack ? (pack.name || 'Untitled pack') : 'No pack - described in thread',
+      packMeta: pack ? ((pack.n || 0) + ' photos · saved ' + (pack.date || '')) : '-',
+      supplyLine: (this.WTYPES[w.wtype] || 'Workplace') + ' · ' +
+        (w.supply === 'single' ? 'single-phase' : w.supply === 'three' ? 'three-phase' : 'supply unknown') + ' · ' +
+        (w.timescale === 'asap' ? 'needed ASAP' : w.timescale === 'weeks' ? 'start in 2–6 weeks' : 'flexible timing') +
+        (w.bays ? ' · ' + w.bays : '') + (w.target ? ' · target ' + w.target : ''),
+      payment: tier.pay === 'card' ? { amount: tier.price, status: 'paid', paidAt: now }
+        : tier.pay === 'invoice' ? { amount: tier.price, status: 'to_invoice', paidAt: null }
+        : { amount: 0, status: 'quote', paidAt: null },
+      createdAt: now, updatedAt: now, due: tier.slaH ? now + tier.slaH * 3600000 : null,
+      unreadC: 0, unreadO: 1,
+      msgs: [
+        { k: 'sys', at: now, text: 'Enquiry submitted · ' + tier.name + ' · scoping' },
+        { k: 'me', at: now, text: w.brief.trim(), att: pack ? [{ name: (pack.name || 'pack').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 28) + '.evsp', meta: 'Project pack · ' + (pack.n || 0) + ' photos' }] : undefined }
+      ]
+    };
+    this.mutate(d => { d.requests.unshift(req); d.nextRef += 1; });
+    this.setState({ activeId: req.id, wiz: { ...w, doneRef: ref, err: '' } });
+  };
+
+  // ---------- render ----------
+  renderVals() {
+    const s = this.state;
+    const opName = this.props.operatorName ?? 'Dan';
+    const opInitials = opName.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase();
+    const reqs = (s.data && s.data.requests) || [];
+    const mode = s.mode, view = s.view;
+    const isCustomer = mode === 'customer', isOperator = !isCustomer;
+    const unread = reqs.reduce((n, r) => n + (r.unreadC || 0), 0);
+
+    const priceStr = (t) => t.pay === 'quote' ? 'Bespoke quote' : '£' + t.price;
+
+    // landing offer - single workplace PM offering
+    const pmDef = this.TIERS.pm;
+    const pmInc = pmDef.inc;
+    const pmSteps = [
+      { n: '1', t: 'Send the pack & brief', d: 'A planner pack, photos and a walkthrough video if you have one - or just describe the site.' },
+      { n: '2', t: 'Scoping call', d: 'Capacity, DNO position, landlord consents, phasing and who does what - agreed before any number.' },
+      { n: '3', t: 'Fixed quote', d: 'Scope, programme and exclusions in writing. Accept it and we run the project to handover.' }
+    ];
+    const pmStart = () => this.setState({ wiz: this.freshWiz(), view: 'wizard', mode: 'customer' });
+
+    // wizard
+    const w = s.wiz;
+    const tierDef = this.TIERS[w.tier] || this.TIERS.pm;
+    const stepLabels = ['Site type', 'Project', 'Details', 'Confirm'];
+    const packs = view === 'wizard' ? this.readIndex() : [];
+    const selPack = packs.find(p => p.id === w.packId);
+    const wiz = {
+      ...w,
+      hasBanner: !!w.banner, notDone: !w.doneRef, isDone: !!w.doneRef,
+      steps: stepLabels.map((label, i) => {
+        const n = i + 1, done = n < w.step, cur = n === w.step;
+        return {
+          n: done ? '✓' : String(n), label, notLast: n < 4,
+          dotBg: done || cur ? 'var(--accent-500)' : 'var(--color-surface)',
+          dotInk: done || cur ? 'var(--accent-contrast)' : 'var(--ink-400)',
+          dotBorder: done || cur ? 'var(--accent-500)' : 'var(--cream-border-strong)',
+          lblInk: cur ? 'var(--ink-900)' : 'var(--ink-400)'
+        };
+      }),
+      s1: w.step === 1, s2: w.step === 2, s3: w.step === 3, s4: w.step === 4,
+      tierOpts: Object.keys(this.WTYPES).map(id => {
+        const lines = { office: 'Staff & visitor charging, often phased', depot: 'Vans and HGVs, overnight schedules, yard civils', dest: 'Customer-facing bays, payment & signage', other: 'Industrial, campus and mixed estates' };
+        const isSel = (w.wtype || 'office') === id;
+        return {
+          id, name: this.WTYPES[id], line: lines[id], price: '', turn: '', isSel,
+          bg: isSel ? 'var(--accent-50)' : 'var(--color-surface)',
+          border: isSel ? 'var(--accent-500)' : 'var(--cream-border)',
+          rBorder: isSel ? 'var(--accent-500)' : 'var(--cream-border-strong)',
+          rBg: isSel ? 'var(--accent-500)' : 'var(--color-surface)',
+          onPick: () => this.wizSet({ wtype: id })
+        };
+      }),
+      packHint: 'Pick the plan pack saved from the Site Planner on this device - photos and markups travel with it. No pack yet is fine.',
+      videoTip: true,
+      hasPacks: packs.length > 0, noPacks: packs.length === 0,
+      packs: packs.slice(0, 6).map(p => {
+        const isSel = w.packId === p.id;
+        return {
+          id: p.id, name: p.name || 'Untitled', meta: (p.n || 0) + ' photos · ' + (p.mode || 'site') + ' · ' + (p.date || ''),
+          thumbBg: p.thumb ? 'url("' + p.thumb + '")' : 'none', hasThumb: !!p.thumb, noThumb: !p.thumb, isSel,
+          bg: isSel ? 'var(--accent-50)' : 'var(--color-surface)',
+          border: isSel ? 'var(--accent-500)' : 'var(--cream-border)',
+          onPick: () => this.wizSet({ packId: p.id, noPack: false })
+        };
+      }),
+      npBg: w.noPack ? 'var(--accent-50)' : 'var(--color-surface)',
+      npBorder: w.noPack ? 'var(--accent-500)' : 'var(--cream-border)',
+      npRBorder: w.noPack ? 'var(--accent-500)' : 'var(--cream-border-strong)',
+      npRBg: w.noPack ? 'var(--accent-500)' : 'var(--color-surface)',
+      onNoPack: () => this.wizSet({ noPack: true, packId: null }),
+      siteLabel: 'Site name',
+      briefLabel: 'The project, in your words',
+      briefPh: 'Scale, site constraints, who else is involved, what you want taken off your plate…',
+      isPm: true,
+      supplyOpts: [['single', 'Single-ph'], ['three', 'Three-ph'], ['unknown', 'Not sure']].map(([id, label]) => ({
+        id, label, onPick: () => this.wizSet({ supply: id }),
+        bg: w.supply === id ? 'var(--color-surface)' : 'transparent',
+        ink: w.supply === id ? 'var(--accent-700)' : 'var(--ink-500)'
+      })),
+      timeOpts: [['asap', 'ASAP'], ['weeks', '2–6 wks'], ['flexible', 'Flexible']].map(([id, label]) => ({
+        id, label, onPick: () => this.wizSet({ timescale: id }),
+        bg: w.timescale === id ? 'var(--color-surface)' : 'transparent',
+        ink: w.timescale === id ? 'var(--accent-700)' : 'var(--ink-500)'
+      })),
+      onField: (e) => this.wizSet({ [e.target.dataset.f]: e.target.value }),
+      payTitle: tierDef.pay === 'card' ? 'Pay & submit' : 'Confirm & submit',
+      payCard: tierDef.pay === 'card', payInvoice: tierDef.pay === 'invoice', payQuote: tierDef.pay === 'quote',
+      sumTier: tierDef.name + ' · ' + (this.WTYPES[w.wtype || 'office'] || 'Workplace'),
+      sumLine: (w.site || 'Untitled request') + (selPack ? ' · ' + (selPack.name || 'pack') : w.noPack ? ' · no pack' : ''),
+      sumPrice: priceStr(tierDef), sumTurn: tierDef.turn,
+      hasErr: !!w.err,
+      canBack: w.step > 1, noBack: w.step === 1,
+      onBack: () => this.wizSet({ step: Math.max(1, w.step - 1) }),
+      onNext: this.wizNext,
+      nextLabel: w.step < 4 ? 'Continue' : 'Submit enquiry',
+      doneRef: w.doneRef || '',
+      doneLine: tierDef.pay === 'card'
+        ? 'Payment taken and the pack is with us. You\u2019ll have it back within ' + tierDef.turn.toLowerCase() + ' - replies land in the request thread.'
+        : tierDef.pay === 'invoice'
+          ? 'We\u2019ll confirm scope in the thread, invoice through Quotes & invoices, and start on acceptance - expect a reply within 1 working day.'
+          : 'We\u2019ll reply in the thread within 1 working day to arrange the scoping call, then send a fixed quote.',
+      onViewReq: () => this.openReq(s.activeId, 'cust')
+    };
+
+    // request rows (customer)
+    const reqRows = reqs.map(r => {
+      const c = this.chip(r), due = this.dueInfo(r);
+      return {
+        id: r.id, ref: r.ref, title: r.title, tierName: this.tierName(r.tier),
+        when: this.rel(r.updatedAt), unread: (r.unreadC || 0) > 0,
+        chipBg: c.bg, chipInk: c.ink, chipLabel: c.label,
+        dueText: due.text, dueInk: due.ink, hasDue: due.has,
+        onOpen: () => this.openReq(r.id, 'cust')
+      };
+    });
+
+    // detail builders
+    const buildMsgs = (r, forOp) => (r ? r.msgs : []).map((m, i) => ({
+      id: r.id + '-' + i,
+      isSys: m.k === 'sys', isOp: m.k === 'op', isMe: m.k === 'me',
+      text: m.text, when: this.rel(m.at),
+      hasAtt: !!(m.att && m.att.length),
+      att: (m.att || []).map(a => ({ name: a.name, meta: a.meta || '', isMark: !!a.mark }))
+    }));
+
+    const ar = this.active();
+    const mkDet = (r) => {
+      if (!r) return { ref: '', title: '', tierName: '', chipBg: '', chipInk: '', chipLabel: '', dueText: '', dueInk: '', hasDue: false, needsInfo: false, timeline: [], msgs: [] };
+      const c = this.chip(r), due = this.dueInfo(r);
+      const order = ['submitted', 'in_review', 'returned', 'closed'];
+      const effective = r.status === 'needs_info' ? 'in_review' : r.status;
+      const idx = order.indexOf(effective);
+      return {
+        ref: r.ref, title: r.title, tierName: this.tierName(r.tier),
+        chipBg: c.bg, chipInk: c.ink, chipLabel: c.label,
+        dueText: due.text, dueInk: due.ink, hasDue: due.has,
+        needsInfo: r.status === 'needs_info',
+        timeline: [['Enquiry'], ['Scoping'], ['Quote sent'], ['Closed']].map(([label], i) => ({
+          label,
+          done: i < idx || (i === idx && (r.status === 'returned' || r.status === 'closed') && i >= 2),
+          dotBg: i <= idx ? 'var(--accent-500)' : 'var(--color-surface)',
+          dotBorder: i <= idx ? 'var(--accent-500)' : 'var(--cream-border-strong)',
+          ink: i <= idx ? 'var(--ink-800)' : 'var(--ink-400)'
+        })),
+        msgs: buildMsgs(r)
+      };
+    };
+    const det = mkDet(ar);
+
+    // operator queue
+    const isOpen = (r) => r.status !== 'closed';
+    const buckets = {
+      open: reqs.filter(isOpen),
+      submitted: reqs.filter(r => r.status === 'submitted'),
+      in_review: reqs.filter(r => r.status === 'in_review'),
+      needs_info: reqs.filter(r => r.status === 'needs_info'),
+      returned: reqs.filter(r => r.status === 'returned'),
+      closed: reqs.filter(r => r.status === 'closed')
+    };
+    const filtered = buckets[s.opFilter] || buckets.open;
+    const awaiting = reqs.filter(r => (r.unreadO || 0) > 0 && isOpen(r)).length;
+
+    const op = {
+      kpis: [
+        { label: 'Open enquiries', val: String(buckets.open.length), sub: 'workplace projects', ink: 'var(--ink-900)' },
+        { label: 'In scoping', val: String(buckets.in_review.length + buckets.needs_info.length), sub: 'call or info pending', ink: 'var(--ink-900)' },
+        { label: 'Quotes sent', val: String(buckets.returned.length), sub: 'awaiting client decision', ink: buckets.returned.length ? 'var(--green-700)' : 'var(--ink-900)' },
+        { label: 'Awaiting your reply', val: String(awaiting), sub: 'client spoke last', ink: awaiting ? 'var(--orange-700)' : 'var(--ink-900)' }
+      ],
+      filters: [['open', 'Open'], ['submitted', 'Submitted'], ['in_review', 'In review'], ['needs_info', 'Needs info'], ['returned', 'Returned'], ['closed', 'Closed']].map(([id, label]) => {
+        const on = s.opFilter === id;
+        return {
+          id, label, count: String((buckets[id] || []).length),
+          bg: on ? 'var(--ink-900)' : 'var(--color-surface)',
+          ink: on ? 'var(--cream-50)' : 'var(--ink-600)',
+          border: on ? 'var(--ink-900)' : 'var(--cream-border-strong)',
+          onPick: () => this.setState({ opFilter: id })
+        };
+      }),
+      rows: filtered.map(r => {
+        const c = this.chip(r), due = this.dueInfo(r);
+        return {
+          id: r.id, ref: r.ref, title: r.title, tierName: this.tierName(r.tier),
+          client: r.client.name, unread: (r.unreadO || 0) > 0,
+          chipBg: c.bg, chipInk: c.ink, chipLabel: c.label,
+          dueText: due.has ? due.text : '-', dueInk: due.ink,
+          updated: this.rel(r.updatedAt),
+          onOpen: () => this.openReq(r.id, 'op')
+        };
+      }),
+      empty: filtered.length === 0,
+      attachMark: s.attachMark,
+      onToggleAttach: () => this.setState({ attachMark: !s.attachMark })
+    };
+
+    // operator detail
+    const opd = ar ? {
+      ...mkDet(ar),
+      msgs: buildMsgs(ar, true),
+      clientName: ar.client.name, clientEmail: ar.client.email, clientPhone: ar.client.phone || '-',
+      clientInitials: ar.client.name.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase(),
+      packName: ar.packName, packMeta: ar.packMeta, supplyLine: ar.supplyLine,
+      payAmount: ar.payment.amount ? '£' + ar.payment.amount.toLocaleString('en-GB') : 'TBC',
+      payLabel: ar.payment.status === 'paid' ? 'Paid' : ar.payment.status === 'to_invoice' ? 'To invoice' : 'Quote to follow',
+      payBg: ar.payment.status === 'paid' ? 'var(--green-100)' : ar.payment.status === 'to_invoice' ? 'var(--amber-100)' : 'var(--ink-100)',
+      payInk: ar.payment.status === 'paid' ? 'var(--green-700)' : ar.payment.status === 'to_invoice' ? 'var(--amber-700)' : 'var(--ink-700)',
+      showInvoiceLink: ar.payment.status === 'to_invoice',
+      actions: [
+        ar.status === 'submitted' ? { label: 'Start scoping', bg: 'var(--accent-500)', ink: 'var(--accent-contrast)', border: 'var(--accent-500)', onClick: () => this.setStatus('in_review') } : null,
+        ar.status !== 'needs_info' && ar.status !== 'closed' ? { label: 'Request more info', bg: 'var(--color-surface)', ink: 'var(--ink-800)', border: 'var(--cream-border-strong)', onClick: () => this.setStatus('needs_info') } : null,
+        ar.status !== 'closed' ? { label: s.attachMark ? 'Quote & proposal queued ✓' : 'Send quote & proposal…', bg: s.attachMark ? 'var(--accent-50)' : 'var(--color-surface)', ink: s.attachMark ? 'var(--accent-700)' : 'var(--ink-800)', border: s.attachMark ? 'var(--accent-300)' : 'var(--cream-border-strong)', onClick: () => this.setState({ attachMark: !s.attachMark }) } : null,
+        ar.status !== 'closed' ? { label: 'Close enquiry', bg: 'var(--color-surface)', ink: 'var(--ink-500)', border: 'var(--cream-border-strong)', onClick: () => this.setStatus('closed') } : { label: 'Reopen (back to scoping)', bg: 'var(--color-surface)', ink: 'var(--ink-800)', border: 'var(--cream-border-strong)', onClick: () => this.setStatus('in_review') }
+      ].filter(Boolean)
+    } : { actions: [], msgs: [], clientName: '', clientEmail: '', clientPhone: '', clientInitials: '', packName: '', packMeta: '', supplyLine: '', payAmount: '', payLabel: '', payBg: '', payInk: '', showInvoiceLink: false, ref: '', title: '', tierName: '', chipBg: '', chipInk: '', chipLabel: '', dueText: '', dueInk: '', hasDue: false };
+
+    return {
+      ready: s.ready,
+      isCustomer, isOperator,
+      segCustBg: isCustomer ? 'var(--color-surface)' : 'transparent',
+      segCustInk: isCustomer ? 'var(--accent-700)' : 'var(--ink-500)',
+      segOpBg: isOperator ? 'var(--ink-900)' : 'transparent',
+      segOpInk: isOperator ? 'var(--cream-50)' : 'var(--ink-500)',
+      setCust: () => this.setState({ mode: 'customer', view: 'landing', draft: '' }),
+      setOp: () => this.setState({ mode: 'operator', view: 'opqueue', draft: '', opFilter: 'open' }),
+      navHome: () => this.go('landing'),
+      navReqs: () => this.go('requests'),
+      navQueue: () => this.go('opqueue'),
+      navNew: () => this.setState({ wiz: this.freshWiz(), view: 'wizard' }),
+      hasUnread: unread > 0, unreadBadge: String(unread),
+      hasRequests: reqs.length > 0,
+      isLanding: view === 'landing' && isCustomer,
+      isWizard: view === 'wizard' && isCustomer,
+      isRequests: view === 'requests' && isCustomer,
+      isDetail: view === 'detail' && isCustomer && !!ar,
+      isOpQueue: view === 'opqueue' && isOperator,
+      isOpDetail: view === 'opdetail' && isOperator && !!ar,
+      opName, opInitials,
+      pmInc, pmSteps, pmStart, wiz, reqRows, reqEmpty: reqs.length === 0, det, op, opd,
+      draft: s.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      onDraftKey: (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); } },
+      onSend: this.send
+    };
+  }
+}
+</script>
+</body>
+</html>

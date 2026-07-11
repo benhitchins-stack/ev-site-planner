@@ -1,0 +1,11 @@
+# EV Site Planner suite is static: no build step, publish the public/ folder as-is.
+[build]
+  publish = "public"
+  command = ""
+
+# Pretty-path fallback: a bare "/" serves the redirect stub, which forwards to
+# the landing page. Everything else is a real file on disk.
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200

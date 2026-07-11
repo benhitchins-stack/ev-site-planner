@@ -1,0 +1,12 @@
+/* ============================================================
+   Fonts — EV Infrastructure Tools  ·  "Current" identity
+   Display:  Bricolage Grotesque  (characterful premium grotesk)
+   Body:     Hanken Grotesk       (warm, legible UI + reading)
+   Data:     Space Grotesk        (engineered numerals)
+   Mono:     IBM Plex Mono        (raw code/values — rare)
+
+   Loaded via Google Fonts CDN. To SELF-HOST, download the woff2
+   binaries for these families + weights and replace this @import
+   with @font-face rules pointing at assets/fonts/*.woff2.
+   ============================================================ */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");

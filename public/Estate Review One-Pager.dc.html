@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>html,body{margin:0;padding:0}</style>
+</helmet>
+
+<div style="font-family:'Hanken Grotesk',sans-serif;color:#16232E">
+  <x-import component-from-global-scope="doc-page" from="./doc-page.js" size="a4" margin="0.55in" hint-size="100%,1123px">
+
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid #16232E;padding-bottom:10px;margin-bottom:14px">
+      <span style="width:26px;height:26px;border-radius:7px;background:#16232E;color:#FBF8F2;display:inline-flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px">ER</span>
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;letter-spacing:-0.01em">Estate Review</span>
+      <span style="font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#1043B0;background:#EBF1FF;border:1px solid #C9DAFF;border-radius:999px;padding:2px 8px">For local authorities</span>
+      <span style="flex:1"></span>
+      <span style="font-family:'Space Grotesk',monospace;font-size:9.5px;color:#8C97A0">EV Site Planner · per-authority licence</span>
+    </div>
+
+    <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;line-height:1.12;letter-spacing:-0.02em;font-weight:800;margin:0 0 8px;max-width:620px;text-wrap:balance">Does your charging estate still meet the standards it was funded against?</h1>
+    <p style="font-size:11.5px;line-height:1.6;color:#5C6770;margin:0 0 10px;max-width:660px;text-wrap:pretty">Most council estates were installed at pace, across several funding rounds, and the rules arrived mid-rollout: PAS 1899 (Oct 2022), then the Public Charge Point Regulations (Nov 2023–25). Estate Review surveys every site against every live framework and turns the result into the documents funders, auditors and members ask for.</p>
+
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+      <span style="font-size:9.5px;font-weight:700;color:#16232E;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:4px 10px">56 checks</span>
+      <span style="font-size:9.5px;font-weight:700;color:#16232E;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:4px 10px">5 regulatory frameworks</span>
+      <span style="font-size:9.5px;font-weight:700;color:#16232E;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:4px 10px">Guided surveys</span>
+      <span style="font-size:9.5px;font-weight:700;color:#16232E;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:4px 10px">Contractor sign-off loop</span>
+      <span style="font-size:9.5px;font-weight:700;color:#16232E;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:4px 10px">4 funder-ready outputs</span>
+    </div>
+
+    <div style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#B3372E;margin-bottom:6px">The cost of not knowing · these liabilities exist whether or not anyone has looked</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <div style="flex:1;background:#16232E;border-radius:9px;padding:9px 11px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.01em;color:#FF8A7A">£10,000</div>
+        <div style="font-size:9.5px;line-height:1.45;color:#F1EFE9;margin-top:3px">Maximum civil penalty per non-compliant chargepoint under the PCPR 2023. Enforcement is complaint-led: the first notice arrives unbudgeted.</div>
+      </div>
+      <div style="flex:1;background:#16232E;border-radius:9px;padding:9px 11px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.01em;color:#FF8A7A">Clawback</div>
+        <div style="font-size:9.5px;line-height:1.45;color:#F1EFE9;margin-top:3px">ORCS and LEVI money is conditional. Conditions nobody can evidence become due-diligence findings that stall or sink the next award.</div>
+      </div>
+      <div style="flex:1;background:#16232E;border-radius:9px;padding:9px 11px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.01em;color:#FF8A7A">Uncapped</div>
+        <div style="font-size:9.5px;line-height:1.45;color:#F1EFE9;margin-top:3px">Equality Act claims have no upper limit. The defence is a s.149 due-regard record; most estates predate PAS 1899 and hold none.</div>
+      </div>
+      <div style="flex:1;background:#16232E;border-radius:9px;padding:9px 11px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.01em;color:#FF8A7A">Call-out rates</div>
+        <div style="font-size:9.5px;line-height:1.45;color:#F1EFE9;margin-top:3px">Defects found by complainants are fixed one visit at a time. Found in survey, the same works price as one programmed package.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:12px">
+      <div style="flex:1.05;border:1px solid #E7DFD0;border-radius:10px;padding:11px 14px">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#B4590A;margin-bottom:6px">What you get</div>
+        <div style="font-size:10px;line-height:1.5;color:#16232E">
+          <div style="display:flex;gap:7px;padding:2.5px 0"><span style="color:#1E6BFF">●</span><span><b>The check library.</b> Payment, electrical, accessibility, highways and grant conditions: 56 checks, each with a plain-English explainer, exact citation and costed rectification guidance, version-controlled for specialist sign-off.</span></div>
+          <div style="display:flex;gap:7px;padding:2.5px 0"><span style="color:#1E6BFF">●</span><span><b>Guided walkthroughs</b> for first-time surveyors and fast checklists for repeat visits, with applies-to logic per site type: lamppost, pillar, car park, rapid hub, depot.</span></div>
+          <div style="display:flex;gap:7px;padding:2.5px 0"><span style="color:#1E6BFF">●</span><span><b>Tiered evidence capture.</b> Notes on every shortfall, photos on every fail, measurements where a threshold applies, and a recorded reason on everything that does not apply.</span></div>
+          <div style="display:flex;gap:7px;padding:2.5px 0"><span style="color:#1E6BFF">●</span><span><b>Contractor mode with sign-off.</b> Assign sites to your surveying contractor; their evidence returns to an officer for approval before it enters the estate record.</span></div>
+        </div>
+      </div>
+      <div style="flex:.95;border:1px solid #E7DFD0;border-radius:10px;padding:11px 14px;background:#F4EFE5">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#0E8A6D;margin-bottom:6px">What it produces</div>
+        <div style="font-size:10px;line-height:1.5;color:#16232E">
+          <div style="padding:2.5px 0"><b>Grant-readiness report.</b> Estate position, findings and a costed rectification programme, ready to attach to the next bid.</div>
+          <div style="padding:2.5px 0"><b>Equality Act s.149 record.</b> Formal evidence of due regard, compiled from the accessibility survey.</div>
+          <div style="padding:2.5px 0"><b>Funder evidence pack.</b> Per-condition proof against each grant agreement (ORCS, LEVI, local funds).</div>
+          <div style="padding:2.5px 0"><b>Public summary.</b> A plain-English page for residents: what we checked, what we are fixing, and when.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;border:1px solid #E7DFD0;border-radius:9px;padding:7px 11px;margin-bottom:10px;background:#FFFFFF">
+      <span style="font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C97A0;flex:none">Sample finding</span>
+      <span style="font-size:8.5px;font-weight:700;letter-spacing:.05em;color:#FFFFFF;background:#B3372E;border-radius:5px;padding:2px 7px;flex:none">FAIL</span>
+      <span style="font-family:'Space Grotesk',monospace;font-size:9px;font-weight:600;color:#1043B0;flex:none">PAY-03</span>
+      <span style="font-size:9.5px;line-height:1.45;color:#16232E">Contactless not fitted on 22 kW pillar units · PCPR 2023 reg. 5 · photo attached · rectification costed and programmed, batch 2 of 3</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:stretch;margin-bottom:10px">
+      <div style="flex:1;border-left:3px solid #1E6BFF;padding:2px 0 2px 10px">
+        <div style="font-family:'Space Grotesk',monospace;font-size:9px;font-weight:600;color:#1043B0;margin-bottom:2px">1 · REVIEWED</div>
+        <div style="font-size:10px;line-height:1.5;color:#5C6770">Every site surveyed against every live framework, including the ones nobody complained about.</div>
+      </div>
+      <div style="flex:1;border-left:3px solid #1E6BFF;padding:2px 0 2px 10px">
+        <div style="font-family:'Space Grotesk',monospace;font-size:9px;font-weight:600;color:#1043B0;margin-bottom:2px">2 · CONSIDERED</div>
+        <div style="font-size:10px;line-height:1.5;color:#5C6770">Each requirement assessed to an adequate level, with a recorded reason where one does not apply.</div>
+      </div>
+      <div style="flex:1;border-left:3px solid #1E6BFF;padding:2px 0 2px 10px">
+        <div style="font-family:'Space Grotesk',monospace;font-size:9px;font-weight:600;color:#1043B0;margin-bottom:2px">3 · RECTIFIED</div>
+        <div style="font-size:10px;line-height:1.5;color:#5C6770">What fell short is fixed or programmed, with a cost and an owner against every item.</div>
+      </div>
+    </div>
+
+    <div style="background:#EBF1FF;border:1px solid #C9DAFF;border-radius:9px;padding:8px 12px;margin-bottom:12px;font-size:9.5px;line-height:1.55;color:#1043B0"><b>Why evidence it here, not in a spreadsheet:</b> every check carries its exact citation · evidence rules are enforced as you survey (notes on shortfalls, photos on fails, recorded reasons on N/A) · contractor submissions return through officer sign-off · all four documents compile from the same record, so the survey and the defence are one job, not two.</div>
+
+    <div style="display:flex;gap:12px;align-items:stretch">
+      <div style="flex:1.4;background:#16232E;border-radius:10px;padding:13px 16px">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5D9BFF;margin-bottom:7px">Per-authority licence</div>
+        <div style="font-size:10.5px;line-height:1.65;color:#F1EFE9">
+          <div style="display:flex;gap:7px"><span style="color:#5D9BFF">·</span><span>Annual licence covering the whole estate</span></div>
+          <div style="display:flex;gap:7px"><span style="color:#5D9BFF">·</span><span>Unlimited officer seats; contractor access included</span></div>
+          <div style="display:flex;gap:7px"><span style="color:#5D9BFF">·</span><span>Estate onboarding and check-library updates included</span></div>
+          <div style="display:flex;gap:7px"><span style="color:#5D9BFF">·</span><span>Priced on chargepoints in scope, quoted per estate; 12-month minimum term</span></div>
+        </div>
+      </div>
+      <sc-if value="{{ showDemo }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;background:#EBF1FF;border:1px solid #C9DAFF;border-radius:10px;padding:13px 16px">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#1043B0;margin-bottom:6px">See it working first</div>
+        <div style="font-size:10.5px;line-height:1.6;color:#16232E">The built-in worked example is open to explore at no cost: your officers can run a full survey, sign-off and all four reports on illustrative data before licensing live use.</div>
+        <div style="font-family:'Space Grotesk',monospace;font-size:10px;color:#1043B0;margin-top:7px">councils@evsiteplanner.co.uk</div>
+      </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ showWorkedExample }}" hint-placeholder-val="{{ true }}">
+    <div style="border:1px solid #E7DFD0;border-radius:10px;padding:10px 14px;margin-top:12px;display:flex;gap:12px;align-items:baseline">
+      <span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C1D4F;background:#F9EAF1;border-radius:999px;padding:2px 8px;flex:none">Worked example</span>
+      <span style="font-size:10.5px;line-height:1.55;color:#5C6770">Averton, a fictional council estate: 410 chargepoints after a 2023 lamppost rollout, ORCS funded at 60%, 1,800 committed by 2028. Profile modelled on published UK rollouts; all findings illustrative.</span>
+    </div>
+    </sc-if>
+
+    <div style="border-top:1px solid #E7DFD0;margin-top:10px;padding-top:8px;font-family:'Space Grotesk',monospace;font-size:8px;line-height:1.6;color:#8C97A0">
+      Frameworks: Public Charge Point Regulations 2023 (DfT/OPSS) · PAS 1899:2022 (BSI) · BS 7671:2018+A2:2022 · Equality Act 2010 · NRSWA, TSRGD, RTRA · grant agreements as filed. Estate Review assists review and evidences consideration. It is not a certification; findings requiring professional judgement are flagged for verification by suitably qualified specialists.
+    </div>
+
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showDemo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;showWorkedExample&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showWorkedExample: this.props.showWorkedExample ?? true,
+      showDemo: this.props.showDemo ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>

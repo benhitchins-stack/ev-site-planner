@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#F4EFE5;}
+  body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  ::selection{background:#1E6BFF;color:#FBF8F2;}
+  a{-webkit-tap-highlight-color:transparent;}
+  details > summary{list-style:none;}
+  details > summary::-webkit-details-marker{display:none;}
+  @keyframes lhpop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#F4EFE5;font-family:'Hanken Grotesk',ui-sans-serif,system-ui,sans-serif;color:#16232E">
+
+  <!-- ── Topbar ── -->
+  <header style="position:sticky;top:0;z-index:50;background:#FFFFFF;border-bottom:1px solid #E7DFD0;display:flex;align-items:center;flex-wrap:wrap;row-gap:8px;gap:12px;padding:10px 14px">
+    <div style="width:32px;height:32px;border-radius:50%;background:#16232E;display:grid;place-items:center;flex-shrink:0">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="#1E6BFF"><path d="M13 2 5 13.2h5.1L8.6 22 19 10.4h-5.2L13 2z"></path></svg>
+    </div>
+    <div style="line-height:1.15">
+      <b style="font-weight:700;font-size:15.5px;letter-spacing:-.015em;font-family:'Bricolage Grotesque','Hanken Grotesk',sans-serif">Learning Hub</b>
+      <small style="display:block;color:#5B6770;font-size:11.5px">Site Planner · short interactive courses</small>
+    </div>
+    <div style="flex:1"></div>
+    <details style="position:relative">
+      <summary style="display:inline-flex;align-items:center;gap:7px;background:#FFFFFF;color:#16232E;border:1px solid #D6CBB6;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:650;cursor:pointer;list-style:none" style-hover="border-color:#1E6BFF">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+        Tools
+      </summary>
+      <div style="position:absolute;right:0;top:calc(100% + 6px);z-index:120;min-width:190px;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:12px;box-shadow:0 14px 34px rgba(22,35,46,.18);padding:5px;display:flex;flex-direction:column;gap:1px">
+        <a href="Guide Library.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Guide library</a>
+        <a href="Quotes &amp; Invoices.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Quotes &amp; invoices</a>
+        <a href="RAMS Builder.dc.html" title="Coming soon" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#5C6770" style-hover="background:#F4EFE5;color:#1043B0"><span>RAMS builder</span><span style="font-size:8.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:#F7EDD8;color:#9A6403;border-radius:999px;padding:2px 7px;flex:none">Soon</span></a>
+        <a href="Project Support.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Project Support</a>
+        <a href="Council Estate Review.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Estate Review</a>
+      </div>
+    </details>
+    <a href="EV Site Planner.html" style="display:inline-flex;align-items:center;gap:7px;background:#1E6BFF;color:#FBF8F2;border:1px solid #1E6BFF;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:650;text-decoration:none" style-hover="background:#1556E0">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"></path></svg>
+      Back to planner
+    </a>
+  </header>
+
+  <!-- ════════ HOME ════════ -->
+  <sc-if value="{{hHome}}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:1020px;margin:0 auto;padding:34px 18px 80px">
+
+      <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:26px">
+        <div style="flex:1;min-width:300px">
+          <div style="font-family:'Space Grotesk',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1043B0;margin-bottom:8px">Two short courses · ~20 min each</div>
+          <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.08">Learn EV installs the<br>way you'll actually do them.</h1>
+          <p style="margin:12px 0 0;font-size:14.5px;line-height:1.6;color:#3D4B57;max-width:56ch">Bite-size lessons built from the same rules the planner enforces - BS 7671:2018+A4:2026 Section 722, the IET Code of Practice (5th edition), manufacturer enabling works and UK process. Every lesson ends with a quick check; every course ends with a scored knowledge check.</p>
+          <div style="display:inline-flex;align-items:flex-start;gap:8px;margin-top:14px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:10px;padding:8px 12px;font-size:12px;line-height:1.55;color:#3D4B57;max-width:56ch">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E6BFF" stroke-width="2.2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="m9 12 2 2 4-4"></path></svg>
+            <span><b style="color:#16232E">Written by the trade</b> - authored and kept current by a Level 3 qualified installer &amp; commercial PM; 18th Edition (BS 7671), SMSTS, 10+ years of domestic and commercial EV installs.</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px">
+          <div style="text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:22px;font-weight:700;color:#1E6BFF">13</div><div style="font-size:10.5px;font-weight:650;color:#8C97A0;text-transform:uppercase;letter-spacing:.06em">Lessons</div></div>
+          <div style="width:1px;background:#E7DFD0"></div>
+          <div style="text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:22px;font-weight:700;color:#1E6BFF">13</div><div style="font-size:10.5px;font-weight:650;color:#8C97A0;text-transform:uppercase;letter-spacing:.06em">Quick checks</div></div>
+          <div style="width:1px;background:#E7DFD0"></div>
+          <div style="text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:22px;font-weight:700;color:#1E6BFF">2</div><div style="font-size:10.5px;font-weight:650;color:#8C97A0;text-transform:uppercase;letter-spacing:.06em">Exams</div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px">
+
+        <!-- Domestic course card -->
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:4px;background:#1E6BFF"></div>
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="{{domRingSt}}"><div style="width:46px;height:46px;border-radius:50%;background:#FFFFFF;display:grid;place-items:center;font-family:'Space Grotesk',monospace;font-size:12px;font-weight:700;color:#16232E">{{domPct}}</div></div>
+            <div>
+              <div style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">Course 01 · Domestic</div>
+              <h2 style="margin:2px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.01em">Home charging, done right</h2>
+            </div>
+          </div>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Survey the property, size the load against the main fuse, get PEN protection right, wire and certify the circuit, and hand over a smart, compliant charger.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:20px;padding:3px 10px">6 lessons</span>
+            <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:20px;padding:3px 10px">Fuse headroom calculator</span>
+            <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:20px;padding:3px 10px">8-question check</span>
+          </div>
+          <sc-if value="{{domBadge}}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:650;color:#1F7A33">🏅 Knowledge check passed - best score {{domBest}}/8</div>
+          </sc-if>
+          <button onClick="{{openDom}}" style="margin-top:auto;background:#1E6BFF;color:#FBF8F2;border:none;border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="background:#1556E0">{{domCta}}</button>
+        </div>
+
+        <!-- Commercial course card -->
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:4px;background:#16232E"></div>
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="{{comRingSt}}"><div style="width:46px;height:46px;border-radius:50%;background:#FFFFFF;display:grid;place-items:center;font-family:'Space Grotesk',monospace;font-size:12px;font-weight:700;color:#16232E">{{comPct}}</div></div>
+            <div>
+              <div style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Course 02 · Commercial</div>
+              <h2 style="margin:2px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.01em">Multi-charger sites that pass</h2>
+            </div>
+          </div>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Scope supply and demand, design the EVDB and radials, set up dynamic load management, nail civils and comms, and document the job so it signs off first time.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:20px;padding:3px 10px">7 lessons</span>
+            <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:20px;padding:3px 10px">DLM sizer</span>
+            <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:20px;padding:3px 10px">8-question check</span>
+          </div>
+          <sc-if value="{{comBadge}}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:650;color:#1F7A33">🏅 Knowledge check passed - best score {{comBest}}/8</div>
+          </sc-if>
+          <button onClick="{{openCom}}" style="margin-top:auto;background:#16232E;color:#FBF8F2;border:none;border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="background:#0E1820">{{comCta}}</button>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px">
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px"><b style="font-size:13px">📖 Learn</b><p style="margin:4px 0 0;font-size:12px;line-height:1.55;color:#5B6770">Short visual lessons - diagrams, key numbers, do/don't lists. No filler.</p></div>
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px"><b style="font-size:13px">🎛 Try</b><p style="margin:4px 0 0;font-size:12px;line-height:1.55;color:#5B6770">Interactive calculators inside the lessons - headroom, DLM sizing, de-rating.</p></div>
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px"><b style="font-size:13px">✅ Prove it</b><p style="margin:4px 0 0;font-size:12px;line-height:1.55;color:#5B6770">Quick checks per lesson, a scored exam per course. Progress saves on this device.</p></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ════════ COURSE VIEW ════════ -->
+  <sc-if value="{{hCourse}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;gap:24px;max-width:1120px;margin:0 auto;padding:22px 18px 80px;align-items:flex-start">
+
+      <!-- Lesson rail -->
+      <nav style="position:sticky;top:76px;width:250px;flex-shrink:0;display:flex;flex-direction:column;gap:12px">
+        <button onClick="{{goHome}}" style="display:inline-flex;align-items:center;gap:7px;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:650;color:#5B6770;font-family:inherit;cursor:pointer;width:fit-content" style-hover="color:#16232E;border-color:#1E6BFF">← All courses</button>
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">{{courseEyebrow}}</div>
+            <b style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;letter-spacing:-.01em">{{courseTitle}}</b>
+          </div>
+          <div style="height:6px;background:#F4EFE5;border-radius:4px;overflow:hidden"><div style="{{progBarSt}}"></div></div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{rail}}" as="ls" hint-placeholder-count="6">
+              <button onClick="{{ls.pick}}" style="{{ls.st}}" style-hover="background:#F4EFE5">
+                <span style="{{ls.dotSt}}">{{ls.mark}}</span>
+                <span style="flex:1;text-align:left;line-height:1.3">{{ls.label}}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Lesson / quiz stage -->
+      <main style="flex:1;min-width:0;max-width:720px;display:flex;flex-direction:column;gap:14px">
+
+        <!-- ─── DOMESTIC LESSONS ─── -->
+        <sc-if value="{{d0}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">Lesson 1 of 6</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Survey the property like it matters</h2>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3D4B57">A domestic install lives or dies at the intake position. Before quoting anything, photograph and record four things:</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">1 · Cut-out (main fuse)</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">60, 80 or 100 A - the rating cap for the whole house. Never open it; it belongs to the DNO.</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">2 · Looped supply?</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Two houses sharing one service cable. Looped supplies can't use connect-and-notify - refer to the DNO first.</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">3 · Earthing arrangement</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">TN-C-S (PME), TN-S or TT - it decides your PEN-fault strategy (lesson 3).</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">4 · Consumer unit & tails</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Spare way? Condition? Tail size? An old board may need a new dedicated enclosure beside it.</p></div>
+            </div>
+            <p style="margin:0;font-size:13px;line-height:1.6;color:#5B6770">Then walk the cable route to the parking spot: measure it, note drilling points and how the car will actually park relative to the charging socket.</p>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{d1}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">Lesson 2 of 6</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">The main fuse is the budget</h2>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3D4B57">A 7 kW charger draws <b>32 A continuously</b> - on top of showers, ovens and heat pumps. If maximum demand can exceed the cut-out rating, you need a CT load limiter (the charger de-rates when the house is busy - a feature many brands offer, but not all) or a DNO fuse/supply upgrade. Try it:</p>
+            <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-wrap:wrap;gap:14px">
+                <div><div style="font-size:11px;font-weight:700;color:#5B6770;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Main fuse</div><div style="display:flex;gap:4px"><sc-for list="{{fuseOpts}}" as="o"><button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button></sc-for></div></div>
+                <div><div style="font-size:11px;font-weight:700;color:#5B6770;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Household peak</div><div style="display:flex;gap:4px"><sc-for list="{{houseOpts}}" as="o"><button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button></sc-for></div></div>
+                <div><div style="font-size:11px;font-weight:700;color:#5B6770;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">CT load limiter</div><div style="display:flex;gap:4px"><sc-for list="{{limOpts}}" as="o"><button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button></sc-for></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:650;color:#5B6770;margin-bottom:4px"><span>House {{fuseHouse}} A + charger {{fuseChg}} A = <b style="color:#16232E">{{fuseTot}} A</b></span><span>fuse {{fuseCap}} A</span></div>
+                <div style="height:14px;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:8px;overflow:hidden"><div style="{{fuseBarSt}}"></div></div>
+                <div style="{{fuseVerdictSt}}">{{fuseVerdict}}</div>
+              </div>
+            </div>
+            <p style="margin:0;font-size:12.5px;line-height:1.6;color:#5B6770">With a limiter, the charger drops as low as ~6 A while the shower runs, then ramps back up - the fuse never sees the sum. That's the same trick commercial dynamic load management uses at scale. Exact floors and behaviour vary by brand and model - check the data sheet before quoting one.</p>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{d2}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">Lesson 3 of 6</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">PEN faults: the outdoor problem</h2>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3D4B57">Most homes are PME (TN-C-S): neutral and earth share one conductor back to the network. If that PEN conductor breaks, the car body outside can rise to mains voltage. BS 7671 gives you three compliant outs:</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:10px;align-items:flex-start;border:1px solid #CBE3CE;background:#F2F9F3;border-radius:10px;padding:11px 14px"><span style="font-size:16px">✓</span><div><b style="font-size:13px;color:#1F7A33">Built-in open-PEN detection (the usual default)</b><p style="margin:3px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">Most current smart chargers monitor for PEN faults and disconnect all conductors - but it's model-specific, so verify it on the data sheet and record it. Where confirmed, nothing extra to fit.</p></div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;border:1px solid #E7DFD0;border-radius:10px;padding:11px 14px"><span style="font-size:16px">○</span><div><b style="font-size:13px">Separate O-PEN device</b><p style="margin:3px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">Only for chargers without built-in detection. Never stack one in front of a charger that already has it - it adds cost and commissioning failures.</p></div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;border:1px solid #EBD9AE;background:#FBF6E8;border-radius:10px;padding:11px 14px"><span style="font-size:16px">⚠</span><div><b style="font-size:13px;color:#9A7A1A">Earth electrode (TT the circuit)</b><p style="margin:3px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">The old way. Brings electrode testing, separation from PME-bonded metalwork and seasonal resistance worries. Last resort.</p></div></div>
+            </div>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{d3}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">Lesson 4 of 6</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">One clean circuit</h2>
+            <div style="display:flex;align-items:stretch;gap:0;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:12px;padding:16px 14px;overflow-x:auto">
+              <div style="flex:1;min-width:96px;background:#16232E;color:#FBF8F2;border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:11px;opacity:.7;font-weight:650">DNO cut-out</div><div style="font-family:'Space Grotesk',monospace;font-size:15px;font-weight:700">60–100 A</div></div>
+              <div style="display:grid;place-items:center;padding:0 6px;color:#8C97A0;font-weight:700">→</div>
+              <div style="flex:1;min-width:96px;background:#FFFFFF;border:1.5px solid #16232E;border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:11px;color:#5B6770;font-weight:650">Meter + tails</div><div style="font-family:'Space Grotesk',monospace;font-size:15px;font-weight:700">25 mm²</div></div>
+              <div style="display:grid;place-items:center;padding:0 6px;color:#8C97A0;font-weight:700">→</div>
+              <div style="flex:1.2;min-width:120px;background:#FFFFFF;border:1.5px solid #1E6BFF;border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:11px;color:#1043B0;font-weight:700">40 A RCBO · Type A</div><div style="font-family:'Space Grotesk',monospace;font-size:15px;font-weight:700;color:#1E6BFF">30 mA + 6 mA DC</div></div>
+              <div style="display:grid;place-items:center;padding:0 6px;color:#8C97A0;font-weight:700">→</div>
+              <div style="flex:1;min-width:96px;background:#1E6BFF;color:#FBF8F2;border-radius:10px;padding:10px 12px;text-align:center"><div style="font-size:11px;opacity:.85;font-weight:650">Charger</div><div style="font-family:'Space Grotesk',monospace;font-size:15px;font-weight:700">7 kW · 32 A</div></div>
+            </div>
+            <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.75;color:#3D4B57">
+              <li><b>Dedicated radial</b> from the board - nothing else on the circuit, no diversity.</li>
+              <li><b>Type A RCD + 6 mA DC detection.</b> The DC part is usually inside the charger (RDC-DD); Type AC devices are banned on EV circuits.</li>
+              <li><b>Cable to suit the run:</b> 6 mm² is a common floor; long garden runs go up a size for volt drop, and anything outside or buried is SWA / EV-grade in duct - never Twin &amp; Earth along the fence.</li>
+              <li><b>Socket height</b> ~0.75–1.2 m, away from where the car door swings.</li>
+            </ul>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{d4}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">Lesson 5 of 6</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">The paperwork is the product</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">DNO</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Connect &amp; notify <b>within 28 days</b> only if demand stays under the cut-out and ~60 A/phase, supply not looped. Otherwise apply <i>before</i> install via ENA Connect Direct.</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">Part P</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">New circuit = notifiable. Self-certify through your competent-person scheme or notify building control.</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">Smart regs</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Chargers sold for home use must be smart: default off-peak schedule, randomised delay, security requirements. Don't defeat them at setup.</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">EIC</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Full certificate with test schedule - Zs, insulation, RCD tests - left with the customer, stating the BS 7671 edition used (A4:2026 from 15 Oct 2026). Plus grant photos if OZEV funding applies.</p></div>
+            </div>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{d5}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0">Lesson 6 of 6</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Handover: five minutes that kill callbacks</h2>
+            <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.8;color:#3D4B57">
+              <li><b>Charge a car</b> (or use the tester) in front of the customer - prove the full start/stop cycle.</li>
+              <li><b>Set the app up on their phone</b>, not yours: account, Wi-Fi credentials, off-peak schedule matched to their tariff.</li>
+              <li><b>Show the isolation point</b> and what the status lights mean.</li>
+              <li><b>Leave the pack:</b> EIC, manufacturer registration/warranty, DNO notification confirmation.</li>
+              <li><b>Photograph the finished install</b> - position, cable dressing, labels - for your own records and any grant claim.</li>
+            </ul>
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>Tip:</b> most "faulty charger" callbacks are Wi-Fi dropouts or tariff schedules - both are handover failures, not hardware.</div>
+          </article>
+        </sc-if>
+
+        <!-- ─── COMMERCIAL LESSONS ─── -->
+        <sc-if value="{{m0}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Lesson 1 of 7</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Scope the site before the sale</h2>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3D4B57">Commercial jobs fail in scoping, not installation. Four numbers decide everything:</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+              <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:20px;font-weight:700;color:#1E6BFF">kVA</div><div style="font-size:11.5px;font-weight:650;color:#5B6770;margin-top:2px">Agreed supply capacity</div></div>
+              <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:20px;font-weight:700;color:#1E6BFF">MD</div><div style="font-size:11.5px;font-weight:650;color:#5B6770;margin-top:2px">Existing max demand (half-hourly data)</div></div>
+              <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:20px;font-weight:700;color:#1E6BFF">32 A</div><div style="font-size:11.5px;font-weight:650;color:#5B6770;margin-top:2px">Per socket, full load, no diversity</div></div>
+              <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:20px;font-weight:700;color:#1E6BFF">m</div><div style="font-size:11.5px;font-weight:650;color:#5B6770;margin-top:2px">Route length: trench, duct, containment</div></div>
+            </div>
+            <p style="margin:0;font-size:13px;line-height:1.6;color:#5B6770">Headroom = capacity − MD. If sockets × 32 A doesn't fit, the design conversation is load management or a new connection - decide it now, not at fix stage. Walk the route, photograph the switch room, and count the bays that actually work for charging.</p>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{m1}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Lesson 2 of 7</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Design the electrical spine</h2>
+            <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:8px;align-items:center">
+                <div style="background:#16232E;color:#FBF8F2;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;min-width:86px;text-align:center">Supply</div>
+                <div style="color:#8C97A0;font-weight:700">→</div>
+                <div style="background:#FFFFFF;border:1.5px solid #16232E;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;min-width:86px;text-align:center">Panel board</div>
+                <div style="color:#8C97A0;font-weight:700">→</div>
+                <div style="background:#FFFFFF;border:1.5px solid #1E6BFF;color:#1043B0;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;min-width:86px;text-align:center">EVDB + SPD</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:stretch;padding-left:120px">
+                <div style="width:2px;background:#1E6BFF;border-radius:2px"></div>
+                <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+                  <div style="display:flex;align-items:center;gap:8px"><div style="flex:0 0 90px;height:2px;background:#1E6BFF"></div><div style="background:#1E6BFF;color:#FBF8F2;border-radius:8px;padding:6px 11px;font-size:11.5px;font-weight:700">CP-01 · 40 A RCBO · radial 1</div></div>
+                  <div style="display:flex;align-items:center;gap:8px"><div style="flex:0 0 60px;height:2px;background:#1E6BFF"></div><div style="background:#1E6BFF;color:#FBF8F2;border-radius:8px;padding:6px 11px;font-size:11.5px;font-weight:700">CP-02 · 40 A RCBO · radial 2</div></div>
+                  <div style="display:flex;align-items:center;gap:8px"><div style="flex:0 0 30px;height:2px;background:#1E6BFF"></div><div style="background:#1E6BFF;color:#FBF8F2;border-radius:8px;padding:6px 11px;font-size:11.5px;font-weight:700">CP-03 · 40 A RCBO · radial 3</div></div>
+                </div>
+              </div>
+            </div>
+            <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.75;color:#3D4B57">
+              <li>A dedicated <b>EVDB near the chargers</b> keeps radials short and future additions cheap - one sub-main upgrade instead of five long runs.</li>
+              <li>Protection per charger type: 40 A DP Type A RCBO (7 kW) · 40 A 4-pole (22 kW) · C40/C63/C80 MCBs for twins with per-socket RCDs inside.</li>
+              <li>Lockable isolation, Type 2 SPD, every way labelled with its charger reference.</li>
+            </ul>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{m2}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Lesson 3 of 7</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Load management: more sockets than supply</h2>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3D4B57">Dynamic load management (DLM) runs many chargers on one supply: the system de-rates every active unit in real time so the total never exceeds the group limit - typically down to a <b>~6 A floor</b>, below which chargers queue. Most systems take any mix of 7, 11 and 22 kW AC units from one brand's range. It comes in two flavours: <b>wired</b> (a load management board + screened data cable to every charger) and <b>cloud</b> (balanced over the internet - no board, no data cabling, but every unit needs reliable connectivity). Try the sizer:</p>
+            <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-wrap:wrap;gap:14px">
+                <div><div style="font-size:11px;font-weight:700;color:#5B6770;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Supply</div><div style="display:flex;gap:4px"><sc-for list="{{phOpts}}" as="o"><button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button></sc-for></div></div>
+                <div><div style="font-size:11px;font-weight:700;color:#5B6770;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Group limit (per phase)</div><div style="display:flex;gap:4px"><sc-for list="{{rateOpts}}" as="o"><button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button></sc-for></div></div>
+              </div>
+              <div style="display:flex;gap:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:130px;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:26px;font-weight:700;color:#1E6BFF">{{arrSockets}}</div><div style="font-size:11px;font-weight:650;color:#5B6770;text-transform:uppercase;letter-spacing:.05em">max active sockets · ~6 A floor</div></div>
+                <div style="flex:1;min-width:130px;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:26px;font-weight:700;color:#16232E">{{arrEach}}</div><div style="font-size:11px;font-weight:650;color:#5B6770;text-transform:uppercase;letter-spacing:.05em">sockets at ≥16 A each</div></div>
+                <div style="flex:1;min-width:130px;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:26px;font-weight:700;color:#16232E">{{arrBoards}}</div><div style="font-size:11px;font-weight:650;color:#5B6770;text-transform:uppercase;letter-spacing:.05em">boards needed</div></div>
+              </div>
+              <div style="font-size:12px;line-height:1.55;color:#5B6770">{{arrNote}}</div>
+            </div>
+            <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+              <li>Most systems accept any AC output - 7 kW single-phase, 11 and 22 kW three-phase. Per-charger RCBOs live <b>inside</b> the board on wired groups; cloud groups keep standard protection at the source board.</li>
+              <li>Sub-main sized to the <b>full group limit - no diversity</b>. The limit is set at commissioning and usually stays manually adjustable; many systems let individual chargers be capped too (e.g. one unit held at 16 A).</li>
+              <li>One or two chargers on a tight supply? A CT load limiter does the same job without a group.</li>
+            </ul>
+            <div style="background:#FBF6E8;border:1px solid #EBD9AE;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#7A5A12"><b>Varies by brand &amp; model:</b> DLM is proprietary - floors, mixing rules, offline fallback and remote adjustment differ between manufacturers, and groups are normally single-brand. The sizer shows typical figures; design from the manufacturer's documentation.</div>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{m3}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Lesson 4 of 7</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Earthing across a car park</h2>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3D4B57">Same physics as domestic, bigger consequences. TN-C-S and TN-S are straightforward - built-in open-PEN detection covers the PEN-fault risk, no rods, no extra devices. <b>TT is the exception case</b> and carries conditions:</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+              <div style="background:#FBF6E8;border:1px solid #EBD9AE;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:19px;font-weight:700;color:#9A7A1A">Type B</div><div style="font-size:11.5px;color:#5B6770;margin-top:2px">100–300 mA RCD at source</div></div>
+              <div style="background:#FBF6E8;border:1px solid #EBD9AE;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:19px;font-weight:700;color:#9A7A1A">&lt;200 Ω</div><div style="font-size:11.5px;color:#5B6770;margin-top:2px">electrode resistance</div></div>
+              <div style="background:#FBF6E8;border:1px solid #EBD9AE;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:19px;font-weight:700;color:#9A7A1A">5 m</div><div style="font-size:11.5px;color:#5B6770;margin-top:2px">max rod distance, protected, no tape clamps</div></div>
+              <div style="background:#FBF6E8;border:1px solid #EBD9AE;border-radius:10px;padding:12px 14px;text-align:center"><div style="font-family:'Space Grotesk',monospace;font-size:19px;font-weight:700;color:#9A7A1A">2.5 m</div><div style="font-size:11.5px;color:#5B6770;margin-top:2px">clearance from other mains equipment</div></div>
+            </div>
+            <p style="margin:0;font-size:13px;line-height:1.6;color:#5B6770">That last one is the site-layout trap: on TT, a lamp column or barrier on a different earth within 2.5 m of the charger creates a touch-potential hazard. Check it on the plan before civils start, not after.</p>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{m4}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Lesson 5 of 7</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Civils: the ground decides the date</h2>
+            <div style="background:#F4EFE5;border:1px solid #E7DFD0;border-radius:12px;padding:16px">
+              <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;color:#8C97A0;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px"><span>Surface</span><span>Cross-section</span></div>
+              <div style="height:8px;background:repeating-linear-gradient(90deg,#8C97A0 0 14px,#B8C0C8 14px 28px);border-radius:3px"></div>
+              <div style="display:flex;gap:14px;margin-top:8px">
+                <div style="flex:1">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px;border:1.5px dashed #B8A98E;border-radius:10px;background:#FBF8F1">
+                    <div style="width:82%;background:#16232E;color:#FBF8F2;border-radius:6px;text-align:center;font-size:11px;font-weight:700;padding:14px 6px 12px">Concrete base<br><span style="font-family:'Space Grotesk',monospace;font-size:13px">600 × 600 × 400 · C20</span></div>
+                    <div style="width:16px;height:26px;background:#1E6BFF;border-radius:4px"></div>
+                    <div style="font-size:10.5px;color:#5B6770;font-weight:650">63 mm twin-wall duct, centred, flush</div>
+                  </div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:650;color:#3D4B57;border-bottom:1px dotted #D6CBB6;padding-bottom:4px"><span>Duct depth · general</span><b style="font-family:'Space Grotesk',monospace">≥ 450 mm</b></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:650;color:#3D4B57;border-bottom:1px dotted #D6CBB6;padding-bottom:4px"><span>Under roadway</span><b style="font-family:'Space Grotesk',monospace">≥ 600 mm</b></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:650;color:#3D4B57;border-bottom:1px dotted #D6CBB6;padding-bottom:4px"><span>Bend radius</span><b style="font-family:'Space Grotesk',monospace">≥ 450 mm</b></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:650;color:#3D4B57"><span>Warning tape above duct</span><b style="font-family:'Space Grotesk',monospace">150 mm</b></div>
+                </div>
+              </div>
+            </div>
+            <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+              <li>Base <b>fully cured before install day</b> - wet concrete is an automatic failed visit and a re-attendance fee.</li>
+              <li><b>Photograph the bare base</b> before tarmac or paving goes over it; no photo, no warranty on the fixing.</li>
+              <li>Mark bays EV-only (2.4 × 4.8 m) with a contrast strip and wheel stops; plan accessible bays to PAS 1899 while the paint crew is there.</li>
+            </ul>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{m5}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Lesson 6 of 7</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">No comms, no commissioning</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+              <div style="border:1px solid #CBE3CE;background:#F2F9F3;border-radius:10px;padding:12px 14px"><b style="font-size:13px;color:#1F7A33">📶 4G - the usual default</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">Built into many units (not all) - zero setup where fitted, and the usual pick outdoors. Test signal <i>at the charger</i>, phone in hand, before you commit.</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">📡 Wi-Fi - usually 2.4 GHz only</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">Most units are 2.4 GHz-only: dedicated SSID, private and secured. No captive portals, no guest networks; mind vendor SSID/password length limits.</p></div>
+              <div style="border:1px solid #E7DFD0;border-radius:10px;padding:12px 14px"><b style="font-size:13px">🔌 Ethernet - where fitted</b><p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">Only some models have a port. Shielded Cat5e/6, live before install day, straight onto the network.</p></div>
+            </div>
+            <p style="margin:0;font-size:13px;line-height:1.6;color:#5B6770">Which interfaces a unit offers varies by brand and model - check the data sheet first. A charger that can't connect on install day can't be commissioned - that's a revisit. Confirm the comms method with the client in writing during scoping, and get SSIDs/credentials a week ahead.</p>
+          </article>
+        </sc-if>
+
+        <sc-if value="{{m6}}" hint-placeholder-val="{{ false }}">
+          <article style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;animation:lhpop .25s ease">
+            <div style="font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B6770">Lesson 7 of 7</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.015em">Programme &amp; paperwork</h2>
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div style="display:flex;gap:12px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:26px;height:26px;border-radius:50%;background:#1E6BFF;color:#FBF8F2;display:grid;place-items:center;font-size:12px;font-weight:700">1</div><div style="width:2px;flex:1;background:#D6CBB6"></div></div><div style="padding-bottom:14px"><b style="font-size:13.5px">DNO application first</b><p style="margin:2px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Multi-charger sites are apply-first, via ENA Connect Direct. Since April 2023 you don't pay for upstream reinforcement - but lead times still set your programme.</p></div></div>
+              <div style="display:flex;gap:12px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:26px;height:26px;border-radius:50%;background:#1E6BFF;color:#FBF8F2;display:grid;place-items:center;font-size:12px;font-weight:700">2</div><div style="width:2px;flex:1;background:#D6CBB6"></div></div><div style="padding-bottom:14px"><b style="font-size:13.5px">Build the photo record as you go</b><p style="margin:2px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Photograph everything before it disappears: supply head, protection, cable runs, coiled spares, bare bases. Once surfacing or backfill goes over it, the proof is gone.</p></div></div>
+              <div style="display:flex;gap:12px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:26px;height:26px;border-radius:50%;background:#1E6BFF;color:#FBF8F2;display:grid;place-items:center;font-size:12px;font-weight:700">3</div><div style="width:2px;flex:1;background:#D6CBB6"></div></div><div style="padding-bottom:14px"><b style="font-size:13.5px">Install, commission, certify</b><p style="margin:2px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">EIC with schedules for every circuit (including passives), commissioning certificates, asset list with charger serials - stating the BS 7671 edition used (A4:2026 from 15 Oct 2026).</p></div></div>
+              <div style="display:flex;gap:12px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:26px;height:26px;border-radius:50%;background:#1E6BFF;color:#FBF8F2;display:grid;place-items:center;font-size:12px;font-weight:700">4</div><div style="width:2px;flex:1;background:#D6CBB6"></div></div><div style="padding-bottom:14px"><b style="font-size:13.5px">Public site? Build in the consumer rules</b><p style="margin:2px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Chargers the public can use fall under the Public Charge Point Regulations 2023: contactless payment on 8 kW+ units, price in p/kWh displayed, free 24/7 helpline, open OCPI data - and rapids carry the 99% reliability and roaming duties. The terminal and data feed belong in the quote.</p></div></div>
+              <div style="display:flex;gap:12px"><div style="width:26px;height:26px;border-radius:50%;background:#1F7A33;color:#FBF8F2;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0">£</div><div><b style="font-size:13.5px">Claim the grant</b><p style="margin:2px 0 0;font-size:12.5px;line-height:1.55;color:#5B6770">Workplace Charging Scheme runs to 31 March 2027 - up to £500 per socket (75% of cost, 40 sockets max) through OZEV-authorised installers, with the installation photos the scheme requires.</p></div></div>
+            </div>
+          </article>
+        </sc-if>
+
+        <!-- ─── QUICK CHECK (shared, one per lesson) ─── -->
+        <sc-if value="{{qcShow}}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF;border:2px solid #1E6BFF;border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#FBF8F2;background:#1E6BFF;border-radius:20px;padding:3px 10px">Quick check</span><span style="font-size:11.5px;color:#8C97A0;font-weight:650">answer to mark this lesson done</span></div>
+            <p style="margin:0;font-size:14.5px;font-weight:650;line-height:1.5">{{qcQ}}</p>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{qcOpts}}" as="o" hint-placeholder-count="3">
+                <button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{qcAnswered}}" hint-placeholder-val="{{ false }}">
+              <div style="{{qcFbSt}}">{{qcFb}}</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ─── Related guides ─── -->
+        <sc-if value="{{relShow}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:10px 14px">
+            <span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C97A0">Related guides</span>
+            <sc-for list="{{relGuides}}" as="g" hint-placeholder-count="2">
+              <a href="{{g.href}}" style="display:inline-flex;align-items:center;gap:5px;background:#F4EFE5;border:1px solid #D6CBB6;border-radius:20px;padding:4px 11px;font-size:11.5px;font-weight:650;color:#16232E;text-decoration:none" style-hover="border-color:#1E6BFF;color:#1043B0">{{g.label}} →</a>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- ─── Lesson nav ─── -->
+        <sc-if value="{{navShow}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;align-items:center">
+            <button onClick="{{prev}}" style="{{prevSt}}">← Previous</button>
+            <div style="flex:1"></div>
+            <button onClick="{{next}}" style="{{nextSt}}">{{nextLabel}}</button>
+          </div>
+        </sc-if>
+
+        <!-- ─── KNOWLEDGE CHECK ─── -->
+        <sc-if value="{{qzShow}}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px;animation:lhpop .25s ease">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#FBF8F2;background:#16232E;border-radius:20px;padding:3px 10px">Knowledge check</span>
+              <span style="font-size:12px;color:#8C97A0;font-weight:650">Question {{qzNum}} of 8 · score {{qzScore}}</span>
+            </div>
+            <div style="display:flex;gap:4px">
+              <sc-for list="{{qzDots}}" as="dt" hint-placeholder-count="8"><div style="{{dt.st}}"></div></sc-for>
+            </div>
+            <p style="margin:0;font-size:16px;font-weight:700;line-height:1.45;font-family:'Bricolage Grotesque',sans-serif">{{qzQ}}</p>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{qzOpts}}" as="o" hint-placeholder-count="3">
+                <button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{qzAnswered}}" hint-placeholder-val="{{ false }}">
+              <div style="{{qzFbSt}}">{{qzFb}}</div>
+              <button onClick="{{qzNext}}" style="align-self:flex-end;background:#1E6BFF;color:#FBF8F2;border:none;border-radius:10px;padding:10px 18px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="background:#1556E0">{{qzNextLabel}}</button>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ─── RESULT ─── -->
+        <sc-if value="{{qzDone}}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:34px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:lhpop .3s ease">
+            <div style="font-size:44px">{{resEmoji}}</div>
+            <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.015em">{{resTitle}}</h2>
+            <div style="font-family:'Space Grotesk',monospace;font-size:34px;font-weight:700;color:#1E6BFF">{{resScore}}<span style="font-size:18px;color:#8C97A0"> / 8</span></div>
+            <p style="margin:0;font-size:13.5px;line-height:1.6;color:#5B6770;max-width:44ch">{{resMsg}}</p>
+            <div style="display:flex;gap:10px;margin-top:6px">
+              <button onClick="{{qzRetry}}" style="background:#FFFFFF;color:#16232E;border:1px solid #D6CBB6;border-radius:10px;padding:10px 18px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="border-color:#1E6BFF">Retry</button>
+              <button onClick="{{goHome}}" style="background:#1E6BFF;color:#FBF8F2;border:none;border-radius:10px;padding:10px 18px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="background:#1556E0">All courses</button>
+            </div>
+          </div>
+        </sc-if>
+      </main>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;passMark&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:6,&quot;min&quot;:4,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Course&quot;},&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    view: "home", course: "dom", lesson: 0,
+    done: { dom: [false,false,false,false,false,false], com: [false,false,false,false,false,false,false] },
+    best: { dom: null, com: null },
+    qcPick: {},                          // "dom0" -> picked index
+    quiz: null,                          // {idx, score, picked} | {done, score}
+    fuse: { cap: 60, house: 40, lim: false },
+    arr: { ph: 1, rate: 100 }
+  };
+
+  componentDidMount(){
+    try {
+      const s = JSON.parse(localStorage.getItem("evsp_learn_v1") || "null");
+      if (s && s.done) this.setState({ done: { dom: s.done.dom || this.state.done.dom, com: s.done.com || this.state.done.com }, best: s.best || this.state.best });
+    } catch(_){}
+    // deep link from guides / other tools: #c=dom|com & l=<lesson index>
+    try {
+      const h = String(location.hash || "");
+      const mc = h.match(/c=(dom|com)/);
+      if (mc) {
+        const ml = h.match(/l=(\d+)/);
+        const n = this.lessons(mc[1]).length;
+        const lesson = ml ? Math.max(0, Math.min(n - 1, parseInt(ml[1], 10))) : 0;
+        this.setState({ view: "course", course: mc[1], lesson, quiz: null });
+        history.replaceState("", "", location.pathname);
+      }
+    } catch(_){}
+  }
+  persist(next){
+    const done = next.done || this.state.done, best = next.best || this.state.best;
+    try { localStorage.setItem("evsp_learn_v1", JSON.stringify({ done, best })); } catch(_){}
+  }
+
+  lessons(c){
+    return c === "dom"
+      ? ["Survey the property","Load vs the main fuse","PEN faults & earthing","One clean circuit","Rules & paperwork","Handover"]
+      : ["Scope the site","The electrical spine","Load management","Earthing the car park","Civils & bays","Comms & commissioning","Programme & paperwork"];
+  }
+  qc(c){
+    if (c === "dom") return [
+      { q:"The service cable feeds this house AND next door. What does that mean for the job?", o:["Nothing - fit and notify within 28 days","It's a looped supply - refer to the DNO before installing","Fit a bigger RCBO to compensate"], a:1, fb:"Looped supplies fail the connect-and-notify criteria - the DNO must assess (and often de-loop) first." },
+      { q:"60 A fuse, house peaks around 40 A, customer wants a 7 kW charger. Best answer?", o:["Install anyway - it'll probably be fine","CT load limiter (or a DNO fuse upgrade)","Tell them EV charging is impossible here"], a:1, fb:"40 + 32 = 72 A on a 60 A fuse. A limiter de-rates the charger when the house is busy (where the brand offers one); an upgrade is the alternative." },
+      { q:"The charger's data sheet confirms built-in open-PEN detection. Earth rod needed?", o:["Yes - always on PME","No - the built-in device covers the PEN-fault risk","Only if the garden is big enough"], a:1, fb:"Built-in O-PEN detection is a compliant PME solution on its own. No rod, no extra upstream device." },
+      { q:"Where does the 6 mA DC protection usually come from?", o:["The RDC-DD inside the charger","Any Type AC RCD","The SWA armour"], a:0, fb:"Most chargers include RDC-DD, which is why a Type A RCBO upstream is sufficient. Type AC is banned on EV circuits." },
+      { q:"Install met all the ENA criteria. When must the DNO hear about it?", o:["Within 28 days of installation","Within 6 months","Never - criteria met means no notification"], a:0, fb:"Connect-and-notify still means notify - within 28 days, via ENA Connect Direct." },
+      { q:"Which of these is a real handover task?", o:["Delete the default off-peak schedule","Set up the app on the customer's phone and match the schedule to their tariff","Keep the EIC for your records only"], a:1, fb:"The smart regs' default schedule stays (adjusted to the tariff), the app lives on their phone, and the EIC is left with the customer." }
+    ];
+    return [
+      { q:"First data to request when scoping a 10-charger site?", o:["The car park's paint colours","Supply capacity + half-hourly maximum-demand data","The reg plates of staff cars"], a:1, fb:"Headroom = agreed capacity − measured MD. Everything else in the design hangs off those two numbers." },
+      { q:"Two 7 kW chargers on one shared 40 A RCBO - acceptable?", o:["Yes, they'll rarely charge together","No - one dedicated radial and device per charger","Only on Tuesdays"], a:1, fb:"No shared protection, no diversity: each charger is a continuous 32 A load with its own radial and device." },
+      { q:"A wired DLM group needs what that a cloud group doesn't?", o:["Bigger breakers","A load management board + a screened data cable to every charger","Planning permission"], a:1, fb:"Wired DLM balances locally over data cabling; cloud DLM does it over the internet - no board, no data cable, but every unit needs reliable connectivity." },
+      { q:"On TT, a powered barrier sits 2 m from the charger on a different earth. What now?", o:["Fine - it's outdoors","Move one of them ≥2.5 m away or get everything on the same earthing system","Paint the barrier"], a:1, fb:"The TT touch-potential rule: no mains equipment on a different earth within 2.5 m of the charger." },
+      { q:"Install day, the base was poured yesterday. What happens?", o:["Proceed carefully","Failed visit - bases must be fully cured (and photographed before surfacing)","Bolt the charger down harder"], a:1, fb:"Uncured concrete is an automatic abort and a re-attendance fee. Cure it, photograph it bare, then book." },
+      { q:"Site Wi-Fi is 5 GHz-only with a captive portal. Chargers will…", o:["Connect fine","Fail commissioning - most units need a private 2.4 GHz network (or 4G / Ethernet where fitted)","Charge slower"], a:1, fb:"Captive portals don't work and most units are 2.4 GHz-only. Fix the network, or use 4G or Ethernet where the unit supports them - no comms, no commissioning." },
+      { q:"The tarmac crew arrives tomorrow; the bases went in today. What must happen first?", o:["Nothing - pave away","Photograph the bare bases for the job record","Wait a fortnight, then pave straight over"], a:1, fb:"Once surfacing covers a base the proof is gone - photograph everything that's about to be buried, and remember the concrete must also be fully cured before install day." }
+    ];
+  }
+  quiz(c){
+    if (c === "dom") return [
+      { q:"Maximum demand of a standard 7 kW home charger?", o:["13 A","32 A","63 A"], a:1 },
+      { q:"Which RCD type is never acceptable on an EV circuit?", o:["Type A","Type B","Type AC"], a:2 },
+      { q:"60 A main fuse, electric shower, 7 kW charger wanted. The compliant fix?", o:["Install and hope","Load limiter or DNO fuse/supply upgrade","Downrate the shower breaker"], a:1 },
+      { q:"PME home, charger has built-in O-PEN detection. You must…", o:["Drive an earth rod anyway","Fit nothing extra - verify and record the built-in device","Add a second O-PEN device upstream"], a:1 },
+      { q:"Connect-and-notify deadline after install?", o:["7 days","28 days","1 year"], a:1 },
+      { q:"Part P means the new charger circuit is…", o:["Not notifiable","Notifiable - competent-person scheme or building control","Only notifiable over 10 kW"], a:1 },
+      { q:"The Smart Charge Points Regulations require home chargers to ship with…", o:["A default off-peak charging schedule","Free electricity","A 5-year service plan"], a:0 },
+      { q:"Cable to a detached garage across the garden should be…", o:["Twin & Earth clipped to the fence","SWA / EV-grade, buried in duct at depth with warning tape","An extension lead"], a:1 }
+    ];
+    return [
+      { q:"Diversity factors on EV charging circuits are…", o:["Fine up to 50%","Not permitted - design at full load","Required by BS 7671"], a:1 },
+      { q:"Upstream protection for a 22 kW three-phase single-socket charger?", o:["40 A 4-pole Type A RCBO","63 A Type AC RCD","Two 20 A MCBs"], a:0 },
+      { q:"Wired vs cloud DLM - what does cloud remove?", o:["The need for RCBOs","The board and the data cable to every charger - balancing happens over the internet","The 6 A minimum"], a:1 },
+      { q:"Typically, DLM won't de-rate a charging vehicle below…", o:["~6 A - below that, chargers usually queue","10 A","16 A"], a:0 },
+      { q:"Max earth-electrode resistance on a TT charger installation?", o:["200 Ω","2000 Ω","20 Ω"], a:0 },
+      { q:"The standard charger base is…", o:["400×400×200 mm, any mix","600×600×400 mm C20, cured & photographed before surfacing","A paving slab"], a:1 },
+      { q:"Duct depth where the run crosses an access road?", o:["≥300 mm","≥450 mm","≥600 mm"], a:2 },
+      { q:"Which connectivity setup reliably passes commissioning?", o:["5 GHz guest Wi-Fi with a portal","A private 2.4 GHz SSID (or another interface the unit supports) shared ahead of install","No connection - set it up later"], a:1 }
+    ];
+  }
+
+  markDone(course, lesson){
+    const done = { dom: this.state.done.dom.slice(), com: this.state.done.com.slice() };
+    if (!done[course][lesson]) { done[course][lesson] = true; this.setState({ done }); this.persist({ done }); }
+  }
+
+  seg(list, cur, apply){
+    const base = { background:"#FFFFFF", border:"1px solid #D6CBB6", borderRadius:"8px", padding:"6px 12px",
+      fontSize:"12px", fontWeight:650, color:"#5B6770", cursor:"pointer", fontFamily:"inherit" };
+    const on = Object.assign({}, base, { background:"#1E6BFF", border:"1px solid #1E6BFF", color:"#FBF8F2" });
+    return list.map(([val,label]) => ({ label, st: val === cur ? on : base, pick: () => apply(val) }));
+  }
+  optBtn(picked, correct, idx){
+    const base = { textAlign:"left", background:"#FFFFFF", border:"1px solid #D6CBB6", borderRadius:"10px",
+      padding:"10px 14px", fontSize:"13.5px", fontWeight:600, color:"#16232E", cursor:"pointer", fontFamily:"inherit", lineHeight:"1.4" };
+    if (picked == null) return base;
+    if (idx === correct) return Object.assign({}, base, { background:"#EAF6EC", border:"1.5px solid #1F7A33", color:"#1F7A33", cursor:"default" });
+    if (idx === picked)  return Object.assign({}, base, { background:"#FDECEC", border:"1.5px solid #B4231F", color:"#B4231F", cursor:"default" });
+    return Object.assign({}, base, { opacity:.45, cursor:"default" });
+  }
+
+  renderVals(){
+    const S = this.state, v = {};
+    const passMark = this.props.passMark ?? 6;
+    const L = this.lessons(S.course), nL = L.length;
+    const inQuiz = S.quiz && !S.quiz.done, quizDone = S.quiz && S.quiz.done;
+
+    v.hHome = S.view === "home";
+    v.hCourse = S.view === "course";
+    v.goHome = () => this.setState({ view:"home", quiz:null });
+
+    /* home cards */
+    const pct = c => { const d = S.done[c]; const n = d.filter(Boolean).length; return Math.round(n / d.length * 100); };
+    const ring = p => ({ width:"56px", height:"56px", borderRadius:"50%", display:"grid", placeItems:"center", flexShrink:0,
+      background:"conic-gradient(#1E6BFF " + (p*3.6) + "deg, #E7DFD0 0deg)" });
+    v.domPct = pct("dom") + "%"; v.comPct = pct("com") + "%";
+    v.domRingSt = ring(pct("dom")); v.comRingSt = ring(pct("com"));
+    v.domCta = pct("dom") === 0 ? "Start course" : pct("dom") === 100 ? "Review course" : "Continue · " + pct("dom") + "%";
+    v.comCta = pct("com") === 0 ? "Start course" : pct("com") === 100 ? "Review course" : "Continue · " + pct("com") + "%";
+    v.domBadge = S.best.dom != null && S.best.dom >= passMark; v.domBest = S.best.dom;
+    v.comBadge = S.best.com != null && S.best.com >= passMark; v.comBest = S.best.com;
+    const firstOpen = c => { const i = S.done[c].indexOf(false); return i < 0 ? 0 : i; };
+    v.openDom = () => this.setState({ view:"course", course:"dom", lesson:firstOpen("dom"), quiz:null });
+    v.openCom = () => this.setState({ view:"course", course:"com", lesson:firstOpen("com"), quiz:null });
+
+    /* course chrome */
+    v.courseEyebrow = S.course === "dom" ? "Course 01 · Domestic" : "Course 02 · Commercial";
+    v.courseTitle = S.course === "dom" ? "Home charging, done right" : "Multi-charger sites that pass";
+    v.progBarSt = { height:"100%", width: pct(S.course) + "%", background:"#1E6BFF", borderRadius:"4px", transition:"width .3s ease" };
+
+    const railBase = { display:"flex", alignItems:"center", gap:"9px", width:"100%", boxSizing:"border-box", background:"transparent",
+      border:"1px solid transparent", borderRadius:"9px", padding:"7px 9px", fontSize:"12px", fontWeight:600, color:"#5B6770",
+      cursor:"pointer", fontFamily:"inherit", textAlign:"left" };
+    const railOn = Object.assign({}, railBase, { background:"#F4EFE5", border:"1px solid #D6CBB6", color:"#16232E", fontWeight:700 });
+    const dot = ok => ({ width:"18px", height:"18px", borderRadius:"50%", flexShrink:0, display:"grid", placeItems:"center",
+      fontSize:"10px", fontWeight:800, background: ok ? "#1F7A33" : "#FFFFFF", color: ok ? "#FFFFFF" : "#8C97A0",
+      border: ok ? "1px solid #1F7A33" : "1px solid #D6CBB6" });
+    v.rail = L.map((t, i) => ({
+      label: (i+1) + ". " + t,
+      mark: S.done[S.course][i] ? "✓" : String(i+1),
+      dotSt: dot(S.done[S.course][i]),
+      st: (!inQuiz && !quizDone && S.lesson === i) ? railOn : railBase,
+      pick: () => this.setState({ lesson:i, quiz:null })
+    })).concat([{
+      label: "Knowledge check · 8 questions",
+      mark: "★",
+      dotSt: dot(S.best[S.course] != null && S.best[S.course] >= passMark),
+      st: (inQuiz || quizDone) ? railOn : railBase,
+      pick: () => this.setState({ quiz:{ idx:0, score:0, picked:null } })
+    }]);
+
+    /* lesson visibility */
+    for (let i = 0; i < 6; i++) v["d" + i] = v.hCourse && S.course === "dom" && !inQuiz && !quizDone && S.lesson === i;
+    for (let i = 0; i < 7; i++) v["m" + i] = v.hCourse && S.course === "com" && !inQuiz && !quizDone && S.lesson === i;
+
+    /* quick check */
+    const qcs = this.qc(S.course), qcItem = qcs[Math.min(S.lesson, qcs.length - 1)];
+    const qcKey = S.course + S.lesson, qcPicked = S.qcPick[qcKey];
+    v.qcShow = v.hCourse && !inQuiz && !quizDone;
+    v.qcQ = qcItem.q;
+    v.qcOpts = qcItem.o.map((label, i) => ({
+      label,
+      st: this.optBtn(qcPicked, qcItem.a, i),
+      pick: () => {
+        if (this.state.qcPick[qcKey] != null) return;
+        const qcPick = Object.assign({}, this.state.qcPick); qcPick[qcKey] = i;
+        this.setState({ qcPick });
+        this.markDone(S.course, S.lesson);
+      }
+    }));
+    v.qcAnswered = qcPicked != null;
+    const qcRight = qcPicked === qcItem.a;
+    v.qcFb = (qcRight ? "✓ Right. " : "✗ Not quite - the highlighted answer is correct. ") + qcItem.fb;
+    v.qcFbSt = { background: qcRight ? "#EAF6EC" : "#FDECEC", border: "1px solid " + (qcRight ? "#CBE3CE" : "#F2C4C2"),
+      color: qcRight ? "#1F7A33" : "#8A1F23", borderRadius:"10px", padding:"10px 13px", fontSize:"12.5px", lineHeight:"1.55", fontWeight:600 };
+
+    /* related guides (deep-link into the Guide Library) */
+    const REL = {
+      dom: [
+        [["md","Max demand & headroom"],["earthsys","Earthing systems"]],
+        [["md","Max demand & headroom"],["limiter","CT load limiters"]],
+        [["openpen","Open-PEN protection"],["earthsys","TN-C-S vs TT"]],
+        [["prot","Protective devices"],["rcd","Type A vs Type B RCD"],["cable","Cable selection"]],
+        [["dno","DNO notification"],["cert","Certification & records"],["regs","The 2026 rulebook"]],
+        [["cert","Certification & records"],["regs","The 2026 rulebook"]]
+      ],
+      com: [
+        [["md","Max demand & headroom"],["dno","DNO applications"]],
+        [["radial","Dedicated radials"],["cable","Cable selection"],["term","Termination & labelling"]],
+        [["array","Dynamic load management"],["data","Data cabling for DLM"]],
+        [["earthsys","Earthing systems"],["openpen","Open-PEN protection"]],
+        [["base","Bases & ducting"],["bays","Bay marking & PAS 1899"]],
+        [["comms","Connectivity that passes"],["data","Data cabling for DLM"]],
+        [["cdm","CDM 2015 & RAMS"],["pcpr","Public charge point regs"]]
+      ]
+    };
+    const rel = (REL[S.course] || [])[S.lesson] || [];
+    v.relShow = v.hCourse && !inQuiz && !quizDone && rel.length > 0;
+    v.relGuides = rel.map(([gid, label]) => ({ label, href: "Guide Library.dc.html#g=" + gid }));
+
+    /* lesson nav */
+    v.navShow = v.qcShow;
+    const navB = { background:"#FFFFFF", color:"#16232E", border:"1px solid #D6CBB6", borderRadius:"10px", padding:"10px 16px",
+      fontSize:"13px", fontWeight:700, fontFamily:"inherit", cursor:"pointer" };
+    v.prevSt = S.lesson === 0 ? Object.assign({}, navB, { opacity:.4, cursor:"default" }) : navB;
+    v.prev = () => { if (this.state.lesson > 0) this.setState({ lesson: this.state.lesson - 1 }); };
+    const last = S.lesson === nL - 1;
+    v.nextLabel = last ? "Start knowledge check ★" : "Next lesson →";
+    v.nextSt = Object.assign({}, navB, { background: last ? "#16232E" : "#1E6BFF", color:"#FBF8F2", border:"none" });
+    v.next = () => { last ? this.setState({ quiz:{ idx:0, score:0, picked:null } }) : this.setState({ lesson: this.state.lesson + 1 }); };
+
+    /* knowledge check */
+    const QZ = this.quiz(S.course);
+    v.qzShow = v.hCourse && inQuiz;
+    v.qzDone = v.hCourse && quizDone;
+    if (inQuiz) {
+      const item = QZ[S.quiz.idx];
+      v.qzNum = S.quiz.idx + 1; v.qzScore = S.quiz.score;
+      v.qzQ = item.q;
+      v.qzDots = QZ.map((_, i) => ({ st: { flex:1, height:"5px", borderRadius:"3px",
+        background: i < S.quiz.idx ? "#1E6BFF" : i === S.quiz.idx ? "#16232E" : "#E7DFD0" } }));
+      v.qzOpts = item.o.map((label, i) => ({
+        label,
+        st: this.optBtn(S.quiz.picked, item.a, i),
+        pick: () => {
+          const qz = this.state.quiz; if (!qz || qz.picked != null) return;
+          this.setState({ quiz: Object.assign({}, qz, { picked:i, score: qz.score + (i === item.a ? 1 : 0) }) });
+        }
+      }));
+      v.qzAnswered = S.quiz.picked != null;
+      const right = S.quiz.picked === item.a;
+      v.qzFb = right ? "✓ Correct." : "✗ The highlighted answer is correct.";
+      v.qzFbSt = { background: right ? "#EAF6EC" : "#FDECEC", border:"1px solid " + (right ? "#CBE3CE" : "#F2C4C2"),
+        color: right ? "#1F7A33" : "#8A1F23", borderRadius:"10px", padding:"9px 13px", fontSize:"12.5px", fontWeight:650 };
+      v.qzNextLabel = S.quiz.idx === QZ.length - 1 ? "See result" : "Next question →";
+      v.qzNext = () => {
+        const qz = this.state.quiz;
+        if (qz.idx === QZ.length - 1) {
+          const best = { dom:this.state.best.dom, com:this.state.best.com };
+          const c = this.state.course;
+          if (best[c] == null || qz.score > best[c]) best[c] = qz.score;
+          this.setState({ quiz:{ done:true, score:qz.score }, best });
+          this.persist({ best });
+        } else this.setState({ quiz: Object.assign({}, qz, { idx: qz.idx + 1, picked:null }) });
+      };
+    }
+    if (quizDone) {
+      const s = S.quiz.score, pass = s >= passMark;
+      v.resScore = s;
+      v.resEmoji = pass ? (s === 8 ? "🏆" : "🏅") : "📚";
+      v.resTitle = pass ? (s === 8 ? "Perfect score" : "Passed") : "Not yet";
+      v.resMsg = pass
+        ? "Nice work - that's the core of a " + (S.course === "dom" ? "compliant domestic install" : "first-time-pass commercial site") + ". The badge is saved on this device."
+        : "You need " + passMark + "/8. Skim the lessons again - every answer is in there - then retry.";
+    }
+
+    /* fuse widget */
+    const F = S.fuse;
+    v.fuseOpts  = this.seg([[60,"60 A"],[80,"80 A"],[100,"100 A"]], F.cap, val => this.setState({ fuse: Object.assign({}, this.state.fuse, { cap: val }) }));
+    v.houseOpts = this.seg([[25,"Light · 25 A"],[40,"Typical · 40 A"],[55,"Heavy · 55 A"]], F.house, val => this.setState({ fuse: Object.assign({}, this.state.fuse, { house: val }) }));
+    v.limOpts   = this.seg([[false,"No"],[true,"Yes"]], F.lim, val => this.setState({ fuse: Object.assign({}, this.state.fuse, { lim: val }) }));
+    const room = Math.max(10, F.cap - F.house);
+    const chg = F.lim ? Math.max(10, Math.min(32, room - 3)) : 32;
+    const tot = F.house + chg;
+    v.fuseHouse = F.house; v.fuseChg = chg; v.fuseTot = tot; v.fuseCap = F.cap;
+    const over = tot > F.cap, warm = !over && tot > F.cap * 0.85;
+    v.fuseBarSt = { height:"100%", width: Math.min(100, Math.round(tot / F.cap * 100)) + "%", transition:"width .25s ease, background .25s ease",
+      background: over ? "#B4231F" : warm ? "#CE9E2E" : "#1F7A33" };
+    v.fuseVerdict = over
+      ? "Over the fuse - this install needs a load limiter or a supply upgrade."
+      : F.lim
+        ? "OK - the limiter caps the charger at ~" + chg + " A when the house is busy, and ramps up when it's quiet."
+        : warm ? "Fits, but it's tight - headroom disappears the day they buy a hot tub." : "Comfortable - full 32 A charging fits under the fuse.";
+    v.fuseVerdictSt = { marginTop:"7px", fontSize:"12.5px", fontWeight:700, lineHeight:"1.5",
+      color: over ? "#B4231F" : F.lim || !warm ? "#1F7A33" : "#9A7A1A" };
+
+    /* DLM sizer widget */
+    const A = S.arr, phN = A.ph === 3 ? 3 : 1;
+    v.phOpts = this.seg([[1,"Single-phase"],[3,"Three-phase"]], A.ph, val => this.setState({ arr: Object.assign({}, this.state.arr, { ph: val }) }));
+    v.rateOpts = this.seg([[40,"40 A"],[60,"60 A"],[80,"80 A"],[100,"100 A"]], A.rate, val => this.setState({ arr: Object.assign({}, this.state.arr, { rate: val }) }));
+    const maxAct = Math.floor(A.rate / 6) * phN, healthy = Math.floor(A.rate / 16) * phN;
+    v.arrSockets = maxAct; v.arrEach = healthy; v.arrBoards = A.ph === 3 ? "2 wired · 0 cloud" : "1 wired · 0 cloud";
+    v.arrNote = "At the " + A.rate + " A" + (phN === 3 ? " per-phase" : "") + " limit, up to " + maxAct + " sockets can charge at once at a typical ~6 A floor - beyond that, chargers queue; " + healthy + " keeps everyone at a healthy ≥16 A. Wired needs the board plus a data cable to every charger; cloud needs neither - just reliable internet at each unit. On most systems the limit (and any per-charger cap) stays adjustable after commissioning - exact floors and offline behaviour are brand-specific.";
+
+    return v;
+  }
+}
+</script>
+</body>
+</html>

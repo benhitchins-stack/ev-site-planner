@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#F4EFE5;}
+  body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  ::selection{background:#1E6BFF;color:#FBF8F2;}
+  a{-webkit-tap-highlight-color:transparent;}
+  details > summary{list-style:none;}
+  details > summary::-webkit-details-marker{display:none;}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#F4EFE5;font-family:'Hanken Grotesk',ui-sans-serif,system-ui,sans-serif;color:#16232E">
+
+  <!-- ── Topbar (matches the planner) ── -->
+  <header style="position:sticky;top:0;z-index:50;background:#FFFFFF;border-bottom:1px solid #E7DFD0;display:flex;align-items:center;flex-wrap:wrap;row-gap:8px;gap:12px;padding:10px 14px">
+    <div style="width:32px;height:32px;border-radius:50%;background:#16232E;display:grid;place-items:center;flex-shrink:0">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="#1E6BFF"><path d="M13 2 5 13.2h5.1L8.6 22 19 10.4h-5.2L13 2z"></path></svg>
+    </div>
+    <div style="line-height:1.15">
+      <b style="font-weight:700;font-size:15.5px;letter-spacing:-.015em;font-family:'Bricolage Grotesque','Hanken Grotesk',sans-serif">Guide Library</b>
+      <small style="display:block;color:#5B6770;font-size:11.5px">Site Planner · how-to guides &amp; useful links</small>
+    </div>
+    <div style="flex:1"></div>
+    <details style="position:relative">
+      <summary style="display:inline-flex;align-items:center;gap:7px;background:#FFFFFF;color:#16232E;border:1px solid #D6CBB6;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:650;cursor:pointer;list-style:none" style-hover="border-color:#1E6BFF">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+        Tools
+      </summary>
+      <div style="position:absolute;right:0;top:calc(100% + 6px);z-index:120;min-width:190px;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:12px;box-shadow:0 14px 34px rgba(22,35,46,.18);padding:5px;display:flex;flex-direction:column;gap:1px">
+        <a href="Learning Hub.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Learning hub</a>
+        <a href="Quotes &amp; Invoices.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Quotes &amp; invoices</a>
+        <a href="RAMS Builder.dc.html" title="Coming soon" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#5C6770" style-hover="background:#F4EFE5;color:#1043B0"><span>RAMS builder</span><span style="font-size:8.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:#F7EDD8;color:#9A6403;border-radius:999px;padding:2px 7px;flex:none">Soon</span></a>
+        <a href="Project Support.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Project Support</a>
+        <a href="Council Estate Review.dc.html" style="display:block;padding:8px 11px;border-radius:8px;text-decoration:none;font-size:12.5px;font-weight:650;color:#16232E" style-hover="background:#F4EFE5;color:#1043B0">Estate Review</a>
+      </div>
+    </details>
+    <a href="EV Site Planner.html" style="display:inline-flex;align-items:center;gap:7px;background:#1E6BFF;color:#FBF8F2;border:1px solid #1E6BFF;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:650;text-decoration:none" style-hover="background:#1556E0">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"></path></svg>
+      Back to planner
+    </a>
+  </header>
+
+  <!-- ── Body: rail + content ── -->
+  <div style="display:flex;gap:26px;max-width:1180px;margin:0 auto;padding:24px 18px 80px;align-items:flex-start">
+
+    <!-- Rail -->
+    <nav style="position:sticky;top:76px;width:232px;flex-shrink:0;display:flex;flex-direction:column;gap:14px">
+      <div style="position:relative">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C97A0" stroke-width="2.2" style="position:absolute;left:11px;top:11px"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+        <input value="{{q}}" onInput="{{setQ}}" placeholder="Search guides…" style="width:100%;box-sizing:border-box;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:10px;padding:9px 12px 9px 32px;font-size:13px;font-family:inherit;color:#16232E;outline:none" style-focus="border-color:#1E6BFF;box-shadow:0 0 0 3px rgba(30,107,255,.15)">
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        <sc-for list="{{lvls}}" as="lv" hint-placeholder-count="4">
+          <button onClick="{{lv.pick}}" style="{{lv.st}}" style-hover="border-color:#1E6BFF">{{lv.label}}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{cats}}" as="ct" hint-placeholder-count="6">
+          <button onClick="{{ct.pick}}" style="{{ct.st}}" style-hover="background:#FFFFFF">
+            <span style="flex:1;text-align:left">{{ct.label}}</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0;font-weight:600">{{ct.count}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:12px 14px;font-size:11.5px;line-height:1.55;color:#5B6770">
+        <b style="color:#16232E;font-size:11.5px">Written by the trade.</b> Every guide is written and kept current in-house by a Level 3 qualified installer &amp; commercial PM - 18th Edition (BS 7671), SMSTS, 10+ years of domestic and commercial EV installs.
+      </div>
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:12px 14px;font-size:11.5px;line-height:1.55;color:#5B6770">
+        <b style="color:#16232E;font-size:11.5px">Reference only.</b> Charger features - load management, connectivity, PEN-fault protection - vary by brand and model. Always confirm against the current edition of BS 7671, the equipment manufacturer's installation guide and your DNO's requirements. Last reviewed <b style="color:#16232E">July 2026</b>.
+      </div>
+    </nav>
+
+    <!-- Content column -->
+    <main style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px;max-width:780px">
+
+      <sc-if value="{{noHits}}" hint-placeholder-val="{{ false }}">
+        <div style="order:0;background:#FFFFFF;border:1px dashed #D6CBB6;border-radius:14px;padding:34px;text-align:center;color:#5B6770;font-size:13.5px">
+          Nothing matches that search.
+          <div style="margin-top:12px"><button onClick="{{clear}}" style="background:#1E6BFF;color:#FBF8F2;border:none;border-radius:9px;padding:8px 16px;font-size:13px;font-weight:650;font-family:inherit;cursor:pointer">Clear search</button></div>
+        </div>
+      </sc-if>
+
+      <!-- ═══ FEATURED ═══ -->
+      <sc-if value="{{showFeat}}" hint-placeholder-val="{{ true }}">
+        <section style="order:1;background:#16232E;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8FB5FF">Most used on site</span><span style="flex:1;height:1px;background:rgba(251,248,242,.15)"></span><span style="font-size:10.5px;color:#8C97A0;font-weight:650">tap to open</span></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+            <sc-for list="{{feats}}" as="f" hint-placeholder-count="4">
+              <button onClick="{{f.pick}}" style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;background:rgba(251,248,242,.06);border:1px solid rgba(251,248,242,.16);border-radius:11px;padding:11px 13px;cursor:pointer;font-family:inherit;text-align:left" style-hover="background:rgba(251,248,242,.12);border-color:#1E6BFF">
+                <b style="font-size:12.5px;font-weight:700;color:#FBF8F2;line-height:1.3">{{f.t}}</b>
+                <span style="font-size:10.5px;color:#8C97A0;line-height:1.4">{{f.s}}</span>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{focusOn}}" hint-placeholder-val="{{ false }}">
+        <div style="order:2;display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:12px;padding:10px 14px">
+          <span style="flex:1;min-width:140px;font-size:12.5px;font-weight:650;color:#1043B0">Showing one guide</span>
+          <sc-if value="{{courseOn}}" hint-placeholder-val="{{ false }}">
+            <a href="{{courseHref}}" title="Open the lesson in the Learning Hub" style="display:inline-flex;align-items:center;gap:5px;background:#FFFFFF;border:1px solid #C9DBF8;border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:700;color:#1043B0;text-decoration:none" style-hover="border-color:#1E6BFF">{{courseLabel}} →</a>
+          </sc-if>
+          <button onClick="{{showAll}}" style="background:#1E6BFF;color:#FBF8F2;border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">← All guides</button>
+        </div>
+      </sc-if>
+
+      <!-- ═══ TIER: START HERE ═══ -->
+      <sc-if value="{{t_b}}" hint-placeholder-val="{{ true }}">
+        <h2 style="order:10;margin:14px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#16232E;display:flex;align-items:center;gap:10px">Start here · the fundamentals<span style="flex:1;height:1px;background:#D6CBB6"></span><span style="font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#1F7A33;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:20px;padding:3px 9px">BEGINNER</span></h2>
+      </sc-if>
+
+      <sc-if value="{{v_prot}}" hint-placeholder-val="{{ true }}">
+        <article style="order:11;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Power &amp; protection</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Pick the right protective device for each charger</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Every AC charger gets its own dedicated radial with its own protective device. The device must switch all live conductors, be lockable/isolatable, and be labelled ("EV charger" + circuit reference). Typical commercial requirements:</p>
+          <div style="border:1px solid #E7DFD0;border-radius:10px;overflow:hidden;font-size:12.5px">
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;background:#F4EFE5;font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#5B6770"><div style="padding:8px 12px">Charger</div><div style="padding:8px 12px">Protection</div><div style="padding:8px 12px">Cable</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">7 kW · single socket</div><div style="padding:8px 12px;color:#3D4B57">40 A double-pole RCBO · Type A · 30 mA · C-curve</div><div style="padding:8px 12px;color:#3D4B57">6–16 mm² 3-core</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">11 kW · single socket</div><div style="padding:8px 12px;color:#3D4B57">20 A 4-pole RCBO · Type A · 30 mA · 16 A per phase</div><div style="padding:8px 12px;color:#3D4B57">5-core</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">22 kW · single socket</div><div style="padding:8px 12px;color:#3D4B57">40 A 4-pole RCBO · Type A · 30 mA · switches all poles</div><div style="padding:8px 12px;color:#3D4B57">6–16 mm² 5-core</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">Twin · 7 kW per socket</div><div style="padding:8px 12px;color:#3D4B57">2 × C40 3-pole MCB (polyphase) or C63/C80 (64 A single-phase)</div><div style="padding:8px 12px;color:#3D4B57">6–25 mm²</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">Twin · 11 kW per socket</div><div style="padding:8px 12px;color:#3D4B57">2 × C20 3-pole MCB · 16 A per phase per socket</div><div style="padding:8px 12px;color:#3D4B57">5-core</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">Twin · 22 kW per socket</div><div style="padding:8px 12px;color:#3D4B57">C63/C80 3-pole MCB, or 2 × C40 3-pole</div><div style="padding:8px 12px;color:#3D4B57">6–25 mm²</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">Wired DLM group</div><div style="padding:8px 12px;color:#3D4B57">MCCB / switch-fuse / MCB at the group limit upstream · per-charger RCBOs live inside the load management board</div><div style="padding:8px 12px;color:#3D4B57">6–16 mm² per radial</div></div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.6fr 0.9fr;border-top:1px solid #F0E9DB"><div style="padding:8px 12px;font-weight:650">Cloud DLM group</div><div style="padding:8px 12px;color:#3D4B57">Standard per-charger protection as above - no extra hardware; balancing happens over the internet</div><div style="padding:8px 12px;color:#3D4B57">as above</div></div>
+          </div>
+          <p style="margin:0;font-size:12.5px;line-height:1.6;color:#5B6770">Where an MCB (not an RCBO) is listed, the 30 mA RCD function must come from per-socket RCDs inside the unit - a feature of some models only; confirm on the data sheet before dropping the RCBO. <b style="color:#B4231F">Not accepted:</b> Type AC devices, single-pole switching, shared protection between chargers, or devices rated above the manufacturer's stated maximum.</p>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> select any charger and the properties panel shows this supply &amp; protection line for its exact variant, power, DLM group and manual cap.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_rcd}}" hint-placeholder-val="{{ true }}">
+        <article style="order:12;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Power &amp; protection</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Type A vs Type B RCDs - and the 6 mA DC rule</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">EV charging can leak smooth DC fault current, which blinds an ordinary RCD. BS 7671 Section 722 therefore requires each charging point to have both 30 mA RCD protection <i>and</i> protection against DC fault current above 6 mA. That second part can come from:</p>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>RDC-DD built into the charger</b> (most current units, but not all - verify on the data sheet) → a <b>Type A</b> RCD/RCBO upstream is sufficient and is the normal commercial arrangement.</li>
+            <li><b>A Type B RCD</b> at the origin of the circuit → required only where the charger has no built-in DC detection, or on TT systems where the source RCD is specified as Type B (100–300 mA).</li>
+          </ul>
+          <p style="margin:0;font-size:12.5px;line-height:1.6;color:#5B6770">Type AC devices are never acceptable for EV circuits. Don't stack a Type B downstream of a Type A - DC blinding works in the other direction; check discrimination with the designer.</p>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_radial}}" hint-placeholder-val="{{ true }}">
+        <article style="order:13;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Power &amp; protection</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Dedicated radials - why there's no diversity on charging</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Each charging point is a continuous full-load appliance: a 7 kW socket draws 32 A for hours at a time. BS 7671 Section 722 requires design at full rated current - you cannot apply diversity factors to EV circuits, and chargers must never share a protective device or loop from one unit to the next.</p>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li>One radial, one protective device, one cable per charger (per socket on back-to-back posts).</li>
+            <li>An EV distribution board (EVDB) close to the chargers keeps radials short and makes future additions cheap.</li>
+            <li>If the sums don't fit the supply, the answer is <b>dynamic load management</b> (wired or cloud) or a supply upgrade - never diversity.</li>
+          </ul>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_spd}}" hint-placeholder-val="{{ true }}">
+        <article style="order:53;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Power &amp; protection</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Surge protection on EV boards</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Since Amendment 2 (2022), BS 7671 expects surge protection in most new installations unless a documented risk assessment says otherwise. For EV work the practical rule: fit a <b>Type 2 SPD</b> in the EVDB or at the origin of the new charging circuits (a Type 1 is also acceptable at the origin on TN-S). Chargers are outdoor electronics on long cable runs - cheap to protect, expensive to replace.</p>
+          <p style="margin:0;font-size:12.5px;line-height:1.6;color:#5B6770">Photograph the SPD with its status window visible for the job's photo record, and note it on the EIC.</p>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_md}}" hint-placeholder-val="{{ true }}">
+        <article style="order:14;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Power &amp; protection</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Assess maximum demand before you design</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Headroom = supply capacity − existing maximum demand. Establish both before placing a single charger:</p>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Supply capacity:</b> read the cut-out / service fuse rating, or the agreed capacity (kVA) on a CT-metered supply. Never open the cut-out - that's the DNO's.</li>
+            <li><b>Existing demand:</b> half-hourly data from the energy supplier is best; otherwise a logged measurement over a representative week, at the worst season.</li>
+            <li><b>New load:</b> full rating per socket, no diversity - 32 A at 7 kW, 16 A per phase at 11 kW, 32 A per phase at 22 kW - then decide whether dynamic load management brings it inside the headroom.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> enter the supply rating in Job details and the <b>Supply load check</b> card tracks connected load live - DLM groups count at their group limit, not the sum of their sockets.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <!-- ═══ TIER: INTERMEDIATE ═══ -->
+      <sc-if value="{{t_i}}" hint-placeholder-val="{{ true }}">
+        <h2 style="order:30;margin:14px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#16232E;display:flex;align-items:center;gap:10px">Build the site · day-to-day design<span style="flex:1;height:1px;background:#D6CBB6"></span><span style="font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#9A7A1A;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">INTERMEDIATE</span></h2>
+      </sc-if>
+
+      <sc-if value="{{v_earthsys}}" hint-placeholder-val="{{ true }}">
+        <article style="order:31;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Earthing &amp; PEN fault</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">TN-C-S, TN-S and TT - what changes on site</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
+            <div style="border:1px solid #CBE3CE;background:#F2F9F3;border-radius:10px;padding:12px 14px"><b style="font-size:12px;color:#1F7A33;text-transform:uppercase;letter-spacing:.05em">✓ TN-C-S (PME)</b><p style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">The common case. Units with built-in open-PEN detection (most current models - verify on the data sheet) handle the PEN-fault risk - no separate earth electrode and no extra O-PEN device.</p></div>
+            <div style="border:1px solid #CBE3CE;background:#F2F9F3;border-radius:10px;padding:12px 14px"><b style="font-size:12px;color:#1F7A33;text-transform:uppercase;letter-spacing:.05em">✓ TN-S</b><p style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">Fully supported - but confirm it's a genuine separate-earth supply (private transformer), not a PME conversion. If in doubt, treat as PME.</p></div>
+            <div style="border:1px solid #EBD9AE;background:#FBF6E8;border-radius:10px;padding:12px 14px"><b style="font-size:12px;color:#9A7A1A;text-transform:uppercase;letter-spacing:.05em">⚠ TT - conditional</b><p style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">Only where no TN system is available. Typical conditions: Type B 100–300 mA RCD at source · electrode resistance &lt;200 Ω · ≥16 mm² G/Y from the electrode · rod within 5 m, mechanically protected, no tape clamps.</p></div>
+          </div>
+          <p style="margin:0;font-size:12.5px;line-height:1.6;color:#5B6770"><b>Touch potential on TT:</b> keep other mains-powered street equipment (lamp columns, powered bollards, gates) at least 2.5 m from the charger unless it shares the same earthing system. This does not apply to TN systems.</p>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> record the earthing arrangement in Job details - pick TT and the panel reminds you of the source-RCD, electrode and 2.5 m clearance rules.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_openpen}}" hint-placeholder-val="{{ true }}">
+        <article style="order:32;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Earthing &amp; PEN fault</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Open-PEN protection without an earth rod</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">On a PME supply, a broken PEN conductor can put mains voltage on everything earthed - including a car on charge outdoors. BS 7671 (722.411.4.1) gives several compliant answers; in practice you'll use one of:</p>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Built-in open-PEN detection</b> in the charger (voltage-monitoring device to IET 01 / the device standard) - common on current commercial units but not universal. Where the data sheet confirms it, nothing extra to install.</li>
+            <li><b>A separate open-PEN device (OPDD)</b> ahead of a charger that lacks it.</li>
+            <li><b>Convert the circuit to TT</b> with an earth electrode - last resort, brings the TT conditions with it.</li>
+          </ul>
+          <p style="margin:0;font-size:12.5px;line-height:1.6;color:#5B6770"><b>Don't double up.</b> If the unit already has O-PEN detection, an extra upstream O-PEN device is unnecessary and can cause commissioning failures. Check the data sheet, then leave it out.</p>
+        </article>
+      </sc-if>
+
+      <!-- ═══ TIER: ADVANCED ═══ -->
+      <sc-if value="{{t_a}}" hint-placeholder-val="{{ true }}">
+        <h2 style="order:50;margin:14px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#16232E;display:flex;align-items:center;gap:10px">Specialist &amp; regulations<span style="flex:1;height:1px;background:#D6CBB6"></span><span style="font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">ADVANCED</span></h2>
+      </sc-if>
+
+      <sc-if value="{{v_cable}}" hint-placeholder-val="{{ true }}">
+        <article style="order:33;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Cabling</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Select and size charger cables</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Type:</b> SWA or an EV-grade composite cable. Twin &amp; Earth is not acceptable for external charger circuits.</li>
+            <li><b>Size:</b> typically 6–16 mm² for single-socket units (25 mm² for twins), driven by load, installation reference method, run length and volt drop - do the calculation, keep it on file.</li>
+            <li><b>Cores:</b> line(s) + neutral + a <b>dedicated CPC core</b>. SWA armour is earthed at the supply end through a proper SWA gland, but the armour can never be the sole CPC.</li>
+            <li><b>Volt drop:</b> long car-park runs are the usual killer - check against the 5% limit at full 32 A load before committing to a route.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> draw the SWA route and set its measured length - the totals card and budget then price the run, and the length feeds your volt-drop check.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_term}}" hint-placeholder-val="{{ true }}">
+        <article style="order:34;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Cabling</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Termination, spares and passive circuits</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li>Leave <b>≥2 m of cable coiled</b> at every charger position, ready for the unit termination.</li>
+            <li>One cable per unit - no loop-in / loop-out between chargers.</li>
+            <li>Label every cable <b>at both ends</b> with its circuit reference; fixed, legible, weatherproof.</li>
+            <li><b>Passive (future-use) circuits:</b> terminate into an adaptable box with maintenance-free connectors, label "Passive" with the circuit number, test them, and record them on the draft EIC - untested passive runs get excluded from certification and stall future expansion.</li>
+          </ul>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_data}}" hint-placeholder-val="{{ true }}">
+        <article style="order:52;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Cabling</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Data cables for load management</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Cloud DLM:</b> no data cabling at all - each charger just needs reliable internet over whichever of Ethernet, Wi-Fi or 4G the unit actually supports (not every model offers all three). Most systems fall back to a safe preset rate if the connection drops - confirm the offline behaviour for the brand.</li>
+            <li><b>Spec (wired):</b> typically 4-core LSZH shielded data cable; screened to 600 V when run alongside LV power. Heavier gauge on runs over ~60 m. 2 m spare both ends. The manufacturer's spec governs - check it before ordering.</li>
+            <li><b>CT limiter:</b> one data cable per charger <i>and per phase</i>, radial only - never daisy-chained.</li>
+            <li><b>Wired DLM:</b> data links the board / controller to every charger - daisy-chained, star-wired or mixed per the manufacturer's topology; keep clusters on different phases on separate data runs.</li>
+            <li><b>Future-proofing:</b> pulling data alongside every power cable today (terminated, labelled "Passive - future load management", on the draft EIC) means moving to wired DLM later needs no re-trenching - or skip it and plan for cloud DLM.</li>
+          </ul>
+        </article>
+      </sc-if>
+
+
+      <sc-if value="{{v_array}}" hint-placeholder-val="{{ true }}">
+        <article style="order:51;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Load management</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Set up dynamic load management (DLM)</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">DLM runs a group of chargers inside one supply limit: the system watches demand and de-rates active units in real time so the total never exceeds the limit. Exactly how it behaves is set by the charger brand - typically any mix of <b>7, 11 and 22 kW</b> AC units from one manufacturer's range can join a group, each keeps charging down to a <b>~6 A minimum</b>, and below that units queue until capacity frees up. Two ways to build it:</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">
+            <div style="border:1px solid #C9DBF8;background:#F5F8FE;border-radius:10px;padding:12px 14px"><b style="font-size:12px;color:#1043B0;text-transform:uppercase;letter-spacing:.05em">Wired DLM</b><p style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57">A load management board / controller with a CT or meter on the incoming supply, and a <b>screened data cable run to every charger</b> (daisy-chain or star, per the manufacturer). Fastest response, and keeps balancing even if the internet goes down. Per-charger RCBOs live in the board.</p></div>
+            <div style="border:1px solid #CBE3CE;background:#F2F9F3;border-radius:10px;padding:12px 14px"><b style="font-size:12px;color:#1F7A33;text-transform:uppercase;letter-spacing:.05em">Cloud DLM</b><p style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#3D4B57"><b>No data cable and no board</b> - the back office balances the group over the internet (OCPP smart-charging profiles). Every unit needs reliable connectivity (whichever of Ethernet, Wi-Fi or 4G it supports), and most systems fall back to a safe preset rate if the connection drops - confirm the offline behaviour. Standard per-charger protection at the source board.</p></div>
+          </div>
+          <div style="border:1px solid #E7DFD0;border-radius:10px;overflow:hidden;font-size:12.5px">
+            <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;background:#F4EFE5;font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#5B6770"><div style="padding:7px 12px">Group limit</div><div style="padding:7px 12px">Max active sockets · ~6 A floor</div><div style="padding:7px 12px">Keeps ≥16 A each</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;border-top:1px solid #F0E9DB"><div style="padding:7px 12px;font-weight:650">40 A</div><div style="padding:7px 12px;color:#3D4B57">6</div><div style="padding:7px 12px;color:#3D4B57">2</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;border-top:1px solid #F0E9DB"><div style="padding:7px 12px;font-weight:650">60 A</div><div style="padding:7px 12px;color:#3D4B57">10</div><div style="padding:7px 12px;color:#3D4B57">3</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;border-top:1px solid #F0E9DB"><div style="padding:7px 12px;font-weight:650">80 A</div><div style="padding:7px 12px;color:#3D4B57">13</div><div style="padding:7px 12px;color:#3D4B57">5</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;border-top:1px solid #F0E9DB"><div style="padding:7px 12px;font-weight:650">100 A</div><div style="padding:7px 12px;color:#3D4B57">16</div><div style="padding:7px 12px;color:#3D4B57">6</div></div>
+          </div>
+          <div style="background:#FBF6E8;border:1px solid #EBD9AE;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#7A5A12"><b>Varies by brand &amp; model:</b> DLM is proprietary - group size, mixing rules, the minimum floor, offline fallback and remote adjustment all differ between manufacturers, and a group normally needs chargers from one brand (or a back office that supports them all). The figures above are typical; design from the manufacturer's current documentation.</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li>Limits are per phase - a three-phase group serves 3× the sockets, and three-phase (11 / 22 kW) units are balanced on every phase.</li>
+            <li>Set the group limit at commissioning, <b>slightly below</b> the fuse or agreed capacity - never at it. On most systems it stays manually adjustable (on site or remotely) as the site's needs change.</li>
+            <li>Many systems also let individual chargers be <b>manually capped</b> - e.g. one unit held at 16 A on a tight corner of the site.</li>
+            <li>Sub-main and switchgear are sized to the full group limit - no diversity.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> tag chargers A/B/C, then either place a <b>load management board</b> with the matching letter (wired) or switch the group to <b>Cloud</b> in the charger panel and set its limit - the load check caps the group at that limit.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_limiter}}" hint-placeholder-val="{{ true }}">
+        <article style="order:35;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Load management</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">CT-clamp load limiting for tight supplies</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">A CT clamp on the incoming tails watches whole-site demand; when it approaches the fuse rating the charger de-rates, then ramps back up as demand falls. Set the threshold to sit inside the fuse rating; output typically bottoms out around a <b>~6 A</b> minimum. Whether a limiter is offered - and which outputs it supports - varies by charger brand and model, so confirm it on the data sheet before quoting one. One dedicated data cable per charger and per phase back to the clamp position - never daisy-chained. For more than a couple of units, a DLM group (wired or cloud) is the better tool.</p>
+        </article>
+      </sc-if>
+
+
+      <sc-if value="{{v_base}}" hint-placeholder-val="{{ true }}">
+        <article style="order:15;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Civils &amp; bays</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Bases and ducting that pass first time</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Base:</b> 600 × 600 × 400 mm, C20 concrete or stronger, flat and flush with the finished surface (450 × 450 is often accepted for a single-post unit). One per charger, fully cured before install day - no exceptions.</li>
+            <li><b>Duct:</b> 63 mm twin-wall (63–110 mm for twins), centred through the base and finishing flush; ≥450 mm deep in general areas, ≥600 mm under roadways; bend radius ≥450 mm, entering the base vertically; watertight at every entry.</li>
+            <li><b>Warning tape</b> 150 mm above the duct, plus a pull cord.</li>
+            <li><b>Photograph the bare base before any surface finish is laid</b> - tarmac over it is fine afterwards; block paving is conditional and the fixing risk sits with whoever laid it.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> pedestal chargers draw their concrete pad automatically; duct routes carry the depth spec in the legend, and "Concrete base - before surfacing" is a one-tap photo name.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_bays}}" hint-placeholder-val="{{ true }}">
+        <article style="order:36;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Civils &amp; bays</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Bay marking and accessible charging (PAS 1899)</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li>Standard bay 2.4 × 4.8 m, painted "EV only" lettering and a contrasting strip at the open end so drivers stop within cable reach; wheel stops protect the unit.</li>
+            <li><b>PAS 1899:2022</b> is the accessible-charging spec: wider bays with hatched transfer zones, level ground, clear approach routes, and controls/sockets reachable from a wheelchair (typically 0.75–1.2 m above ground).</li>
+            <li>Plan at least some accessible provision on public and workplace sites - grant and planning conditions increasingly expect it, and retrofitting bay layouts is expensive.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> the Bay tool has an <b>Accessible</b> type that draws the hatched access zone - set the hatch side to suit the transfer space.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_signage}}" hint-placeholder-val="{{ true }}">
+        <article style="order:37;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Civils &amp; bays</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Signage, lighting and bays that stay usable</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Signage:</b> an "EV charging only" sign per bay or pair, plus operator and tariff information where the public charges. Fix signs clear of door swings, the hatched transfer zone and the charging lead's reach.</li>
+            <li><b>Enforcement:</b> agree up front who polices the bays and how - parking terms, warnings, fines or barriers. Signage without enforcement means blocked bays within weeks of go-live.</li>
+            <li><b>Lighting:</b> walk the site after dark. You want even light at each charger and along the approach route, no deep shadow between car and socket, and no glare into drivers' eyes. PAS 1899 expects accessible bays to be well lit, and units are commissioned and serviced after dark too.</li>
+            <li><b>Evidence:</b> photograph the signed, lit bays at handover - planning conditions and grant claims increasingly ask for proof.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> the Bay tool draws the EV-ONLY lettering and green band; drop a Label or marker where signs and lighting columns go so they're planned, priced and photographed.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+
+      <sc-if value="{{v_comms}}" hint-placeholder-val="{{ true }}">
+        <article style="order:16;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Connectivity</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Get every charger online - or it can't be commissioned</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Mobile (3G/4G):</b> built into most commercial units, zero setup - the default for outdoor positions. Check signal at the actual charger location, not the car park entrance.</li>
+            <li><b>Wi-Fi:</b> 2.4 GHz only on most units - a dedicated 2.4 GHz SSID beats a dual-band network. Private and secured; no captive portals or guest login pages. Watch vendor limits on SSID/password length.</li>
+            <li><b>Ethernet:</b> where the unit has a port (not all do) - shielded Cat5e/Cat6, live before install day, straight to the network; again, no portals.</li>
+            <li>Smart-charging regulations assume connectivity: an offline charger fails commissioning outright.</li>
+          </ul>
+          <div style="background:#FBF6E8;border:1px solid #EBD9AE;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#7A5A12"><b>Varies by brand &amp; model:</b> which of these interfaces a charger actually has differs between makes and models - confirm the fitted options on the data sheet before designing the comms.</div>
+        </article>
+      </sc-if>
+
+
+      <sc-if value="{{v_dno}}" hint-placeholder-val="{{ true }}">
+        <article style="order:17;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Process &amp; regulations</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">DNO notification and applications</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Every chargepoint must be notified to the network operator - it's how the DNO keeps the local network safe as load grows. The route depends on the installation:</p>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Connect &amp; notify (within 28 days):</b> only when the ENA criteria all hold - a single new unit, cut-out rating known, no looped service, metered supply, and maximum demand stays under the cut-out and under ~60 A (13.8 kVA) per phase.</li>
+            <li><b>Apply first:</b> everything else - multiple chargers, load-managed systems, tight headroom or looped services. The DNO has 10 working days to respond to a notification; larger schemes get a connection offer instead.</li>
+            <li>Submissions go through the <b>ENA Connect Direct</b> portal (links below). Since April 2023, demand customers aren't charged for upstream network reinforcement - you pay only for your own connection assets.</li>
+            <li>Talk to the DNO early on multi-charger sites: capacity data shapes the whole design.</li>
+          </ul>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_cert}}" hint-placeholder-val="{{ true }}">
+        <article style="order:18;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Process &amp; regulations</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Certification and a clean photo record</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>EIC</b> (with schedules of inspection and test results) for every new circuit - issue a draft covering passive circuits too. Domestic work also needs Part P notification via a competent-person scheme.</li>
+            <li><b>Photograph as you go:</b> cut-out/supply head with ratings legible, protection devices in the board, cable runs and glands, the coiled 2 m spare, and the bare concrete base before surfacing.</li>
+            <li><b>Share before sign-off:</b> if a client, principal contractor or charger supplier has to approve the works, send photos and draft certificates ahead of the visit - surprises on the day become revisits.</li>
+            <li>Skipped photos = arguments later: surfacing hides the base, walls hide the cable, and the warranty conversation gets expensive. The record costs minutes.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> the photo rename chips cover this record ("Circuit protection close-up", "Concrete base - before surfacing"…), and the compliance checklist card tracks the paperwork per job.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_regs}}" hint-placeholder-val="{{ true }}">
+        <article style="order:54;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Process &amp; regulations</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">The 2026 rulebook at a glance</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>BS 7671 (18th Edition):</b> Amendment 4 ("Orange Book") was published 15 April 2026; the previous version (…+A2:2022+A3:2024) is withdrawn on 15 October 2026, after which new work certifies to A4. Check which edition your certification software and designs cite. Section 722 is the EV chapter.</li>
+            <li><b>What A4:2026 changed for EV work:</b> Section 722 gains provisions for bidirectional charging (V2G/V2H) and export-capable units; 6 mA DC fault detection for Mode 3 now references RDC-DD to IEC 62955 (not just Type B RCDs); AFDD requirements extend to more premises including EV charging circuits; and a new Chapter 57 covers battery storage that increasingly shares the board with chargers. Schemes also now expect each person doing EV work to hold their own Level 3 qualification.</li>
+            <li><b>IET Code of Practice for EV Charging Equipment Installation, 5th Edition (2023)</b> - the practical companion to Section 722, aligned with ENA G12/4. Covers PAS 1899 accessibility, RC59 fire safety guidance, V2G/prosumer installs, buried-cable depths and telecoms/auxiliary cabling.</li>
+            <li><b>Smart Charge Points Regulations 2021:</b> private chargers up to 50 kW sold since 30 June 2022 must be smart, with default off-peak schedules, randomised delay and security requirements.</li>
+            <li><b>Building Regs Part S (England):</b> new homes and buildings with parking need chargepoints from the outset - at least Mode 3, ≥7 kW, universal socket, on a dedicated circuit.</li>
+            <li><b>Public Charge Point Regulations 2023:</b> consumer duties if your chargers serve the public - see the dedicated guide below.</li>
+            <li><b>PAS 1899:2022:</b> the accessible-charging specification - bay dimensions, clear access zones, charger reach and interface heights.</li>
+            <li><b>Grants:</b> the Workplace Charging Scheme runs until 31 March 2027 - up to £500 per socket (75% of costs, max 40 sockets per applicant) for installs completed from 1 April 2026, via OZEV-authorised installers.</li>
+          </ul>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_pcpr}}" hint-placeholder-val="{{ true }}">
+        <article style="order:55;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Process &amp; regulations</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Public charging sites: the consumer-facing rules</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">The Public Charge Point Regulations 2023 apply to any charger the general public can use - supermarket and destination car parks included. Private workplace and residential chargers are exempt. All the phase-in deadlines have now passed, so a new public site must meet the lot from day one:</p>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Pricing:</b> the maximum price in p/kWh clearly displayed at the unit, on its screen or in the app before the session starts.</li>
+            <li><b>Contactless payment</b> on every new public charger of 8 kW+ (a shared site terminal is acceptable) - no app or membership barrier for ad-hoc users.</li>
+            <li><b>Free 24/7 staffed helpline</b>, with contact details displayed at the site, plus quarterly performance reporting.</li>
+            <li><b>Open data via OCPI:</b> live status, location, connector type and pricing published in machine-readable form.</li>
+            <li><b>99% reliability</b> for rapid (50 kW+) networks, measured as an annual average, published and reported to OPSS.</li>
+            <li><b>Roaming:</b> payment through at least one third-party roaming provider (required since Nov 2025); new agreements reported within 28 days.</li>
+          </ul>
+          <p style="margin:0;font-size:12.5px;line-height:1.55;color:#8C97A0">Enforced by the Office for Product Safety and Standards on behalf of OZEV - compliance notices can block further installs, and fines follow. Flag these duties to clients early: the payment terminal, data feed and helpline contract belong in the quote, not the snag list.</p>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_afdd}}" hint-placeholder-val="{{ true }}">
+        <article style="order:56;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A12;background:#FBF3DC;border:1px solid #EBDBB0;border-radius:20px;padding:3px 9px">Reference</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Power &amp; protection</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">AFDD on EV circuits - decide and record</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">An AFDD trips on the arc signature of a damaged cable or loose termination - faults an RCD and MCB both miss. BS 7671:2018+A4:2026 extends where arc fault protection is expected, and EV final circuits are squarely in scope for the assessment.</p>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>Mandatory list first:</b> higher-risk residential buildings, HMOs, purpose-built student accommodation and care homes require AFDDs on 32 A socket circuits - an EV radial qualifies. Elsewhere the requirement is a documented judgement, not silence.</li>
+            <li><b>Fitting one:</b> a combined AFDD / RCBO (Type A, 30 mA) in the way feeding the charger keeps board space sane - check coordination with the charger's RDC-DD against the manufacturer's device list.</li>
+            <li><b>Record the decision either way</b> on the EIC / design record: "assessed - required and fitted" or "assessed - not required for this premises type". The written decision is what stands up at inspection.</li>
+          </ul>
+          <p style="margin:0;font-size:12.5px;line-height:1.55;color:#8C97A0">AFDDs are wider than a plain RCBO and cost real money - decide at design so the board, quote and drawing all agree before fit-off.</p>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_cdm}}" hint-placeholder-val="{{ true }}">
+        <article style="order:38;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1043B0;background:#EAF1FE;border:1px solid #C9DBF8;border-radius:20px;padding:3px 9px">How-to</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Process &amp; regulations</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">CDM, RAMS and the paperwork that opens the site</h3>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#3D4B57">
+            <li><b>CDM 2015 applies to every job</b>, even domestic installs. With more than one contractor on site, a principal designer and principal contractor are appointed and a <b>construction phase plan</b> (CPP) must exist before work starts - a few proportionate pages is fine for a small site.</li>
+            <li><b>Notifiable jobs</b> (30+ working days with 20+ workers at once, or 500+ person-days) also need an <b>F10 notification</b> to HSE before site set-up.</li>
+            <li><b>Welfare from day one</b> (CDM Schedule 2): toilet, washing, drinking water and somewhere to rest and eat: a welfare unit / site cabin on site, or the client's facilities agreed in writing, never assumed. Agree where the cabin, storage container and skip will stand, and which bays or access they take out, before mobilisation.</li>
+            <li><b>RAMS:</b> a site-specific risk assessment and method statement, issued to and accepted by the client or principal contractor before the start date. Name the actual site, tasks, plant and emergency arrangements - recycled generic RAMS are the top reason start dates slip.</li>
+            <li><b>Buried services:</b> utility drawings obtained (a free LSBUD enquiry covers most), the route CAT &amp; Genny scanned and marked, hand-dig within 500&nbsp;mm of marked services, and dig / isolation / hot-works permits signed before the first trench is cut.</li>
+            <li><b>Public protection:</b> Heras fencing around work areas, open trenches covered or fenced whenever unattended, a signed and lit pedestrian diversion, and banksman control where plant crosses footways.</li>
+            <li><b>Asbestos:</b> in any building built or refurbished before 2000, check the asbestos register / survey before drilling or chasing, and stop if suspect material appears.</li>
+            <li><b>Emergency arrangements:</b> named first aider and kit on site, an extinguisher at the work area, muster point and nearest A&amp;E in the induction.</li>
+            <li><b>Day one:</b> inductions booked and signed, with the paperwork above displayed in the welfare unit.</li>
+          </ul>
+          <sc-if value="{{tips}}" hint-placeholder-val="{{ true }}">
+            <div style="background:#EAF1FE;border:1px solid #C9DBF8;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#1043B0"><b>On the plan:</b> work the site-safety items in <b>Compliance &amp; progress</b> (CDM / CPP &amp; RAMS, welfare, buried services, public segregation, F10, asbestos and first aid), ticking each Done or N/A. Name the <b>principal designer and principal contractor</b> on the CDM row (they print with the compliance page) and export the <b>CPP template</b> from the same row to complete and keep on site. Set the <b>F10 status</b> on its row: not notifiable, to file, or filed with date and HSE reference. Attach the accepted RAMS to the Project pack, then draw the set-up on the plan: cabin, storage container, WC and skip from <b>Site &amp; surroundings</b>, the <b>Heras fencing</b> line around work areas, and <b>First aid / Fire point</b> markers so everyone can find them.</div>
+          </sc-if>
+        </article>
+      </sc-if>
+
+      <!-- ═══ USING THE PLANNER ═══ -->
+      <sc-if value="{{s_t}}" hint-placeholder-val="{{ true }}">
+        <h2 style="order:70;margin:14px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#8C97A0;display:flex;align-items:center;gap:10px">Using the planner<span style="flex:1;height:1px;background:#D6CBB6"></span></h2>
+      </sc-if>
+
+      <sc-if value="{{v_scale}}" hint-placeholder-val="{{ true }}">
+        <article style="order:71;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1F7A33;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:20px;padding:3px 9px">Planner</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Using the planner</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Set the scale before anything else</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Everything measurable - run lengths, lead-reach arcs, true-size chargers and bays, the budget - hangs off the photo scale. Use <b>Set scale</b>, drag along something with a known length (a parking bay ≈ 4.8 m, a door ≈ 0.9 m, a marked dimension on a site plan), type the real length, done. Do it once per photo, first. The readiness score flags any plan still missing its scale.</p>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_routes}}" hint-placeholder-val="{{ true }}">
+        <article style="order:72;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1F7A33;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:20px;padding:3px 9px">Planner</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Using the planner</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Routes that measure and price themselves</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Pick the right route kind (SWA, duct, trench, tray, trunking, data…) - each carries its own line style, legend entry and spec note. On a scaled photo the length is measured as you draw; snap the ends onto equipment so runs land on the unit or board. Lengths roll into the totals card, and once you've entered rates, the live budget prices trenching, ducting, cabling and reinstatement per metre. Add run notes from the presets ("2 m spare coiled at charger", "Warning tape 150 mm above duct") so the drawing carries the install detail.</p>
+        </article>
+      </sc-if>
+
+      <sc-if value="{{v_arrtool}}" hint-placeholder-val="{{ true }}">
+        <article style="order:73;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1F7A33;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:20px;padding:3px 9px">Planner</span><span style="font-size:11px;color:#8C97A0;font-weight:650">Using the planner</span></div>
+          <h3 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em">Model DLM groups and read the load check</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:#3D4B57">Tag each charger with a DLM group letter (A/B/C) in its properties - any mix of 7, 11 and 22 kW. For <b>wired DLM</b>, place a <b>load management board</b> with the same letter and set its phase and limit; the board panel allocates RCBO ways and warns when sockets would queue. For <b>cloud DLM</b>, switch the group to Cloud in the charger panel and set its limit - no board or data cabling on the plan. The <b>Supply load check</b> card then counts each group at its limit instead of full rate per socket - so you can see exactly how much headroom load management buys before you commit to a supply application.</p>
+        </article>
+      </sc-if>
+
+      <!-- ═══ USEFUL LINKS ═══ -->
+      <sc-if value="{{s_k}}" hint-placeholder-val="{{ true }}">
+        <h2 style="order:90;margin:14px 0 0;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#8C97A0;display:flex;align-items:center;gap:10px">Useful links<span style="flex:1;height:1px;background:#D6CBB6"></span></h2>
+        <div style="order:91;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+
+          <a href="https://connect-direct.energynetworks.org" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">ENA Connect Direct ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Submit chargepoint notifications and applications to any GB network operator in one portal.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">connect-direct.energynetworks.org</span>
+          </a>
+          <a href="https://www.energynetworks.org/industry/connecting-to-the-networks/connecting-electric-vehicles-and-heat-pumps" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">ENA - connecting EVs to the networks ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">The notification criteria, process flowchart, forms and FAQs behind connect-and-notify vs apply-first.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">energynetworks.org</span>
+          </a>
+          <a href="https://www.energynetworks.org/customers/find-my-network-operator" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">Who's my network operator? ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Look up the DNO for any UK postcode before you notify or apply.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">energynetworks.org</span>
+          </a>
+          <a href="https://www.gov.uk/government/publications/connecting-electric-vehicle-chargepoints-to-the-electricity-network/connecting-electric-vehicle-chargepoints-to-the-electricity-network" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">GOV.UK - connecting chargepoints to the network ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">The connection process for bigger sites: applications, quotes, costs and the 2023 reinforcement-charge changes.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">gov.uk</span>
+          </a>
+          <a href="https://www.gov.uk/guidance/electric-vehicle-chargepoint-grants" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">GOV.UK - EV chargepoint grants ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">All live OZEV grant schemes and rates (extended to 31 March 2027).</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">gov.uk</span>
+          </a>
+          <a href="https://www.find-government-grants.service.gov.uk/grants/workplace-charging-scheme-2" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">Workplace Charging Scheme ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Grant details and eligibility - up to £500 per socket, max 40 sockets, for installs from 1 April 2026.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">find-government-grants.service.gov.uk</span>
+          </a>
+          <a href="https://electrical.theiet.org/bs-7671-18th-edition-wiring-regulations/ensure-you-are-up-to-date-with-bs-7671/" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">IET - am I up to date with BS 7671? ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Current amendment status of the Wiring Regulations, including Amendment 4:2026 and transition dates.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">electrical.theiet.org</span>
+          </a>
+          <a href="https://electrical.theiet.org/" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">IET Electrical - Codes of Practice ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Home of the Wiring Regulations and the Code of Practice for EV Charging Equipment Installation.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">electrical.theiet.org</span>
+          </a>
+          <a href="https://www.legislation.gov.uk/uksi/2021/1467/contents" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">Smart Charge Points Regulations 2021 ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">The legal smart-functionality requirements for chargers sold for home and workplace use.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">legislation.gov.uk</span>
+          </a>
+          <a href="https://www.legislation.gov.uk/uksi/2023/1168/contents" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">Public Charge Point Regulations 2023 ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Payment, pricing, reliability and open-data duties for chargepoints open to the public.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">legislation.gov.uk</span>
+          </a>
+          <a href="https://www.gov.uk/government/publications/infrastructure-for-charging-electric-vehicles-approved-document-s" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">Approved Document S ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Building Regulations (England): EV charging infrastructure in new homes and buildings with parking.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">gov.uk</span>
+          </a>
+          <a href="https://knowledge.bsigroup.com/" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">BSI Knowledge - PAS 1899 ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Search "PAS 1899" for the free accessible-charging specification download.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">knowledge.bsigroup.com</span>
+          </a>
+          <a href="https://www.gov.uk/government/organisations/office-for-zero-emission-vehicles" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">Office for Zero Emission Vehicles ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">Grant schemes, authorised-installer lists and approved chargepoint models.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">gov.uk</span>
+          </a>
+          <a href="https://www.legislation.gov.uk/uksi/1989/635/contents" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:5px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px;text-decoration:none;color:#16232E" style-hover="border-color:#1E6BFF;box-shadow:0 2px 10px rgba(30,107,255,.10)">
+            <b style="font-size:13.5px;font-weight:700">Electricity at Work Regulations 1989 ↗</b>
+            <span style="font-size:12px;line-height:1.5;color:#5B6770">The statutory duties behind safe isolation, live working and maintenance on every job.</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:10.5px;color:#8C97A0">legislation.gov.uk</span>
+          </a>
+        </div>
+      </sc-if>
+
+      <div style="order:99;margin-top:18px;padding-top:14px;border-top:1px solid #D6CBB6;font-size:11.5px;line-height:1.6;color:#8C97A0">
+        Curated for the EV Site Planner · figures reflect typical UK commercial AC charging equipment and current UK requirements as of July 2026. External links open in a new tab. Nothing here replaces design by a competent person.
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showPlannerTips&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;defaultCategory&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;p&quot;,&quot;e&quot;,&quot;c&quot;,&quot;l&quot;,&quot;v&quot;,&quot;n&quot;,&quot;r&quot;,&quot;t&quot;,&quot;k&quot;],&quot;default&quot;:&quot;all&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  state = { q: "", cat: "all", lvl: "all", focus: null };
+
+  componentDidMount(){
+    const d = this.props.defaultCategory;
+    if (d && d !== "all") this.setState({ cat: d });
+    try { const m = (location.hash || "").match(/g=([a-z]+)/i); if (m && this.meta().some(x => x.id === m[1].toLowerCase())) this.setState({ focus: m[1].toLowerCase() }); } catch(_){}
+  }
+
+  meta(){
+    return [
+      { id:"prot",    cat:"p", kw:"pick the right protective device rcbo mcb breaker 40a 20a type a c curve double pole 4 pole twin c63 c80 dlm 11kw protection cable table" },
+      { id:"rcd",     cat:"p", kw:"type a vs type b rcd 6ma dc detection rdc-dd residual current 722 30ma blinding type ac" },
+      { id:"radial",  cat:"p", kw:"dedicated radial diversity no shared protection evdb full load continuous 32a loop" },
+      { id:"spd",     cat:"p", kw:"surge protection spd type 2 type 1 transient amendment risk assessment" },
+      { id:"md",      cat:"p", kw:"maximum demand headroom supply capacity cut-out half hourly data kva assessment load check" },
+      { id:"earthsys",cat:"e", kw:"earthing tn-c-s pme tn-s tt earth systems electrode 200 ohm type b touch potential 2.5m rod" },
+      { id:"openpen", cat:"e", kw:"open pen protection o-pen opdd earth rod pen fault 722.411 broken neutral pme detection device" },
+      { id:"cable",   cat:"c", kw:"cable selection sizing swa ev grade 6mm 16mm 25mm cores cpc armour gland volt drop twin and earth" },
+      { id:"term",    cat:"c", kw:"termination spare 2m coiled labelling passive circuits adaptable box wago draft eic loop" },
+      { id:"data",    cat:"c", kw:"data cable load management 4 core lszh shielded ct clamp daisy chain star cluster future proofing cloud wired dlm internet no cable brand model manufacturer" },
+      { id:"array",   cat:"l", kw:"dynamic load management dlm group wired cloud ocpp internet limit amps controller de-rate 6a floor queue sub-main manual adjust cap 7 11 22 kw brand model manufacturer" },
+      { id:"limiter", cat:"l", kw:"ct clamp load limiter fuse threshold 6a minimum output single charger tight supply brand model manufacturer" },
+      { id:"base",    cat:"v", kw:"concrete base ducting 600 400 c20 cured duct 63mm twin wall 450 depth roadway warning tape photograph surfacing tarmac block paving" },
+      { id:"bays",    cat:"v", kw:"bay marking accessible pas 1899 wheel stops ev only lettering hatched zone wheelchair 2.4 4.8" },
+      { id:"comms",   cat:"n", kw:"connectivity online 4g 3g wifi 2.4ghz ethernet cat5e cat6 captive portal ssid commissioning signal brand model manufacturer" },
+      { id:"dno",     cat:"r", kw:"dno notification application ena connect direct 28 days 10 working days looped supply reinforcement network operator g99" },
+      { id:"cert",    cat:"r", kw:"certification eic photo record photos part p schedules test results sign-off" },
+      { id:"regs",    cat:"r", kw:"2026 rulebook bs 7671 amendment 4 18th edition orange book iet code of practice 5th smart charge point regulations part s public charge point grants wcs 500 pas 1899 afdd v2g iec 62955 level 3 competence" },
+      { id:"pcpr",    cat:"r", kw:"public charge point regulations 2023 contactless payment 8kw pricing p/kwh helpline 24/7 ocpi open data 99% reliability rapid roaming opss enforcement consumer public sites" },
+      { id:"signage", cat:"v", kw:"signage lighting enforcement ev only sign tariff bays usable after dark glare approach route handover evidence planning condition blocked ice" },
+      { id:"afdd",    cat:"p", kw:"afdd arc fault detection device a4 2026 premises hrrb hmo student care home risk assessment record decision 32a rcbo combined loose termination" },
+      { id:"cdm",     cat:"r", kw:"cdm 2015 rams method statement risk assessment construction phase plan cpp f10 notifiable hse principal contractor designer inductions permits cat scan paperwork welfare schedule 2 site cabin storage container skip toilet set up heras fencing barriers public segregation pedestrians lsbud cat genny permit to dig asbestos artex first aid fire point muster f10 notification" },
+      { id:"scale",   cat:"t", kw:"set the scale photo measure true size planner readiness bay 4.8" },
+      { id:"routes",  cat:"t", kw:"routes measure price budget rates swa duct trench tray trunking legend run notes planner" },
+      { id:"arrtool", cat:"t", kw:"model dlm groups load check tag letter board limit cloud wired rcbo ways planner headroom" }
+    ];
+  }
+
+  renderVals(){
+    const q = (this.state.q || "").trim().toLowerCase();
+    const cat = this.state.cat;
+    const lvl = this.state.lvl || "all";
+    const focus = this.state.focus;
+    const tips = this.props.showPlannerTips ?? true;
+    const M = this.meta();
+    const LVL = { prot:"b", rcd:"b", radial:"b", md:"b", base:"b", comms:"b", dno:"b", cert:"b",
+      earthsys:"i", openpen:"i", cable:"i", term:"i", limiter:"i", bays:"i",
+      array:"a", data:"a", spd:"a", regs:"a", pcpr:"a", signage:"i", afdd:"a", cdm:"i", scale:"b", routes:"b", arrtool:"i" };
+    const vals = {};
+
+    M.forEach(m => {
+      if (focus) { vals["v_" + m.id] = m.id === focus; return; }
+      const catOk = cat === "all" || cat === m.cat;
+      const lvlOk = lvl === "all" || LVL[m.id] === lvl;
+      vals["v_" + m.id] = catOk && lvlOk && (!q || m.kw.indexOf(q) !== -1);
+    });
+
+    const knowledge = m => m.cat !== "t" && m.cat !== "k";
+    vals.t_b = !focus && M.some(m => knowledge(m) && LVL[m.id] === "b" && vals["v_" + m.id]);
+    vals.t_i = !focus && M.some(m => knowledge(m) && LVL[m.id] === "i" && vals["v_" + m.id]);
+    vals.t_a = !focus && M.some(m => knowledge(m) && LVL[m.id] === "a" && vals["v_" + m.id]);
+    vals.s_t = !focus && M.some(m => m.cat === "t" && vals["v_" + m.id]);
+
+    const linkKw = "useful links ena connect direct dno network operator gov.uk grants workplace charging scheme wcs iet bs 7671 wiring regulations code of practice smart charge point public charge point approved document s part s bsi pas 1899 ozev electricity at work legislation";
+    vals.s_k = !focus && lvl === "all" && (cat === "all" || cat === "k") && (!q || linkKw.indexOf(q) !== -1);
+
+    vals.noHits = !focus && !vals.t_b && !vals.t_i && !vals.t_a && !vals.s_t && !vals.s_k;
+
+    const catDefs = [
+      ["all","All guides"], ["p","Power & protection"], ["e","Earthing & PEN"],
+      ["c","Cabling"], ["l","Load management"], ["v","Civils & bays"],
+      ["n","Connectivity"], ["r","Process & regs"], ["t","Using the planner"], ["k","Useful links"]
+    ];
+    const baseSt = { display:"flex", alignItems:"center", gap:"8px", width:"100%", boxSizing:"border-box",
+      background:"transparent", border:"1px solid transparent", borderRadius:"9px", padding:"7px 11px",
+      fontSize:"12.5px", fontWeight:600, color:"#5B6770", cursor:"pointer", fontFamily:"inherit", textAlign:"left" };
+    vals.cats = catDefs.map(([key,label]) => ({
+      label,
+      count: key === "all" ? M.length + 14 : key === "k" ? 14 : M.filter(m => m.cat === key).length,
+      st: cat === key
+        ? Object.assign({}, baseSt, { background:"#FFFFFF", border:"1px solid #D6CBB6", color:"#16232E", fontWeight:700, boxShadow:"0 1px 3px rgba(22,35,46,.06)" })
+        : baseSt,
+      pick: () => this.setState({ cat: key, focus: null })
+    }));
+
+    const lvlDefs = [["all","All levels"],["b","Beginner"],["i","Intermediate"],["a","Advanced"]];
+    const lvlBase = { background:"#FFFFFF", border:"1px solid #D6CBB6", borderRadius:"20px", padding:"5px 11px",
+      fontSize:"11.5px", fontWeight:650, color:"#5B6770", cursor:"pointer", fontFamily:"inherit" };
+    vals.lvls = lvlDefs.map(([key,label]) => ({
+      label,
+      st: lvl === key
+        ? Object.assign({}, lvlBase, { background:"#16232E", border:"1px solid #16232E", color:"#FBF8F2", fontWeight:700 })
+        : lvlBase,
+      pick: () => this.setState({ lvl: key, focus: null })
+    }));
+
+    vals.showFeat = !focus && !q && cat === "all" && lvl === "all";
+    const featDefs = [
+      { id:"prot", t:"Protective devices", s:"RCBO / MCB per charger type" },
+      { id:"rcd", t:"Type A vs Type B", s:"The 6 mA DC rule" },
+      { id:"openpen", t:"Open-PEN options", s:"PME without an earth rod" },
+      { id:"base", t:"Bases & ducting", s:"Specs that pass first time" }
+    ];
+    vals.feats = featDefs.map(f => ({ t:f.t, s:f.s, pick: () => this.setState({ focus: f.id }) }));
+    vals.focusOn = !!focus;
+    vals.showAll = () => this.setState({ focus: null });
+
+    /* cross-link: which Learning Hub lesson covers this guide */
+    const COURSE = { prot:["dom",3], rcd:["dom",3], cable:["dom",3], afdd:["dom",3], md:["dom",1], limiter:["dom",1], openpen:["dom",2], earthsys:["dom",2], dno:["dom",4], cert:["dom",4], regs:["dom",4], radial:["com",1], term:["com",1], array:["com",2], data:["com",2], base:["com",4], bays:["com",4], signage:["com",4], comms:["com",5], cdm:["com",6], pcpr:["com",6] };
+    const ci = focus ? COURSE[focus] : null;
+    vals.courseOn = !!ci;
+    vals.courseHref = ci ? ("Learning Hub.dc.html#c=" + ci[0] + "&l=" + ci[1]) : "";
+    vals.courseLabel = ci ? ("Covered in " + (ci[0] === "dom" ? "Course 01" : "Course 02") + " \u00b7 Lesson " + (ci[1] + 1)) : "";
+
+    vals.q = this.state.q;
+    vals.setQ = e => this.setState({ q: e.target.value, focus: null });
+    vals.clear = () => this.setState({ q: "", cat: "all", lvl: "all", focus: null });
+    vals.tips = tips;
+    return vals;
+  }
+}
+</script>
+</body>
+</html>

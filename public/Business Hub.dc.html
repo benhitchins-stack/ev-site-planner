@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    /* First-paint fallback: mirrors the token values below so nothing renders
+       in serif / unstyled while the linked sheets load. The links that follow
+       override these the moment they arrive. */
+    :root {
+      --font-display: "Bricolage Grotesque", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+      --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-data: "Space Grotesk", ui-monospace, monospace;
+      --cream-50: #FBF8F2; --cream-100: #F4EFE5; --cream-200: #EBE3D4;
+      --cream-border: #E7DFD0; --cream-border-strong: #D6CBB6;
+      --ink-400: #8C97A0; --ink-500: #5C6770; --ink-700: #28333C; --ink-800: #1A2530; --ink-900: #16232E;
+      --accent-50: #EBF1FF; --accent-200: #B5CBFF; --accent-400: #4D82FF; --accent-500: #1E6BFF; --accent-600: #1556E0; --accent-700: #1043B0;
+      --color-surface: #FFFFFF;
+    }
+  </style>
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/tokens/base.css">
+  <link rel="stylesheet" href="_ds/ev-infrastructure-tools-design-system-7296fd7a-04b3-434f-9dc1-013d68c70882/styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { background: var(--cream-200); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+    input, select, textarea, button { font-family: inherit; }
+    input::placeholder, textarea::placeholder { color: var(--ink-400); }
+    .scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+    .scroll::-webkit-scrollbar-track { background: transparent; }
+    .scroll::-webkit-scrollbar-thumb { background: var(--cream-border-strong); border-radius: 8px; border: 2px solid var(--cream-100); }
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    @supports (height: 100dvh) { .hub { height: 100dvh !important; } }
+    .hub-count:empty, .hub-chip:empty, .hub-next:empty, a.hub-lnk:empty,
+    .hub-count:has(> .sc-interp:empty), .hub-chip:has(> .sc-interp:empty), .hub-next:has(> .sc-interp:empty), a.hub-lnk:has(> .sc-interp:empty) { display: none; }
+    .hub-card { background: var(--color-surface); border: 1px solid var(--cream-border); border-radius: 14px; }
+    .hub-lbl { display: block; font-family: var(--font-sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-400); margin-bottom: 5px; }
+    .hub-inp { width: 100%; font-family: var(--font-sans); font-size: 12px; color: var(--ink-900); background: var(--color-surface); border: 1px solid var(--cream-border-strong); border-radius: 8px; padding: 7px 9px; outline: none; }
+    .hub-inp:focus { border-color: var(--accent-500); box-shadow: 0 0 0 3px rgba(30, 107, 255, 0.16); }
+    .hub-btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--ink-700); background: var(--color-surface); border: 1px solid var(--cream-border-strong); border-radius: 8px; padding: 7px 12px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+    .hub-btn:hover { border-color: var(--accent-400); color: var(--accent-700); }
+    .hub-btn-pri { background: var(--accent-500); border-color: var(--accent-500); color: #FBF8F2; font-weight: 700; }
+    .hub-btn-pri:hover { background: var(--accent-600); border-color: var(--accent-600); color: #FBF8F2; }
+    .hub-btn-danger { color: #A93226; border-color: #EFC0B8; }
+    .hub-btn-danger:hover { background: #FBEBE9; border-color: #E5A79D; color: #A93226; }
+    .hub-x { width: 20px; height: 20px; flex: none; border: none; background: transparent; color: var(--ink-400); font-size: 14px; line-height: 1; border-radius: 6px; cursor: pointer; padding: 0; }
+    .hub-x:hover { background: #FBEBE9; color: #A93226; }
+    .hub-nav { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font-family: var(--font-sans); font-size: 12.5px; font-weight: 650; color: var(--ink-500); background: transparent; border: none; border-radius: 9px; padding: 9px 11px; cursor: pointer; }
+    .hub-nav:hover { background: var(--color-surface); color: var(--ink-900); }
+    .hub-nav[data-active="true"] { background: var(--color-surface); color: var(--ink-900); box-shadow: inset 3px 0 0 var(--accent-500), 0 1px 2px rgba(16, 24, 40, 0.06); }
+    .hub-pill { font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--ink-700); background: var(--color-surface); border: 1px solid var(--cream-border-strong); border-radius: 999px; padding: 6px 13px; cursor: pointer; white-space: nowrap; }
+    .hub-pill:hover { border-color: var(--accent-400); color: var(--accent-700); }
+    .hub-pill[data-active="true"] { background: var(--ink-900); color: #FBF8F2; border-color: var(--ink-900); }
+    .hub-count { font-family: var(--font-data); font-size: 10px; font-weight: 600; background: var(--accent-50); color: var(--accent-700); border: 1px solid var(--accent-200); border-radius: 999px; padding: 1px 7px; }
+    .hub-chip { font-family: var(--font-data); font-size: 10px; font-weight: 600; color: var(--ink-500); background: var(--cream-100); border: 1px solid var(--cream-border); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+    .hub-tone { font-family: var(--font-data); font-size: 10px; font-weight: 600; border: 1px solid; border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+    .hub-tone[data-tone="over"] { background: #FBEBE9; border-color: #EFC0B8; color: #A93226; }
+    .hub-tone[data-tone="soon"] { background: #FBF3DC; border-color: #E8D49A; color: #8F6D0B; }
+    .hub-tone[data-tone="ok"] { background: var(--cream-100); border-color: var(--cream-border-strong); color: var(--ink-500); }
+    .hub-tone[data-tone="none"] { background: var(--cream-100); border-color: var(--cream-border); color: var(--ink-400); }
+    .hub-tone[data-tone="good"] { background: #E7F3EB; border-color: #BCDCC8; color: #267A43; }
+    button.hub-tone { cursor: pointer; }
+    .hub-type { font-family: var(--font-sans); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid; border-radius: 999px; padding: 2px 7px; white-space: nowrap; }
+    .hub-type[data-type="installer"] { background: var(--accent-50); border-color: var(--accent-200); color: var(--accent-700); }
+    .hub-type[data-type="council"] { background: #FBF3DC; border-color: #E8D49A; color: #8F6D0B; }
+    .hub-own { width: 20px; height: 20px; flex: none; border-radius: 50%; display: inline-grid; place-items: center; font-family: var(--font-sans); font-size: 8.5px; font-weight: 800; border: 1px solid transparent; padding: 0; }
+    .hub-own[data-owner="a"] { background: var(--accent-500); border-color: var(--accent-500); color: #FBF8F2; }
+    .hub-own[data-owner="b"] { background: #C89A14; border-color: #C89A14; color: #FBF8F2; }
+    .hub-own[data-owner=""] { background: transparent; border: 1px dashed var(--cream-border-strong); color: var(--ink-400); }
+    button.hub-own { cursor: pointer; }
+    .hub-chk { width: 19px; height: 19px; flex: none; border-radius: 6px; border: 1.5px solid var(--cream-border-strong); background: var(--color-surface); color: transparent; font-size: 11px; font-weight: 800; display: inline-grid; place-items: center; cursor: pointer; padding: 0; }
+    .hub-chk:hover { border-color: var(--accent-400); }
+    .hub-chk[data-done="true"] { background: var(--accent-500); border-color: var(--accent-500); color: #FBF8F2; }
+    .hub-srow[data-done="true"] .hub-sti { color: var(--ink-400); text-decoration: line-through; }
+    .hub-tag { font-family: var(--font-sans); font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 999px; padding: 2px 7px; width: fit-content; }
+    .hub-tag[data-tag="planner"] { background: var(--accent-50); color: var(--accent-700); }
+    .hub-tag[data-tag="conductor"] { background: #EAECFB; color: #4656B8; }
+    .hub-tag[data-tag="sparks"] { background: #FBF3DC; color: #8F6D0B; }
+    .hub-tag[data-tag="estate"] { background: #E7F3EB; color: #267A43; }
+    .hub-tag[data-tag="company"] { background: var(--cream-100); color: #3E4A53; }
+    .hub-tag[data-tag="foreman"] { background: #F7E9F3; color: #A2467E; }
+    .hub-drop.drag-over { outline: 2px dashed var(--accent-400); outline-offset: -3px; background: var(--accent-50) !important; }
+    .hub-money-hidden [data-money] { filter: blur(7px); }
+    .hub-bar { height: 6px; background: var(--cream-100); border: 1px solid var(--cream-border); border-radius: 999px; overflow: hidden; }
+    .hub-barfill { height: 100%; background: var(--accent-500); border-radius: 999px; }
+    @media (max-width: 1100px) { .hub-tiles { grid-template-columns: repeat(2, 1fr) !important; } .hub-two { grid-template-columns: 1fr !important; } }
+    @media (max-width: 900px) {
+      .hub-body { flex-direction: column !important; }
+      .hub-side { width: auto !important; flex-direction: row !important; overflow-x: auto; border-right: none !important; border-bottom: 1px solid var(--cream-border-strong); padding: 8px 10px !important; }
+      .hub-side .hub-nav { width: auto; white-space: nowrap; }
+      .hub-sidefoot, .hub-sidegap { display: none !important; }
+      .hub-drawer { width: min(420px, 100vw) !important; }
+    }
+    @media (max-width: 680px) { .hub-main-pad { padding: 14px 12px 60px !important; } .hub-addrow { flex-wrap: wrap; } }
+  </style>
+</helmet>
+
+<div class="hub {{ moneyClass }}" style="height:100vh; display:flex; flex-direction:column; background:var(--cream-200); color:var(--ink-900); font-family:var(--font-sans);">
+
+  <!-- ░░ TOP BAR ░░ -->
+  <header data-screen-label="Top bar" style="flex:none; display:flex; align-items:center; gap:11px; padding:10px 18px; background:var(--cream-100); border-bottom:1px solid var(--cream-border-strong); position:relative; z-index:60;">
+    <a href="EV Site Planner.html" title="Back to the Site Planner" class="hub-btn" style="font-size:11px; padding:6px 9px;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"></path></svg>
+      <span>Planner</span>
+    </a>
+    <details style="position:relative;">
+      <summary class="hub-btn" style="font-size:11px; padding:6px 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+        <span>Features</span>
+      </summary>
+      <div style="position:absolute; left:0; top:calc(100% + 6px); z-index:130; min-width:200px; background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:12px; box-shadow:var(--shadow-lg); padding:5px; display:flex; flex-direction:column; gap:1px;">
+        <a href="Landing Page Final.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Landing page</a>
+        <a href="Quotes & Invoices.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Quotes &amp; invoices</a>
+        <a href="RAMS Builder.dc.html" title="Coming soon" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-500);" style-hover="background:var(--cream-100); color:var(--accent-700);"><span>RAMS builder</span><span style="font-size:8.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; background:#F7EDD8; color:#9A6403; border-radius:999px; padding:2px 7px; flex:none;">Soon</span></a>
+        <a href="Project Support.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Project Support</a>
+        <a href="Learning Hub.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Learning hub</a>
+        <a href="Guide Library.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Guide library</a>
+        <a href="Council Estate Review.dc.html" style="display:block; padding:8px 11px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:650; color:var(--ink-800);" style-hover="background:var(--cream-100); color:var(--accent-700);">Estate review</a>
+      </div>
+    </details>
+    <svg width="30" height="30" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EV Infrastructure Tools" style="flex:none;">
+      <circle cx="40" cy="40" r="38" fill="#16232E"></circle>
+      <circle cx="40" cy="40" r="37" fill="none" stroke="#1E6BFF" stroke-width="2.5"></circle>
+      <circle cx="40" cy="40" r="30" fill="none" stroke="#4D82FF" stroke-width="2" stroke-dasharray="1.4 4.1" stroke-linecap="round" opacity="0.85"></circle>
+      <path d="M45.5 18.5 L27 44 H37.5 L34.5 61.5 L53 36 H42.5 Z" fill="#3D86FF"></path>
+    </svg>
+    <div style="min-width:0;">
+      <div style="font-family:var(--font-display); font-weight:800; font-size:15px; letter-spacing:-0.015em; color:var(--ink-900); line-height:1;">Business hub</div>
+      <div style="font-size:10.5px; color:var(--ink-500); margin-top:3px;">EV Infrastructure Tools · set up, run and sell</div>
+    </div>
+    <span style="flex:1;"></span>
+    <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ openSettings }}" title="Example data is loaded. Open settings to clear it." class="hub-chip" style="cursor:pointer;">Example data</button>
+    </sc-if>
+    <button onClick="{{ openSettings }}" class="hub-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h7M15 7h5M4 17h5M13 17h7"></path><circle cx="13" cy="7" r="2"></circle><circle cx="11" cy="17" r="2"></circle></svg>
+      <span>Settings</span>
+    </button>
+  </header>
+
+  <!-- ░░ BODY ░░ -->
+  <div class="hub-body" style="flex:1; display:flex; min-height:0;">
+
+    <nav class="hub-side scroll" data-screen-label="Sidebar" style="width:200px; flex:none; display:flex; flex-direction:column; gap:2px; padding:12px 10px; background:var(--cream-100); border-right:1px solid var(--cream-border-strong); overflow-y:auto;">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="7">
+        <button class="hub-nav" data-sec="{{ n.sec }}" data-active="{{ n.active }}" onClick="{{ onNav }}">
+          <span style="flex:1;">{{ n.label }}</span>
+          <span class="hub-count">{{ n.countLabel }}</span>
+        </button>
+      </sc-for>
+      <span class="hub-sidegap" style="flex:1;"></span>
+      <div class="hub-sidefoot" style="padding:10px 11px; border-top:1px solid var(--cream-border); font-size:10.5px; line-height:1.5; color:var(--ink-400);">Data stays in this browser. The documents themselves belong in Drive.</div>
+    </nav>
+
+    <main class="scroll" style="flex:1; overflow-y:auto; min-width:0;">
+      <div class="hub-main-pad" style="max-width:1280px; margin:0 auto; padding:20px 22px 64px; display:flex; flex-direction:column; gap:16px;">
+
+        <!-- ░░ OVERVIEW ░░ -->
+        <sc-if value="{{ secOverview }}" hint-placeholder-val="{{ true }}">
+          <section data-screen-label="Overview" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+              <h2 style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Overview</h2>
+              <span style="font-size:12px; color:var(--ink-400);">{{ todayLabel }}</span>
+            </div>
+            <div class="hub-tiles" style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+              <div class="hub-card" style="padding:14px 16px;">
+                <div class="hub-lbl" style="margin-bottom:8px;">Company set-up</div>
+                <div style="font-family:var(--font-data); font-size:24px; font-weight:700; letter-spacing:-0.01em; color:var(--ink-900);">{{ setupPctLabel }}</div>
+                <div class="hub-bar" style="margin-top:8px;"><div class="hub-barfill" style="width:{{ setupPct }}%;"></div></div>
+                <div style="font-size:11px; color:var(--ink-500); margin-top:7px;">{{ setupDoneLabel }}</div>
+              </div>
+              <div class="hub-card" style="padding:14px 16px;">
+                <div class="hub-lbl" style="margin-bottom:8px;">Open pipeline</div>
+                <div data-money="1" style="font-family:var(--font-data); font-size:24px; font-weight:700; letter-spacing:-0.01em; color:var(--ink-900);">{{ openPipeLabel }}</div>
+                <div style="font-size:11px; color:var(--ink-500); margin-top:7px;">{{ openDealsLabel }}</div>
+              </div>
+              <div class="hub-card" style="padding:14px 16px;">
+                <div class="hub-lbl" style="margin-bottom:8px;">Tasks due · 7 days</div>
+                <div style="font-family:var(--font-data); font-size:24px; font-weight:700; letter-spacing:-0.01em; color:var(--ink-900);">{{ tasksDueLabel }}</div>
+                <div style="font-size:11px; color:var(--ink-500); margin-top:7px;">{{ tasksDueSub }}</div>
+              </div>
+              <div class="hub-card" style="padding:14px 16px;">
+                <div class="hub-lbl" style="margin-bottom:8px;">MRR</div>
+                <div data-money="1" style="font-family:var(--font-data); font-size:24px; font-weight:700; letter-spacing:-0.01em; color:var(--ink-900);">{{ mrrLabel }}</div>
+                <div style="font-size:11px; color:var(--ink-500); margin-top:7px;">Runway: {{ runwayLabel }}</div>
+              </div>
+            </div>
+            <div class="hub-two" style="display:grid; grid-template-columns:1.15fr 1fr; gap:12px; align-items:start;">
+              <div class="hub-card" data-screen-label="Needs attention" style="padding:6px 0 4px;">
+                <div style="padding:10px 16px 8px;"><span class="hub-lbl" style="margin:0;">Needs attention</span></div>
+                <sc-if value="{{ attnEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:6px 16px 16px; font-size:12.5px; color:var(--ink-400);">Nothing urgent. Get on with the roadmap.</div>
+                </sc-if>
+                <sc-for list="{{ attention }}" as="a" hint-placeholder-count="3">
+                  <button data-sec="{{ a.sec }}" onClick="{{ onNav }}" style="display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:transparent; border:none; border-top:1px solid var(--cream-border); padding:10px 16px; cursor:pointer;" style-hover="background:var(--cream-100);">
+                    <span style="flex:1; min-width:0;">
+                      <span style="display:block; font-size:12.5px; font-weight:650; color:var(--ink-800);">{{ a.label }}</span>
+                      <span style="display:block; font-size:10.5px; color:var(--ink-400); margin-top:2px;">{{ a.sub }}</span>
+                    </span>
+                    <span class="hub-tone" data-tone="{{ a.tone }}">{{ a.toneLabel }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div class="hub-card" data-screen-label="Pipeline glance" style="padding:6px 0 12px;">
+                <div style="padding:10px 16px 8px;"><span class="hub-lbl" style="margin:0;">Pipeline</span></div>
+                <sc-for list="{{ glance }}" as="g" hint-placeholder-count="5">
+                  <div style="display:grid; grid-template-columns:82px 1fr 30px 76px; align-items:center; gap:10px; padding:7px 16px;">
+                    <span style="font-size:11px; font-weight:650; color:var(--ink-700);">{{ g.label }}</span>
+                    <div class="hub-bar"><div class="hub-barfill" style="width:{{ g.pct }}%;"></div></div>
+                    <span style="font-family:var(--font-data); font-size:11px; color:var(--ink-400); text-align:right;">{{ g.countLabel }}</span>
+                    <span data-money="1" style="font-family:var(--font-data); font-size:11.5px; font-weight:600; color:var(--ink-800); text-align:right;">{{ g.totalLabel }}</span>
+                  </div>
+                </sc-for>
+                <div style="display:flex; justify-content:space-between; padding:10px 16px 0; border-top:1px solid var(--cream-border); margin-top:6px; font-size:11.5px; color:var(--ink-500);">
+                  <span>Won to date</span>
+                  <span data-money="1" style="font-family:var(--font-data); font-weight:700; color:#267A43;">{{ wonLabel }}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ░░ COMPANY SET-UP ░░ -->
+        <sc-if value="{{ secSetup }}" hint-placeholder-val="{{ false }}">
+          <section data-screen-label="Company set-up" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+              <h2 style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Company set-up</h2>
+              <span style="font-size:12px; color:var(--ink-500);">UK Ltd, from zero. A working checklist, not legal or tax advice.</span>
+            </div>
+            <div class="hub-card" style="display:flex; align-items:center; gap:14px; padding:12px 16px; flex-wrap:wrap;">
+              <div class="hub-bar" style="flex:1; min-width:160px;"><div class="hub-barfill" style="width:{{ setupPct }}%;"></div></div>
+              <span style="font-family:var(--font-data); font-size:12px; font-weight:600; color:var(--ink-800);">{{ setupDoneLabel }}</span>
+              <span class="hub-chip" data-money="1">{{ setupCostLabel }}</span>
+            </div>
+            <sc-for list="{{ setupPhases }}" as="ph" hint-placeholder-count="4">
+              <div class="hub-card">
+                <div style="display:flex; align-items:baseline; gap:10px; padding:14px 16px 10px; flex-wrap:wrap;">
+                  <span style="font-family:var(--font-display); font-weight:700; font-size:14.5px; color:var(--ink-900);">{{ ph.title }}</span>
+                  <span style="font-size:11.5px; color:var(--ink-500); flex:1; min-width:140px;">{{ ph.blurb }}</span>
+                  <span style="font-family:var(--font-data); font-size:11px; color:var(--ink-400);">{{ ph.doneLabel }}</span>
+                </div>
+                <sc-for list="{{ ph.items }}" as="it" hint-placeholder-count="4">
+                  <div class="hub-srow" data-done="{{ it.done }}" style="display:flex; align-items:flex-start; gap:11px; padding:11px 16px; border-top:1px solid var(--cream-border);">
+                    <button class="hub-chk" data-id="{{ it.id }}" onClick="{{ onSetupToggle }}" title="Done / not done" style="margin-top:1px;">✓</button>
+                    <div style="flex:1; min-width:0;">
+                      <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
+                        <span class="hub-sti" style="font-size:13px; font-weight:650; color:var(--ink-900);">{{ it.title }}</span>
+                        <span class="hub-chip" data-money="1">{{ it.costLabel }}</span>
+                        <a class="hub-lnk" href="{{ it.link }}" target="_blank" rel="noreferrer" style="font-size:10px; font-weight:700; color:var(--accent-700); text-decoration:none; border:1px solid var(--accent-200); background:var(--accent-50); border-radius:999px; padding:2px 8px;">{{ it.linkLabel }}</a>
+                      </div>
+                      <div style="font-size:11.5px; line-height:1.5; color:var(--ink-500); margin-top:3px; max-width:640px;">{{ it.detail }}</div>
+                    </div>
+                    <button class="hub-own" data-owner="{{ it.owner }}" data-id="{{ it.id }}" onClick="{{ onSetupOwner }}" title="Click to assign: you, partner, nobody" style="margin-top:1px;">{{ it.ownerLabel }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </section>
+        </sc-if>
+
+        <!-- ░░ CRM ░░ -->
+        <sc-if value="{{ secCrm }}" hint-placeholder-val="{{ false }}">
+          <section data-screen-label="CRM" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <h2 style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">CRM</h2>
+              <div style="display:flex; gap:5px; margin-left:6px;">
+                <button class="hub-pill" data-tab="pipeline" data-active="{{ crmPipe }}" onClick="{{ onCrmTab }}">Pipeline</button>
+                <button class="hub-pill" data-tab="contacts" data-active="{{ crmContacts }}" onClick="{{ onCrmTab }}">Contacts</button>
+                <button class="hub-pill" data-tab="tasks" data-active="{{ crmTasks }}" onClick="{{ onCrmTab }}">Tasks</button>
+              </div>
+              <span style="flex:1;"></span>
+              <button class="hub-btn" onClick="{{ onNewContact }}">+ Contact</button>
+              <button class="hub-btn hub-btn-pri" onClick="{{ onNewDeal }}">+ Deal</button>
+            </div>
+
+            <sc-if value="{{ crmPipe }}" hint-placeholder-val="{{ false }}">
+              <div data-screen-label="Pipeline" style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                  <sc-for list="{{ pipeChips }}" as="pfc" hint-placeholder-count="3">
+                    <button class="hub-pill" data-pf="{{ pfc.id }}" data-active="{{ pfc.active }}" onClick="{{ onPipeFilter }}" style="font-size:11px; padding:5px 11px;">{{ pfc.label }}</button>
+                  </sc-for>
+                  <span style="flex:1;"></span>
+                  <span style="font-size:11px; color:var(--ink-400);">Drag cards between stages · click a card to edit</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(6, minmax(198px, 1fr)); gap:10px; overflow-x:auto; padding-bottom:4px;">
+                  <sc-for list="{{ pipeCols }}" as="col" hint-placeholder-count="6">
+                    <div class="hub-drop" data-stage="{{ col.stage }}" onDragOver="{{ onColOver }}" onDragLeave="{{ onColLeave }}" onDrop="{{ onColDrop }}" style="background:var(--cream-100); border:1px solid var(--cream-border); border-radius:12px; padding:10px; display:flex; flex-direction:column; gap:8px; min-height:340px;">
+                      <div style="display:flex; align-items:baseline; gap:7px; padding:2px 3px;">
+                        <span style="font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-500);">{{ col.label }}</span>
+                        <span style="font-family:var(--font-data); font-size:10.5px; color:var(--ink-400);">{{ col.countLabel }}</span>
+                        <span style="flex:1;"></span>
+                        <span data-money="1" style="font-family:var(--font-data); font-size:11px; font-weight:600; color:var(--ink-500);">{{ col.totalLabel }}</span>
+                      </div>
+                      <sc-for list="{{ col.deals }}" as="d" hint-placeholder-count="1">
+                        <div draggable="true" data-id="{{ d.id }}" onDragStart="{{ onDealDragStart }}" onClick="{{ onDealOpen }}" style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:10px; padding:10px 11px; cursor:grab; display:flex; flex-direction:column; gap:6px;" style-hover="border-color:var(--accent-400); box-shadow:0 2px 6px rgba(16,24,40,0.08);">
+                          <div style="font-size:12.5px; font-weight:700; color:var(--ink-900); line-height:1.25;">{{ d.org }}</div>
+                          <div style="font-size:11px; color:var(--ink-500);">{{ d.title }}</div>
+                          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                            <span data-money="1" style="font-family:var(--font-data); font-size:12px; font-weight:700; color:var(--ink-900);">{{ d.valueLabel }}</span>
+                            <span class="hub-type" data-type="{{ d.type }}">{{ d.typeLabel }}</span>
+                            <span style="flex:1;"></span>
+                            <span class="hub-own" data-owner="{{ d.ownerKey }}">{{ d.ownerLabel }}</span>
+                          </div>
+                          <div class="hub-next" style="font-size:10.5px; color:var(--ink-500); border-top:1px dashed var(--cream-border); padding-top:6px;">{{ d.next }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ crmContacts }}" hint-placeholder-val="{{ false }}">
+              <div class="hub-card" data-screen-label="Contacts">
+                <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--cream-border);">
+                  <input class="hub-inp" value="{{ contactSearch }}" onInput="{{ onContactSearch }}" placeholder="Search name, organisation or email" style="max-width:320px;">
+                  <span style="font-size:11.5px; color:var(--ink-400);">{{ contactCountLabel }}</span>
+                </div>
+                <sc-if value="{{ contactsEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:18px 16px; font-size:12.5px; color:var(--ink-400);">No contacts yet: add your first installer or council.</div>
+                </sc-if>
+                <sc-for list="{{ contactRows }}" as="c" hint-placeholder-count="4">
+                  <button data-id="{{ c.id }}" onClick="{{ onContactOpen }}" style="display:grid; grid-template-columns:1.3fr 1.2fr 92px 1.3fr 70px; align-items:center; gap:10px; width:100%; text-align:left; background:transparent; border:none; border-top:1px solid var(--cream-border); padding:11px 16px; cursor:pointer;" style-hover="background:var(--cream-100);">
+                    <span style="min-width:0;">
+                      <span style="display:block; font-size:12.5px; font-weight:700; color:var(--ink-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.name }}</span>
+                      <span style="display:block; font-size:10.5px; color:var(--ink-400); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.role }}</span>
+                    </span>
+                    <span style="font-size:12px; color:var(--ink-700); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.org }}</span>
+                    <span class="hub-type" data-type="{{ c.type }}" style="justify-self:start;">{{ c.typeLabel }}</span>
+                    <span style="font-family:var(--font-data); font-size:11px; color:var(--ink-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.email }}</span>
+                    <span style="font-size:10.5px; color:var(--ink-400); text-align:right;">{{ c.lastLabel }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ crmTasks }}" hint-placeholder-val="{{ false }}">
+              <div data-screen-label="Tasks" style="display:flex; flex-direction:column; gap:10px;">
+                <div class="hub-card hub-addrow" style="display:flex; align-items:center; gap:8px; padding:10px 12px;">
+                  <input class="hub-inp" value="{{ ntTitle }}" data-field="title" onChange="{{ onNtField }}" onKeyDown="{{ onTaskKey }}" placeholder="Add a task, press Enter" style="flex:2; min-width:180px;">
+                  <input class="hub-inp" type="date" value="{{ ntDue }}" data-field="due" onChange="{{ onNtField }}" style="width:150px;">
+                  <select class="hub-inp" value="{{ ntOwner }}" data-field="owner" onChange="{{ onNtField }}" style="width:130px;">
+                    <option value="a">{{ ownerAName }}</option>
+                    <option value="b">{{ ownerBName }}</option>
+                    <option value="">Unassigned</option>
+                  </select>
+                  <select class="hub-inp" value="{{ ntContact }}" data-field="contactId" onChange="{{ onNtField }}" style="width:170px;">
+                    <option value="">No contact link</option>
+                    <sc-for list="{{ contactOptions }}" as="co" hint-placeholder-count="0">
+                      <option value="{{ co.id }}">{{ co.label }}</option>
+                    </sc-for>
+                  </select>
+                  <button class="hub-btn hub-btn-pri" onClick="{{ onAddTask }}">Add</button>
+                </div>
+                <sc-if value="{{ hasOver }}" hint-placeholder-val="{{ false }}">
+                  <div class="hub-card">
+                    <div style="padding:11px 16px 6px; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#A93226;">Overdue</div>
+                    <sc-for list="{{ overTasks }}" as="t" hint-placeholder-count="1">
+                      <div class="hub-srow" data-done="{{ t.done }}" style="display:flex; align-items:center; gap:10px; padding:9px 16px; border-top:1px solid var(--cream-border);">
+                        <button class="hub-chk" data-id="{{ t.id }}" onClick="{{ onTaskToggle }}">✓</button>
+                        <span class="hub-sti" style="flex:1; font-size:12.5px; font-weight:600; color:var(--ink-800); min-width:0;">{{ t.title }}</span>
+                        <span class="hub-chip">{{ t.linkName }}</span>
+                        <span class="hub-tone" data-tone="{{ t.tone }}">{{ t.dueLabel }}</span>
+                        <span class="hub-own" data-owner="{{ t.ownerKey }}">{{ t.ownerLabel }}</span>
+                        <button class="hub-x" data-id="{{ t.id }}" onClick="{{ onTaskDelete }}" title="Delete">×</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ hasSoon }}" hint-placeholder-val="{{ false }}">
+                  <div class="hub-card">
+                    <div style="padding:11px 16px 6px; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#8F6D0B;">Next 7 days</div>
+                    <sc-for list="{{ soonTasks }}" as="t" hint-placeholder-count="2">
+                      <div class="hub-srow" data-done="{{ t.done }}" style="display:flex; align-items:center; gap:10px; padding:9px 16px; border-top:1px solid var(--cream-border);">
+                        <button class="hub-chk" data-id="{{ t.id }}" onClick="{{ onTaskToggle }}">✓</button>
+                        <span class="hub-sti" style="flex:1; font-size:12.5px; font-weight:600; color:var(--ink-800); min-width:0;">{{ t.title }}</span>
+                        <span class="hub-chip">{{ t.linkName }}</span>
+                        <span class="hub-tone" data-tone="{{ t.tone }}">{{ t.dueLabel }}</span>
+                        <span class="hub-own" data-owner="{{ t.ownerKey }}">{{ t.ownerLabel }}</span>
+                        <button class="hub-x" data-id="{{ t.id }}" onClick="{{ onTaskDelete }}" title="Delete">×</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ hasLater }}" hint-placeholder-val="{{ false }}">
+                  <div class="hub-card">
+                    <div style="padding:11px 16px 6px; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">Later · no date</div>
+                    <sc-for list="{{ laterTasks }}" as="t" hint-placeholder-count="2">
+                      <div class="hub-srow" data-done="{{ t.done }}" style="display:flex; align-items:center; gap:10px; padding:9px 16px; border-top:1px solid var(--cream-border);">
+                        <button class="hub-chk" data-id="{{ t.id }}" onClick="{{ onTaskToggle }}">✓</button>
+                        <span class="hub-sti" style="flex:1; font-size:12.5px; font-weight:600; color:var(--ink-800); min-width:0;">{{ t.title }}</span>
+                        <span class="hub-chip">{{ t.linkName }}</span>
+                        <span class="hub-tone" data-tone="{{ t.tone }}">{{ t.dueLabel }}</span>
+                        <span class="hub-own" data-owner="{{ t.ownerKey }}">{{ t.ownerLabel }}</span>
+                        <button class="hub-x" data-id="{{ t.id }}" onClick="{{ onTaskDelete }}" title="Delete">×</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ hasDone }}" hint-placeholder-val="{{ false }}">
+                  <details class="hub-card">
+                    <summary style="display:flex; align-items:center; gap:8px; padding:11px 16px; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">
+                      <span>Completed · {{ doneCountLabel }}</span>
+                      <span style="flex:1;"></span>
+                      <button class="hub-btn" onClick="{{ onClearDone }}" style="font-size:10.5px; padding:4px 9px;">Clear</button>
+                    </summary>
+                    <sc-for list="{{ doneTasks }}" as="t" hint-placeholder-count="1">
+                      <div class="hub-srow" data-done="{{ t.done }}" style="display:flex; align-items:center; gap:10px; padding:9px 16px; border-top:1px solid var(--cream-border);">
+                        <button class="hub-chk" data-done="{{ t.done }}" data-id="{{ t.id }}" onClick="{{ onTaskToggle }}">✓</button>
+                        <span class="hub-sti" style="flex:1; font-size:12.5px; font-weight:600; color:var(--ink-800); min-width:0;">{{ t.title }}</span>
+                        <span class="hub-chip">{{ t.linkName }}</span>
+                        <span class="hub-own" data-owner="{{ t.ownerKey }}">{{ t.ownerLabel }}</span>
+                        <button class="hub-x" data-id="{{ t.id }}" onClick="{{ onTaskDelete }}" title="Delete">×</button>
+                      </div>
+                    </sc-for>
+                  </details>
+                </sc-if>
+              </div>
+            </sc-if>
+          </section>
+        </sc-if>
+
+        <!-- ░░ FINANCE & METRICS ░░ -->
+        <sc-if value="{{ secFinance }}" hint-placeholder-val="{{ false }}">
+          <section data-screen-label="Finance & metrics" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+              <h2 style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Finance &amp; metrics</h2>
+              <span style="font-size:12px; color:var(--ink-500);">Manual numbers, updated at month end. Nothing leaves this browser.</span>
+            </div>
+            <div class="hub-two" style="display:grid; grid-template-columns:1fr 1.35fr; gap:12px; align-items:start;">
+              <div class="hub-card" data-screen-label="Cash position" style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+                <span class="hub-lbl" style="margin:0;">Cash position</span>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px;">
+                  <div>
+                    <label class="hub-lbl">Cash at bank £</label>
+                    <input class="hub-inp" type="number" value="{{ finCash }}" data-field="cash" onChange="{{ onFinField }}" data-money="1" style="font-family:var(--font-data);">
+                  </div>
+                  <div>
+                    <label class="hub-lbl">Outgoings £/mo</label>
+                    <input class="hub-inp" type="number" value="{{ finOut }}" data-field="out" onChange="{{ onFinField }}" data-money="1" style="font-family:var(--font-data);">
+                  </div>
+                  <div>
+                    <label class="hub-lbl">MRR £</label>
+                    <input class="hub-inp" type="number" value="{{ finMrr }}" data-field="mrr" onChange="{{ onFinField }}" data-money="1" style="font-family:var(--font-data);">
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+                  <div style="background:var(--cream-100); border:1px solid var(--cream-border); border-radius:10px; padding:10px 12px;">
+                    <div class="hub-lbl" style="margin-bottom:4px;">Net burn</div>
+                    <div data-money="1" style="font-family:var(--font-data); font-size:18px; font-weight:700; color:var(--ink-900);">{{ burnLabel }}</div>
+                  </div>
+                  <div style="background:var(--cream-100); border:1px solid var(--cream-border); border-radius:10px; padding:10px 12px;">
+                    <div class="hub-lbl" style="margin-bottom:4px;">Runway</div>
+                    <div data-money="1" style="font-family:var(--font-data); font-size:18px; font-weight:700; color:var(--ink-900);">{{ runwayLabel }}</div>
+                  </div>
+                </div>
+                <div style="font-size:10.5px; color:var(--ink-400); line-height:1.5;">Runway = cash ÷ (outgoings minus MRR). Update after the month-end bank statement.</div>
+              </div>
+              <div class="hub-card" data-screen-label="Monthly funnel" style="padding:6px 0 10px;">
+                <div style="display:flex; align-items:center; padding:10px 16px 6px;">
+                  <span class="hub-lbl" style="margin:0; flex:1;">Monthly funnel</span>
+                  <button class="hub-btn" onClick="{{ onAddMonth }}" style="font-size:11px; padding:5px 10px;">+ Month</button>
+                </div>
+                <div style="display:grid; grid-template-columns:64px 1fr 1fr 1fr 84px 26px; gap:8px; padding:6px 16px 4px; font-size:9px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-400);">
+                  <span>Month</span><span>Signups</span><span>Trials</span><span>Paid</span><span style="text-align:right;">Trial → paid</span><span></span>
+                </div>
+                <sc-if value="{{ metricsEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:12px 16px; font-size:12px; color:var(--ink-400);">No months yet. Add the first one after launch.</div>
+                </sc-if>
+                <sc-for list="{{ metricRows }}" as="m" hint-placeholder-count="3">
+                  <div style="display:grid; grid-template-columns:64px 1fr 1fr 1fr 84px 26px; gap:8px; align-items:center; padding:5px 16px; border-top:1px solid var(--cream-border);">
+                    <span style="font-family:var(--font-data); font-size:11.5px; font-weight:600; color:var(--ink-800);">{{ m.monthLabel }}</span>
+                    <input class="hub-inp" type="number" value="{{ m.signups }}" data-idx="{{ m.idx }}" data-field="signups" onChange="{{ onMetricField }}" style="font-family:var(--font-data); padding:5px 8px;">
+                    <input class="hub-inp" type="number" value="{{ m.trials }}" data-idx="{{ m.idx }}" data-field="trials" onChange="{{ onMetricField }}" style="font-family:var(--font-data); padding:5px 8px;">
+                    <input class="hub-inp" type="number" value="{{ m.paid }}" data-idx="{{ m.idx }}" data-field="paid" onChange="{{ onMetricField }}" style="font-family:var(--font-data); padding:5px 8px;">
+                    <span style="font-family:var(--font-data); font-size:11px; color:var(--ink-500); text-align:right;">{{ m.convLabel }}</span>
+                    <button class="hub-x" data-idx="{{ m.idx }}" onClick="{{ onMetricDelete }}" title="Remove month">×</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ░░ COMPLIANCE CALENDAR ░░ -->
+        <sc-if value="{{ secCalendar }}" hint-placeholder-val="{{ false }}">
+          <section data-screen-label="Compliance calendar" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+              <h2 style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Compliance &amp; renewals</h2>
+              <span style="font-size:12px; color:var(--ink-500);">Statutory dates calculate from the incorporation date. Confirm them with your accountant.</span>
+            </div>
+            <div class="hub-card" data-screen-label="Statutory deadlines">
+              <div style="display:flex; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--cream-border); flex-wrap:wrap;">
+                <span class="hub-lbl" style="margin:0;">Statutory · Companies House &amp; HMRC</span>
+                <span style="flex:1;"></span>
+                <label style="font-size:11px; color:var(--ink-500); font-weight:600;">Incorporated on</label>
+                <input class="hub-inp" type="date" value="{{ incDateVal }}" onChange="{{ onIncDate }}" style="width:150px;">
+              </div>
+              <sc-if value="{{ incUnset }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:10px 16px 0; font-size:11.5px; color:var(--ink-400);">Not incorporated yet. Set the date when the certificate arrives and the deadlines below fill in.</div>
+              </sc-if>
+              <sc-for list="{{ statRows }}" as="r" hint-placeholder-count="4">
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 16px; border-top:1px solid var(--cream-border);">
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:12.5px; font-weight:650; color:var(--ink-900);">{{ r.label }}</div>
+                    <div style="font-size:10.5px; color:var(--ink-400); margin-top:2px;">{{ r.sub }}</div>
+                  </div>
+                  <span style="font-family:var(--font-data); font-size:11.5px; color:var(--ink-700);">{{ r.dateLabel }}</span>
+                  <span class="hub-tone" data-tone="{{ r.tone }}">{{ r.toneLabel }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div class="hub-card" data-screen-label="Renewals">
+              <div style="padding:13px 16px 8px;"><span class="hub-lbl" style="margin:0;">Renewals · insurance, domains, certifications</span></div>
+              <sc-for list="{{ renewalRows }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex; align-items:center; gap:9px; padding:8px 16px; border-top:1px solid var(--cream-border);">
+                  <input class="hub-inp" value="{{ r.name }}" data-id="{{ r.id }}" data-field="name" onChange="{{ onRenField }}" style="flex:1; min-width:140px;">
+                  <input class="hub-inp" type="date" value="{{ r.date }}" data-id="{{ r.id }}" data-field="date" onChange="{{ onRenField }}" style="width:150px;">
+                  <span class="hub-tone" data-tone="{{ r.tone }}">{{ r.toneLabel }}</span>
+                  <button class="hub-btn" data-id="{{ r.id }}" onClick="{{ onRenAdvance }}" title="Mark renewed: moves the date on a year" style="font-size:10.5px; padding:5px 9px;">Renewed +1y</button>
+                  <button class="hub-x" data-id="{{ r.id }}" onClick="{{ onRenDelete }}" title="Delete">×</button>
+                </div>
+              </sc-for>
+              <div class="hub-addrow" style="display:flex; align-items:center; gap:9px; padding:10px 16px; border-top:1px solid var(--cream-border); background:var(--cream-100); border-radius:0 0 14px 14px;">
+                <input class="hub-inp" value="{{ nrName }}" data-field="name" onChange="{{ onNrField }}" placeholder="e.g. PI &amp; PL insurance" style="flex:1; min-width:140px;">
+                <input class="hub-inp" type="date" value="{{ nrDate }}" data-field="date" onChange="{{ onNrField }}" style="width:150px;">
+                <button class="hub-btn hub-btn-pri" onClick="{{ onAddRenewal }}">Add</button>
+              </div>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ░░ ROADMAP ░░ -->
+        <sc-if value="{{ secRoadmap }}" hint-placeholder-val="{{ false }}">
+          <section data-screen-label="Roadmap" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+              <h2 style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Product roadmap</h2>
+              <span style="font-size:12px; color:var(--ink-500);">Drag cards between lanes.</span>
+            </div>
+            <div class="hub-card hub-addrow" style="display:flex; align-items:center; gap:8px; padding:10px 12px;">
+              <input class="hub-inp" value="{{ rdTitle }}" data-field="title" onChange="{{ onRdField }}" placeholder="New roadmap item" style="flex:2; min-width:180px;">
+              <select class="hub-inp" value="{{ rdTag }}" data-field="tag" onChange="{{ onRdField }}" style="width:150px;">
+                <sc-for list="{{ tagOptions }}" as="tg" hint-placeholder-count="0">
+                  <option value="{{ tg.id }}">{{ tg.label }}</option>
+                </sc-for>
+              </select>
+              <select class="hub-inp" value="{{ rdLane }}" data-field="lane" onChange="{{ onRdField }}" style="width:110px;">
+                <option value="now">Now</option>
+                <option value="next">Next</option>
+                <option value="later">Later</option>
+                <option value="shipped">Shipped</option>
+              </select>
+              <button class="hub-btn hub-btn-pri" onClick="{{ onAddRoad }}">Add</button>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(4, minmax(210px, 1fr)); gap:10px; overflow-x:auto; padding-bottom:4px;">
+              <sc-for list="{{ roadLanes }}" as="ln" hint-placeholder-count="4">
+                <div class="hub-drop" data-lane="{{ ln.lane }}" onDragOver="{{ onColOver }}" onDragLeave="{{ onColLeave }}" onDrop="{{ onColDrop }}" style="background:var(--cream-100); border:1px solid var(--cream-border); border-radius:12px; padding:10px; display:flex; flex-direction:column; gap:8px; min-height:280px;">
+                  <div style="display:flex; align-items:baseline; gap:7px; padding:2px 3px;">
+                    <span style="font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-500);">{{ ln.label }}</span>
+                    <span style="font-family:var(--font-data); font-size:10.5px; color:var(--ink-400);">{{ ln.countLabel }}</span>
+                  </div>
+                  <sc-for list="{{ ln.items }}" as="ri" hint-placeholder-count="2">
+                    <div draggable="true" data-id="{{ ri.id }}" onDragStart="{{ onRoadDragStart }}" style="background:var(--color-surface); border:1px solid var(--cream-border); border-radius:10px; padding:9px 10px; cursor:grab; display:flex; flex-direction:column; gap:6px;" style-hover="border-color:var(--accent-400);">
+                      <div style="display:flex; align-items:center; gap:6px;">
+                        <span class="hub-tag" data-tag="{{ ri.tag }}">{{ ri.tagLabel }}</span>
+                        <span style="flex:1;"></span>
+                        <button class="hub-x" data-id="{{ ri.id }}" onClick="{{ onRoadDelete }}" title="Delete">×</button>
+                      </div>
+                      <div style="font-size:12px; font-weight:600; color:var(--ink-900); line-height:1.35;">{{ ri.title }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ░░ DOCS & DRIVE ░░ -->
+        <sc-if value="{{ secDocs }}" hint-placeholder-val="{{ false }}">
+          <section data-screen-label="Docs & Drive" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+              <h2 style="font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-0.015em; color:var(--ink-900); margin:0;">Business documents</h2>
+              <span style="font-size:12px; color:var(--ink-500);">Documents live in Google Drive; this page is the index.</span>
+            </div>
+            <div class="hub-card" data-screen-label="Drive folder" style="padding:16px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <div style="width:38px; height:38px; border-radius:10px; background:var(--accent-50); border:1px solid var(--accent-200); display:grid; place-items:center; flex:none;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1043B0" stroke-width="2"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path></svg>
+                </div>
+                <div style="flex:1; min-width:200px;">
+                  <div style="font-size:13px; font-weight:700; color:var(--ink-900);">Google Drive · business docs folder</div>
+                  <div style="font-size:11px; color:var(--ink-500); margin-top:2px;">Create the folder in your own Drive, share it with your co-founder only, then paste the link here.</div>
+                </div>
+                <sc-if value="{{ driveSet }}" hint-placeholder-val="{{ false }}">
+                  <a class="hub-btn hub-btn-pri" href="{{ driveHref }}" target="_blank" rel="noreferrer">Open Drive folder</a>
+                </sc-if>
+                <sc-if value="{{ driveUnset }}" hint-placeholder-val="{{ true }}">
+                  <a class="hub-btn" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noreferrer">Open Google Drive</a>
+                </sc-if>
+              </div>
+              <input class="hub-inp" value="{{ driveUrl }}" onChange="{{ onDriveField }}" placeholder="https://drive.google.com/drive/folders/…" style="font-family:var(--font-data); font-size:11.5px;">
+              <div style="font-size:10.5px; color:var(--ink-400); line-height:1.5;">Keep it secure: 2-step verification on both Google accounts; share with named people, never "anyone with the link". This hub stores the link only, never the documents.</div>
+            </div>
+            <div class="hub-card" data-screen-label="Document register">
+              <div style="display:flex; align-items:center; gap:10px; padding:13px 16px; border-bottom:1px solid var(--cream-border);">
+                <span class="hub-lbl" style="margin:0; flex:1;">Document register · mirrors the Drive folder structure</span>
+                <span style="font-family:var(--font-data); font-size:11px; color:var(--ink-500);">{{ docsFiledLabel }}</span>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:14px 22px; padding:14px 16px 16px;">
+                <sc-for list="{{ docGroups }}" as="g" hint-placeholder-count="5">
+                  <div>
+                    <div style="font-family:var(--font-data); font-size:10.5px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:#1043B0; margin-bottom:4px;">{{ g.title }}</div>
+                    <div style="display:flex; flex-direction:column;">
+                      <sc-for list="{{ g.items }}" as="doc" hint-placeholder-count="4">
+                        <div style="display:flex; align-items:center; gap:8px; padding:6px 0; border-top:1px solid var(--cream-border);">
+                          <span style="flex:1; font-size:12px; color:var(--ink-800);">{{ doc.label }}</span>
+                          <button class="hub-tone" data-tone="{{ doc.tone }}" data-key="{{ doc.key }}" onClick="{{ onDocToggle }}" title="Toggle: is this filed in Drive?">{{ doc.statusLabel }}</button>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ░░ DRAWERS ░░ -->
+        <sc-if value="{{ anyDrawer }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ onCloseDrawer }}" style="position:fixed; inset:0; background:rgba(22,35,46,0.32); z-index:90;"></div>
+        </sc-if>
+
+        <sc-if value="{{ drawerContact }}" hint-placeholder-val="{{ false }}">
+          <aside class="hub-drawer" data-screen-label="Contact drawer" style="position:fixed; top:0; right:0; bottom:0; width:400px; background:var(--color-surface); border-left:1px solid var(--cream-border-strong); box-shadow:var(--shadow-lg); z-index:95; display:flex; flex-direction:column;">
+            <div style="display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--cream-border);">
+              <span style="font-family:var(--font-display); font-weight:800; font-size:15px; color:var(--ink-900); flex:1;">Contact</span>
+              <button class="hub-x" onClick="{{ onCloseDrawer }}" style="font-size:16px;">×</button>
+            </div>
+            <div class="scroll" style="flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:14px;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+                <div style="grid-column:1 / -1;"><label class="hub-lbl">Name</label><input class="hub-inp" value="{{ dcName }}" data-field="name" onChange="{{ onContactField }}" placeholder="Full name"></div>
+                <div style="grid-column:1 / -1;"><label class="hub-lbl">Organisation</label><input class="hub-inp" value="{{ dcOrg }}" data-field="org" onChange="{{ onContactField }}" placeholder="Company or council"></div>
+                <div><label class="hub-lbl">Type</label><select class="hub-inp" value="{{ dcType }}" data-field="type" onChange="{{ onContactField }}"><option value="installer">Installer</option><option value="council">Council</option></select></div>
+                <div><label class="hub-lbl">Role</label><input class="hub-inp" value="{{ dcRole }}" data-field="role" onChange="{{ onContactField }}" placeholder="Job title"></div>
+                <div><label class="hub-lbl">Email</label><input class="hub-inp" value="{{ dcEmail }}" data-field="email" onChange="{{ onContactField }}" placeholder="name@example.co.uk"></div>
+                <div><label class="hub-lbl">Phone</label><input class="hub-inp" value="{{ dcPhone }}" data-field="phone" onChange="{{ onContactField }}" style="font-family:var(--font-data);" placeholder="07700 …"></div>
+              </div>
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                  <label class="hub-lbl" style="margin:0; flex:1;">Deals</label>
+                  <button class="hub-btn" onClick="{{ onNewDealForContact }}" style="font-size:10.5px; padding:4px 9px;">+ Deal</button>
+                </div>
+                <sc-for list="{{ dcDeals }}" as="dd0" hint-placeholder-count="1">
+                  <button data-id="{{ dd0.id }}" onClick="{{ onDealOpen }}" style="display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:var(--cream-100); border:1px solid var(--cream-border); border-radius:9px; padding:8px 10px; margin-bottom:5px; cursor:pointer;" style-hover="border-color:var(--accent-400);">
+                    <span data-money="1" style="flex:1; font-size:11.5px; font-weight:650; color:var(--ink-800); min-width:0;">{{ dd0.label }}</span>
+                    <span class="hub-chip">{{ dd0.stageLabel }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div>
+                <label class="hub-lbl">Notes</label>
+                <textarea class="hub-inp" value="{{ noteDraft }}" onChange="{{ onNoteDraft }}" placeholder="Call notes, next steps…" style="min-height:56px; resize:vertical;"></textarea>
+                <button class="hub-btn" onClick="{{ onAddNote }}" style="margin-top:6px;">Add note</button>
+                <sc-for list="{{ dcNotes }}" as="n0" hint-placeholder-count="1">
+                  <div style="border-top:1px solid var(--cream-border); padding:8px 2px; margin-top:8px;">
+                    <div style="font-family:var(--font-data); font-size:10px; color:var(--ink-400); margin-bottom:3px;">{{ n0.dateLabel }}</div>
+                    <div style="font-size:12px; line-height:1.5; color:var(--ink-700); white-space:pre-wrap;">{{ n0.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="padding:12px 18px; border-top:1px solid var(--cream-border);">
+              <button class="hub-btn hub-btn-danger" onClick="{{ onDeleteContact }}">{{ dcDelLabel }}</button>
+            </div>
+          </aside>
+        </sc-if>
+
+        <sc-if value="{{ drawerDeal }}" hint-placeholder-val="{{ false }}">
+          <aside class="hub-drawer" data-screen-label="Deal drawer" style="position:fixed; top:0; right:0; bottom:0; width:400px; background:var(--color-surface); border-left:1px solid var(--cream-border-strong); box-shadow:var(--shadow-lg); z-index:95; display:flex; flex-direction:column;">
+            <div style="display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--cream-border);">
+              <span style="font-family:var(--font-display); font-weight:800; font-size:15px; color:var(--ink-900); flex:1;">Deal</span>
+              <button class="hub-x" onClick="{{ onCloseDrawer }}" style="font-size:16px;">×</button>
+            </div>
+            <div class="scroll" style="flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:9px;">
+              <div><label class="hub-lbl">Organisation</label><input class="hub-inp" value="{{ ddOrg }}" data-field="org" onChange="{{ onDealField }}" placeholder="Company or council"></div>
+              <div><label class="hub-lbl">Deal</label><input class="hub-inp" value="{{ ddTitle }}" data-field="title" onChange="{{ onDealField }}" placeholder="e.g. Solo · annual, Estate review pilot"></div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+                <div><label class="hub-lbl">Type</label><select class="hub-inp" value="{{ ddType }}" data-field="type" onChange="{{ onDealField }}"><option value="installer">Installer</option><option value="council">Council</option></select></div>
+                <div><label class="hub-lbl">Stage</label><select class="hub-inp" value="{{ ddStage }}" data-field="stage" onChange="{{ onDealField }}"><option value="lead">Lead</option><option value="contacted">Contacted</option><option value="demo">Demo</option><option value="proposal">Proposal</option><option value="won">Won</option><option value="lost">Lost</option></select></div>
+                <div><label class="hub-lbl">Value £ · first year</label><input class="hub-inp" type="number" value="{{ ddValue }}" data-field="value" onChange="{{ onDealField }}" data-money="1" style="font-family:var(--font-data);"></div>
+                <div><label class="hub-lbl">Owner</label><select class="hub-inp" value="{{ ddOwner }}" data-field="owner" onChange="{{ onDealField }}"><option value="a">{{ ownerAName }}</option><option value="b">{{ ownerBName }}</option><option value="">Unassigned</option></select></div>
+              </div>
+              <div><label class="hub-lbl">Contact</label>
+                <select class="hub-inp" value="{{ ddContact }}" data-field="contactId" onChange="{{ onDealField }}">
+                  <option value="">No contact link</option>
+                  <sc-for list="{{ contactOptions }}" as="co2" hint-placeholder-count="0">
+                    <option value="{{ co2.id }}">{{ co2.label }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div><label class="hub-lbl">Next step</label><input class="hub-inp" value="{{ ddNext }}" data-field="next" onChange="{{ onDealField }}" placeholder="What moves this forward?"></div>
+              <div><label class="hub-lbl">Notes</label><textarea class="hub-inp" value="{{ ddNotes }}" data-field="notes" onChange="{{ onDealField }}" style="min-height:76px; resize:vertical;" placeholder="Anything worth remembering"></textarea></div>
+            </div>
+            <div style="padding:12px 18px; border-top:1px solid var(--cream-border);">
+              <button class="hub-btn hub-btn-danger" onClick="{{ onDeleteDeal }}">{{ ddDelLabel }}</button>
+            </div>
+          </aside>
+        </sc-if>
+
+        <sc-if value="{{ drawerSettings }}" hint-placeholder-val="{{ false }}">
+          <aside class="hub-drawer" data-screen-label="Settings drawer" style="position:fixed; top:0; right:0; bottom:0; width:400px; background:var(--color-surface); border-left:1px solid var(--cream-border-strong); box-shadow:var(--shadow-lg); z-index:95; display:flex; flex-direction:column;">
+            <div style="display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--cream-border);">
+              <span style="font-family:var(--font-display); font-weight:800; font-size:15px; color:var(--ink-900); flex:1;">Settings</span>
+              <button class="hub-x" onClick="{{ onCloseDrawer }}" style="font-size:16px;">×</button>
+            </div>
+            <div class="scroll" style="flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:10px;">
+              <div><label class="hub-lbl">Company name</label><input class="hub-inp" value="{{ stCompany }}" data-field="company" onChange="{{ onSettingsField }}"></div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+                <div><label class="hub-lbl">You</label><input class="hub-inp" value="{{ stOwnerA }}" data-field="ownerA" onChange="{{ onSettingsField }}" placeholder="Your name"></div>
+                <div><label class="hub-lbl">Partner</label><input class="hub-inp" value="{{ stOwnerB }}" data-field="ownerB" onChange="{{ onSettingsField }}" placeholder="Their name"></div>
+              </div>
+              <div><label class="hub-lbl">Incorporated on</label><input class="hub-inp" type="date" value="{{ stInc }}" data-field="incDate" onChange="{{ onSettingsField }}"></div>
+              <div><label class="hub-lbl">Drive folder URL</label><input class="hub-inp" value="{{ stDrive }}" data-field="driveUrl" onChange="{{ onSettingsField }}" placeholder="https://drive.google.com/drive/folders/…" style="font-family:var(--font-data); font-size:11px;"></div>
+              <div style="background:var(--cream-100); border:1px solid var(--cream-border); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                <span class="hub-lbl" style="margin:0;">Data</span>
+                <span style="font-size:11px; color:var(--ink-500); line-height:1.5;">{{ dataModeNote }}</span>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="hub-btn" onClick="{{ onLoadExample }}">{{ exampleLabel }}</button>
+                  <button class="hub-btn hub-btn-danger" onClick="{{ onClearAll }}">{{ clearLabel }}</button>
+                </div>
+              </div>
+              <div style="font-size:10.5px; color:var(--ink-400); line-height:1.5;">Owner initials appear on tasks, deals and set-up items. Click an owner chip on a set-up item to cycle who is doing it.</div>
+            </div>
+          </aside>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultSection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;setup&quot;,&quot;crm&quot;,&quot;finance&quot;,&quot;calendar&quot;,&quot;roadmap&quot;,&quot;docs&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behaviour&quot;},&quot;hideMoney&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Privacy&quot;}}">
+class Component extends DCLogic {
+  KEY = 'evit_business_hub_v1';
+
+  // ── definitions ──
+  stagesDef() { return [['lead','Lead'],['contacted','Contacted'],['demo','Demo'],['proposal','Proposal'],['won','Won'],['lost','Lost']]; }
+  lanesDef() { return [['now','Now'],['next','Next'],['later','Later'],['shipped','Shipped']]; }
+  tagsDef() { return [['planner','Site Planner'],['conductor','Conductor'],['sparks','Sparks'],['estate','Estate Review'],['foreman','Foreman'],['company','Company']]; }
+
+  phasesDef() { return [
+    { id:'p1', title:'1 · Incorporate', blurb:'Get the legal entity to exist.' },
+    { id:'p2', title:'2 · Money & tax', blurb:'Bank, books and HMRC.' },
+    { id:'p3', title:'3 · Protect', blurb:'Paper, cover and registrations.' },
+    { id:'p4', title:'4 · Sell properly', blurb:'Contracts, payments and what councils ask for.' },
+  ]; }
+
+  setupDef() { return [
+    { id:'s1', phase:'p1', title:'Agree the founder split', detail:'Equity, roles, and what happens if one of you walks. Write it down now; it only gets harder later.' },
+    { id:'s2', phase:'p1', title:'Check the name is free', detail:'Companies House register, the trademark register, the domain and the socials.', link:'https://find-and-update.company-information.service.gov.uk/', linkLabel:'Companies House' },
+    { id:'s3', phase:'p1', title:'Pick SIC codes', detail:'62012 (business software development) fits; add 62090 as a catch-all second.' },
+    { id:'s4', phase:'p1', title:'Sort a registered office address', detail:'A registered-office service keeps home addresses off the public record.', cost:30, costLabel:'≈ £30/yr' },
+    { id:'s5', phase:'p1', title:'Incorporate the Ltd (form IN01)', detail:'Online, usually same or next working day. Directors, share split and PSCs from the step above.', cost:50, costLabel:'£50', link:'https://www.gov.uk/limited-company-formation', linkLabel:'GOV.UK' },
+    { id:'s6', phase:'p1', title:'File the incorporation pack in Drive', detail:'Certificate, authentication code and the UTR letter go straight into 01 · Company.' },
+    { id:'s7', phase:'p2', title:'Open the business bank account', detail:'App-first banks open in days; you need the certificate of incorporation.' },
+    { id:'s8', phase:'p2', title:'Set up bookkeeping from day one', detail:'Xero or FreeAgent, with the bank feed connected before receipts pile up.', cost:180, costLabel:'≈ £15/mo' },
+    { id:'s9', phase:'p2', title:'Appoint an accountant', detail:'Fixed-fee small practice. Ask about R&D relief on development spend.' },
+    { id:'s10', phase:'p2', title:'Register for Corporation Tax', detail:'Within 3 months of starting to trade; you need the UTR from the incorporation pack.', link:'https://www.gov.uk/corporation-tax', linkLabel:'GOV.UK' },
+    { id:'s11', phase:'p2', title:'Decide the VAT position', detail:'Compulsory past £90k turnover. Registering early reclaims VAT on tooling, and most of your customers are VAT-registered anyway.' },
+    { id:'s12', phase:'p2', title:'PAYE, only when salaries start', detail:'Director payroll can wait; the accountant runs it when you are ready.' },
+    { id:'s13', phase:'p3', title:'Sign a shareholders\u2019 agreement', detail:'Vesting, good and bad leaver, drag and tag. The document that saves the friendship.', cost:650, costLabel:'£300–£1,000' },
+    { id:'s14', phase:'p3', title:'Assign pre-incorporation IP to the company', detail:'Everything built so far transfers in by deed. Councils and investors both ask.' },
+    { id:'s15', phase:'p3', title:'Insurance: PI, public liability, cyber', detail:'Professional indemnity matters most; the product assists electrical design decisions.', cost:720, costLabel:'≈ £60/mo' },
+    { id:'s16', phase:'p3', title:'Pay the ICO data protection fee', detail:'Legally required while holding customer data. Tier 1 at this size.', cost:52, costLabel:'£52/yr', link:'https://ico.org.uk/for-organisations/data-protection-fee/', linkLabel:'ico.org.uk' },
+    { id:'s17', phase:'p3', title:'Trademark the name', detail:'UK IPO, one class. Cheap insurance on the brand you are building.', cost:170, costLabel:'£170', link:'https://www.gov.uk/how-to-register-a-trade-mark', linkLabel:'GOV.UK' },
+    { id:'s18', phase:'p4', title:'Terms of service', detail:'Carry the product line into contract: design assistance, not certification.' },
+    { id:'s19', phase:'p4', title:'Privacy policy and DPA', detail:'Installers upload their customers\u2019 addresses and photos; you are their data processor.' },
+    { id:'s20', phase:'p4', title:'Payments: Stripe or GoCardless', detail:'Subscriptions, VAT invoices and failed-payment retries handled for you.' },
+    { id:'s21', phase:'p4', title:'Cyber Essentials certification', detail:'Councils ask for it in procurement, and it sharpens your own setup.', cost:320, costLabel:'≈ £320/yr', link:'https://iasme.co.uk/cyber-essentials/', linkLabel:'IASME' },
+    { id:'s22', phase:'p4', title:'Build the council procurement pack', detail:'Insurance schedule, policies and references in one folder, ready for PQQs.' },
+  ]; }
+
+  docsDef() { return [
+    { title:'01 · Company', items:['Certificate of incorporation','Memorandum & articles','Shareholders\u2019 agreement (signed)','Share certificates','Statutory registers (members, PSC)'] },
+    { title:'02 · Finance & tax', items:['Bank account confirmation','Accountant engagement letter','Corporation Tax UTR letter','VAT certificate (when registered)'] },
+    { title:'03 · Insurance & compliance', items:['PI & public liability schedule','Cyber policy schedule','ICO registration certificate','Cyber Essentials certificate'] },
+    { title:'04 · Product & legal', items:['Terms of service (current)','Privacy policy & DPA','IP assignment deed','Trademark filing receipt'] },
+    { title:'05 · Sales', items:['Council proposal template','Pilot agreement template','Pricing sheet (current)','Procurement / PQQ pack'] },
+  ]; }
+
+  // ── helpers ──
+  iso(d) { const p = (n) => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+  todayIso() { return this.iso(new Date()); }
+  dPlus(n) { const d = new Date(); d.setDate(d.getDate() + n); return this.iso(d); }
+  addMonthsIso(isoStr, m, extraDays) { const d = new Date(isoStr + 'T12:00:00'); d.setMonth(d.getMonth() + m); if (extraDays) d.setDate(d.getDate() + extraDays); return this.iso(d); }
+  daysUntil(isoStr) { if (!isoStr) return null; const a = new Date(isoStr + 'T12:00:00'); const b = new Date(this.todayIso() + 'T12:00:00'); return Math.round((a - b) / 86400000); }
+  fmtDate(isoStr) { if (!isoStr) return ''; return new Date(isoStr + 'T12:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }); }
+  fmtShort(isoStr) { if (!isoStr) return ''; return new Date(isoStr + 'T12:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short' }); }
+  fmtMonth(m) { if (!m) return ''; return new Date(m + '-01T12:00:00').toLocaleDateString('en-GB', { month:'short', year:'2-digit' }); }
+  money(n) { return '£' + Math.round(Number(n) || 0).toLocaleString('en-GB'); }
+  uid() { return 'x' + Math.random().toString(36).slice(2, 9); }
+  initials(name) { const s = (name || '').trim(); if (!s) return '·'; return s.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase(); }
+
+  emptyData() { return {
+    demo: false,
+    settings: { company:'EV Infrastructure Tools Ltd', ownerA:'You', ownerB:'Partner', incDate:'', driveUrl:'' },
+    setupDone: {}, setupOwners: {},
+    contacts: [], deals: [], tasks: [], renewals: [], metrics: [], roadmap: [], docsFiled: {},
+    finance: { cash: 0, out: 0, mrr: 0 },
+  }; }
+
+  seedData() {
+    const P = (n) => this.dPlus(n);
+    return {
+      demo: true,
+      settings: { company:'EV Infrastructure Tools Ltd', ownerA:'You', ownerB:'Co-founder', incDate:'', driveUrl:'' },
+      setupDone: { s1:true, s2:true },
+      setupOwners: { s3:'a', s4:'a', s5:'a', s13:'b' },
+      contacts: [
+        { id:'c1', name:'Dan Whitfield', org:'Whitfield Electrical', type:'installer', role:'Director', email:'dan@whitfieldelectrical.co.uk', phone:'07700 900412', notes:[{ d:P(-9), t:'Two vans, mostly domestic. Found us through the NICEIC forum thread.' }] },
+        { id:'c2', name:'Priya Nair', org:'Nair EV & Electrical', type:'installer', role:'Director', email:'priya@nairev.co.uk', phone:'07700 900233', notes:[] },
+        { id:'c3', name:'Marcus Tan', org:'GridWorks Contracting', type:'installer', role:'Operations manager', email:'m.tan@gridworks.co.uk', phone:'0161 496 0733', notes:[{ d:P(-4), t:'Commercial fleet installer, six engineers. Wants shared rate cards across the team.' }] },
+        { id:'c4', name:'Rachel Okafor', org:'Liverpool City Council', type:'council', role:'EV infrastructure officer', email:'r.okafor@liverpool.gov.uk', phone:'0151 496 0210', notes:[{ d:P(-6), t:'Saw the Liverpool worked example on the one-pager. Wants pilot scope for 62 sites before LEVI reporting in the autumn.' }] },
+        { id:'c5', name:'James Hartley', org:'Wirral Council', type:'council', role:'Transport strategy', email:'j.hartley@wirral.gov.uk', phone:'0151 496 0884', notes:[] },
+        { id:'c6', name:'Sophie Ellis', org:'Ellis Power Services', type:'installer', role:'Director', email:'sophie@ellispower.co.uk', phone:'07700 900871', notes:[] },
+        { id:'c7', name:'Anna McBride', org:'Stockport Council', type:'council', role:'Parking & EV lead', email:'a.mcbride@stockport.gov.uk', phone:'0161 496 0442', notes:[] },
+      ],
+      deals: [
+        { id:'d1', org:'Whitfield Electrical', title:'Solo · annual', type:'installer', stage:'won', value:190, owner:'a', next:'Onboarding call booked', contactId:'c1', notes:'' },
+        { id:'d2', org:'GridWorks Contracting', title:'Team · 5 seats', type:'installer', stage:'proposal', value:490, owner:'a', next:'Waiting on final seat count', contactId:'c3', notes:'' },
+        { id:'d3', org:'Nair EV & Electrical', title:'Solo · monthly', type:'installer', stage:'demo', value:228, owner:'a', next:'Trial ends 14 Jul; check in before then', contactId:'c2', notes:'' },
+        { id:'d4', org:'Liverpool City Council', title:'Estate review pilot · 62 sites', type:'council', stage:'proposal', value:4500, owner:'b', next:'Proposal v2 due Thursday', contactId:'c4', notes:'' },
+        { id:'d5', org:'Wirral Council', title:'Estate review · 38 sites', type:'council', stage:'contacted', value:3800, owner:'b', next:'Waiting on the asset list', contactId:'c5', notes:'' },
+        { id:'d6', org:'Stockport Council', title:'Estate review', type:'council', stage:'lead', value:3200, owner:'b', next:'', contactId:'c7', notes:'' },
+        { id:'d7', org:'Ellis Power Services', title:'Solo · annual', type:'installer', stage:'lead', value:190, owner:'a', next:'On the free tier; two projects in', contactId:'c6', notes:'' },
+        { id:'d8', org:'FastCharge North', title:'Team · 8 seats', type:'installer', stage:'lost', value:780, owner:'a', next:'Went back to spreadsheets', contactId:'', notes:'' },
+      ],
+      tasks: [
+        { id:'t1', title:'Send Liverpool pilot proposal v2', due:P(2), owner:'b', contactId:'c4', done:false },
+        { id:'t2', title:'Chase GridWorks on seat count', due:P(1), owner:'a', contactId:'c3', done:false },
+        { id:'t3', title:'Shortlist registered-office address services', due:P(-1), owner:'a', contactId:'', done:false },
+        { id:'t4', title:'Heads of terms for the shareholders\u2019 agreement', due:P(6), owner:'b', contactId:'', done:false },
+        { id:'t5', title:'Check in on Priya before the trial ends', due:P(8), owner:'a', contactId:'c2', done:false },
+        { id:'t6', title:'Run the company name check', due:P(-3), owner:'a', contactId:'', done:true },
+      ],
+      renewals: [
+        { id:'r1', name:'evsiteplanner.co.uk domain', date:'2027-03-14' },
+        { id:'r2', name:'Design & dev tool licences review', date:'2026-09-01' },
+      ],
+      metrics: [
+        { m:'2026-04', signups:34, trials:9, paid:3 },
+        { m:'2026-05', signups:51, trials:14, paid:6 },
+        { m:'2026-06', signups:68, trials:19, paid:9 },
+      ],
+      roadmap: [
+        { id:'m1', lane:'now', tag:'conductor', title:'Conductor cable-sizing beta' },
+        { id:'m2', lane:'now', tag:'estate', title:'Council report PDF export' },
+        { id:'m3', lane:'now', tag:'planner', title:'Offline sync hardening' },
+        { id:'m4', lane:'next', tag:'sparks', title:'Sparks scoping: AI install assistant' },
+        { id:'m5', lane:'next', tag:'planner', title:'Team seat management' },
+        { id:'m6', lane:'next', tag:'company', title:'Installer referral scheme' },
+        { id:'m7', lane:'later', tag:'foreman', title:'Foreman: install project management' },
+        { id:'m8', lane:'later', tag:'company', title:'Public API' },
+        { id:'m9', lane:'later', tag:'planner', title:'DNO application autofill' },
+        { id:'m10', lane:'shipped', tag:'planner', title:'Quotes & invoices' },
+        { id:'m11', lane:'now', tag:'planner', title:'RAMS builder · coming soon' },
+        { id:'m12', lane:'shipped', tag:'estate', title:'Estate Review council mode' },
+      ],
+      docsFiled: { g4i0:true, g4i2:true },
+      finance: { cash: 4200, out: 310, mrr: 171 },
+    };
+  }
+
+  loadData() {
+    try {
+      const raw = localStorage.getItem(this.KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d && Array.isArray(d.contacts)) {
+          if (!d.demo) return d;
+          // Stored data is the worked example: start clean, keep settings.
+          const e = this.emptyData();
+          e.settings = { ...e.settings, ...(d.settings || {}) };
+          return e;
+        }
+      }
+    } catch (e) {}
+    return this.emptyData();
+  }
+
+  state = {
+    data: this.loadData(),
+    section: null, crmTab: 'pipeline', pipeFilter: 'all',
+    drawer: null, contactSearch: '', noteDraft: '',
+    newTask: { title:'', due:'', owner:'a', contactId:'' },
+    newRen: { name:'', date:'' },
+    newRoad: { title:'', lane:'now', tag:'planner' },
+    confirm: null,
+  };
+
+  save(d) { try { localStorage.setItem(this.KEY, JSON.stringify(d)); } catch (e) {} }
+  upd(fn) { const d = this.state.data; fn(d); this.save(d); this.setState({ data: d }); }
+  contactById(id) { return this.state.data.contacts.find(c => c.id === id); }
+  dealById(id) { return this.state.data.deals.find(x => x.id === id); }
+
+  // ── handlers ──
+  onNav = (e) => { this.setState({ section: e.currentTarget.dataset.sec, confirm: null }); };
+  openSettings = () => { this.setState({ drawer: { kind:'settings' }, confirm: null }); };
+  onCloseDrawer = () => { this.setState({ drawer: null, confirm: null, noteDraft: '' }); };
+  onCrmTab = (e) => { this.setState({ crmTab: e.currentTarget.dataset.tab }); };
+  onPipeFilter = (e) => { this.setState({ pipeFilter: e.currentTarget.dataset.pf }); };
+  onSetupToggle = (e) => { const id = e.currentTarget.dataset.id; this.upd(d => { d.setupDone[id] = !d.setupDone[id]; }); };
+  onSetupOwner = (e) => { const id = e.currentTarget.dataset.id; this.upd(d => { const cur = d.setupOwners[id] || ''; d.setupOwners[id] = cur === '' ? 'a' : (cur === 'a' ? 'b' : ''); }); };
+  onDealDragStart = (e) => { this._drag = { kind:'deal', id: e.currentTarget.dataset.id }; try { e.dataTransfer.setData('text/plain', this._drag.id); e.dataTransfer.effectAllowed = 'move'; } catch (err) {} };
+  onRoadDragStart = (e) => { this._drag = { kind:'road', id: e.currentTarget.dataset.id }; try { e.dataTransfer.setData('text/plain', this._drag.id); e.dataTransfer.effectAllowed = 'move'; } catch (err) {} };
+  onColOver = (e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); };
+  onColLeave = (e) => { e.currentTarget.classList.remove('drag-over'); };
+  onColDrop = (e) => {
+    e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+    const ds = e.currentTarget.dataset; const drag = this._drag; if (!drag) return; this._drag = null;
+    if (drag.kind === 'deal' && ds.stage) { this.upd(d => { const x = d.deals.find(y => y.id === drag.id); if (x) x.stage = ds.stage; }); }
+    else if (drag.kind === 'road' && ds.lane) { this.upd(d => { const x = d.roadmap.find(y => y.id === drag.id); if (x) x.lane = ds.lane; }); }
+  };
+  onDealOpen = (e) => { e.stopPropagation(); this.setState({ drawer: { kind:'deal', id: e.currentTarget.dataset.id }, confirm: null }); };
+  onContactOpen = (e) => { this.setState({ drawer: { kind:'contact', id: e.currentTarget.dataset.id }, confirm: null, noteDraft: '' }); };
+  onNewContact = () => { const id = this.uid(); this.upd(d => { d.contacts.push({ id, name:'', org:'', type:'installer', role:'', email:'', phone:'', notes:[] }); }); this.setState({ drawer: { kind:'contact', id }, crmTab:'contacts' }); };
+  onNewDeal = () => { const id = this.uid(); this.upd(d => { d.deals.push({ id, org:'', title:'', type:'installer', stage:'lead', value:0, owner:'a', next:'', contactId:'', notes:'' }); }); this.setState({ drawer: { kind:'deal', id } }); };
+  onNewDealForContact = () => {
+    const dr = this.state.drawer; if (!dr) return; const c = this.contactById(dr.id) || {}; const id = this.uid();
+    this.upd(d => { d.deals.push({ id, org: c.org || c.name || '', title:'', type: c.type || 'installer', stage:'lead', value:0, owner:'a', next:'', contactId: c.id, notes:'' }); });
+    this.setState({ drawer: { kind:'deal', id } });
+  };
+  onContactField = (e) => { const dr = this.state.drawer; if (!dr) return; const f = e.currentTarget.dataset.field, v = e.currentTarget.value; this.upd(d => { const c = d.contacts.find(x => x.id === dr.id); if (c) c[f] = v; }); };
+  onDealField = (e) => { const dr = this.state.drawer; if (!dr) return; const f = e.currentTarget.dataset.field; let v = e.currentTarget.value; if (f === 'value') v = Number(v) || 0; this.upd(d => { const x = d.deals.find(y => y.id === dr.id); if (x) x[f] = v; }); };
+  onSettingsField = (e) => { const f = e.currentTarget.dataset.field, v = e.currentTarget.value; this.upd(d => { d.settings[f] = v; }); };
+  onIncDate = (e) => { const v = e.currentTarget.value; this.upd(d => { d.settings.incDate = v; }); };
+  onDriveField = (e) => { const v = e.currentTarget.value.trim(); this.upd(d => { d.settings.driveUrl = v; }); };
+  onContactSearch = (e) => { this.setState({ contactSearch: e.currentTarget.value }); };
+  onNoteDraft = (e) => { this.setState({ noteDraft: e.currentTarget.value }); };
+  onAddNote = () => {
+    const dr = this.state.drawer; const t = (this.state.noteDraft || '').trim(); if (!dr || !t) return;
+    this.upd(d => { const c = d.contacts.find(x => x.id === dr.id); if (c) { c.notes = c.notes || []; c.notes.unshift({ d: this.todayIso(), t }); } });
+    this.setState({ noteDraft: '' });
+  };
+  onDeleteContact = () => {
+    const dr = this.state.drawer; if (!dr) return;
+    if (this.state.confirm !== 'delc') { this.setState({ confirm: 'delc' }); return; }
+    this.upd(d => { d.contacts = d.contacts.filter(x => x.id !== dr.id); d.deals.forEach(x => { if (x.contactId === dr.id) x.contactId = ''; }); d.tasks.forEach(t => { if (t.contactId === dr.id) t.contactId = ''; }); });
+    this.setState({ drawer: null, confirm: null });
+  };
+  onDeleteDeal = () => {
+    const dr = this.state.drawer; if (!dr) return;
+    if (this.state.confirm !== 'deld') { this.setState({ confirm: 'deld' }); return; }
+    this.upd(d => { d.deals = d.deals.filter(x => x.id !== dr.id); });
+    this.setState({ drawer: null, confirm: null });
+  };
+  onNtField = (e) => { const f = e.currentTarget.dataset.field, v = e.currentTarget.value; this.setState(s => ({ newTask: { ...s.newTask, [f]: v } })); };
+  onAddTask = () => {
+    const nt = this.state.newTask; const title = (nt.title || '').trim(); if (!title) return;
+    this.upd(d => { d.tasks.unshift({ id: this.uid(), title, due: nt.due || '', owner: nt.owner || '', contactId: nt.contactId || '', done: false }); });
+    this.setState({ newTask: { title:'', due:'', owner:'a', contactId:'' } });
+  };
+  onTaskKey = (e) => {
+    if (e.key !== 'Enter') return; const title = e.currentTarget.value.trim(); if (!title) return;
+    const nt = this.state.newTask;
+    this.upd(d => { d.tasks.unshift({ id: this.uid(), title, due: nt.due || '', owner: nt.owner || 'a', contactId: nt.contactId || '', done: false }); });
+    e.currentTarget.value = '';
+    this.setState({ newTask: { title:'', due:'', owner:'a', contactId:'' } });
+  };
+  onTaskToggle = (e) => { const id = e.currentTarget.dataset.id; this.upd(d => { const t = d.tasks.find(x => x.id === id); if (t) t.done = !t.done; }); };
+  onTaskDelete = (e) => { const id = e.currentTarget.dataset.id; this.upd(d => { d.tasks = d.tasks.filter(x => x.id !== id); }); };
+  onClearDone = (e) => { e.preventDefault(); e.stopPropagation(); this.upd(d => { d.tasks = d.tasks.filter(x => !x.done); }); };
+  onFinField = (e) => { const f = e.currentTarget.dataset.field; const v = Number(e.currentTarget.value) || 0; this.upd(d => { d.finance[f] = v; }); };
+  onMetricField = (e) => { const i = Number(e.currentTarget.dataset.idx); const f = e.currentTarget.dataset.field; const v = Number(e.currentTarget.value) || 0; this.upd(d => { if (d.metrics[i]) d.metrics[i][f] = v; }); };
+  onMetricDelete = (e) => { const i = Number(e.currentTarget.dataset.idx); this.upd(d => { d.metrics.splice(i, 1); }); };
+  onAddMonth = () => {
+    this.upd(d => {
+      let m;
+      if (d.metrics.length) { const dt = new Date(d.metrics[d.metrics.length - 1].m + '-01T12:00:00'); dt.setMonth(dt.getMonth() + 1); m = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0'); }
+      else { const n = new Date(); m = n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0'); }
+      d.metrics.push({ m, signups: 0, trials: 0, paid: 0 });
+    });
+  };
+  onRenField = (e) => { const id = e.currentTarget.dataset.id, f = e.currentTarget.dataset.field, v = e.currentTarget.value; this.upd(d => { const r = d.renewals.find(x => x.id === id); if (r) r[f] = v; }); };
+  onRenAdvance = (e) => { const id = e.currentTarget.dataset.id; this.upd(d => { const r = d.renewals.find(x => x.id === id); if (r && r.date) r.date = this.addMonthsIso(r.date, 12, 0); }); };
+  onRenDelete = (e) => { const id = e.currentTarget.dataset.id; this.upd(d => { d.renewals = d.renewals.filter(x => x.id !== id); }); };
+  onNrField = (e) => { const f = e.currentTarget.dataset.field, v = e.currentTarget.value; this.setState(s => ({ newRen: { ...s.newRen, [f]: v } })); };
+  onAddRenewal = () => { const nr = this.state.newRen; if (!(nr.name || '').trim()) return; this.upd(d => { d.renewals.push({ id: this.uid(), name: nr.name.trim(), date: nr.date || '' }); }); this.setState({ newRen: { name:'', date:'' } }); };
+  onRdField = (e) => { const f = e.currentTarget.dataset.field, v = e.currentTarget.value; this.setState(s => ({ newRoad: { ...s.newRoad, [f]: v } })); };
+  onAddRoad = () => { const nr = this.state.newRoad; if (!(nr.title || '').trim()) return; this.upd(d => { d.roadmap.push({ id: this.uid(), title: nr.title.trim(), lane: nr.lane || 'now', tag: nr.tag || 'planner' }); }); this.setState(s => ({ newRoad: { ...s.newRoad, title: '' } })); };
+  onRoadDelete = (e) => { const id = e.currentTarget.dataset.id; this.upd(d => { d.roadmap = d.roadmap.filter(x => x.id !== id); }); };
+  onDocToggle = (e) => { const k = e.currentTarget.dataset.key; this.upd(d => { d.docsFiled[k] = !d.docsFiled[k]; }); };
+  onLoadExample = () => {
+    if (this.state.confirm !== 'seed') { this.setState({ confirm: 'seed' }); return; }
+    const d = this.seedData(); this.save(d); this.setState({ data: d, confirm: null, drawer: null });
+  };
+  onClearAll = () => {
+    if (this.state.confirm !== 'clear') { this.setState({ confirm: 'clear' }); return; }
+    const cur = this.state.data.settings; const d = this.emptyData(); d.settings = { ...d.settings, ...cur };
+    this.save(d); this.setState({ data: d, confirm: null, drawer: null });
+  };
+
+  // ── render values ──
+  renderVals() {
+    const st = this.state; const d = st.data; const s = d.settings;
+    const section = st.section || this.props.defaultSection || 'overview';
+    const stages = this.stagesDef();
+    const stageName = Object.fromEntries(stages);
+    const iA = this.initials(s.ownerA), iB = this.initials(s.ownerB);
+    const ownerLabel = (k) => k === 'a' ? iA : (k === 'b' ? iB : '+');
+    const ownerName = (k) => k === 'a' ? (s.ownerA || 'You') : (k === 'b' ? (s.ownerB || 'Partner') : 'unassigned');
+
+    // tasks
+    const taskRow = (t) => {
+      const days = this.daysUntil(t.due);
+      let dueLabel, tone;
+      if (t.done) { tone = 'ok'; dueLabel = t.due ? this.fmtShort(t.due) : ''; }
+      else if (days === null) { tone = 'ok'; dueLabel = 'No date'; }
+      else if (days < 0) { tone = 'over'; dueLabel = Math.abs(days) + 'd over'; }
+      else if (days === 0) { tone = 'soon'; dueLabel = 'Today'; }
+      else if (days === 1) { tone = 'soon'; dueLabel = 'Tomorrow'; }
+      else if (days <= 7) { tone = 'soon'; dueLabel = 'in ' + days + 'd'; }
+      else { tone = 'ok'; dueLabel = this.fmtShort(t.due); }
+      return { id: t.id, title: t.title, done: !!t.done, tone, dueLabel, linkName: (d.contacts.find(c => c.id === t.contactId) || {}).name || '', ownerKey: t.owner || '', ownerLabel: ownerLabel(t.owner || '') };
+    };
+    const open = d.tasks.filter(t => !t.done).map(t => ({ t, days: this.daysUntil(t.due) }));
+    const over = open.filter(x => x.days !== null && x.days < 0).sort((a, b) => a.days - b.days);
+    const soon = open.filter(x => x.days !== null && x.days >= 0 && x.days <= 7).sort((a, b) => a.days - b.days);
+    const later = open.filter(x => x.days === null || x.days > 7).sort((a, b) => ((a.days ?? 9999) - (b.days ?? 9999)));
+    const doneT = d.tasks.filter(t => t.done);
+    const overTasks = over.map(x => taskRow(x.t)), soonTasks = soon.map(x => taskRow(x.t)), laterTasks = later.map(x => taskRow(x.t)), doneTasks = doneT.map(taskRow);
+
+    // renewals + statutory
+    const renewalRows = [...d.renewals].sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999')).map(r => {
+      const days = this.daysUntil(r.date);
+      return { id: r.id, name: r.name, date: r.date || '', days, tone: days === null ? 'none' : (days < 0 ? 'over' : (days <= 30 ? 'soon' : 'ok')), toneLabel: days === null ? 'no date' : (days < 0 ? Math.abs(days) + 'd over' : 'in ' + days + 'd') };
+    });
+    const inc = s.incDate;
+    const statDef = [
+      { id:'st1', label:'Confirmation statement', sub:'Companies House · annual snapshot of directors and shareholders · £34 online', calc: () => this.addMonthsIso(inc, 12, 14) },
+      { id:'st2', label:'First annual accounts', sub:'Companies House · 21 months after incorporation for the first set', calc: () => this.addMonthsIso(inc, 21, 0) },
+      { id:'st3', label:'Corporation Tax payment', sub:'HMRC · 9 months and 1 day after the first year end (approximate)', calc: () => this.addMonthsIso(inc, 21, 1) },
+      { id:'st4', label:'Company Tax Return (CT600)', sub:'HMRC · 12 months after the first year end (approximate)', calc: () => this.addMonthsIso(inc, 24, 0) },
+    ];
+    const statRows = statDef.map(r => {
+      if (!inc) return { id: r.id, label: r.label, sub: r.sub, dateLabel: 'After incorporation', days: null, tone: 'none', toneLabel: '·' };
+      const dt = r.calc(); const days = this.daysUntil(dt);
+      return { id: r.id, label: r.label, sub: r.sub, dateLabel: this.fmtDate(dt), days, tone: days < 0 ? 'over' : (days <= 30 ? 'soon' : 'ok'), toneLabel: days < 0 ? Math.abs(days) + 'd over' : 'in ' + days + 'd' };
+    });
+
+    // pipeline
+    const pf = st.pipeFilter;
+    const dealsF = d.deals.filter(x => pf === 'all' || x.type === pf);
+    const pipeCols = stages.map(([stg, label]) => {
+      const list = dealsF.filter(x => x.stage === stg);
+      const total = list.reduce((a, x) => a + (Number(x.value) || 0), 0);
+      return { stage: stg, label, countLabel: String(list.length), totalLabel: total ? this.money(total) : '', deals: list.map(x => ({ id: x.id, org: x.org || '(no organisation)', title: x.title || '', valueLabel: this.money(x.value), type: x.type, typeLabel: x.type === 'council' ? 'Council' : 'Installer', ownerKey: x.owner || '', ownerLabel: ownerLabel(x.owner || ''), next: x.next || '' })) };
+    });
+    const openDeals = d.deals.filter(x => x.stage !== 'won' && x.stage !== 'lost');
+    const openVal = openDeals.reduce((a, x) => a + (Number(x.value) || 0), 0);
+    const wonVal = d.deals.filter(x => x.stage === 'won').reduce((a, x) => a + (Number(x.value) || 0), 0);
+    const glanceStages = stages.slice(0, 5);
+    const totals = glanceStages.map(([stg]) => d.deals.filter(x => x.stage === stg).reduce((a, x) => a + (Number(x.value) || 0), 0));
+    const maxTot = Math.max(...totals, 1);
+    const glance = glanceStages.map(([stg, label], i) => ({ label, countLabel: String(d.deals.filter(x => x.stage === stg).length), totalLabel: this.money(totals[i]), pct: Math.max(Math.round(totals[i] / maxTot * 100), 3) }));
+
+    // contacts
+    const q = (st.contactSearch || '').trim().toLowerCase();
+    const contactRows = d.contacts
+      .filter(c => !q || [c.name, c.org, c.email].join(' ').toLowerCase().includes(q))
+      .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+      .map(c => ({ id: c.id, name: c.name || '(unnamed)', role: c.role || '', org: c.org || '', type: c.type, typeLabel: c.type === 'council' ? 'Council' : 'Installer', email: c.email || '', lastLabel: (c.notes && c.notes[0]) ? this.fmtShort(c.notes[0].d) : '·' }));
+
+    // setup
+    const defs = this.setupDef();
+    const doneCount = defs.filter(x => d.setupDone[x.id]).length;
+    const setupPct = Math.round(doneCount / defs.length * 100);
+    const remCost = defs.filter(x => !d.setupDone[x.id]).reduce((a, x) => a + (x.cost || 0), 0);
+    const setupPhases = this.phasesDef().map(ph => {
+      const items = defs.filter(x => x.phase === ph.id).map(x => ({ id: x.id, title: x.title, detail: x.detail, costLabel: x.costLabel || '', link: x.link || '', linkLabel: x.link ? (x.linkLabel || 'Link') : '', done: !!d.setupDone[x.id], owner: d.setupOwners[x.id] || '', ownerLabel: ownerLabel(d.setupOwners[x.id] || '') }));
+      return { id: ph.id, title: ph.title, blurb: ph.blurb, doneLabel: items.filter(i => i.done).length + ' / ' + items.length, items };
+    });
+
+    // attention
+    const attn = [];
+    over.forEach(x => attn.push({ ord: x.days, label: x.t.title, sub: 'Overdue task · ' + ownerName(x.t.owner), tone: 'over', toneLabel: Math.abs(x.days) + 'd over', sec: 'crm' }));
+    soon.filter(x => x.days <= 1).forEach(x => attn.push({ ord: x.days, label: x.t.title, sub: 'Task · ' + ownerName(x.t.owner), tone: 'soon', toneLabel: x.days === 0 ? 'Today' : 'Tomorrow', sec: 'crm' }));
+    renewalRows.filter(r => r.tone === 'over' || r.tone === 'soon').forEach(r => attn.push({ ord: r.days, label: r.name, sub: 'Renewal', tone: r.tone, toneLabel: r.toneLabel, sec: 'calendar' }));
+    statRows.filter(r => r.tone === 'over' || r.tone === 'soon').forEach(r => attn.push({ ord: r.days, label: r.label, sub: 'Statutory deadline', tone: r.tone, toneLabel: r.toneLabel, sec: 'calendar' }));
+    attn.sort((a, b) => (a.ord ?? 9999) - (b.ord ?? 9999));
+    const attention = attn.slice(0, 6);
+
+    // metrics + finance
+    const metricRows = d.metrics.map((m, i) => ({ idx: i, monthLabel: this.fmtMonth(m.m), signups: m.signups, trials: m.trials, paid: m.paid, convLabel: m.trials ? Math.round((m.paid / m.trials) * 100) + '%' : '·' }));
+    const f = d.finance;
+    const burn = (Number(f.out) || 0) - (Number(f.mrr) || 0);
+    const finEmpty = !(Number(f.cash) || Number(f.out) || Number(f.mrr));
+    const burnLabel = finEmpty ? '·' : (burn > 0 ? this.money(burn) + '/mo' : 'Covered');
+    const runwayLabel = finEmpty ? 'not set' : (burn > 0 ? (Math.max(Number(f.cash) || 0, 0) / burn).toFixed(1).replace(/\.0$/, '') + ' months' : 'break-even or better');
+
+    // roadmap
+    const tagName = Object.fromEntries(this.tagsDef());
+    const roadLanes = this.lanesDef().map(([lane, label]) => {
+      const items = d.roadmap.filter(r => r.lane === lane).map(r => ({ id: r.id, title: r.title, tag: r.tag, tagLabel: tagName[r.tag] || r.tag }));
+      return { lane, label, countLabel: String(items.length), items };
+    });
+
+    // docs
+    const docGroups = this.docsDef().map((g, gi) => ({ title: g.title, items: g.items.map((label, ii) => { const key = 'g' + gi + 'i' + ii; const filed = !!d.docsFiled[key]; return { key, label, filed, tone: filed ? 'good' : 'none', statusLabel: filed ? 'In Drive' : 'Missing' }; }) }));
+    const filedCount = docGroups.reduce((a, g) => a + g.items.filter(i => i.filed).length, 0);
+    const totalDocs = docGroups.reduce((a, g) => a + g.items.length, 0);
+
+    // drive
+    const driveUrl = s.driveUrl || '';
+    const driveSet = /^https?:\/\//.test(driveUrl);
+
+    // drawer
+    const dr = st.drawer;
+    const drawerContact = !!(dr && dr.kind === 'contact');
+    const drawerDeal = !!(dr && dr.kind === 'deal');
+    const drawerSettings = !!(dr && dr.kind === 'settings');
+    const c0 = drawerContact ? (this.contactById(dr.id) || {}) : {};
+    const dl0 = drawerDeal ? (this.dealById(dr.id) || {}) : {};
+    const dcDeals = drawerContact ? d.deals.filter(x => x.contactId === dr.id).map(x => ({ id: x.id, label: (x.title || 'Deal') + ' · ' + this.money(x.value), stageLabel: stageName[x.stage] || x.stage })) : [];
+    const dcNotes = drawerContact ? (c0.notes || []).map((n, i) => ({ i, dateLabel: this.fmtDate(n.d), text: n.t })) : [];
+
+    // nav
+    const dueCount = over.length + soon.length;
+    const calSoon = renewalRows.filter(r => r.tone === 'over' || r.tone === 'soon').length + statRows.filter(r => r.tone === 'over' || r.tone === 'soon').length;
+    const navItems = [
+      ['overview', 'Overview', ''],
+      ['setup', 'Company set-up', ''],
+      ['crm', 'CRM', dueCount ? String(dueCount) : ''],
+      ['finance', 'Finance & metrics', ''],
+      ['calendar', 'Compliance calendar', calSoon ? String(calSoon) : ''],
+      ['roadmap', 'Roadmap', ''],
+      ['docs', 'Docs & Drive', ''],
+    ].map(([sec, label, countLabel]) => ({ sec, label, countLabel, active: section === sec }));
+
+    return {
+      moneyClass: this.props.hideMoney ? 'hub-money-hidden' : '',
+      isDemo: !!d.demo,
+      navItems,
+      onNav: this.onNav, openSettings: this.openSettings, onCloseDrawer: this.onCloseDrawer,
+
+      // sections
+      secOverview: section === 'overview', secSetup: section === 'setup', secCrm: section === 'crm',
+      secFinance: section === 'finance', secCalendar: section === 'calendar', secRoadmap: section === 'roadmap', secDocs: section === 'docs',
+
+      // overview
+      todayLabel: new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }),
+      setupPctLabel: setupPct + '%', setupPct, setupDoneLabel: doneCount + ' of ' + defs.length + ' done',
+      openPipeLabel: this.money(openVal), openDealsLabel: openDeals.length + ' open deals',
+      tasksDueLabel: String(dueCount), tasksDueSub: over.length ? over.length + ' overdue' : 'none overdue',
+      mrrLabel: this.money(f.mrr), runwayLabel, burnLabel,
+      attention, attnEmpty: attention.length === 0, glance, wonLabel: this.money(wonVal),
+
+      // setup
+      setupPhases, setupCostLabel: '≈ ' + this.money(remCost) + ' in fees remaining',
+      onSetupToggle: this.onSetupToggle, onSetupOwner: this.onSetupOwner,
+
+      // crm
+      crmPipe: st.crmTab === 'pipeline', crmContacts: st.crmTab === 'contacts', crmTasks: st.crmTab === 'tasks',
+      onCrmTab: this.onCrmTab, onNewContact: this.onNewContact, onNewDeal: this.onNewDeal,
+      pipeChips: [['all','All'],['installer','Installers'],['council','Councils']].map(([id, label]) => ({ id, label, active: pf === id })),
+      onPipeFilter: this.onPipeFilter, pipeCols,
+      onDealDragStart: this.onDealDragStart, onColOver: this.onColOver, onColLeave: this.onColLeave, onColDrop: this.onColDrop, onDealOpen: this.onDealOpen,
+      contactSearch: st.contactSearch, onContactSearch: this.onContactSearch, contactRows,
+      contactCountLabel: contactRows.length + ' of ' + d.contacts.length, contactsEmpty: d.contacts.length === 0,
+      onContactOpen: this.onContactOpen,
+      overTasks, soonTasks, laterTasks, doneTasks,
+      hasOver: overTasks.length > 0, hasSoon: soonTasks.length > 0, hasLater: laterTasks.length > 0, hasDone: doneTasks.length > 0,
+      doneCountLabel: String(doneTasks.length),
+      onTaskToggle: this.onTaskToggle, onTaskDelete: this.onTaskDelete, onClearDone: this.onClearDone,
+      ntTitle: st.newTask.title, ntDue: st.newTask.due, ntOwner: st.newTask.owner, ntContact: st.newTask.contactId,
+      onNtField: this.onNtField, onAddTask: this.onAddTask, onTaskKey: this.onTaskKey,
+      contactOptions: d.contacts.map(c => ({ id: c.id, label: c.name || c.org || '(unnamed)' })),
+      ownerAName: s.ownerA || 'You', ownerBName: s.ownerB || 'Partner',
+
+      // finance & metrics
+      finCash: Number(f.cash) || 0, finOut: Number(f.out) || 0, finMrr: Number(f.mrr) || 0,
+      onFinField: this.onFinField,
+      metricRows, metricsEmpty: d.metrics.length === 0,
+      onMetricField: this.onMetricField, onMetricDelete: this.onMetricDelete, onAddMonth: this.onAddMonth,
+
+      // calendar
+      incDateVal: s.incDate || '', incUnset: !s.incDate, onIncDate: this.onIncDate,
+      statRows, renewalRows,
+      onRenField: this.onRenField, onRenAdvance: this.onRenAdvance, onRenDelete: this.onRenDelete,
+      nrName: st.newRen.name, nrDate: st.newRen.date, onNrField: this.onNrField, onAddRenewal: this.onAddRenewal,
+
+      // roadmap
+      roadLanes, onRoadDragStart: this.onRoadDragStart, onRoadDelete: this.onRoadDelete,
+      rdTitle: st.newRoad.title, rdLane: st.newRoad.lane, rdTag: st.newRoad.tag,
+      onRdField: this.onRdField, onAddRoad: this.onAddRoad,
+      tagOptions: this.tagsDef().map(([id, label]) => ({ id, label })),
+
+      // docs
+      driveUrl, driveSet, driveUnset: !driveSet, driveHref: driveSet ? driveUrl : '#',
+      onDriveField: this.onDriveField, docGroups, docsFiledLabel: filedCount + ' of ' + totalDocs + ' filed',
+      onDocToggle: this.onDocToggle,
+
+      // drawers
+      anyDrawer: drawerContact || drawerDeal || drawerSettings,
+      drawerContact, drawerDeal, drawerSettings,
+      dcName: c0.name || '', dcOrg: c0.org || '', dcType: c0.type || 'installer', dcRole: c0.role || '', dcEmail: c0.email || '', dcPhone: c0.phone || '',
+      onContactField: this.onContactField, dcDeals, dcNotes,
+      noteDraft: st.noteDraft, onNoteDraft: this.onNoteDraft, onAddNote: this.onAddNote,
+      onNewDealForContact: this.onNewDealForContact,
+      dcDelLabel: st.confirm === 'delc' ? 'Confirm delete' : 'Delete contact', onDeleteContact: this.onDeleteContact,
+      ddOrg: dl0.org || '', ddTitle: dl0.title || '', ddType: dl0.type || 'installer', ddStage: dl0.stage || 'lead',
+      ddValue: Number(dl0.value) || 0, ddOwner: dl0.owner ?? 'a', ddContact: dl0.contactId || '', ddNext: dl0.next || '', ddNotes: dl0.notes || '',
+      onDealField: this.onDealField,
+      ddDelLabel: st.confirm === 'deld' ? 'Confirm delete' : 'Delete deal', onDeleteDeal: this.onDeleteDeal,
+      stCompany: s.company || '', stOwnerA: s.ownerA || '', stOwnerB: s.ownerB || '', stInc: s.incDate || '', stDrive: s.driveUrl || '',
+      onSettingsField: this.onSettingsField,
+      exampleLabel: st.confirm === 'seed' ? 'Sure? Overwrites everything' : 'Load example data',
+      clearLabel: st.confirm === 'clear' ? 'Sure? Clears everything' : 'Clear to empty',
+      onLoadExample: this.onLoadExample, onClearAll: this.onClearAll,
+      dataModeNote: d.demo ? 'Example data is loaded so you can see how everything works. Clear it when you are ready to run the real thing.' : 'Running on your data. It lives in this browser only; documents belong in Drive.',
+    };
+  }
+}
+</script>
+</body>
+</html>

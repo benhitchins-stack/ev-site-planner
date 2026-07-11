@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>html,body{margin:0;padding:0}</style>
+</helmet>
+
+<div style="font-family:'Hanken Grotesk',sans-serif;color:#16232E">
+  <x-import component-from-global-scope="doc-page" from="./doc-page.js" size="a4" margin="0.7in" hint-size="100%,1400px">
+
+    <div slot="header" style="display:flex;justify-content:space-between;align-items:baseline;font-family:'Space Grotesk',monospace;font-size:9px;color:#8C97A0;border-bottom:1px solid #E7DFD0;padding-bottom:5px">
+      <span>Estate Check Library · {{ version }}</span><span>DRAFT FOR SPECIALIST REVIEW</span>
+    </div>
+    <div slot="footer" style="font-family:'Space Grotesk',monospace;font-size:9px;color:#8C97A0;border-top:1px solid #E7DFD0;padding-top:5px">EV Site Planner · Estate Review · not for reliance until signed off</div>
+
+    <div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B4590A;margin:0 0 10px">Council Estate Review · governing check library</div>
+    <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:30px;line-height:1.1;letter-spacing:-0.02em;font-weight:800;margin:0 0 10px;text-wrap:balance">Estate Check Library · {{ version }}</h1>
+    <p style="font-size:12.5px;line-height:1.65;color:#5C6770;margin:0 0 6px;text-wrap:pretty">Every check the Estate Review tool surveys, with its plain-English rationale, citation, rectification guidance and evidence rule. Drafted for line-by-line review by the named specialist for each category before councils rely on it. Items flagged <b style="color:#B4590A">⚠ verify</b> carry an open question for the reviewer.</p>
+    <p style="font-size:11px;color:#8C97A0;margin:0 0 18px">{{ updated }} · {{ totalChecks }} checks across 5 categories · applies-to logic per site type · statutory text prevails over this summary in all cases.</p>
+
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.01em;margin:0 0 8px">Evidence policy</h2>
+    <div style="border:1px solid #E7DFD0;border-radius:8px;padding:4px 14px;margin-bottom:18px">
+      <sc-for list="{{ policy }}" as="p" hint-placeholder-count="5">
+        <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #F0EADD;font-size:11.5px;line-height:1.55"><b style="flex:0 0 110px">{{ p.o }}</b><span style="color:#5C6770">{{ p.rule }}</span></div>
+      </sc-for>
+    </div>
+
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.01em;margin:0 0 8px">Why this library exists</h2>
+    <p style="font-size:12px;line-height:1.7;color:#16232E;margin:0 0 4px;text-wrap:pretty">Funding follows evidence. Award assessments, audits and legal challenges all ask the same three questions of an existing estate: was it <b>reviewed</b> against every live framework; was each requirement <b>considered</b> to an adequate level (including a recorded reason where it does not apply); and was what fell short <b>rectified</b> or programmed with an owner and a cost. This library is the review's backbone: the survey tool walks it check by check, and the outputs (grant-readiness report, Equality Act record, funder evidence pack, public summary) are compiled from its results.</p>
+    <p style="font-size:12px;line-height:1.7;color:#5C6770;margin:0 0 20px;text-wrap:pretty">A recorded "not applicable, because…" is treated as first-class evidence: it is the difference between a requirement that was considered and one that was missed.</p>
+
+    <sc-for list="{{ cats }}" as="cat" hint-placeholder-count="5">
+      <div style="break-inside:avoid;border-top:3px solid {{ cat.color }};padding-top:12px;margin-top:22px">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap">
+          <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;letter-spacing:-0.01em;margin:0">{{ cat.name }}</h2>
+          <span style="font-family:'Space Grotesk',monospace;font-size:10px;color:#8C97A0">{{ cat.count }} checks</span>
+        </div>
+        <div style="font-family:'Space Grotesk',monospace;font-size:10px;color:#1043B0;margin:4px 0 6px">{{ cat.reg }}</div>
+        <p style="font-size:11.5px;line-height:1.65;color:#5C6770;margin:0 0 12px;text-wrap:pretty">{{ cat.scope }}</p>
+      </div>
+      <sc-for list="{{ cat.checks }}" as="c" hint-placeholder-count="6">
+        <div style="break-inside:avoid;border:1px solid #E7DFD0;border-radius:8px;padding:11px 14px;margin-bottom:9px">
+          <div style="display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:5px">
+            <span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:600;color:#8C97A0">{{ c.id }}</span>
+            <b style="font-size:12.5px;flex:1;min-width:200px">{{ c.title }}</b>
+            <span style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{{ c.sevFg }};background:{{ c.sevBg }};border-radius:999px;padding:2px 8px">{{ c.sev }}</span>
+          </div>
+          <div style="font-size:11.5px;line-height:1.6;color:#16232E;margin-bottom:6px;text-wrap:pretty">{{ c.why }}</div>
+          <div style="font-size:10.5px;line-height:1.6;color:#5C6770;margin-bottom:2px"><b style="color:#16232E">Cite:</b> <span style="font-family:'Space Grotesk',monospace;color:#1043B0">{{ c.cite }}</span> <span style="color:#8C97A0">{{ c.deadline }}</span></div>
+          <div style="font-size:10.5px;line-height:1.6;color:#5C6770;margin-bottom:2px"><b style="color:#16232E">Rectify:</b> {{ c.fix }} <span style="color:#8C97A0">· {{ c.cost }}</span></div>
+          <div style="font-size:10.5px;line-height:1.6;color:#5C6770"><b style="color:#16232E">Applies to:</b> {{ c.applies }}<span style="color:#8C97A0">{{ c.measure }}</span></div>
+          <sc-if value="{{ c.verify }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:10.5px;line-height:1.55;color:#B4590A;margin-top:5px">⚠ For reviewer: {{ c.verify }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <div style="break-inside:avoid;background:#F4EFE5;border-radius:8px;padding:12px 16px;margin:4px 0 8px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8C97A0;margin-bottom:8px">Specialist sign-off · {{ cat.specialist }}</div>
+        <div style="display:flex;gap:22px;flex-wrap:wrap;font-size:11px;color:#5C6770">
+          <span>Reviewed by: ____________________</span><span>Qualification: ________________</span><span>Date: ____________</span><span>Result: approved / amended (see notes)</span>
+        </div>
+      </div>
+    </sc-for>
+
+    <div style="break-inside:avoid;border-top:3px solid #16232E;padding-top:12px;margin-top:22px">
+      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;letter-spacing:-0.01em;margin:0 0 8px">Open questions for reviewers</h2>
+      <sc-for list="{{ verifies }}" as="v" hint-placeholder-count="5">
+        <div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #F0EADD;font-size:11px;line-height:1.6">
+          <span style="font-family:'Space Grotesk',monospace;flex:0 0 58px;color:#8C97A0">{{ v.id }}</span>
+          <span style="flex:1;color:#16232E">{{ v.q }}</span>
+        </div>
+      </sc-for>
+      <p style="font-size:11px;line-height:1.65;color:#5C6770;margin:14px 0 0;text-wrap:pretty">Change control: amendments are made in <span style="font-family:'Space Grotesk',monospace">estate-check-library.js</span>, version-stamped, and flow automatically into the survey tool and every generated document. No check is removed; superseded checks are marked withdrawn with a reason, preserving the audit trail of past surveys.</p>
+    </div>
+
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lib: null };
+  componentDidMount() { import("./estate-check-library.js").then(lib => this.setState({ lib })); }
+  renderVals() {
+    const lib = this.state.lib;
+    if (!lib) return { version: "v0.9 draft", updated: "", totalChecks: "…", policy: [], cats: [], verifies: [] };
+    const sevMap = { critical: ["#B3372E", "#F9E7E4"], high: ["#B4590A", "#F7EDD8"], medium: ["#5C6770", "#EFEAE0"] };
+    const typeName = id => (lib.SITE_TYPES.find(t => t.id === id) || {}).name || id;
+    return {
+      version: lib.VERSION, updated: lib.UPDATED, totalChecks: String(lib.CHECKS.length), policy: lib.EVIDENCE_POLICY,
+      cats: lib.CATEGORIES.map(cat => ({
+        name: cat.name, color: cat.color, reg: cat.reg, scope: cat.scope, specialist: cat.specialist,
+        count: String(lib.CHECKS.filter(c => c.cat === cat.id).length),
+        checks: lib.CHECKS.filter(c => c.cat === cat.id).map(c => ({
+          id: c.id, title: c.title, why: c.why, cite: c.cite, fix: c.fix, cost: c.cost,
+          deadline: c.deadline ? "· " + c.deadline : "",
+          sev: c.sev, sevFg: sevMap[c.sev][0], sevBg: sevMap[c.sev][1],
+          applies: c.applies.map(typeName).join(" · ") + (c.publicOnly ? " (public sites only)" : ""),
+          measure: c.measure ? " · Measured: " + c.measure.label + " (" + c.measure.unit + ", " + c.measure.limit + ")" : "",
+          verify: c.verify || false
+        }))
+      })),
+      verifies: lib.CHECKS.filter(c => c.verify).map(c => ({ id: c.id, q: c.verify }))
+    };
+  }
+}
+</script>
+</body>
+</html>

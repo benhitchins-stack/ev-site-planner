@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    html,body{margin:0;padding:0;background:#FBF8F2}
+    *{-webkit-tap-highlight-color:transparent}
+    input,textarea,select,button{font-family:'Hanken Grotesk',sans-serif}
+    textarea:focus,input:focus{outline:2px solid #1E6BFF33}
+    @media print{ .no-print{display:none !important} }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#FBF8F2;color:#16232E;font-family:'Hanken Grotesk',sans-serif">
+
+  <header class="no-print" style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:8px 14px;padding:9px clamp(12px,3vw,24px);min-height:56px;box-sizing:border-box;background:rgba(251,248,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid #E7DFD0;flex-wrap:wrap">
+    <button onClick="{{ goStart }}" style="display:flex;align-items:center;gap:9px;background:none;border:none;padding:0;cursor:pointer">
+      <span style="width:28px;height:28px;border-radius:8px;background:#16232E;color:#FBF8F2;display:inline-flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:13px">ER</span>
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;letter-spacing:-0.01em;color:#16232E">Estate Review</span>
+    </button>
+    <span style="font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#1043B0;background:#EBF1FF;border:1px solid #C9DAFF;border-radius:999px;padding:3px 9px">Local authority mode</span>
+    <span style="flex:1"></span>
+    <div style="display:flex;align-items:center;gap:2px;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:2px">
+      <sc-for list="{{ roleBtns }}" as="rb" hint-placeholder-count="2">
+        <button onClick="{{ rb.on }}" style="{{ rb.style }}">{{ rb.label }}</button>
+      </sc-for>
+    </div>
+    <nav style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <sc-for list="{{ navBtns }}" as="nb" hint-placeholder-count="2">
+        <button onClick="{{ nb.on }}" style="{{ nb.style }}">{{ nb.label }}</button>
+      </sc-for>
+      <a href="Estate Check Library.dc.html" style="font-size:12.5px;font-weight:600;color:#5C6770;text-decoration:none;padding:7px 10px;border-radius:8px" style-hover="background:#F4EFE5">Check library</a>
+      <a href="EV Site Planner.html" style="font-size:12.5px;font-weight:600;color:#5C6770;text-decoration:none;padding:7px 10px;border-radius:8px" style-hover="background:#F4EFE5">Planner</a>
+      <button onClick="{{ resetDemo }}" style="font-size:12.5px;font-weight:600;color:#8C97A0;background:none;border:none;padding:7px 10px;border-radius:8px;cursor:pointer" style-hover="background:#F4EFE5">Reset demo</button>
+    </nav>
+  </header>
+
+  <sc-if value="{{ isStart }}" hint-placeholder-val="{{ true }}">
+  <section data-screen-label="ER · Start" style="flex:1">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr))">
+      <div style="padding:clamp(30px,5vw,60px) clamp(18px,4vw,48px);background:#F4EFE5;display:flex;flex-direction:column;justify-content:center">
+        <div style="font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B4590A;margin-bottom:14px">The third planner mode · Existing estates</div>
+        <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(28px,5vw,42px);line-height:1.08;letter-spacing:-0.02em;font-weight:800;margin:0 0 16px;max-width:560px;text-wrap:pretty">Evidence that your estate has been reviewed, considered and rectified.</h1>
+        <p style="font-size:15px;line-height:1.65;color:#5C6770;margin:0 0 12px;max-width:540px;text-wrap:pretty">Future funding awards, contract renewals and audits are assessed against the evidence trail behind your existing chargepoints, not the press release that opened them. This tool walks each site survey through every live framework, records why each requirement passes, fails or doesn't apply, and turns the result into funder-ready documents.</p>
+        <p style="font-size:13.5px;line-height:1.6;color:#8C97A0;margin:0 0 26px;max-width:540px">Built for council officers running their own reviews, and for contractors surveying on a council's behalf with a sign-off loop back to the authority.</p>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button onClick="{{ startOfficer }}" style="display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:10px;background:#1E6BFF;border:none;color:#FBF8F2;font-weight:600;font-size:14.5px;cursor:pointer" style-hover="background:#1043B0">Enter as council officer →</button>
+          <button onClick="{{ startContractor }}" style="display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:10px;background:transparent;border:1px solid #D6CBB6;color:#16232E;font-weight:600;font-size:14.5px;cursor:pointer" style-hover="background:#EFE9DC">Enter as contractor</button>
+        </div>
+        <a href="Estate Review One-Pager.dc.html" style="font-size:13px;font-weight:600;color:#1043B0;text-decoration:none;margin-top:14px;width:fit-content" style-hover="color:#1E6BFF">Need sign-off from colleagues? The one-pager →</a>
+      </div>
+      <div style="background:#0E1820;padding:clamp(30px,5vw,60px) clamp(18px,4vw,48px);display:flex;flex-direction:column;justify-content:center;gap:12px">
+        <div style="font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5D9BFF">Funding follows evidence</div>
+        <sc-for list="{{ trailSteps }}" as="ts" hint-placeholder-count="3">
+          <div style="background:rgba(251,248,242,.05);border:1px solid rgba(157,170,176,.25);border-radius:12px;padding:14px 16px">
+            <div style="font-family:'Space Grotesk',monospace;font-size:11.5px;font-weight:600;color:#5D9BFF;margin-bottom:5px">{{ ts.k }}</div>
+            <div style="font-size:13px;line-height:1.55;color:#F1EFE9">{{ ts.t }}</div>
+          </div>
+        </sc-for>
+        <div style="font-size:12.5px;line-height:1.6;color:#9DAAB0">An estate that cannot show this trail counts against the authority in a funding assessment: assessors treat the gap as a due-diligence finding. The review builds the trail while the survey is being done.</div>
+      </div>
+    </div>
+
+    <div style="padding:clamp(24px,4vw,44px) clamp(16px,4vw,40px);border-bottom:1px solid #E7DFD0;background:#FFFFFF">
+      <div style="max-width:1160px;margin:0 auto">
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(20px,3.5vw,26px);font-weight:800;letter-spacing:-0.02em;margin:0 0 6px">What an unreviewed estate costs</h2>
+        <p style="font-size:13.5px;line-height:1.6;color:#5C6770;margin:0 0 16px;max-width:780px;text-wrap:pretty">These liabilities exist whether or not anyone has looked. A review does not create them; it finds them while they are still cheap to fix, and builds the record that defends the authority.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:12px;margin-bottom:14px">
+          <div style="background:#FDF3F0;border:1px solid #EFCFC8;border-radius:12px;padding:14px 16px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;color:#B3372E">£10,000</div>
+            <div style="font-size:12px;font-weight:700;color:#16232E;margin-top:2px">per chargepoint · PCPR penalties</div>
+            <div style="font-size:12px;line-height:1.55;color:#5C6770;margin-top:4px">The maximum civil penalty per non-compliant chargepoint under the Public Charge Point Regulations 2023, fully in force since Nov 2025. Enforcement is complaint-led: the first notice arrives unbudgeted.</div>
+          </div>
+          <div style="background:#FDF3F0;border:1px solid #EFCFC8;border-radius:12px;padding:14px 16px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;color:#B3372E">Clawback</div>
+            <div style="font-size:12px;font-weight:700;color:#16232E;margin-top:2px">grant conditions outlive the rollout</div>
+            <div style="font-size:12px;line-height:1.55;color:#5C6770;margin-top:4px">ORCS and LEVI money is conditional. A condition nobody can evidence is a due-diligence finding at the next assessment: it stalls the award and puts the money already drawn in question.</div>
+          </div>
+          <div style="background:#FDF3F0;border:1px solid #EFCFC8;border-radius:12px;padding:14px 16px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;color:#B3372E">Uncapped</div>
+            <div style="font-size:12px;font-weight:700;color:#16232E;margin-top:2px">Equality Act claims</div>
+            <div style="font-size:12px;line-height:1.55;color:#5C6770;margin-top:4px">Discrimination claims carry no upper limit, and the first question is the authority's s.149 due-regard record. Most estates predate PAS 1899 (Oct 2022) and hold no such record until a review builds one.</div>
+          </div>
+          <div style="background:#FDF3F0;border:1px solid #EFCFC8;border-radius:12px;padding:14px 16px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;color:#B3372E">Call-out rates</div>
+            <div style="font-size:12px;font-weight:700;color:#16232E;margin-top:2px">reactive fixes, one at a time</div>
+            <div style="font-size:12px;line-height:1.55;color:#5C6770;margin-top:4px">Defects found by complainants are fixed visit by visit at emergency rates. Found in survey, the same works price as one programmed package, with a cost and an owner against every item.</div>
+          </div>
+        </div>
+        <div style="background:#EBF1FF;border:1px solid #C9DAFF;border-radius:12px;padding:12px 16px;font-size:13px;line-height:1.6;color:#1043B0"><b>Why evidence it here, not in a spreadsheet:</b> every check carries its exact citation · evidence rules are enforced as you survey (notes on shortfalls, photos on fails, recorded reasons on N/A) · contractor submissions return through officer sign-off · all four funder documents compile from the same record. The survey and the defence are one job, not two.</div>
+      </div>
+    </div>
+
+    <sc-if value="{{ showExample }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:clamp(24px,4vw,44px) clamp(16px,4vw,40px);border-bottom:1px solid #E7DFD0">
+      <div style="max-width:1160px;margin:0 auto;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:clamp(18px,3.5vw,30px)">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C1D4F;background:#F9EAF1;border-radius:999px;padding:3px 10px">Worked example</span>
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;letter-spacing:-0.015em">Averton City Council</span>
+        </div>
+        <p style="font-size:14px;line-height:1.65;color:#5C6770;margin:0 0 14px;max-width:860px;text-wrap:pretty">A fictional city-scale network, modelled on real rollouts of the period: 260 lamppost chargepoints added in 2023 took the estate to 410, with 1,800 more committed by 2028. The rollout was ORCS funded (a 60% government grant with 40% from the operator) on 5&nbsp;kW lamppost units paid by QR code. An estate built at that pace, across several funding rounds, now has to evidence itself against rules that arrived mid-rollout: PAS 1899 (Oct 2022) and the Public Charge Point Regulations (Nov 2023–25).</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ exampleChips }}" as="ec" hint-placeholder-count="4">
+            <span style="font-size:12px;font-weight:600;color:#16232E;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:5px 11px">{{ ec }}</span>
+          </sc-for>
+        </div>
+        <div style="font-size:11.5px;color:#8C97A0;margin-top:12px">Averton is a fictional council; the estate profile is modelled on published UK rollouts of the period. All survey findings in this demo are illustrative; they are not audit results.</div>
+      </div>
+    </div>
+    </sc-if>
+
+    <div style="padding:clamp(24px,4vw,44px) clamp(16px,4vw,40px)">
+      <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px">
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0;margin-bottom:8px">Council officer</div>
+          <div style="font-size:13.5px;line-height:1.7;color:#5C6770">Run reviews in-house or assign sites to a contractor · sign off submitted surveys · generate the grant-readiness report, Equality Act record, funder evidence pack and public summary.</div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B4590A;margin-bottom:8px">Contractor</div>
+          <div style="font-size:13.5px;line-height:1.7;color:#5C6770">Survey assigned sites with guided walkthroughs · capture notes, photos and measurements per check · submit for council sign-off · quote remediation works from failed checks in the planner.</div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:20px 22px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0E8A6D;margin-bottom:8px">The check library</div>
+          <div style="font-size:13.5px;line-height:1.7;color:#5C6770;margin-bottom:10px">56 checks across payment, electrical, accessibility, highways and funding. Each carries a plain-English explainer, exact citation and rectification guidance. Drafted for line-by-line specialist sign-off.</div>
+          <a href="Estate Check Library.dc.html" style="font-size:13px;font-weight:600;color:#1E6BFF;text-decoration:none">Open the reviewable guide →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{ isEstate }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="ER · Estate dashboard" style="flex:1;padding:clamp(18px,3vw,30px) clamp(14px,3.5vw,40px) 60px">
+    <div style="max-width:1160px;margin:0 auto">
+      <button class="no-print" onClick="{{ goStart }}" style="background:none;border:none;padding:0;font-size:12.5px;font-weight:600;color:#8C97A0;cursor:pointer;margin-bottom:10px">← Start</button>
+      <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:6px">
+        <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(23px,4.5vw,30px);font-weight:800;letter-spacing:-0.02em;margin:0">Averton City Council</h1>
+        <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C1D4F;background:#F9EAF1;border-radius:999px;padding:3px 10px;margin-bottom:3px">Worked example · illustrative data</span>
+      </div>
+      <div style="font-size:13.5px;color:#5C6770;margin-bottom:18px">{{ roleLine }}</div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:12px;margin-bottom:14px">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+          <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 16px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.02em;color:{{ k.color }}">{{ k.v }}</div>
+            <div style="font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#8C97A0;margin-top:2px">{{ k.k }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <sc-for list="{{ fundingChips }}" as="fc" hint-placeholder-count="3">
+          <span style="font-size:12px;font-weight:600;color:#16232E;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:5px 11px">{{ fc }}</span>
+        </sc-for>
+      </div>
+
+      <div style="background:#16232E;border-radius:12px;padding:14px 18px;margin-bottom:18px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D9BFF;margin-bottom:8px">Compliance clock</div>
+        <sc-for list="{{ alerts }}" as="al" hint-placeholder-count="2">
+          <div style="display:flex;align-items:baseline;gap:9px;padding:3px 0">
+            <span style="width:7px;height:7px;border-radius:50%;background:{{ al.dot }};flex:none;position:relative;top:-1px"></span>
+            <span style="font-size:13px;line-height:1.5;color:#F1EFE9">{{ al.t }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ hasExposure }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FFFFFF;border:1.5px solid #EFCFC8;border-radius:12px;padding:14px 18px;margin-bottom:18px">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B3372E">Exposure while open fails stand</div>
+          <span style="font-size:11px;color:#8C97A0">computed from this estate record · illustrative, not a legal assessment</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:10px 16px;margin-top:10px">
+          <sc-for list="{{ exposureRows }}" as="ex" hint-placeholder-count="3">
+            <div style="border-left:3px solid #B3372E;padding:2px 0 2px 10px">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#B3372E">{{ ex.v }}</div>
+              <div style="font-size:11.5px;font-weight:700;color:#16232E;margin-top:1px">{{ ex.k }}</div>
+              <div style="font-size:11.5px;line-height:1.5;color:#5C6770;margin-top:2px">{{ ex.d }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;line-height:1.55;color:#5C6770;margin-top:10px;border-top:1px solid #F0EADD;padding-top:8px">Every fail behind these numbers already carries rectification guidance and a typical cost in this record. The programmed fix, evidenced here, is the cheap version of this list; the grant-readiness report in Outputs takes it to members.</div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ hasQueue }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FFF9EC;border:1px solid #EAD9AE;border-radius:12px;padding:14px 18px;margin-bottom:18px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9A6403;margin-bottom:8px">Awaiting your sign-off</div>
+        <sc-for list="{{ queueRows }}" as="q" hint-placeholder-count="1">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:5px 0">
+            <span style="font-size:13.5px;font-weight:600">{{ q.name }}</span>
+            <span style="font-size:12px;color:#8C97A0">{{ q.sub }}</span>
+            <span style="flex:1"></span>
+            <button onClick="{{ q.on }}" style="padding:7px 14px;border-radius:8px;background:#16232E;border:none;color:#FBF8F2;font-weight:600;font-size:12.5px;cursor:pointer">Review & sign off</button>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C97A0;margin:0 0 10px">{{ sitesHeading }}</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ siteRows }}" as="s" hint-placeholder-count="4">
+          <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px 18px;flex-wrap:wrap">
+            <div style="flex:3 1 240px;min-width:0">
+              <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+                <span style="font-size:15.5px;font-weight:700">{{ s.name }}</span>
+                <span style="font-size:12px;color:#8C97A0">{{ s.area }}</span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:7px">
+                <span style="font-size:11px;font-weight:600;color:#5C6770;background:#F4EFE5;border-radius:999px;padding:3px 9px">{{ s.typeName }}</span>
+                <span style="font-size:11px;font-weight:600;color:#5C6770;background:#F4EFE5;border-radius:999px;padding:3px 9px">{{ s.unitsLabel }}</span>
+                <span style="font-size:11px;font-weight:600;color:#5C6770;background:#F4EFE5;border-radius:999px;padding:3px 9px">{{ s.funding }}</span>
+                <span style="font-size:11px;font-weight:600;color:{{ s.assignFg }};background:{{ s.assignBg }};border-radius:999px;padding:3px 9px">{{ s.assigned }}</span>
+              </div>
+            </div>
+            <div style="flex:2 1 170px">
+              <span style="font-size:11.5px;font-weight:700;color:{{ s.stFg }};background:{{ s.stBg }};border-radius:999px;padding:4px 11px">{{ s.status }}</span>
+              <div style="font-size:12px;color:#8C97A0;margin-top:7px">{{ s.progress }}</div>
+              <div style="font-family:'Space Grotesk',monospace;font-size:11.5px;margin-top:3px"><span style="color:#1E7D4E">{{ s.p }}</span> · <span style="color:#9A6403">{{ s.a }}</span> · <span style="color:#B3372E">{{ s.f }}</span> · <span style="color:#8C97A0">{{ s.n }}</span></div>
+            </div>
+            <button onClick="{{ s.on }}" style="flex:0 0 auto;padding:10px 16px;border-radius:9px;background:{{ s.btnBg }};border:1px solid {{ s.btnBorder }};color:{{ s.btnFg }};font-weight:600;font-size:13px;cursor:pointer">{{ s.btnLabel }}</button>
+            <sc-if value="{{ s.hasReturn }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1 1 100%;background:#FDF3F0;border:1px solid #EFCFC8;border-radius:9px;padding:9px 13px;font-size:12.5px;line-height:1.55;color:#8C3A31"><b>Returned by the council:</b> {{ s.returnNote }}</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{ isSurvey }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="ER · Site survey" style="flex:1;padding:clamp(16px,3vw,28px) clamp(14px,3.5vw,40px) 120px">
+    <div style="max-width:980px;margin:0 auto">
+      <button class="no-print" onClick="{{ goEstate }}" style="background:none;border:none;padding:0;font-size:12.5px;font-weight:600;color:#8C97A0;cursor:pointer;margin-bottom:10px">← Estate</button>
+      <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+        <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,4.5vw,27px);font-weight:800;letter-spacing:-0.02em;margin:0">{{ svName }}</h1>
+        <span style="font-size:11.5px;font-weight:700;color:{{ svStFg }};background:{{ svStBg }};border-radius:999px;padding:4px 11px;margin-bottom:2px">{{ svStatus }}</span>
+      </div>
+      <div style="font-size:13px;color:#5C6770;margin:6px 0 14px">{{ svMeta }}</div>
+
+      <sc-if value="{{ svReturned }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FDF3F0;border:1px solid #EFCFC8;border-radius:12px;padding:13px 16px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B3372E;margin-bottom:4px">Returned by the council · {{ svReturnDate }}</div>
+        <div style="font-size:13px;line-height:1.55;color:#16232E">{{ svReturnNote }}</div>
+      </div>
+      </sc-if>
+
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <div style="display:flex;gap:2px;background:#F4EFE5;border:1px solid #E7DFD0;border-radius:999px;padding:2px">
+          <sc-for list="{{ modeBtns }}" as="mb" hint-placeholder-count="2">
+            <button onClick="{{ mb.on }}" style="{{ mb.style }}">{{ mb.label }}</button>
+          </sc-for>
+        </div>
+        <button onClick="{{ togglePolicy }}" style="font-size:12px;font-weight:600;color:#5C6770;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:999px;padding:6px 12px;cursor:pointer">Evidence rules ?</button>
+        <button onClick="{{ toggleNA }}" style="font-size:12px;font-weight:600;color:#5C6770;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:999px;padding:6px 12px;cursor:pointer">{{ naLabel }}</button>
+        <span style="flex:1"></span>
+        <span style="font-size:12.5px;color:#8C97A0">{{ svProgressText }}</span>
+      </div>
+
+      <sc-if value="{{ showPolicy }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:12px;padding:14px 18px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C97A0;margin-bottom:8px">Evidence rules: what each outcome requires</div>
+        <sc-for list="{{ policyRows }}" as="pr" hint-placeholder-count="4">
+          <div style="display:flex;gap:10px;padding:4px 0;font-size:13px;line-height:1.55"><b style="flex:0 0 108px;color:#16232E">{{ pr.o }}</b><span style="color:#5C6770">{{ pr.rule }}</span></div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ showNA }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#EFEAE0;border:1px solid #E7DFD0;border-radius:12px;padding:14px 18px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C97A0;margin-bottom:4px">Recorded as not applicable to this site type</div>
+        <div style="font-size:12px;color:#8C97A0;margin-bottom:8px">Every requirement in the library is accounted for. A recorded reason is what shows it was considered, not missed.</div>
+        <sc-for list="{{ naRows }}" as="na" hint-placeholder-count="3">
+          <div style="display:flex;gap:10px;padding:4px 0;font-size:12.5px;line-height:1.5;border-top:1px solid #E7DFD044">
+            <span style="font-family:'Space Grotesk',monospace;flex:0 0 62px;color:#8C97A0">{{ na.id }}</span>
+            <span style="flex:1;min-width:0"><b>{{ na.title }}</b>: <span style="color:#5C6770">{{ na.reason }}</span></span>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <sc-for list="{{ catChips }}" as="cc" hint-placeholder-count="5">
+          <button onClick="{{ cc.on }}" style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#16232E;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:999px;padding:5px 11px;cursor:pointer" style-hover="background:#F4EFE5">
+            <span style="width:8px;height:8px;border-radius:50%;background:{{ cc.color }}"></span>{{ cc.name }}
+            <span style="font-family:'Space Grotesk',monospace;color:#8C97A0">{{ cc.count }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isGuided }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:clamp(18px,3.5vw,28px)">
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px">
+          <span style="display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:{{ g.catColor }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ g.catColor }}"></span>{{ g.catName }}</span>
+          <span style="font-family:'Space Grotesk',monospace;font-size:12px;color:#8C97A0">{{ g.pos }}</span>
+          <span style="flex:1"></span>
+          <span style="font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:{{ g.sevFg }};background:{{ g.sevBg }};border-radius:999px;padding:3px 9px">{{ g.sev }}</span>
+        </div>
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(18px,3.5vw,22px);font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin:0 0 10px;text-wrap:pretty">{{ g.title }}</h2>
+        <p style="font-size:14px;line-height:1.65;color:#5C6770;margin:0 0 10px;text-wrap:pretty">{{ g.why }}</p>
+        <div style="font-family:'Space Grotesk',monospace;font-size:12px;color:#1043B0;background:#EBF1FF;border-radius:8px;padding:8px 12px;display:inline-block;margin-bottom:12px">{{ g.cite }}</div>
+        <div>
+          <button onClick="{{ g.onFix }}" style="background:none;border:none;padding:0;font-size:13px;font-weight:600;color:#1E6BFF;cursor:pointer;margin-bottom:8px">{{ g.fixLabel }}</button>
+          <sc-if value="{{ g.fixOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#F4EFE5;border-radius:10px;padding:12px 16px;margin-bottom:12px">
+            <div style="font-size:13px;line-height:1.6;color:#16232E">{{ g.fix }}</div>
+            <div style="font-size:12px;color:#8C97A0;margin-top:6px">Typical cost: {{ g.cost }}</div>
+          </div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ g.hasMeasure }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:2px 0 14px">
+          <span style="font-size:13px;font-weight:600;color:#16232E">{{ g.mLabel }}</span>
+          <input type="number" value="{{ g.mVal }}" onChange="{{ g.onM }}" placeholder="…" style="width:110px;padding:9px 12px;border:1px solid #D6CBB6;border-radius:9px;font-size:14px;background:#FBF8F2">
+          <span style="font-size:12.5px;color:#8C97A0">{{ g.mUnit }} · threshold {{ g.mLimit }}</span>
+          <span style="font-size:12px;font-weight:700;color:{{ g.mvColor }}">{{ g.mVerdict }}</span>
+        </div>
+        </sc-if>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(110px,100%),1fr));gap:8px;margin-bottom:14px">
+          <sc-for list="{{ g.outcomeBtns }}" as="ob" hint-placeholder-count="4">
+            <button onClick="{{ ob.on }}" style="{{ ob.style }}">{{ ob.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ g.needsNote }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-bottom:12px">
+          <div style="font-size:12.5px;font-weight:600;color:#16232E;margin-bottom:6px">Surveyor note <span style="color:#B3372E">required</span></div>
+          <textarea value="{{ g.note }}" onChange="{{ g.onNote }}" placeholder="What falls short, where, and the intended fix…" style="width:100%;box-sizing:border-box;min-height:74px;padding:11px 13px;border:1px solid #D6CBB6;border-radius:10px;font-size:13.5px;line-height:1.5;background:#FBF8F2;resize:vertical"></textarea>
+        </div>
+        </sc-if>
+        <sc-if value="{{ g.needsPhoto }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <sc-if value="{{ g.photoThumb }}" hint-placeholder-val="{{ false }}">
+          <div role="img" aria-label="Survey photo" style="flex:none;width:64px;height:64px;border-radius:9px;border:1px solid #D6CBB6;background-size:cover;background-position:center;background-image:url({{ g.photoThumb }})"></div>
+          </sc-if>
+          <button onClick="{{ g.onPhoto }}" style="{{ g.photoStyle }}">{{ g.photoLabel }}</button>
+          <sc-if value="{{ g.photoOn }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ g.onPhotoRemove }}" style="background:none;border:none;padding:0;font-size:12px;font-weight:600;color:#B3372E;cursor:pointer">Remove</button>
+          </sc-if>
+        </div>
+        </sc-if>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #F0EADD;padding-top:14px;margin-top:16px">
+          <button onClick="{{ g.onPrev }}" style="padding:10px 16px;border-radius:9px;background:transparent;border:1px solid #D6CBB6;color:#16232E;font-weight:600;font-size:13px;cursor:pointer">← Back</button>
+          <button onClick="{{ g.onNext }}" style="padding:10px 18px;border-radius:9px;background:#16232E;border:none;color:#FBF8F2;font-weight:600;font-size:13px;cursor:pointer">Next check →</button>
+          <button onClick="{{ g.onNextUn }}" style="padding:10px 14px;border-radius:9px;background:transparent;border:1px solid #D6CBB6;color:#5C6770;font-weight:600;font-size:12.5px;cursor:pointer" style-hover="background:#F4EFE5">Next unrecorded ↷</button>
+          <span style="flex:1"></span>
+          <span style="font-size:12px;color:#8C97A0">{{ g.verify }}</span>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isChecklist }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ catGroups }}" as="grp" hint-placeholder-count="5">
+          <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;overflow:hidden">
+            <button onClick="{{ grp.on }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;padding:14px 18px;cursor:pointer;flex-wrap:wrap">
+              <span style="width:9px;height:9px;border-radius:50%;background:{{ grp.color }}"></span>
+              <span style="font-size:14px;font-weight:700;color:#16232E">{{ grp.name }}</span>
+              <span style="font-family:'Space Grotesk',monospace;font-size:11.5px;color:#8C97A0">{{ grp.count }}</span>
+              <span style="flex:1"></span>
+              <span style="font-family:'Space Grotesk',monospace;font-size:11.5px"><span style="color:#1E7D4E">{{ grp.p }}</span> · <span style="color:#9A6403">{{ grp.a }}</span> · <span style="color:#B3372E">{{ grp.f }}</span> · <span style="color:#8C97A0">{{ grp.n }}</span></span>
+              <span style="font-size:12px;color:#8C97A0">{{ grp.chev }}</span>
+            </button>
+            <sc-if value="{{ grp.open }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <sc-for list="{{ grp.rows }}" as="r" hint-placeholder-count="4">
+                <div style="border-top:1px solid #F0EADD;padding:12px 18px">
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                    <span style="width:7px;height:7px;border-radius:50%;background:{{ r.sevColor }};flex:none"></span>
+                    <button onClick="{{ r.onOpen }}" style="flex:1 1 220px;min-width:0;text-align:left;background:none;border:none;padding:0;cursor:pointer">
+                      <span style="font-size:13.5px;font-weight:600;color:#16232E;line-height:1.4">{{ r.title }}</span>
+                      <span style="display:block;font-family:'Space Grotesk',monospace;font-size:11px;color:#8C97A0;margin-top:2px">{{ r.id }} · {{ r.cite }}</span>
+                    </button>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap">
+                      <sc-for list="{{ r.outcomeBtns }}" as="ob" hint-placeholder-count="4">
+                        <button onClick="{{ ob.on }}" style="{{ ob.style }}">{{ ob.label }}</button>
+                      </sc-for>
+                      <button onClick="{{ r.onOpen }}" style="width:30px;height:30px;border-radius:8px;background:#F4EFE5;border:1px solid #E7DFD0;color:#5C6770;font-weight:700;font-size:13px;cursor:pointer">?</button>
+                    </div>
+                  </div>
+                  <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FBF8F2;border:1px solid #F0EADD;border-radius:10px;padding:13px 16px;margin-top:10px">
+                    <div style="font-size:13px;line-height:1.6;color:#5C6770;margin-bottom:8px">{{ r.why }}</div>
+                    <div style="font-family:'Space Grotesk',monospace;font-size:11.5px;color:#1043B0;margin-bottom:8px">{{ r.cite }}</div>
+                    <div style="font-size:12.5px;line-height:1.55;color:#16232E;margin-bottom:4px"><b>Rectify:</b> {{ r.fix }}</div>
+                    <div style="font-size:12px;color:#8C97A0;margin-bottom:10px">Typical cost: {{ r.cost }} <span style="color:#B4590A">{{ r.verify }}</span></div>
+                    <sc-if value="{{ r.hasMeasure }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                      <span style="font-size:12.5px;font-weight:600">{{ r.mLabel }}</span>
+                      <input type="number" value="{{ r.mVal }}" onChange="{{ r.onM }}" placeholder="…" style="width:100px;padding:8px 11px;border:1px solid #D6CBB6;border-radius:8px;font-size:13px;background:#FFFFFF">
+                      <span style="font-size:12px;color:#8C97A0">{{ r.mUnit }} · {{ r.mLimit }}</span>
+                      <span style="font-size:11.5px;font-weight:700;color:{{ r.mvColor }}">{{ r.mVerdict }}</span>
+                    </div>
+                    </sc-if>
+                    <sc-if value="{{ r.needsNote }}" hint-placeholder-val="{{ false }}">
+                    <textarea value="{{ r.note }}" onChange="{{ r.onNote }}" placeholder="Surveyor note (required for this outcome)…" style="width:100%;box-sizing:border-box;min-height:60px;padding:10px 12px;border:1px solid #D6CBB6;border-radius:9px;font-size:13px;line-height:1.5;background:#FFFFFF;resize:vertical;margin-bottom:8px"></textarea>
+                    </sc-if>
+                    <sc-if value="{{ r.needsPhoto }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+                      <sc-if value="{{ r.photoThumb }}" hint-placeholder-val="{{ false }}">
+                      <div role="img" aria-label="Survey photo" style="flex:none;width:48px;height:48px;border-radius:8px;border:1px solid #D6CBB6;background-size:cover;background-position:center;background-image:url({{ r.photoThumb }})"></div>
+                      </sc-if>
+                      <button onClick="{{ r.onPhoto }}" style="{{ r.photoStyle }}">{{ r.photoLabel }}</button>
+                      <sc-if value="{{ r.photoOn }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ r.onPhotoRemove }}" style="background:none;border:none;padding:0;font-size:11.5px;font-weight:600;color:#B3372E;cursor:pointer">Remove</button>
+                      </sc-if>
+                    </div>
+                    </sc-if>
+                  </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+    </div>
+
+    <div class="no-print" style="position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(251,248,242,.96);backdrop-filter:blur(10px);border-top:1px solid #E7DFD0;padding:10px clamp(14px,3.5vw,40px)">
+      <div style="max-width:980px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:12.5px;color:#5C6770"><b>{{ svDone }}</b> of {{ svTotal }} recorded · <span style="color:#B3372E">{{ svMissing }}</span></span>
+        <span style="flex:1"></span>
+        <button onClick="{{ prefill }}" style="padding:9px 14px;border-radius:9px;background:transparent;border:1px solid #D6CBB6;color:#5C6770;font-weight:600;font-size:12.5px;cursor:pointer">Prefill example findings</button>
+        <button onClick="{{ submitSurvey }}" style="{{ submitStyle }}">{{ submitLabel }}</button>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{ isSignoff }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="ER · Sign-off" style="flex:1;padding:clamp(16px,3vw,28px) clamp(14px,3.5vw,40px) 60px">
+    <div style="max-width:860px;margin:0 auto">
+      <button class="no-print" onClick="{{ goEstate }}" style="background:none;border:none;padding:0;font-size:12.5px;font-weight:600;color:#8C97A0;cursor:pointer;margin-bottom:10px">← Estate</button>
+      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,4.5vw,27px);font-weight:800;letter-spacing:-0.02em;margin:0 0 4px">Sign-off · {{ soName }}</h1>
+      <div style="font-size:13px;color:#5C6770;margin-bottom:16px">{{ soSubmitted }}</div>
+
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:18px 20px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C97A0;margin-bottom:10px">Survey summary</div>
+        <sc-for list="{{ soCats }}" as="sc" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-top:1px solid #F0EADD;flex-wrap:wrap">
+            <span style="width:8px;height:8px;border-radius:50%;background:{{ sc.color }}"></span>
+            <span style="font-size:13px;font-weight:600;flex:1 1 160px">{{ sc.name }}</span>
+            <span style="font-family:'Space Grotesk',monospace;font-size:12px"><span style="color:#1E7D4E">{{ sc.p }} pass</span> · <span style="color:#9A6403">{{ sc.a }} action</span> · <span style="color:#B3372E">{{ sc.f }} fail</span> · <span style="color:#8C97A0">{{ sc.n }} n/a</span></span>
+          </div>
+        </sc-for>
+        <div style="font-size:12.5px;color:#5C6770;margin-top:10px">{{ soEvidence }}</div>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:18px 20px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C97A0;margin-bottom:10px">Findings to verify</div>
+        <sc-for list="{{ soFindings }}" as="fd" hint-placeholder-count="3">
+          <div style="border-top:1px solid #F0EADD;padding:10px 0">
+            <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+              <span style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{{ fd.fg }};background:{{ fd.bg }};border-radius:999px;padding:3px 9px">{{ fd.o }}</span>
+              <span style="font-size:13.5px;font-weight:600">{{ fd.title }}</span>
+              <span style="font-family:'Space Grotesk',monospace;font-size:11px;color:#8C97A0">{{ fd.cite }}</span>
+              <span style="font-size:11.5px;color:#1E6BFF">{{ fd.photo }}</span>
+            </div>
+            <div style="font-size:12.5px;line-height:1.55;color:#5C6770;margin-top:5px">{{ fd.note }}</div>
+            <sc-if value="{{ fd.thumb }}" hint-placeholder-val="{{ false }}">
+            <div role="img" aria-label="Evidence photo" style="width:84px;height:64px;border-radius:8px;border:1px solid #E7DFD0;margin-top:8px;background-size:cover;background-position:center;background-image:url({{ fd.thumb }})"></div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px">
+        <div style="background:#F0F7F2;border:1px solid #CBE3D3;border-radius:14px;padding:18px 20px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1E7D4E;margin-bottom:10px">Approve</div>
+          <input value="{{ signName }}" onChange="{{ onSignName }}" placeholder="Name & role, e.g. M. Okafor, Network Officer" style="width:100%;box-sizing:border-box;padding:10px 13px;border:1px solid #B7D4C1;border-radius:9px;font-size:13.5px;background:#FFFFFF;margin-bottom:10px">
+          <button onClick="{{ approve }}" style="padding:11px 18px;border-radius:9px;background:#1E7D4E;border:none;color:#FFFFFF;font-weight:600;font-size:13.5px;cursor:pointer">Approve & sign off</button>
+          <div style="font-size:11.5px;color:#5C6770;margin-top:9px;line-height:1.5">Signing accepts the survey as evidence. Open actions and fails transfer to the rectification programme; they do not block sign-off.</div>
+        </div>
+        <div style="background:#FDF3F0;border:1px solid #EFCFC8;border-radius:14px;padding:18px 20px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B3372E;margin-bottom:10px">Return to contractor</div>
+          <textarea value="{{ returnNote }}" onChange="{{ onReturnNote }}" placeholder="What needs re-surveying or better evidence…" style="width:100%;box-sizing:border-box;min-height:64px;padding:10px 13px;border:1px solid #E5C0B8;border-radius:9px;font-size:13px;line-height:1.5;background:#FFFFFF;resize:vertical;margin-bottom:10px"></textarea>
+          <button onClick="{{ returnBack }}" style="padding:11px 18px;border-radius:9px;background:transparent;border:1px solid #B3372E;color:#B3372E;font-weight:600;font-size:13.5px;cursor:pointer">Return with comments</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{ isOutputs }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="ER · Outputs" style="flex:1;padding:clamp(16px,3vw,28px) clamp(10px,3.5vw,40px) 60px;background:#EFE9DC">
+    <div style="max-width:940px;margin:0 auto">
+      <div class="no-print" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(21px,4vw,25px);font-weight:800;letter-spacing:-0.02em;margin:0;flex:1 1 auto">Outputs</h1>
+        <sc-for list="{{ outSiteBtns }}" as="osb" hint-placeholder-count="3">
+          <button onClick="{{ osb.on }}" style="{{ osb.style }}">{{ osb.label }}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isOfficerOut }}" hint-placeholder-val="{{ true }}">
+      <div class="no-print" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <sc-for list="{{ outTabs }}" as="ot" hint-placeholder-count="4">
+          <button onClick="{{ ot.on }}" style="{{ ot.style }}">{{ ot.label }}</button>
+        </sc-for>
+        <span style="flex:1"></span>
+        <button onClick="{{ doPrint }}" style="padding:8px 14px;border-radius:9px;background:#16232E;border:none;color:#FBF8F2;font-weight:600;font-size:12.5px;cursor:pointer">Print / save PDF</button>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:4px;box-shadow:0 10px 34px rgba(16,24,40,.12);padding:clamp(22px,5vw,50px) clamp(16px,5vw,54px) clamp(20px,4vw,42px)">
+
+        <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;border-bottom:2px solid #16232E;padding-bottom:14px;margin-bottom:18px">
+          <div style="flex:1 1 300px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;letter-spacing:-0.015em">{{ docTitle }}</div>
+            <div style="font-size:12.5px;color:#5C6770">{{ docSub }}</div>
+          </div>
+          <div style="text-align:right;font-family:'Space Grotesk',monospace;font-size:11px;color:#5C6770;line-height:1.6">Ref AVC-EST-2026-07<br>{{ docDate }} · Draft<br><span style="color:#8C1D4F">Illustrative data</span></div>
+        </div>
+
+        <sc-if value="{{ tabGrant }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(120px,100%),1fr));gap:10px;margin-bottom:20px">
+            <sc-for list="{{ gr.kpis }}" as="gk" hint-placeholder-count="4">
+              <div style="border:1px solid #E7DFD0;border-radius:9px;padding:11px 13px">
+                <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;color:{{ gk.color }}">{{ gk.v }}</div>
+                <div style="font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#8C97A0">{{ gk.k }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8C97A0;margin-bottom:8px">Estate position</div>
+          <div style="border:1px solid #E7DFD0;border-radius:9px;overflow-x:auto;margin-bottom:20px">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr .6fr .6fr .6fr .9fr;background:#F4EFE5;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5C6770;min-width:620px">
+              <span style="padding:8px 12px">Site</span><span style="padding:8px 12px">Status</span><span style="padding:8px 12px">Pass</span><span style="padding:8px 12px">Action</span><span style="padding:8px 12px">Fail</span><span style="padding:8px 12px">Evidence</span>
+            </div>
+            <sc-for list="{{ gr.rows }}" as="grr" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:1.6fr 1fr .6fr .6fr .6fr .9fr;border-top:1px solid #F0EADD;font-size:12px;min-width:620px;align-items:center">
+                <span style="padding:9px 12px;font-weight:600">{{ grr.name }}</span>
+                <span style="padding:9px 12px;color:{{ grr.stColor }};font-weight:600">{{ grr.status }}</span>
+                <span style="padding:9px 12px;font-family:'Space Grotesk',monospace;color:#1E7D4E">{{ grr.p }}</span>
+                <span style="padding:9px 12px;font-family:'Space Grotesk',monospace;color:#9A6403">{{ grr.a }}</span>
+                <span style="padding:9px 12px;font-family:'Space Grotesk',monospace;color:#B3372E">{{ grr.f }}</span>
+                <span style="padding:9px 12px;color:#5C6770">{{ grr.ev }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8C97A0;margin-bottom:8px">Key findings</div>
+          <sc-for list="{{ gr.findings }}" as="gf" hint-placeholder-count="4">
+            <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #F0EADD;font-size:12.5px;line-height:1.55">
+              <span style="flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:{{ gf.dot }};position:relative;top:5px"></span>
+              <span style="flex:1;min-width:0"><b>{{ gf.title }}</b> ({{ gf.site }}). {{ gf.note }} <span style="font-family:'Space Grotesk',monospace;color:#1043B0">{{ gf.cite }}</span></span>
+            </div>
+          </sc-for>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8C97A0;margin:18px 0 8px">Rectification programme</div>
+          <sc-for list="{{ gr.prog }}" as="gp" hint-placeholder-count="3">
+            <div style="display:flex;gap:10px;padding:6px 0;font-size:12.5px;line-height:1.5;flex-wrap:wrap">
+              <span style="font-family:'Space Grotesk',monospace;color:#8C97A0;flex:0 0 62px">{{ gp.id }}</span>
+              <span style="flex:1 1 260px;min-width:0">{{ gp.t }}</span>
+              <span style="color:#5C6770;flex:0 0 auto">{{ gp.cost }}</span>
+              <span style="color:#8C97A0;flex:0 0 auto">owner & date at programme sign-off</span>
+            </div>
+          </sc-for>
+          <div style="background:#F4EFE5;border-radius:9px;padding:13px 16px;margin-top:16px;font-size:12.5px;line-height:1.6;color:#16232E"><b>Reviewed · considered · rectified.</b> Every requirement in the library v0.9 has been surveyed, recorded as met, programmed for rectification, or recorded as not applicable with a reason. This is the evidence trail funders assess future awards against.</div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ tabEqa }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:13px;line-height:1.7;color:#16232E;margin:0 0 14px;text-wrap:pretty">Under section 149 of the Equality Act 2010, the council must have due regard to the need to eliminate discrimination and advance equality of opportunity for disabled people in the exercise of its functions, including the operation of its existing public charging estate. This record documents the consideration given, the findings, and the mitigations adopted.</p>
+          <div style="font-size:12px;color:#5C6770;margin-bottom:14px"><b>Scope:</b> {{ eq.scope }} · Accessibility framework: PAS 1899:2022 · Survey evidence held per check in the estate file.</div>
+          <div style="border:1px solid #E7DFD0;border-radius:9px;overflow-x:auto;margin-bottom:16px">
+            <div style="display:grid;grid-template-columns:2fr .8fr 2.4fr;background:#F4EFE5;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5C6770;min-width:560px">
+              <span style="padding:8px 12px">Consideration</span><span style="padding:8px 12px">Finding</span><span style="padding:8px 12px">Record / mitigation</span>
+            </div>
+            <sc-for list="{{ eq.rows }}" as="er" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:2fr .8fr 2.4fr;border-top:1px solid #F0EADD;font-size:12px;min-width:560px">
+                <span style="padding:9px 12px;font-weight:600;line-height:1.45">{{ er.t }} <span style="font-family:'Space Grotesk',monospace;font-weight:400;color:#8C97A0">{{ er.id }}</span></span>
+                <span style="padding:9px 12px;color:{{ er.fg }};font-weight:700">{{ er.o }}</span>
+                <span style="padding:9px 12px;color:#5C6770;line-height:1.5">{{ er.note }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:12.5px;line-height:1.65;color:#16232E;margin-bottom:16px"><b>Decision.</b> {{ eq.decision }}</div>
+          <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:#5C6770">
+            <span>Signed: ________________________</span><span>Role: ______________________</span><span>Date: {{ eqDate }} · Review due: {{ eqReview }}</span>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ tabFunder }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:13px;line-height:1.65;color:#5C6770;margin:0 0 16px">Per-condition evidence against each funding programme in the estate. Attachments (photos, certificates, notes) are held per check and export with this pack.</p>
+          <sc-for list="{{ fu.programmes }}" as="fp" hint-placeholder-count="2">
+            <div style="margin-bottom:18px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8C1D4F;margin-bottom:8px">{{ fp.name }}</div>
+              <sc-for list="{{ fp.lines }}" as="fl" hint-placeholder-count="4">
+                <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #F0EADD;font-size:12.5px;line-height:1.5;flex-wrap:wrap">
+                  <span style="flex:1 1 240px;min-width:0"><b>{{ fl.cond }}</b><span style="display:block;font-family:'Space Grotesk',monospace;font-size:11px;color:#8C97A0;margin-top:2px">{{ fl.checks }}</span></span>
+                  <span style="flex:0 0 auto;font-weight:700;color:{{ fl.color }}">{{ fl.status }}</span>
+                  <span style="flex:2 1 220px;min-width:0;color:#5C6770">{{ fl.evidence }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ tabPublic }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.02em;margin:0 0 6px;text-wrap:pretty">How our charging network is doing, and what we are fixing</h2>
+          <p style="font-size:13.5px;line-height:1.7;color:#5C6770;margin:0 0 18px;max-width:640px;text-wrap:pretty">We inspected our chargepoints against the national rules on payment, safety and accessibility. Here's what we found, in plain terms.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:10px;margin-bottom:18px">
+            <sc-for list="{{ pu.stats }}" as="ps" hint-placeholder-count="3">
+              <div style="background:#F4EFE5;border-radius:11px;padding:14px 16px">
+                <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;color:#16232E">{{ ps.v }}</div>
+                <div style="font-size:12px;color:#5C6770;line-height:1.4;margin-top:3px">{{ ps.k }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8C97A0;margin-bottom:8px">What we're fixing</div>
+          <sc-for list="{{ pu.fixing }}" as="pf" hint-placeholder-count="3">
+            <div style="display:flex;gap:10px;padding:6px 0;font-size:13px;line-height:1.55"><span style="color:#B4590A">→</span><span style="flex:1;min-width:0">{{ pf.t }} <b style="color:#5C6770">{{ pf.when }}</b></span></div>
+          </sc-for>
+          <div style="background:#EBF1FF;border-radius:10px;padding:13px 16px;margin-top:16px;font-size:13px;line-height:1.6;color:#1043B0">Spot a problem at a chargepoint? Call the free 24/7 helpline shown on the unit, or report it to the council and we will take it up with the operator.</div>
+        </div>
+        </sc-if>
+
+        <div style="border-top:1px solid #E7DFD0;padding-top:12px;margin-top:20px;font-family:'Space Grotesk',monospace;font-size:9.5px;line-height:1.7;color:#8C97A0">
+          Estate Check Library {{ libVersion }} · PCPR 2023 (DfT/OPSS) · PAS 1899:2022 (BSI) · BS 7671:2018+A2:2022 · Equality Act 2010 · grant agreements as filed. Worked example: estate profile from public sources; findings illustrative. This document assists review; it is not a certification. Findings require verification by suitably qualified professionals; responsibility for decisions remains with the authority.
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isContractorOut }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:14px;padding:clamp(18px,4vw,28px)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B4590A;margin-bottom:8px">Contractor handover</div>
+        <p style="font-size:13.5px;line-height:1.65;color:#5C6770;margin:0 0 14px;max-width:640px">Council documents (grant-readiness report, Equality Act record, funder pack, public summary) are generated by the authority after sign-off. Your survey and evidence transfer automatically on submission.</p>
+        <sc-for list="{{ coRows }}" as="co" hint-placeholder-count="3">
+          <div style="display:flex;gap:10px;padding:6px 0;border-top:1px solid #F0EADD;font-size:13px;flex-wrap:wrap">
+            <b style="flex:1 1 200px">{{ co.name }}</b><span style="color:{{ co.color }};font-weight:600">{{ co.status }}</span><span style="color:#8C97A0">{{ co.sub }}</span>
+          </div>
+        </sc-for>
+        <div style="background:#F4EFE5;border-radius:11px;padding:15px 18px;margin-top:14px">
+          <div style="font-size:13.5px;font-weight:700;margin-bottom:4px">Quote the remediation works</div>
+          <div style="font-size:12.5px;line-height:1.6;color:#5C6770;margin-bottom:10px">Failed checks carry rectification guidance and typical costs. Take them into the planner's Quotes tool to price the works for the council.</div>
+          <a href="EV Site Planner.html" style="display:inline-flex;padding:10px 16px;border-radius:9px;background:#16232E;color:#FBF8F2;font-weight:600;font-size:13px;text-decoration:none">Open Quotes in the planner →</a>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </section>
+  </sc-if>
+
+  <input type="file" accept="image/*" onChange="{{ onPhotoFile }}" ref="{{ photoRef }}" style="display:none">
+
+  <sc-if value="{{ toastMsg }}" hint-placeholder-val="{{ false }}">
+  <div class="no-print" style="position:fixed;left:50%;bottom:74px;transform:translateX(-50%);z-index:80;background:#16232E;color:#FBF8F2;font-size:13px;font-weight:600;border-radius:10px;padding:11px 18px;box-shadow:0 8px 24px rgba(16,24,40,.25);max-width:88vw;text-align:center">{{ toastMsg }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;officer&quot;,&quot;contractor&quot;],&quot;default&quot;:&quot;officer&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demo setup&quot;},&quot;startMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;guided&quot;,&quot;checklist&quot;],&quot;default&quot;:&quot;guided&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demo setup&quot;},&quot;showWorkedExample&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo setup&quot;}}">
+class Component extends DCLogic {
+  photoRef = React.createRef();
+  state = {
+    lib: null, role: "officer", screen: "start", siteId: null,
+    mode: "guided", gIdx: 0, openCats: {}, openRow: null,
+    showNA: false, showPolicy: false, fixOpen: false,
+    outTab: "grant", outSite: "estate", toastMsg: "",
+    signName: "", returnNote: "", db: null
+  };
+
+  SITES = [
+    { id: "granby", name: "Foundry Street", area: "Millbrook · AV8", type: "lamppost", units: "6 × 5 kW lamppost", installed: "2023", funding: "ORCS 2023 · 60% grant", pub: true, assigned: "KH Contracting" },
+    { id: "lark", name: "Orchard Lane", area: "Eastfield · AV4", type: "lamppost", units: "4 × 5 kW lamppost", installed: "2023", funding: "ORCS 2023 · 60% grant", pub: true, assigned: "KH Contracting" },
+    { id: "crox", name: "Park Crescent", area: "Weston Park · AV8", type: "pillar", units: "2 × 22 kW pillar", installed: "2021", funding: "Council capital", pub: true, assigned: null },
+    { id: "mount", name: "Guildhall MSCP", area: "City centre · AV1", type: "carpark", units: "8 × 7 kW AC", installed: "2019", funding: "ORCS 2019 · 60% grant", pub: true, assigned: "KH Contracting" },
+    { id: "dock", name: "Canal Basin hub", area: "Old Wharf · AV1", type: "rapid", units: "4 × 150 kW rapid", installed: "2024", funding: "LEVI pipeline match", pub: true, assigned: null },
+    { id: "depot", name: "Brindley Road depot", area: "Fleet operations · AV6", type: "depot", units: "6 × 22 kW fleet", installed: "2022", funding: "Fleet capital", pub: false, assigned: null }
+  ];
+
+  DEMO = {
+    granby: { fail: { "ACC-10": { n: "Bay marked nose-in ahead of column; cable crosses 1.1 m of footway when connected. Re-mark bay flush to column.", p: 1 }, "PAY-05": { n: "No roaming provider live on these units; reg 6 deadline passed Nov 2025. Escalate to CPO under operating contract.", p: 1 } },
+      action: { "PAY-06": { n: "Helpline sticker faded/illegible on 4 of 6 units. Re-sticker at next maintenance visit." }, "HWY-01": { n: "Remaining footway 1,420 mm at column 3 with vehicle charging.", m: 1420 }, "ACC-02": { n: "Socket centreline 1,380 mm on retrofit column, above the reachable band. Record mitigation: nearest accessible unit + helpline assist.", m: 1380 } } },
+    lark: { fail: {}, action: { "PAY-05": { n: "Roaming coverage unconfirmed for this batch; CPO confirmation requested." } } },
+    crox: { fail: { "ELE-04": { n: "Type AC RCDs found in feeder pillar, no DC fault detection. Upgrade both ways.", p: 1 } },
+      action: { "PAY-03": { n: "Existing 22 kW pre-Nov 2023 stock: contactless exemption applies but record it; roaming still required.", }, "ACC-12": { n: "Screen glare makes tariff unreadable in afternoon sun; add anti-glare film." } } },
+    mount: { fail: { "ELE-02": { n: "EICR expired March 2024, more than two years overdue on a 2019 public installation.", p: 1 }, "ACC-07": { n: "All 8 bays 2,400 mm standard width; zero accessible provision on a 300-space public car park.", p: 1, m: 2400 }, "PAY-01": { n: "No tariff shown on unit or signage; QR flow reveals price only after account creation.", p: 1 } },
+      action: { "ACC-06": { n: "Re-designate 2 bays as accessible at ratio 1:5 when re-marking." }, "GRA-04": { n: "3 of 8 units missing from public map data; utilisation under-recorded since 2023." }, "ELE-04": { n: "Protective devices predate DC-detection requirement; survey at EICR." } } },
+    dock: { fail: {}, action: { "ACC-09": { n: "CCS cable force at bay 2 marginal; balancer arm sticking, service due.", }, "GRA-08": { n: "Commissioning certificates for 2 units not yet in the estate file; requested from installer." } } },
+    depot: { fail: {}, action: { "ELE-08": { n: "Isolators unlabelled in plant room; label at next visit." } } }
+  };
+
+  componentDidMount() {
+    import("./estate-check-library.js").then(lib => {
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem("ccp-estate-review-v2") || "null"); } catch (e) {}
+      const db = saved && saved.db ? saved.db : this.seedDb(lib);
+      const role = (saved && saved.role) || this.props.defaultRole || "officer";
+      const mode = this.props.startMode || "guided";
+      this.setState({ lib, db, role, mode });
+    });
+  }
+
+  seedDb(lib) {
+    const db = {};
+    for (const s of this.SITES) db[s.id] = { answers: {}, status: "notstarted" };
+    db.granby = { answers: this.buildAnswers(lib, "granby"), status: "signed", submittedBy: "KH Contracting · 18 Jun 2026", signedBy: "M. Okafor, Network Officer · 24 Jun 2026" };
+    db.mount = { answers: this.buildAnswers(lib, "mount"), status: "submitted", submittedBy: "KH Contracting · 2 Jul 2026" };
+    return db;
+  }
+
+  buildAnswers(lib, siteId) {
+    const site = this.SITES.find(s => s.id === siteId);
+    const spec = this.DEMO[siteId] || { fail: {}, action: {} };
+    const out = {};
+    for (const c of lib.checksFor(site.type, site.pub)) {
+      if (spec.fail[c.id]) out[c.id] = { o: "fail", n: spec.fail[c.id].n, p: !!spec.fail[c.id].p, m: spec.fail[c.id].m || "" };
+      else if (spec.action[c.id]) out[c.id] = { o: "action", n: spec.action[c.id].n, p: false, m: spec.action[c.id].m || "" };
+      else out[c.id] = { o: "pass", n: "", p: false, m: "" };
+    }
+    return out;
+  }
+
+  persist(next) {
+    try { localStorage.setItem("ccp-estate-review-v2", JSON.stringify({ role: next.role ?? this.state.role, db: next.db ?? this.state.db })); } catch (e) {}
+  }
+  setDb(fn) { this.setState(s => { const db = JSON.parse(JSON.stringify(s.db)); fn(db); this.persist({ db, role: s.role }); return { db }; }); }
+  toast(m) { this.setState({ toastMsg: m }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toastMsg: "" }), 3400); }
+
+  ans(siteId, id) { return (this.state.db && this.state.db[siteId] && this.state.db[siteId].answers[id]) || null; }
+  setOutcome(siteId, id, o) { this.setDb(db => { const a = db[siteId].answers[id] || { n: "", p: false, m: "" }; a.o = o; db[siteId].answers[id] = a; if (db[siteId].status === "notstarted" || db[siteId].status === "returned") db[siteId].status = "inprogress"; }); }
+  setNote(siteId, id, v) { this.setDb(db => { const a = db[siteId].answers[id] || { o: null, p: false, m: "" }; a.n = v; db[siteId].answers[id] = a; }); }
+  setMeasure(siteId, id, v) { this.setDb(db => { const a = db[siteId].answers[id] || { o: null, n: "", p: false }; a.m = v; db[siteId].answers[id] = a; }); }
+  removePhoto(siteId, id) { this.setDb(db => { const a = db[siteId].answers[id]; if (a) { a.p = false; delete a.pi; } }); }
+  handlePhotoFile(e) {
+    const file = e.target.files && e.target.files[0];
+    const tgt = this._photoTarget;
+    e.target.value = "";
+    if (!file || !tgt) return;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const max = 560, sc = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.max(1, Math.round(img.width * sc)); cv.height = Math.max(1, Math.round(img.height * sc));
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      const data = cv.toDataURL("image/jpeg", 0.62);
+      URL.revokeObjectURL(url);
+      this.setDb(db => { const a = db[tgt.siteId].answers[tgt.id] || { o: null, n: "", m: "" }; a.p = true; a.pi = data; db[tgt.siteId].answers[tgt.id] = a; });
+      this.toast("Photo attached to " + tgt.id);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); this.toast("Could not read that image"); };
+    img.src = url;
+  }
+  fmtDate(d) { return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); }
+  fmtDateLong(d) { return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }); }
+  measureVerdict(c, mVal) {
+    if (!c.measure || mVal === "" || mVal == null) return null;
+    const mt = (c.measure.limit || "").match(/^([≥≤])\s*([\d,]+)/);
+    if (!mt) return null;
+    const bound = parseFloat(mt[2].replace(/,/g, "")), v = parseFloat(mVal);
+    if (isNaN(v) || isNaN(bound)) return null;
+    if (mt[1] === "≥" ? v >= bound : v <= bound) return { t: "✓ meets threshold", color: "#1E7D4E" };
+    return { t: (mt[1] === "≥" ? "below the " + mt[2] + " " + c.measure.unit + " minimum" : "over the " + mt[2] + " " + c.measure.unit + " maximum") + " → record Action or Fail", color: "#B3372E" };
+  }
+
+  missing(lib, siteId) {
+    const site = this.SITES.find(s => s.id === siteId);
+    const checks = lib.checksFor(site.type, site.pub);
+    let un = 0, needN = 0, needP = 0;
+    for (const c of checks) {
+      const a = this.ans(siteId, c.id);
+      if (!a || !a.o) { un++; continue; }
+      if (a.o !== "pass" && !(a.n || "").trim()) needN++;
+      if (a.o === "fail" && !a.p) needP++;
+    }
+    return { un, needN, needP, total: checks.length, done: checks.length - un };
+  }
+
+  counts(lib, siteId, catId) {
+    const site = this.SITES.find(s => s.id === siteId);
+    let checks = lib.checksFor(site.type, site.pub);
+    if (catId) checks = checks.filter(c => c.cat === catId);
+    const r = { p: 0, a: 0, f: 0, n: 0, done: 0, total: checks.length };
+    for (const c of checks) { const a = this.ans(siteId, c.id); if (a && a.o) { r.done++; r[a.o === "pass" ? "p" : a.o === "action" ? "a" : a.o === "fail" ? "f" : "n"]++; } }
+    return r;
+  }
+
+  renderVals() {
+    const S = this.state, lib = S.lib;
+    const seg = (label, active, on, small) => ({ label, on, style: `padding:${small ? "6px 11px" : "7px 14px"};border-radius:999px;border:none;cursor:pointer;font-weight:600;font-size:${small ? "12px" : "12.5px"};background:${active ? "#16232E" : "transparent"};color:${active ? "#FBF8F2" : "#5C6770"}` });
+    const base = {
+      isStart: S.screen === "start", isEstate: S.screen === "estate", isSurvey: S.screen === "survey", isSignoff: S.screen === "signoff", isOutputs: S.screen === "outputs",
+      goStart: () => this.setState({ screen: "start" }), goEstate: () => this.setState({ screen: "estate" }),
+      startOfficer: () => { this.setState({ role: "officer", screen: "estate" }); this.persist({ role: "officer" }); },
+      startContractor: () => { this.setState({ role: "contractor", screen: "estate" }); this.persist({ role: "contractor" }); },
+      roleBtns: [seg("Council officer", S.role === "officer", () => { this.setState({ role: "officer" }); this.persist({ role: "officer" }); }), seg("Contractor", S.role === "contractor", () => { this.setState({ role: "contractor", screen: S.screen === "signoff" ? "estate" : S.screen }); this.persist({ role: "contractor" }); })],
+      navBtns: [
+        { label: "Estate", on: () => this.setState({ screen: "estate" }), style: `padding:7px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:12.5px;background:${S.screen === "estate" || S.screen === "survey" || S.screen === "signoff" ? "#F4EFE5" : "transparent"};color:#16232E` },
+        { label: "Outputs", on: () => this.setState({ screen: "outputs" }), style: `padding:7px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:12.5px;background:${S.screen === "outputs" ? "#F4EFE5" : "transparent"};color:#16232E` }
+      ],
+      trailSteps: [
+        { k: "1 · REVIEWED", t: "Every site surveyed against every live framework, including the ones nobody complained about." },
+        { k: "2 · CONSIDERED", t: "Each requirement assessed to an adequate level, with a recorded reason where one does not apply." },
+        { k: "3 · RECTIFIED", t: "What fell short is fixed or programmed, with a cost and an owner against every item." }
+      ],
+      exampleChips: ["410 chargepoints (2023)", "260 lamppost units added 2023", "1,800 committed by 2028", "ORCS: 60% grant / 40% CPO", "5 kW · QR-code payment"],
+      showExample: this.props.showWorkedExample ?? true,
+      toastMsg: S.toastMsg, libVersion: lib ? lib.VERSION : "v0.9 draft",
+      policyRows: lib ? lib.EVIDENCE_POLICY : [],
+      photoRef: this.photoRef, onPhotoFile: e => this.handlePhotoFile(e),
+      resetDemo: () => {
+        if (!lib) return;
+        if (!window.confirm("Reset the demo to its seeded example state? Recorded outcomes, notes and photos will be replaced.")) return;
+        const db = this.seedDb(lib);
+        this.setState({ db, screen: "start", siteId: null, gIdx: 0, openRow: null, signName: "", returnNote: "" });
+        this.persist({ db });
+        this.toast("Demo reset to the seeded worked example");
+      }
+    };
+    if (!lib || !S.db) return { ...base, kpis: [], fundingChips: [], alerts: [], exposureRows: [], hasExposure: false, siteRows: [], queueRows: [], hasQueue: false, catChips: [], catGroups: [], naRows: [], modeBtns: [], outSiteBtns: [], outTabs: [], g: {}, gr: { kpis: [], rows: [], findings: [], prog: [] }, eq: { rows: [] }, fu: { programmes: [] }, pu: { stats: [], fixing: [] }, soCats: [], soFindings: [], coRows: [], sitesHeading: "Sites", roleLine: "", isGuided: false, isChecklist: false, isOfficerOut: false, isContractorOut: false, tabGrant: false, tabEqa: false, tabFunder: false, tabPublic: false };
+
+    const O = { pass: ["#1E7D4E", "#E4F2EA"], action: ["#9A6403", "#F7EDD8"], fail: ["#B3372E", "#F9E7E4"], na: ["#5C6770", "#EFEAE0"] };
+    const sevMap = { critical: ["#B3372E", "#F9E7E4", "Critical"], high: ["#B4590A", "#F7EDD8", "High"], medium: ["#5C6770", "#EFEAE0", "Medium"] };
+    const stMap = { notstarted: ["Not started", "#5C6770", "#EFEAE0"], inprogress: ["In progress", "#1043B0", "#EBF1FF"], submitted: ["Awaiting sign-off", "#9A6403", "#F7EDD8"], signed: ["Signed off", "#1E7D4E", "#E4F2EA"], returned: ["Returned", "#B3372E", "#F9E7E4"] };
+    const catById = id => lib.CATEGORIES.find(c => c.id === id);
+    const mySites = S.role === "contractor" ? this.SITES.filter(s => s.assigned) : this.SITES;
+
+    // ---- estate ----
+    const surveyedN = mySites.filter(s => ["submitted", "signed"].includes(S.db[s.id].status)).length;
+    let openActions = 0, openFails = 0;
+    for (const s of mySites) { const c = this.counts(lib, s.id); openActions += c.a; openFails += c.f; }
+    const roamingDays = Math.max(0, Math.floor((Date.now() - new Date(2025, 10, 24).getTime()) / 86400000));
+    const nowD = new Date();
+    const eicrMonths = (nowD.getFullYear() - 2024) * 12 + nowD.getMonth() - 2;
+    // exposure while open fails stand - computed from the live record
+    const unitsOf = st => { const m = String(st.units || "").match(/^(\d+)/); return m ? +m[1] : 0; };
+    let payCPs = 0, accSites = 0, grantSites = 0;
+    for (const st of mySites) {
+      const a = (S.db[st.id] && S.db[st.id].answers) || {};
+      const fails = Object.keys(a).filter(id => a[id] && a[id].o === "fail");
+      if (!fails.length) continue;
+      if (fails.some(id => id.indexOf("PAY") === 0)) payCPs += unitsOf(st);
+      if (fails.some(id => id.indexOf("ACC") === 0)) accSites++;
+      if (/ORCS|LEVI/i.test(st.funding || "")) grantSites++;
+    }
+    const exposureRows = [];
+    if (payCPs) exposureRows.push({ v: "£" + (payCPs * 10000).toLocaleString("en-GB"), k: "maximum PCPR penalty exposure", d: payCPs + " chargepoints sit on sites with an open payment-regs fail, at up to £10,000 each" });
+    if (grantSites) exposureRows.push({ v: String(grantSites), k: "grant-funded sites with open fails", d: "ORCS / LEVI conditions unmet: clawback risk now, due-diligence findings at the next award" });
+    if (accSites) exposureRows.push({ v: "Uncapped", k: "Equality Act exposure", d: accSites + " site" + (accSites === 1 ? "" : "s") + " with accessibility fails; there is no s.149 defence until rectification is programmed and recorded" });
+    const estate = {
+      hasExposure: S.role === "officer" && exposureRows.length > 0,
+      exposureRows,
+      roleLine: S.role === "officer" ? "Signed in as council officer: full estate, sign-off and outputs." : "Signed in as contractor (KH Contracting): your assigned sites and submissions.",
+      sitesHeading: S.role === "contractor" ? "Your assigned sites" : "Estate · 6 sites in scope",
+      kpis: [
+        { k: "Sites in scope", v: String(mySites.length), color: "#16232E" },
+        { k: "Surveyed / signed", v: surveyedN + "/" + mySites.length, color: "#16232E" },
+        { k: "Open actions", v: String(openActions), color: "#9A6403" },
+        { k: "Fails to rectify", v: String(openFails), color: "#B3372E" }
+      ],
+      fundingChips: ["ORCS 2019 & 2023 · 60% grant", "LEVI pipeline (city region)", "1,800 chargepoints committed by 2028"],
+      alerts: [
+        { dot: "#FF6B5E", t: "Roaming (PCPR reg 6) deadline passed " + roamingDays + " days ago (24 Nov 2025); legacy QR-only units without a roaming provider are now non-compliant." },
+        { dot: "#F2B33D", t: "EICR on the 2019 car-park estate expired March 2024, " + eicrMonths + " months overdue. Periodic inspection is the first thing an auditor asks for." },
+        { dot: "#5D9BFF", t: "Next funding window (city region LEVI pipeline) assesses estates on evidence of review, consideration and rectification." }
+      ],
+      hasQueue: S.role === "officer" && this.SITES.some(s => S.db[s.id].status === "submitted"),
+      queueRows: this.SITES.filter(s => S.db[s.id].status === "submitted").map(s => ({ name: s.name, sub: (S.db[s.id].submittedBy || "") + " · " + this.missing(lib, s.id).done + " checks recorded", on: () => this.setState({ screen: "signoff", siteId: s.id }) })),
+      siteRows: mySites.map(s => {
+        const st = stMap[S.db[s.id].status], c = this.counts(lib, s.id), m = this.missing(lib, s.id);
+        const canSign = S.role === "officer" && S.db[s.id].status === "submitted";
+        const ret = S.db[s.id].status === "returned" ? S.db[s.id].returned : null;
+        return {
+          hasReturn: !!ret, returnNote: ret ? ret.note + (ret.date ? " (" + ret.date + ")" : "") : "",
+          name: s.name, area: s.area, typeName: lib.SITE_TYPES.find(t => t.id === s.type).name, unitsLabel: s.units + " · " + s.installed, funding: s.funding,
+          assigned: s.assigned ? (S.role === "contractor" ? "Assigned to you" : s.assigned) : "In-house", assignFg: s.assigned ? "#B4590A" : "#5C6770", assignBg: s.assigned ? "#FBEFDD" : "#F4EFE5",
+          status: st[0], stFg: st[1], stBg: st[2], progress: m.done + " of " + m.total + " checks recorded",
+          p: c.p + " pass", a: c.a + " action", f: c.f + " fail", n: c.n + " n/a",
+          btnLabel: canSign ? "Review & sign off" : S.db[s.id].status === "signed" ? "View survey" : m.done > 0 ? "Continue survey" : "Start survey",
+          btnBg: canSign ? "#16232E" : m.done === 0 ? "#1E6BFF" : "transparent", btnFg: canSign || m.done === 0 ? "#FBF8F2" : "#16232E", btnBorder: canSign || m.done === 0 ? "transparent" : "#D6CBB6",
+          on: () => this.setState(canSign ? { screen: "signoff", siteId: s.id } : { screen: "survey", siteId: s.id, gIdx: 0, openRow: null })
+        };
+      })
+    };
+
+    // ---- survey ----
+    let survey = { g: {}, catGroups: [], catChips: [], naRows: [], modeBtns: [], isGuided: false, isChecklist: false };
+    if (S.siteId) {
+      const site = this.SITES.find(s => s.id === S.siteId);
+      const checks = lib.checksFor(site.type, site.pub);
+      const naChecks = lib.notApplicableFor(site.type, site.pub);
+      const m = this.missing(lib, S.siteId);
+      const st = stMap[S.db[S.siteId].status];
+      const locked = S.db[S.siteId].status === "signed" || S.db[S.siteId].status === "submitted";
+      const gC = checks[Math.min(S.gIdx, checks.length - 1)] || checks[0];
+      const gA = gC ? this.ans(S.siteId, gC.id) : null;
+      const obtn = (c, big) => ["pass", "action", "fail", "na"].map(o => {
+        const a = this.ans(S.siteId, c.id), act = a && a.o === o;
+        return { label: o === "pass" ? "Pass" : o === "action" ? "Action" : o === "fail" ? "Fail" : "N/A", on: () => locked ? this.toast("Survey is " + st[0].toLowerCase() + "; reopen by returning it") : this.setOutcome(S.siteId, c.id, o), style: `padding:${big ? "11px 8px" : "6px 10px"};border-radius:${big ? "10px" : "8px"};cursor:pointer;font-weight:700;font-size:${big ? "13.5px" : "11.5px"};border:1px solid ${act ? O[o][0] : "#E7DFD0"};background:${act ? O[o][1] : "#FFFFFF"};color:${act ? O[o][0] : "#8C97A0"}` };
+      });
+      const rowVm = c => {
+        const a = this.ans(S.siteId, c.id) || {};
+        const needsNote = a.o && a.o !== "pass", needsPhoto = a.o === "fail";
+        const mv = this.measureVerdict(c, a.m);
+        return {
+          mVerdict: mv ? mv.t : "", mvColor: mv ? mv.color : "#8C97A0",
+          id: c.id, title: c.title, cite: c.cite, sevColor: sevMap[c.sev][0], why: c.why, fix: c.fix, cost: c.cost, verify: c.verify ? "⚠ " + c.verify : "",
+          open: S.openRow === c.id, onOpen: () => this.setState({ openRow: S.openRow === c.id ? null : c.id }),
+          outcomeBtns: obtn(c, false),
+          hasMeasure: !!c.measure, mLabel: c.measure ? c.measure.label : "", mUnit: c.measure ? c.measure.unit : "", mLimit: c.measure ? c.measure.limit : "", mVal: a.m || "", onM: e => this.setMeasure(S.siteId, c.id, e.target.value),
+          needsNote, note: a.n || "", onNote: e => this.setNote(S.siteId, c.id, e.target.value),
+          needsPhoto, photoOn: !!a.p, photoThumb: a.pi || "",
+          onPhoto: () => locked ? this.toast("Survey is " + st[0].toLowerCase() + "; reopen by returning it") : (this._photoTarget = { siteId: S.siteId, id: c.id }, this.photoRef.current && this.photoRef.current.click()),
+          onPhotoRemove: () => locked ? this.toast("Survey is " + st[0].toLowerCase() + "; reopen by returning it") : this.removePhoto(S.siteId, c.id),
+          photoLabel: a.pi ? "Replace photo" : a.p ? "✓ Photo recorded (demo) · replace with a real one" : "Attach photo (required on fail)",
+          photoStyle: `padding:9px 14px;border-radius:9px;cursor:pointer;font-weight:600;font-size:12.5px;border:1px dashed ${a.p ? "#1E7D4E" : "#D6CBB6"};background:${a.p ? "#E4F2EA" : "#FFFFFF"};color:${a.p ? "#1E7D4E" : "#5C6770"}`
+        };
+      };
+      const gVm = gC ? { ...rowVm(gC), catName: catById(gC.cat).name, catColor: catById(gC.cat).color, pos: "Check " + (Math.min(S.gIdx, checks.length - 1) + 1) + " of " + checks.length, sev: sevMap[gC.sev][2], sevFg: sevMap[gC.sev][0], sevBg: sevMap[gC.sev][1], fixOpen: S.fixOpen, onFix: () => this.setState({ fixOpen: !S.fixOpen }), fixLabel: S.fixOpen ? "Hide rectification guidance ▴" : "How to rectify + typical cost ▾", note: gA ? gA.n || "" : "", onPrev: () => this.setState({ gIdx: Math.max(0, S.gIdx - 1), fixOpen: false }), onNext: () => this.setState({ gIdx: Math.min(checks.length - 1, S.gIdx + 1), fixOpen: false }), onNextUn: () => { for (let k = 1; k <= checks.length; k++) { const idx = (Math.min(S.gIdx, checks.length - 1) + k) % checks.length; const aa = this.ans(S.siteId, checks[idx].id); if (!aa || !aa.o) return this.setState({ gIdx: idx, fixOpen: false }); } this.toast("Every check recorded; review evidence and submit"); } } : {};
+      survey = {
+        svName: site.name, svMeta: lib.SITE_TYPES.find(t => t.id === site.type).name + " · " + site.units + " · installed " + site.installed + " · " + site.funding + " · " + checks.length + " applicable checks",
+        svStatus: st[0], svStFg: st[1], svStBg: st[2],
+        svReturned: S.db[S.siteId].status === "returned" && !!S.db[S.siteId].returned,
+        svReturnNote: (S.db[S.siteId].returned || {}).note || "", svReturnDate: (S.db[S.siteId].returned || {}).date || "",
+        svDone: m.done, svTotal: m.total,
+        svMissing: (m.needN + m.needP) > 0 ? m.needN + " notes + " + m.needP + " photos still required" : m.un > 0 ? m.un + " not yet recorded" : "evidence complete",
+        svProgressText: Math.round((m.done / m.total) * 100) + "% recorded",
+        modeBtns: [seg("Guided", S.mode === "guided", () => this.setState({ mode: "guided" })), seg("Checklist", S.mode === "checklist", () => this.setState({ mode: "checklist" }))],
+        isGuided: S.mode === "guided", isChecklist: S.mode === "checklist", g: gVm,
+        showPolicy: S.showPolicy, togglePolicy: () => this.setState({ showPolicy: !S.showPolicy }),
+        showNA: S.showNA, toggleNA: () => this.setState({ showNA: !S.showNA }), naLabel: naChecks.length + " recorded n/a ?",
+        naRows: naChecks.map(c => ({ id: c.id, title: c.title, reason: c.naNote || "Outside the scope of this requirement for this site type." })),
+        catChips: lib.CATEGORIES.map(c => { const cc = this.counts(lib, S.siteId, c.id); return { name: c.name, color: c.color, count: cc.done + "/" + cc.total, on: () => { if (S.mode === "guided") { const idx = checks.findIndex(x => x.cat === c.id); if (idx >= 0) this.setState({ gIdx: idx, fixOpen: false }); } else { const oc = {}; for (const cat of lib.CATEGORIES) oc[cat.id] = cat.id === c.id; this.setState({ openCats: oc }); } } }; }),
+        catGroups: lib.CATEGORIES.map(c => { const cc = this.counts(lib, S.siteId, c.id); return { name: c.name, color: c.color, count: cc.done + "/" + cc.total, p: cc.p, a: cc.a, f: cc.f, n: cc.n, open: S.openCats[c.id] !== false, chev: S.openCats[c.id] !== false ? "▴" : "▾", on: () => this.setState(s => ({ openCats: { ...s.openCats, [c.id]: s.openCats[c.id] === false } })), rows: checks.filter(x => x.cat === c.id).map(rowVm) }; }),
+        prefill: () => { if (locked) return this.toast("Survey is locked; already " + st[0].toLowerCase()); this.setDb(db => { db[S.siteId].answers = this.buildAnswers(lib, S.siteId); db[S.siteId].status = "inprogress"; }); this.toast("Example findings loaded: every check recorded with evidence"); },
+        submitLabel: S.role === "contractor" ? "Submit for council sign-off" : "Complete review",
+        submitStyle: `padding:11px 20px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:13.5px;background:${m.un + m.needN + m.needP === 0 && !locked ? "#1E6BFF" : "#C9CFD6"};color:#FFFFFF`,
+        submitSurvey: () => {
+          if (locked) return this.toast("Already " + st[0].toLowerCase());
+          const mm = this.missing(lib, S.siteId);
+          if (mm.un > 0) return this.toast(mm.un + " checks not yet recorded");
+          if (mm.needN + mm.needP > 0) return this.toast("Evidence incomplete: " + mm.needN + " notes, " + mm.needP + " photos required");
+          if (S.role === "contractor") { this.setDb(db => { db[S.siteId].status = "submitted"; db[S.siteId].submittedBy = "KH Contracting · " + this.fmtDate(new Date()); delete db[S.siteId].returned; }); this.setState({ screen: "estate" }); this.toast("Submitted. The council will review and sign off"); }
+          else { this.setDb(db => { db[S.siteId].status = "signed"; db[S.siteId].signedBy = "Officer review · " + this.fmtDate(new Date()); delete db[S.siteId].returned; }); this.setState({ screen: "estate" }); this.toast("Review complete. Survey signed into the estate record"); }
+        }
+      };
+    }
+
+    // ---- signoff ----
+    let signoff = { soCats: [], soFindings: [] };
+    if (S.siteId && S.screen === "signoff") {
+      const site = this.SITES.find(s => s.id === S.siteId);
+      const checks = lib.checksFor(site.type, site.pub);
+      let notes = 0, photos = 0;
+      const findings = [];
+      for (const c of checks) { const a = this.ans(S.siteId, c.id); if (!a) continue; if ((a.n || "").trim()) notes++; if (a.p) photos++; if (a.o === "fail" || a.o === "action") findings.push({ o: a.o === "fail" ? "Fail" : "Action", fg: O[a.o][0], bg: O[a.o][1], title: c.title, cite: c.cite, note: a.n, photo: a.p ? "📎 photo" : "", thumb: a.pi || "" }); }
+      signoff = {
+        soName: site.name, soSubmitted: "Submitted by " + (S.db[S.siteId].submittedBy || "not recorded") + " · " + checks.length + " applicable checks · evidence policy v0.9",
+        soCats: lib.CATEGORIES.map(c => { const cc = this.counts(lib, S.siteId, c.id); return { name: c.name, color: c.color, p: cc.p, a: cc.a, f: cc.f, n: cc.n }; }),
+        soEvidence: notes + " notes and " + photos + " photos attached · all non-pass outcomes carry a note · all fails carry a photo",
+        soFindings: findings,
+        signName: S.signName, onSignName: e => this.setState({ signName: e.target.value }),
+        returnNote: S.returnNote, onReturnNote: e => this.setState({ returnNote: e.target.value }),
+        approve: () => { if (!(S.signName || "").trim()) return this.toast("Add your name and role to sign"); this.setDb(db => { db[S.siteId].status = "signed"; db[S.siteId].signedBy = S.signName + " · " + this.fmtDate(new Date()); delete db[S.siteId].returned; }); this.setState({ screen: "estate", signName: "" }); this.toast("Signed off. Evidence locked into the estate record"); },
+        returnBack: () => { if (!(S.returnNote || "").trim()) return this.toast("Add a comment for the contractor"); this.setDb(db => { db[S.siteId].status = "returned"; db[S.siteId].returned = { note: S.returnNote, date: this.fmtDate(new Date()) }; }); this.setState({ screen: "estate", returnNote: "" }); this.toast("Returned to KH Contracting with comments"); }
+      };
+    }
+
+    // ---- outputs ----
+    const scopeSites = S.outSite === "estate" ? this.SITES : this.SITES.filter(s => s.id === S.outSite);
+    const allFindings = [];
+    for (const s of scopeSites) { const checks = lib.checksFor(s.type, s.pub); for (const c of checks) { const a = this.ans(s.id, c.id); if (a && (a.o === "fail" || a.o === "action")) allFindings.push({ site: s.name, c, a }); } }
+    const sevRank = { critical: 0, high: 1, medium: 2 };
+    allFindings.sort((x, y) => (x.a.o === "fail" ? 0 : 1) - (y.a.o === "fail" ? 0 : 1) || sevRank[x.c.sev] - sevRank[y.c.sev]);
+    let tp = 0, ta = 0, tf = 0, evd = 0, evt = 0;
+    const grRows = scopeSites.map(s => { const c = this.counts(lib, s.id); const m = this.missing(lib, s.id); tp += c.p; ta += c.a; tf += c.f; evd += m.done; evt += m.total; const st = stMap[S.db[s.id].status]; return { name: s.name, status: st[0], stColor: st[1], p: String(c.p), a: String(c.a), f: String(c.f), ev: m.done + "/" + m.total + " recorded" }; });
+    const accRows = [];
+    for (const s of scopeSites) { for (const c of lib.checksFor(s.type, s.pub).filter(x => x.cat === "access")) { const a = this.ans(s.id, c.id); if (a && a.o) accRows.push({ id: c.id + (S.outSite === "estate" ? " · " + s.name : ""), t: c.title, o: a.o === "pass" ? "Met" : a.o === "action" ? "Action" : a.o === "fail" ? "Not met" : "N/A", fg: O[a.o][0], note: a.o === "pass" ? "Verified on survey." : a.o === "na" ? "Recorded not applicable with reason." : (a.n || "No note recorded.") }); } }
+    const naTotal = scopeSites.reduce((t, s) => t + lib.notApplicableFor(s.type, s.pub).length, 0);
+    const outputs = {
+      isOfficerOut: S.role === "officer", isContractorOut: S.role === "contractor",
+      outSiteBtns: [{ id: "estate", label: "Estate-wide" }, ...this.SITES.filter(s => this.missing(lib, s.id).done > 0).map(s => ({ id: s.id, label: s.name }))].map(o => seg(o.label, S.outSite === o.id, () => this.setState({ outSite: o.id }), true)),
+      outTabs: [["grant", "Grant-readiness"], ["eqa", "Equality Act record"], ["funder", "Funder pack"], ["public", "Public summary"]].map(t => seg(t[1], S.outTab === t[0], () => this.setState({ outTab: t[0] }), true)),
+      tabGrant: S.outTab === "grant", tabEqa: S.outTab === "eqa", tabFunder: S.outTab === "funder", tabPublic: S.outTab === "public",
+      docTitle: S.outTab === "grant" ? "Grant-readiness report" : S.outTab === "eqa" ? "Equality Act 2010 record of consideration (s.149)" : S.outTab === "funder" ? "Funder evidence pack" : "Public summary",
+      docSub: "EV charging estate review · Averton City Council (worked example)" + (S.outSite === "estate" ? " · all sites" : " · " + (this.SITES.find(s => s.id === S.outSite) || {}).name),
+      doPrint: () => window.print(),
+      docDate: this.fmtDateLong(new Date()),
+      eqDate: this.fmtDateLong(new Date()),
+      eqReview: new Date().toLocaleDateString("en-GB", { month: "long" }) + " " + (new Date().getFullYear() + 1),
+      gr: {
+        kpis: [{ k: "Checks recorded", v: evd + "/" + evt, color: "#16232E" }, { k: "Pass", v: String(tp), color: "#1E7D4E" }, { k: "Actions", v: String(ta), color: "#9A6403" }, { k: "Fails", v: String(tf), color: "#B3372E" }, { k: "Recorded n/a", v: String(naTotal), color: "#5C6770" }],
+        rows: grRows,
+        findings: allFindings.filter(x => x.a.o === "fail").slice(0, 8).map(x => ({ title: x.c.title, site: x.site, note: x.a.n, cite: x.c.cite, dot: "#B3372E" })),
+        prog: allFindings.slice(0, 10).map(x => ({ id: x.c.id, t: x.c.fix + " (" + x.site + ")", cost: x.c.cost }))
+      },
+      eq: {
+        scope: S.outSite === "estate" ? "All 6 estate sites (surveyed sites evidenced; remainder programmed)" : (this.SITES.find(s => s.id === S.outSite) || {}).name,
+        rows: accRows.slice(0, 16),
+        decision: "The authority has had due regard to the accessibility of its charging estate. Where provision falls short of PAS 1899:2022, mitigations and a costed rectification programme have been adopted (see grant-readiness report); constrained sites record the nearest accessible alternative. This record will be reviewed on completion of the programme and at least annually."
+      },
+      fu: {
+        programmes: [
+          { name: "ORCS 2019 & 2023 · 60% capital grant", lines: [
+            { cond: "Units operational for the minimum period", checks: "GRA-02 · live-status evidence", status: tf > 0 ? "At risk" : "Evidenced", color: tf > 0 ? "#B3372E" : "#1E7D4E", evidence: "Survey status per unit; dead units flagged to CPO with repair SLA." },
+            { cond: "Chargepoints publicly listed with live data", checks: "GRA-04 · PAY-08", status: "Action open", color: "#9A6403", evidence: "3 units missing from public map data at Guildhall MSCP; CPO reconciliation requested." },
+            { cond: "Claims & commissioning evidence retained", checks: "GRA-08 · ELE-01", status: "Evidenced", color: "#1E7D4E", evidence: "Certificates filed per site; 2 commissioning certs requested from installer." },
+            { cond: "Change control on funded assets", checks: "GRA-10 · GRA-05", status: "Evidenced", color: "#1E7D4E", evidence: "No unnotified relocations or tariff-model changes found." }
+          ] },
+          { name: "LEVI pipeline (city region) · next-round readiness", lines: [
+            { cond: "Estate reviewed against live frameworks", checks: "All categories · library v0.9", status: evd === evt ? "Complete" : "In progress", color: evd === evt ? "#1E7D4E" : "#9A6403", evidence: evd + " of " + evt + " checks recorded across the estate." },
+            { cond: "Accessibility duty considered and recorded", checks: "ACC-01 · Equality Act record", status: "Evidenced", color: "#1E7D4E", evidence: "s.149 record generated from survey; mitigations adopted." },
+            { cond: "Rectification programme costed and owned", checks: "Fails & actions → programme", status: ta + tf > 0 ? "Programmed" : "Clear", color: ta + tf > 0 ? "#9A6403" : "#1E7D4E", evidence: (ta + tf) + " items with rectification guidance and typical costs." }
+          ] }
+        ]
+      },
+      pu: {
+        stats: [{ v: String(tp), k: "checks passed across the estate" }, { v: String(ta + tf), k: "improvements identified and programmed" }, { v: "24/7", k: "free helpline on every public unit" }],
+        fixing: allFindings.slice(0, 5).map(x => ({ t: x.c.title + " (" + x.site + ").", when: "programmed 2026/27" })),
+      },
+      coRows: this.SITES.filter(s => s.assigned).map(s => { const st = stMap[S.db[s.id].status]; const m = this.missing(lib, s.id); return { name: s.name, status: st[0], color: st[1], sub: m.done + "/" + m.total + " recorded" + (S.db[s.id].signedBy ? " · " + S.db[s.id].signedBy : "") }; })
+    };
+
+    return { ...base, ...estate, ...survey, ...signoff, ...outputs };
+  }
+}
+</script>
+</body>
+</html>

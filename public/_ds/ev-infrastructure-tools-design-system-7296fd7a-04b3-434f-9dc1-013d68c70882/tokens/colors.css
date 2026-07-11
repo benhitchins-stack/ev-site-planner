@@ -1,0 +1,167 @@
+/* ============================================================
+   Colors — EV Infrastructure Tools  ·  "Current" identity
+   Vivid electric-blue accent over cool slate-navy ink on warm
+   cream chrome. Energetic, infrastructure-grade. Base ramps
+   first, then semantic aliases — use the SEMANTIC tokens.
+   ============================================================ */
+:root {
+  /* ---- Brand: Electric Blue ---- */
+  --accent-50:  #EBF1FF;
+  --accent-100: #D6E3FF;
+  --accent-200: #AEC8FF;
+  --accent-300: #7FA6FF;
+  --accent-400: #4D82FF;
+  --accent-500: #1E6BFF;   /* brand electric blue */
+  --accent-600: #1556E0;   /* hover */
+  --accent-700: #1043B0;   /* electric-blue text on light bg */
+  --accent-800: #0C3185;
+  --accent-900: #081F54;   /* deepest electric blue */
+
+  /* ---- Cream: warm paper neutrals (surfaces / chrome) ---- */
+  --cream-50:  #FBF8F2;
+  --cream-100: #F4EFE5;   /* app chrome / panels */
+  --cream-200: #EBE3D4;
+  --cream-300: #DDD2BE;
+  --cream-border:        #E7DFD0;
+  --cream-border-strong: #D6CBB6;
+
+  /* ---- Ink: cool slate-navy neutrals (text / dark) ---- */
+  --ink-50:  #F1F3F4;
+  --ink-100: #E6E9EB;
+  --ink-200: #DBE0E3;
+  --ink-300: #C3CBD0;
+  --ink-400: #8C97A0;   /* tertiary / faint */
+  --ink-500: #5C6770;   /* secondary text */
+  --ink-600: #3E4A53;
+  --ink-700: #28333C;
+  --ink-800: #1A2530;
+  --ink-900: #16232E;   /* primary text / slate navy */
+  --ink-950: #0E1820;   /* deepest */
+
+  /* ---- Stage (dark work canvas, e.g. Site Planner photo) ---- */
+  --stage-900: #0E1820;
+  --stage-800: #14222C;
+  --stage-700: #1D2E3A;
+  --stage-ink:  #F1EFE9;   /* text on dark stage */
+  --stage-dim:  #9DAAB0;   /* muted text on dark stage */
+
+  /* ---- Equipment / domain palette (Site Planner markup legend) ---- */
+  --eq-swa:    #C85F14;   /* SWA cable — burnt orange */
+  --eq-cu:     #7B7BAB;   /* copper / supply tails — periwinkle */
+  --eq-supply: #D42626;   /* incoming supply / DNO — red */
+  --eq-sub:    #872974;   /* sub-distribution — magenta */
+  --eq-iso:    #5899A8;   /* isolation — steel */
+  --eq-earth:  #4BA069;   /* earthing — green */
+  --eq-fs:     #C89A14;   /* fused spur / data — gold */
+  --eq-trunk:  #AEB6BE;   /* trunking / containment — cool grey */
+
+  /* ---- Semantic hues ---- */
+  --green-50:  #E9F5EE;
+  --green-100: #D2ECDD;
+  --green-500: #2F8A4E;
+  --green-600: #267A43;   /* ok */
+  --green-700: #1B5A31;
+
+  --amber-50:  #FBF1DC;
+  --amber-100: #F7E3BD;
+  --amber-500: #DE9A1C;
+  --amber-600: #BC7E12;
+  --amber-700: #8E5E09;
+
+  --red-50:  #FCECEA;
+  --red-100: #FBDAD6;
+  --red-500: #E04A3F;
+  --red-600: #CC382E;   /* warn */
+  --red-700: #A0241C;
+
+  --blue-50:  #EAF0FB;
+  --blue-100: #D9E5F8;
+  --blue-500: #2E6BD6;
+  --blue-600: #1F55B6;
+  --blue-700: #16438F;
+
+  /* ---- Orange (hi-vis / field-create signal; distinct from the blue accent) ---- */
+  --orange-50:  #FEEEE2;
+  --orange-100: #FCD8C0;
+  --orange-200: #F8B488;
+  --orange-300: #F39255;
+  --orange-400: #ED7A35;
+  --orange-500: #E0651C;
+  --orange-600: #C45414;
+  --orange-700: #97400F;
+
+  /* ============================================================
+     SEMANTIC ALIASES — use these in product code
+     ============================================================ */
+
+  /* Surfaces — warm cream chrome + white cards */
+  --color-bg:             var(--cream-100);
+  --color-surface:        #FFFFFF;
+  --color-surface-2:      var(--cream-50);
+  --color-surface-sunken: var(--cream-200);
+  --color-surface-ink:    var(--ink-900);   /* dark chrome panels */
+  --color-surface-ink-2:  var(--ink-800);
+  --color-stage:          var(--stage-800); /* dark photo canvas */
+  --color-overlay:        rgba(14, 24, 32, 0.55);
+
+  /* Borders & dividers (warm, to sit on cream) */
+  --color-border:         var(--cream-border);
+  --color-border-strong:  var(--cream-border-strong);
+  --color-border-ink:     #2A3942;
+  --color-divider:        var(--cream-border);
+
+  /* Text */
+  --text-primary:    var(--ink-900);
+  --text-secondary:  var(--ink-500);
+  --text-muted:      var(--ink-400);
+  --text-disabled:   var(--ink-300);
+  --text-inverse:    var(--stage-ink);
+  --text-on-accent:  var(--cream-50);   /* light text ON the blue accent */
+  --text-on-ink:     var(--cream-50);
+  --text-link:       var(--accent-700);
+
+  /* Accent (electric blue) */
+  --accent:          var(--accent-500);
+  --accent-hover:    var(--accent-600);
+  --accent-press:    var(--accent-700);
+  --accent-contrast: var(--cream-50);    /* text/icons ON the blue accent fills */
+  --accent-soft:     var(--accent-50);
+  --accent-strong:   var(--accent-700);  /* electric blue as text on light bg */
+
+  /* Secondary action (navy) */
+  --navy:          var(--ink-900);
+  --navy-hover:    var(--ink-800);
+  --navy-contrast: var(--cream-50);
+
+  /* Signal (orange) — field-create / hi-vis emphasis */
+  --signal:          var(--orange-600);
+  --signal-hover:    var(--orange-700);
+  --signal-soft:     var(--orange-50);
+  --signal-contrast: #FFFFFF;
+
+  /* Equipment status (EV domain) */
+  --status-charging:     var(--green-600);
+  --status-charging-bg:  var(--green-100);
+  --status-idle:         var(--amber-600);
+  --status-idle-bg:      var(--amber-100);
+  --status-fault:        var(--red-600);
+  --status-fault-bg:     var(--red-100);
+  --status-installed:    var(--ink-700);   /* built / solid — navy, kept distinct from planned blue */
+  --status-installed-bg: var(--ink-100);
+  --status-planned:      var(--blue-600);
+  --status-planned-bg:   var(--blue-100);
+
+  /* Feedback */
+  --color-success:    var(--green-600);
+  --color-success-bg: var(--green-100);
+  --color-warning:    var(--amber-700);
+  --color-warning-bg: var(--amber-100);
+  --color-danger:     var(--red-600);
+  --color-danger-bg:  var(--red-100);
+  --color-info:       var(--blue-600);
+  --color-info-bg:    var(--blue-100);
+
+  /* Focus ring (electric blue) */
+  --focus-ring: 0 0 0 3px rgba(30, 107, 255, 0.45);
+  --focus-ring-ink: 0 0 0 2px var(--ink-900), 0 0 0 4px var(--accent-500);
+}
