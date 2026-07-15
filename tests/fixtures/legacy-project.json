@@ -1,0 +1,72 @@
+{
+  "index": [
+    {
+      "id": "legacy01",
+      "name": "Legacy Drive Job",
+      "mode": "domestic",
+      "date": "2025-11-02",
+      "thumb": "",
+      "n": 1,
+      "cust": "Old Customer",
+      "ref": "L-001"
+    }
+  ],
+  "record": {
+    "pack": {
+      "v": 1,
+      "mode": "domestic",
+      "name": "Legacy Drive Job",
+      "jobRef": "L-001",
+      "custName": "Old Customer",
+      "address": "1 Old Lane",
+      "postcode": "BS1 1AA",
+      "earthing": "PME (TN-C-S)",
+      "mainFuse": "80 A",
+      "notes": "Kept from the pre stage-navigation build.",
+      "photos": [
+        {
+          "id": "ph1",
+          "name": "Front drive",
+          "src": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAAkADADASIAAhEBAxEB/8QAGQABAQEBAQEAAAAAAAAAAAAAAAUDBgQC/8QALBAAAQIDAwsFAAAAAAAAAAAAAQACAwQRBRIxBhMUFjRTVIGio7EiQWHR0v/EABcBAQEBAQAAAAAAAAAAAAAAAAIAAQP/xAAZEQADAQEBAAAAAAAAAAAAAAAAAQIREyH/2gAMAwEAAhEDEQA/ALrGOiPDGCrjgFtoMzu+oJI7Wzn4KrLbty8QZlNEnQZnd9QTQZnd9QVZEOtC5ok6DM7vqCxex0N5Y8UcMQrikz21v5eAnFunjDUpISO1s5+Cqyhse6G8PYaOGBUm0csZmQnokrmM5cp6r4FagHC78quHT1FNJL07JFwmvszwvcH5TX2Z4XuD8ocaF0R3akz21v5eAodnZYzM/PQ5XMZu/X1XwaUBOF34VZ73RHl7zVxxKcQ5esNUmvD5XimLGs+bjujx5e/EdSpvuFaCnsURdTmZavWVwvcd9pq9ZXC9x32iLSNZexrPlI7Y8CXuRG1ob7jSop7le1EWEf/Z",
+          "imgW": 48,
+          "imgH": 36,
+          "items": [
+            {
+              "id": "u1",
+              "type": "unit",
+              "variant": "teth_wall",
+              "x": 24,
+              "y": 14,
+              "kw": "7"
+            },
+            {
+              "id": "r1",
+              "type": "route",
+              "kind": "swa",
+              "pts": [
+                {
+                  "x": 4,
+                  "y": 4
+                },
+                {
+                  "x": 40,
+                  "y": 28
+                }
+              ],
+              "manualLen": 12
+            }
+          ]
+        }
+      ],
+      "active": "ph1"
+    },
+    "budget": {
+      "lines": [],
+      "at": "2025-11-02T10:00:00.000Z",
+      "name": "Legacy Drive Job",
+      "mode": "domestic",
+      "jobRef": "L-001",
+      "custName": "Old Customer"
+    }
+  }
+}
