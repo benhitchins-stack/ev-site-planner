@@ -320,7 +320,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .side .tab button{flex:1;padding:11px;font-size:12px;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;}
 .side .tab button.on{color:var(--ink);border-bottom-color:var(--accent);border-bottom-width:3px;}
 
-.sidetoggle{display:none;}
+.sidetoggle{display:flex;}
 .mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:19;display:none;}
 
 /* ── LARGE DESKTOP (≥1440px): wider panel + rail ── */
@@ -829,9 +829,10 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
         <button class="emi" id="btnHandover" title="Per-charger commissioning record & customer handover certificate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M9 14l2 2 4-5"/></svg><span>Handover certificate<small>Commissioning record · signatures</small></span></button>
       </div>
     </div>
-    <button class="hbtn sidetoggle" id="btnSide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <button class="hbtn sidetoggle" id="btnSide" title="Show or hide the project panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
   </div>
 </header>
+<nav class="stagebar" id="stagebar" aria-label="Project stages"></nav>
 
 <div class="main" id="root">
  <div class="workarea">
@@ -1016,6 +1017,63 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
 .snav button:not(.on):hover{background:var(--panel2);border-color:var(--line);}
 .snav .sdot{position:absolute;top:4px;right:6px;width:6px;height:6px;border-radius:50%;box-shadow:0 0 0 2px var(--panel);}
 .snav button.on .sdot{box-shadow:0 0 0 2px var(--accent);}
+/* ---- project stage navigation ---- */
+.stagebar{display:flex;align-items:center;gap:2px;flex:none;padding:5px calc(14px + env(safe-area-inset-right,0px)) 5px calc(14px + env(safe-area-inset-left,0px));background:#FFFFFF;border-bottom:1px solid var(--line);overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:38;}
+.stagebar::-webkit-scrollbar{display:none;}
+.stgbtn{display:flex;align-items:center;gap:7px;flex:none;padding:5px 11px;min-height:31px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--dim);font-size:12px;font-weight:650;white-space:nowrap;cursor:pointer;transition:background .12s,border-color .12s;}
+.stgbtn:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.stgbtn.on{background:rgba(30,107,255,.10);border-color:rgba(30,107,255,.32);color:var(--accentText);}
+.stgbtn>svg{width:14px;height:14px;flex:none;}
+.stgdot{width:9px;height:9px;border-radius:50%;flex:none;background:transparent;border:1.6px solid #B9C2CA;box-sizing:border-box;}
+.stgdot.prog{background:var(--accent);border-color:var(--accent);}
+.stgdot.ready{background:#fff;border-color:#3B8557;border-width:2.6px;}
+.stgdot.done{background:#267A43;border-color:#267A43;}
+.stgdot.block{background:var(--warn);border-color:var(--warn);}
+.stgn{flex:none;font-size:10px;font-weight:750;line-height:1;padding:3px 6px;border-radius:9px;background:#FBF3DC;color:#7A5A10;border:1px solid #E8D9A8;}
+.stgbtn.blk .stgn{background:#FBE4E2;color:#A32820;border-color:#F0BDB8;}
+.stgsep{flex:none;width:12px;height:12px;color:var(--line2);}
+@media (hover:hover){ .stgbtn:not(.on):hover{background:var(--panel);color:var(--ink);} }
+@media (pointer:coarse){ .stgbtn{min-height:40px;padding:6px 12px;} }
+@media (max-width:700px){ .stagebar{padding:4px 8px;} .stgbtn{padding:5px 8px;font-size:11.5px;gap:6px;} .stgsep{display:none;} }
+@media (min-width:960px){ .side.hidedesk{display:none;} }
+/* ---- stage header + overview ---- */
+.stghead{display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;}
+.stghead .sh-top{display:flex;align-items:center;gap:8px;}
+.stghead .sh-top b{font-family:var(--font-display);font-size:14px;letter-spacing:-.01em;color:var(--ink);flex:1;min-width:0;}
+.stghead .sh-why{font-size:11px;color:var(--dim);line-height:1.5;}
+.stghead .sh-link{font-size:11px;font-weight:700;color:var(--accentText);cursor:pointer;background:none;border:none;padding:0;text-align:left;align-self:flex-start;}
+.stghead .sh-link:hover{text-decoration:underline;}
+.stchip{flex:none;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:10px;background:#EDF1F4;color:#5C6770;}
+.stchip.prog{background:rgba(30,107,255,.12);color:var(--accentText);}
+.stchip.ready{background:#E7F3EB;color:#1E6A39;}
+.stchip.done{background:#267A43;color:#fff;}
+.stchip.block{background:#FBE4E2;color:#A32820;}
+.ovnext{border:1px solid rgba(30,107,255,.36);background:rgba(30,107,255,.06);border-radius:12px;padding:12px;margin-bottom:10px;}
+.ovnext .nx-kick{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accentText);margin-bottom:5px;display:flex;align-items:center;gap:7px;}
+.ovnext .nx-t{display:block;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:3px;}
+.ovnext .nx-d{font-size:12px;color:var(--dim);line-height:1.5;margin-bottom:10px;}
+.ovnext .nx-row{display:flex;gap:8px;align-items:center;}
+.ovnext .nx-go{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:8px 14px;border-radius:9px;background:var(--accent);color:var(--accentInk);font-size:13px;font-weight:650;border:1px solid var(--accent);cursor:pointer;}
+.ovnext .nx-go:hover{background:var(--green2);border-color:var(--green2);}
+.ovnext .nx-stage{flex:none;font-size:10px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);}
+.ovrow{display:flex;gap:9px;align-items:flex-start;padding:7px 8px;margin:0 -8px;border-radius:9px;cursor:pointer;width:calc(100% + 16px);text-align:left;background:none;border:none;font:inherit;}
+.ovrow:hover{background:var(--panel);}
+.ovrow:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.ovrow .sevdot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:4px;}
+.ovrow .ov-tx{flex:1;min-width:0;}
+.ovrow .ov-tx b{font-size:12.5px;font-weight:650;color:var(--ink);display:block;line-height:1.35;}
+.ovrow .ov-tx em{font-style:normal;font-size:11px;color:var(--dim);line-height:1.45;display:block;}
+.ovrow .ov-r{margin-left:auto;flex:none;display:flex;align-items:center;gap:6px;padding-top:2px;}
+.ovrow .ov-st{font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);}
+.ovkv{display:grid;grid-template-columns:106px 1fr;gap:4px 10px;font-size:12px;margin:0;}
+.ovkv dt{color:var(--faint);font-weight:600;font-size:11px;padding-top:1px;}
+.ovkv dd{color:var(--ink);font-weight:550;min-width:0;overflow-wrap:anywhere;margin:0;}
+.ovkv dd.na{color:var(--faint);font-weight:500;}
+.ovkv dd .kv-act{font-size:11px;font-weight:700;color:var(--accentText);cursor:pointer;background:none;border:none;padding:0;}
+.ovkv dd .kv-act:hover{text-decoration:underline;}
+.flashcard{animation:cardflash 1.6s ease;}
+@keyframes cardflash{0%{box-shadow:0 0 0 3px rgba(30,107,255,.55);}100%{box-shadow:0 0 0 3px rgba(30,107,255,0);}}
+@media (prefers-reduced-motion:reduce){ .flashcard{animation:none;} }
 </style>
 
 <div class="walk" id="walkRoot" role="dialog" aria-modal="true"></div>
@@ -8178,7 +8236,7 @@ function autosaveNow(){
     else if(pack.projId) refreshProjIndexMeta();
   }catch(_){ }
 }
-function autosave(){ clearTimeout(saveT); saveT=setTimeout(()=>{ saveT=null; autosaveNow(); }, 700); }
+function autosave(){ try{ evalMarkDirty(); }catch(_){ } clearTimeout(saveT); saveT=setTimeout(()=>{ saveT=null; autosaveNow(); try{ syncStageBar(); }catch(_){ } }, 700); }
 function clearAutosave(){ try{ localStorage.removeItem(LS_KEY); }catch(_){} idbDel("autosave").catch(()=>{}); }
 /* flush a pending autosave the moment the tab is backgrounded or closed */
 function flushAutosave(){ if(saveT){ clearTimeout(saveT); saveT=null; autosaveNow(); } }
@@ -8570,13 +8628,15 @@ document.getElementById("zfit").onclick=()=>{ fitView(); draw(); };
 /* ============================================================ SIDE PANEL ============================================================ */
 document.querySelectorAll(".tab button").forEach(b=>b.onclick=()=>{ sideTab=b.dataset.tab; setSideTab(); });
 function setSideTab(){ document.querySelectorAll(".tab button").forEach(b=>b.classList.toggle("on",b.dataset.tab===sideTab)); renderSide(); }
-let packSec=(function(){ try{ return localStorage.getItem("evsp_packsec")||"capture"; }catch(_){ return "capture"; } })();
+/* pack panel stage: legacy section keys map onto the project stages introduced by the 2026 restructure */
+let packSec=(function(){ try{ const v=localStorage.getItem("evsp_packsec")||"survey"; const mig={capture:"survey",job:"survey",status:"verify",checks:"install",pricing:"price",output:"design"}; return mig[v]||v; }catch(_){ return "survey"; } })();
 function renderSide(){
   const el=document.getElementById("sideScroll");
   if(sideTab==="pack") el.innerHTML=packPanel();
   else el.innerHTML=propsPanel();
   wireSide();
   syncPdfGate();
+  syncStageBar();
 }
 function packPanel(){
   let photos = pack.photos.map((p,i)=>{
@@ -8669,9 +8729,9 @@ function packPanel(){
       <div class="sub" style="color:var(--faint);font-size:11px;margin-top:6px">3D models render live from the showroom engine for chargers, vehicles, feeder pillars and site kit (substations, street cabinets, signs, lamp columns, bollards), each angled per item in its Selected panel. Overhead (plan) symbols stay 2D. Needs a connection the first time.</div>
     <div class="sub" style="color:var(--faint);font-size:11px;margin-top:8px">Pack-wide design &amp; colour for every charger. Override an individual charger in its Selected panel.</div>
   </div>`;
-  const secJob=`
+  const cardSite=`
   <div class="card">
-    <h3><span class="dot"></span>Site</h3>
+    <h3><span class="dot"></span>Site &amp; client</h3>
     <div class="prop">
       <label>Site name</label>
       <input id="pkSiteName" value="${esc(pack.name)}" placeholder="e.g. Harbour Retail Park" autocomplete="off">
@@ -8680,10 +8740,12 @@ function packPanel(){
       <div class="pcsug" id="pkSug"></div>
       <label>Address</label>
       <textarea id="pkAddr" rows="2" placeholder="Street &amp; town (picking a postcode fills the area in)">${esc(pack.address)}</textarea>
+      <label>Client / customer <em style="font-style:normal;color:var(--faint)">&middot; optional</em></label>
+      <input id="pkClient" value="${esc(pack.custName||'')}" placeholder="${pack.mode==='domestic'?'e.g. homeowner name':'e.g. client or FM contact'}" autocomplete="off">
       <div class="sub" style="color:var(--faint);font-size:11px">Shows in the title block and on every export. Postcode lookup needs an internet connection.</div>
     </div>
-  </div>
-
+  </div>`;
+  const cardJob=`
   <div class="card">
     <h3><span class="dot"></span>Job details</h3>
     <div class="prop">
@@ -8706,16 +8768,14 @@ function packPanel(){
       <label>Notes</label>
       <textarea id="packNotes" placeholder="Access, parking, DNO notes, connection method, RCD checks, materials: anything the installer or office should know…">${esc(pack.notes)}</textarea>
     </div>
-  </div>
-  ${cardAppearance}`;
-  const secStatus=`
+  </div>`;
+  const cardTotals=`
   <div class="card stdpack">
     <h3><span class="dot"></span>Markup totals</h3>
     ${(()=>{ const units=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="unit")); const byKind={}; units.forEach(u=>{ const key=unitDisplayName(u)+" · "+(u.kw||"7")+" kW"+(u.provision==="passive"?" · passive":""); byKind[key]=(byKind[key]||0)+1; }); const sockets=units.reduce((s,u)=>s+((u.variant==="twin_ped"||u.variant==="solo_dfsm"||u.variant==="dc_rapid")?2:1),0); const arrays=[...new Set(units.filter(u=>u.array).map(u=>u.array))].sort(); const bays=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="bay")).length; const sum=k=>pack.photos.flatMap(p=>p.items.filter(i=>i.type==="route"&&i.kind===k).map(i=>routeLen(i,p)||0)).reduce((s,v)=>s+v,0); const lens=[["tray","Cable tray"],["mt2","Trunking"],["basket","Basket"],["trench","Trench"],["swa","SWA"],["hituff","Hi-Tuff"],["run","Cable run"],["duct","Buried duct"],["data","Data / comms"],["tails","Meter tails"],["earthcable","Earth cable"]].map(([k,n])=>[n,sum(k)]).filter(([n,v])=>v>0); return (units.length?Object.entries(byKind).map(([nm,n])=>`<div class="stdrow"><span class="sw" style="background:var(--earth)"></span><span class="nm">${nm}</span><b>${n}</b></div>`).join("")+`<div class="stdrow"><span class="sw" style="background:var(--accent)"></span><span class="nm">Sockets total</span><b>${sockets}</b></div>`+(arrays.length?`<div class="stdrow"><span class="sw" style="background:#38bdf8"></span><span class="nm">DLM groups <em>(${arrays.map(a=>{const n=units.filter(u=>u.array===a).length;return a+" × "+n;}).join(" · ")})</em></span><b>${arrays.length}</b></div>`:'')+(bays?`<div class="stdrow"><span class="sw" style="background:#4CAF50"></span><span class="nm">EV bays marked</span><b>${bays}</b></div>`:'')+lens.map(([n,v])=>`<div class="stdrow"><span class="sw" style="background:#9AA7B4"></span><span class="nm">${n}</span><b>${v} m</b></div>`).join(""):'<div style="color:var(--faint);font-size:12px">Place chargers on the photos and the project totals build up here.</div>'); })()}
     <p class="stdnote">Live totals from the markup across all photos. Set run lengths on each route so totals are counted.</p>
-  </div>
-
-  ${(()=>{ const lc=loadCheck(); if(!lc.units) return ''; return `<div class="card tally">
+  </div>`;
+  const cardLoad=`${(()=>{ const lc=loadCheck(); if(!lc.units) return ''; return `<div class="card tally">
     <h3><span class="dot" style="background:${lc.col}"></span>Supply load check${hintBtn('load')}</h3>${hintBox('load')}
     <div class="lab"><span>Connected charger load <em style="font-style:normal;color:var(--faint)">(full rate per socket · DLM groups at their limit)</em></span><b>${lc.a1?lc.a1+' A':''}${lc.a1&&lc.a3?' + ':''}${lc.a3?lc.a3+' A/ph':''}${(!lc.a1&&!lc.a3)?'-':''}</b></div>
     <div class="bar"><div class="fill" style="width:${lc.pct}%;background:${lc.col}"></div></div>
@@ -8723,24 +8783,18 @@ function packPanel(){
     <div class="sub" style="color:var(--dim);font-size:11px;line-height:1.45;margin-top:5px">${lc.msg}</div>
     ${(lc.cap&&lc.tot>lc.cap&&pack.mode!=="domestic")?`<button class="pbtn" id="fixArray" style="margin-top:8px;width:100%">⚡ Tag all AC chargers → DLM group A</button>`:''}
     <button class="pbtn" id="openSim" style="margin-top:8px;width:100%">Charging-day simulator</button>
-  </div>`; })()}
-
-  ${(()=>{ const rows=cableCheckData(); if(!rows.length) return ''; const n=s=>rows.filter(r=>r.st===s).length; const fail=n("fail"), warn=n("warn"), nolen=n("nolen"), tbc=n("tbc"), ok=n("ok"); const col=fail?"var(--warn)":(warn||nolen||tbc)?"#CE9E2E":"#4BA069"; const bits=[]; if(ok)bits.push(ok+" pass"); if(warn)bits.push(warn+" near limit"); if(fail)bits.push(fail+" failing"); if(nolen)bits.push(nolen+" incomplete"); if(tbc)bits.push(tbc+" type TBC"); return `<div class="card tally">
+  </div>`; })()}`;
+  const cardCables=`${(()=>{ const rows=cableCheckData(); if(!rows.length) return ''; const n=s=>rows.filter(r=>r.st===s).length; const fail=n("fail"), warn=n("warn"), nolen=n("nolen"), tbc=n("tbc"), ok=n("ok"); const col=fail?"var(--warn)":(warn||nolen||tbc)?"#CE9E2E":"#4BA069"; const bits=[]; if(ok)bits.push(ok+" pass"); if(warn)bits.push(warn+" near limit"); if(fail)bits.push(fail+" failing"); if(nolen)bits.push(nolen+" incomplete"); if(tbc)bits.push(tbc+" type TBC"); return `<div class="card tally">
     <h3><span class="dot" style="background:${col}"></span>Cable calculations · ${rows.length} run${rows.length===1?'':'s'}${hintBtn('vd')}</h3>${hintBox('vd')}
     <div class="sub" style="color:${fail?'var(--warn)':'var(--dim)'};font-size:11.5px;line-height:1.5;font-weight:${fail?'700':'500'}">${bits.join(' · ')}${fail?'. Open the calculator and clear the failing checks before ordering cable.':(warn?'. Worth a look at the near-limit runs.':(ok&&!nolen&&!tbc?'. Every sized run passes capacity, volt drop, Zs and CPC checks.':''))}</div>
     <button class="pbtn" id="openCableCheck" style="margin-top:8px;width:100%">Open cable calculations</button>
   </div>`; })()}`;
-  const secChecks=`
-  ${pack.photos.length?(()=>{ const r=readiness(); const col=r.pct>=100?"#4BA069":(r.pct>=60?"#CE9E2E":"#8A98A8"); return `<div class="card tally">
+  const cardReadiness=`${pack.photos.length?(()=>{ const r=readiness(); const col=r.pct>=100?"#4BA069":(r.pct>=60?"#CE9E2E":"#8A98A8"); return `<div class="card tally">
     <h3><span class="dot" style="background:${col}"></span>Site readiness · ${r.pct}%${hintBtn('ready')}</h3>${hintBox('ready')}
     <div class="bar"><div class="fill" style="width:${Math.max(4,r.pct)}%;background:${col}"></div></div>
     ${r.pct<100?`<div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">${r.checks.filter(cc=>!cc[1]).slice(0,5).map(cc=>`<div style="font-size:11.5px;color:var(--dim)">○ ${cc[0]}</div>`).join("")}</div>`:`<div class="sub" style="color:var(--ok);font-size:11.5px;font-weight:650;margin-top:6px">Pack complete and ready to export.</div>`}
-  </div>`; })():''}
-
-
-
-  ${''/* punch list & snags render after the compliance card */}
-
+  </div>`; })():''}`;
+  const cardCompliance=`
   <div class="card">
     <h3><span class="dot"></span>Compliance &amp; progress${hintBtn('comp')}</h3>${hintBox('comp')}
     <div class="prop">
@@ -8760,17 +8814,15 @@ function packPanel(){
         </span></div>${compHintBox(n)}${compDetail(n)}`; }).join("")}</div>
       <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;line-height:1.4">Tap <b>?</b> on a row for the full requirement and its guide. Prints as a status page in the engineer PDF; N/A items drop out of the total.</div>
     </div>
-  </div>
-
-  ${(()=>{ const tasks=punchTasks(); if(!tasks.length) return ''; const dn=tasks.filter(t=>t.done).length; return `<div class="card">
+  </div>`;
+  const cardPunch=`${(()=>{ const tasks=punchTasks(); if(!tasks.length) return ''; const dn=tasks.filter(t=>t.done).length; return `<div class="card">
     <h3><span class="dot" style="background:${dn===tasks.length?'#4BA069':'var(--accent)'}"></span>Punch list · ${dn}/${tasks.length}</h3>
     <div class="prop">
       <div class="needs">${tasks.map(t=>`<label class="needrow"><input type="checkbox" data-punch="${t.id}" ${t.done?'checked':''}><span><b>${esc(t.name)}</b><em>${esc(t.photo)}</em></span></label>`).join("")}</div>
       <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;line-height:1.4">Callout stamps, drill points, chambers &amp; text notes become install-day tasks. They print as a commissioning checklist in the engineer PDF.</div>
     </div>
-  </div>`; })()}
-
-  ${(()=>{ const sl=snagList(); if(!sl.length) return ''; syncSnagSign(); const st=snagStats(); const dom=pack.mode==="domestic"; const signed=snagSignedOff(); const col=st.open?(st.safety?SNAG_SEVS.safety.color:'#D9A21B'):'var(--ok)'; return `<div class="card">
+  </div>`; })()}`;
+  const cardSnags=`${(()=>{ const sl=snagList(); if(!sl.length) return ''; syncSnagSign(); const st=snagStats(); const dom=pack.mode==="domestic"; const signed=snagSignedOff(); const col=st.open?(st.safety?SNAG_SEVS.safety.color:'#D9A21B'):'var(--ok)'; return `<div class="card">
     <h3><span class="dot" style="background:${col}"></span>Snags \u00b7 ${st.open?st.open+' open':(signed?'signed off':'all fixed')}${hintBtn('snags')}</h3>${hintBox('snags')}
     <div class="prop">
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;font-size:10.5px;font-weight:650;color:var(--faint)">
@@ -8789,9 +8841,8 @@ function packPanel(){
       ${signed?`<div class="sub" style="color:var(--ok);font-size:11.5px;font-weight:650;margin-top:6px">All ${st.total} snag${st.total===1?'':'s'} closed out \u00b7 signed off ${esc((pack.snagSign||{}).date||'')}.</div>`:''}
       <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;line-height:1.4;margin-top:8px">Tap a row to jump to its pin on the photo. Prints as a numbered <b>snag &amp; rectification list</b> with sign-off in the engineer PDF and web pack.</div>
     </div>
-  </div>`; })()}
-
-  ${(()=>{ const cus=commUnits(); if(!cus.length) return ''; const cs=commStats(); const c=commRoot(); const ccol=cs.complete?'var(--ok)':(cs.started?'var(--accent)':'#8A98A8');
+  </div>`; })()}`;
+  const cardCommissioning=`${(()=>{ const cus=commUnits(); if(!cus.length) return ''; const cs=commStats(); const c=commRoot(); const ccol=cs.complete?'var(--ok)':(cs.started?'var(--accent)':'#8A98A8');
     return `<div class="card">
     <h3><span class="dot" style="background:${ccol}"></span>Commissioning &amp; handover · ${cs.done}/${cs.total}</h3>
     <div class="prop">
@@ -8824,9 +8875,8 @@ function packPanel(){
       <button class="addbtn" id="btnHandover2" style="margin-top:8px">Handover certificate (PDF)</button>
       <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;line-height:1.4;margin-top:8px">A per-charger commissioning record and handover certificate. It sits alongside the EIC from your certification software; it does not replace it.</div>
     </div>
-  </div>`; })()}
-
-  ${roleShow('outcome')?`<div class="card">
+  </div>`; })()}`;
+  const cardOutcome=`${roleShow('outcome')?`<div class="card">
     <h3><span class="dot"></span>Install review</h3>
     <div class="prop">
       <label>Outcome</label>
@@ -8853,7 +8903,7 @@ function packPanel(){
       <div class="needs"><label class="needrow"><input type="checkbox" id="readyProceed" ${pack.readyToProceed?'checked':''}><span><b>Blocker resolved, ready to install</b><em>Optional flag for your own tracking once the quote's paid, info's in, DNO's approved or permission's granted.</em></span></label></div>`:''}
     </div>
   </div>`:''}`;
-  const secPricing=`
+  const cardBudget=`
   <div class="card stdpack">
     <h3><span class="dot"></span>Rates &amp; budget${hintBtn('budget')}</h3>${hintBox('budget')}
     ${(()=>{ const lines=budgetLines(); const priced=lines.filter(l=>l.total!=null); const tot=priced.reduce((s,l)=>s+l.total,0);
@@ -8862,15 +8912,12 @@ function packPanel(){
     })()}
     <button class="addbtn" id="editRates" style="margin-top:8px">${pack._ratesOpen?'Done':'Edit rates'}</button>
     ${pack._ratesOpen?`<div class="prop" style="margin-top:8px">${RATE_DEFS.map(d=>`<label>${d.label} <em style="font-style:normal;color:var(--faint)">£ / ${d.unit}</em></label><input data-rate="${d.k}" inputmode="decimal" value="${esc((pack.rates||{})[d.k]||'')}" placeholder="-">`).join("")}<div class="sub" style="color:var(--faint);font-size:11px">Rates are remembered on this device and travel with saved projects. Lines without a rate show quantity only.</div></div>`:''}
-    <button class="addbtn" id="openBom" style="margin-top:8px" title="Copy, CSV or email the materials for this plan">Materials list · wholesaler-ready</button>
     <button class="addbtn" id="mkQuote" style="margin-top:8px" title="Opens Quotes & invoices with this plan's quantities and rates">Quotes &amp; invoices: price this plan</button>
-    <button class="addbtn" id="mkSupport" style="margin-top:8px" title="Send this plan to Project Support: bespoke-quoted project management for workplace charging">Project Support: workplace PM quote</button>
-    <button class="addbtn" id="mkRams" style="margin-top:8px" title="Draft a site-specific RAMS from this plan's hazards, quantities and method sequence">RAMS: draft risk assessment &amp; method statement</button>
     ${(()=>{ const qd=quoteDrift(); if(!qd) return ''; return qd.n>0
       ?`<div style="margin-top:8px;font-size:11.5px;line-height:1.45;color:#7A5A10;background:#FBF3DC;border:1px solid #E8D9A8;border-radius:8px;padding:7px 9px"><b>${esc(qd.number)}</b>${qd.status?' ('+esc(qd.status)+')':''}: <b>${qd.n} line${qd.n===1?'':'s'}</b> changed on this plan since the quote was drafted. Open Quotes &amp; invoices → Re-sync to update it.</div>`
       :`<div style="margin-top:8px;font-size:11.5px;color:var(--ok);font-weight:650">\u2713 ${esc(qd.number)} matches this plan.</div>`; })()}
-  </div>
-
+  </div>`;
+  const cardDocs=`
   <div class="card">
     <h3><span class="dot"></span>Project pack &middot; documents${hintBtn('photos')}</h3>${hintBox('photos')}
     ${(pack.attachments&&pack.attachments.length)?`<div class="thumbs">${pack.attachments.map(a=>`
@@ -8884,7 +8931,7 @@ function packPanel(){
       </div>`).join('')}</div>`:`<div style="color:var(--faint);font-size:12px">Attach EICs, EICRs, board schedules, quotes, RAMS&hellip; They save inside the project file and travel with the pack.</div>`}
     <button class="addbtn" id="addAttach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add documents</button>
   </div>`;
-  const secOutput=`
+  const cardDisplay=`
   <div class="card">
     <h3><span class="dot"></span>Display</h3>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
@@ -8900,8 +8947,8 @@ function packPanel(){
     ${pack.showLegend!==false?`<label style="font-size:11px;color:var(--dim);font-weight:550;display:block;margin:2px 0 6px">Legend position</label>
     <div class="seg" style="margin-bottom:8px">${[["bl","Btm L"],["br","Btm R"],["tl","Top L"],["tr","Top R"]].map(([v,t])=>`<button data-legpos="${v}" class="${(pack.legendPos||'bl')===v?'on':''}">${t}</button>`).join("")}</div>`:''}
     <div class="sub" style="color:var(--faint);font-size:11px">Legend &amp; plan title print onto PNG/PDF exports. Toggle off for a cleaner client view.</div>
-  </div>
-
+  </div>`;
+  const cardLegend=`
   <div class="card">
     <h3 data-legtoggle="1" title="${legendOpen?'Hide':'Show'} the symbol key" style="cursor:pointer;user-select:none;margin-bottom:${legendOpen?'10px':'0'}">
       <span class="dot"></span>Legend
@@ -8960,8 +9007,8 @@ function packPanel(){
       h+='</div><div class="sub" style="color:var(--faint);font-size:11px;margin-top:9px">Counts show items placed across every plan in this pack. Exports print a legend listing only what appears on each plan.</div>';
       return h;
     })()}
-  </div>
-
+  </div>`;
+  const cardBranding=`
   <div class="card">
     <h3><span class="dot"></span>Branding</h3>
     <div class="prop">
@@ -8980,16 +9027,341 @@ function packPanel(){
       <div class="sub" style="color:var(--faint);font-size:11px">Used in the header and on PDF covers &amp; footers. Remembered as the default on this device.</div>
     </div>
   </div>`;
-  /* --- section tabs: one slice of the pack panel at a time --- */
-  let statusDot="", checksDot="";
-  try{ const lc=loadCheck(); const cf=cableCheckData().some(r=>r.st==="fail"); if(cf||(lc.units&&lc.cap&&lc.tot>lc.cap)) statusDot="var(--warn)"; }catch(_){ }
-  try{ const st=snagStats(), pr=compProgress(); if(st.safety) checksDot="var(--warn)"; else if(st.open||pr.out) checksDot="#D9A21B"; }catch(_){ }
-  const SEC_TIPS={capture:"Survey photos, services overlay & guided survey",job:"Site, job details, charger appearance & notes",status:"Markup totals, load check & cable calcs",checks:"Readiness, compliance, snags, commissioning & review",pricing:"Rates, budget, quotes & documents",output:"Display, legend & branding"};
-  const SECS=[["capture","Photos",secCapture,""],["job","Job",secJob,""],["status","Status",secStatus,statusDot],["checks","Checks",secChecks,checksDot],["pricing","Pricing",secPricing,""],["output","Output",secOutput,""]];
-  if(!SECS.some(s=>s[0]===packSec)) packSec="capture";
-  const nav=`<div class="snav">`+SECS.map(([k,t,,d])=>`<button type="button" data-psec="${k}" class="${packSec===k?'on':''}" title="${SEC_TIPS[k]}">${t}${d?`<span class="sdot" style="background:${d}"></span>`:''}</button>`).join("")+`</div>`;
-  return nav + SECS.find(s=>s[0]===packSec)[2];
+  /* --- project stages: the existing cards regrouped into the project journey --- */
+  const cardPlanActions=`
+  <div class="card">
+    <h3><span class="dot"></span>Programme &amp; applications</h3>
+    <button class="addbtn" data-ovact="fn:programme" style="margin-top:0" title="Phase-by-phase timeline suggested from the marked-up quantities">Job programme &middot; phase timeline</button>
+    <button class="addbtn" data-ovact="fn:dno" style="margin-top:6px" title="Compile the connection-application data your DNO asks for">DNO application data</button>
+    <button class="addbtn" id="openBom" style="margin-top:6px" title="Copy, CSV or email the materials for this plan">Materials list &middot; wholesaler-ready</button>
+    <button class="addbtn" id="mkRams" style="margin-top:6px" title="Draft a site-specific RAMS from this plan's hazards, quantities and method sequence">RAMS: draft risk assessment &amp; method statement</button>
+    ${pack.mode==="domestic"?'':`<button class="addbtn" id="mkSupport" style="margin-top:6px" title="Send this plan to Project Support: bespoke-quoted project management for workplace charging">Project Support: workplace PM quote</button>`}
+    <div class="sub" style="color:var(--faint);font-size:11px;margin-top:8px">The programme, DNO data and materials list are compiled live from this pack's markup.</div>
+  </div>`;
+  const emptyCard=(t,d,act,lbl)=>`<div class="card"><h3><span class="dot" style="background:#8A98A8"></span>${t}</h3><div style="font-size:12px;color:var(--dim);line-height:1.55;margin-bottom:${act?'10px':'0'}">${d}</div>${act?`<button class="pbtn go" data-ovact="${act}" style="width:100%">${lbl}</button>`:''}</div>`;
+  const ev=evalProject();
+  const STAGE_BODY={
+    overview: overviewBody(ev),
+    survey: secCapture+cardSite+cardJob,
+    design: cardTotals+cardAppearance+cardDisplay+cardLegend,
+    verify: ((cardLoad||cardCables)?cardLoad+cardCables:emptyCard("Electrical checks","No checks to run yet. Place a charger and draw its supply route on the plan; the load check and cable calculations then run automatically.","stage:design","Open the Design stage"))+cardReadiness,
+    price: cardBudget+cardBranding,
+    plan: cardCompliance+cardPlanActions+cardDocs,
+    install: cardPunch+cardSnags+((cardPunch||cardSnags)?'':emptyCard("Snagging","No snags recorded yet. Pin snags on the photos with the snag tool; each pin tracks severity, owner and before and after evidence.","fn:snagtool","Pick up the snag tool"))+cardOutcome,
+    handover: cardCommissioning||emptyCard("Commissioning &amp; handover","Commissioning records unlock once at least one active charger is placed on a plan. Each charger gets its serial, test results and sign-off, and they feed the handover certificate.","stage:design","Open the Design stage")
+  };
+  if(!(packSec in STAGE_BODY)) packSec=(pack.photos.length||pack.name)?"overview":"survey";
+  return stageHeadHtml(packSec,ev)+STAGE_BODY[packSec];
 }
+
+/* ============================================================ PROJECT STAGES - status engine, overview & navigation ============================================================ */
+const STAGE_ORDER=["survey","design","verify","price","plan","install","handover"];
+const STAGE_META={
+  overview:{label:"Overview",tip:"Project overview: status, next action and open issues"},
+  survey:{label:"Survey",tip:"Photos, guided survey, site, client and supply details"},
+  design:{label:"Design",tip:"Draw the layout: chargers, routes, boards and site kit"},
+  verify:{label:"Verify",tip:"Load check, cable calculations and pack readiness"},
+  price:{label:"Price",tip:"Rates, budget, quote and branding"},
+  plan:{label:"Plan",tip:"Compliance, programme, DNO, RAMS and documents"},
+  install:{label:"Install",tip:"Punch list, snags and install review"},
+  handover:{label:"Handover",tip:"Commissioning results and handover certificate"}
+};
+const STAGE_STATES={none:{label:"Not started",cls:"none"},prog:{label:"In progress",cls:"prog"},ready:{label:"Ready",cls:"ready"},done:{label:"Complete",cls:"done"},block:{label:"Blocked",cls:"block"}};
+const ISSUE_SEVS={crit:{label:"Critical",col:"#CC382E"},warn:{label:"Warning",col:"#D9A21B"},adv:{label:"Advisory",col:"#1E6BFF"},info:{label:"Information",col:"#8C97A0"}};
+let __evDirty=true, __evCache=null;
+function evalMarkDirty(){ __evDirty=true; }
+/* Deterministic project evaluation: per-stage status + why, open issues and the suggested next action.
+   Reads only existing pack data and the existing check helpers; never writes anything. */
+function evalProject(){
+  if(!__evDirty && __evCache) return __evCache;
+  const st={}, issues=[];
+  const S=(k,stt,why,count)=>{ st[k]={st:stt,why:(why||[]).filter(Boolean),count:count||0}; };
+  const I=(sev,stage,title,why,act)=>{ issues.push({sev,stage,title,why,act}); };
+  const dom=pack.mode==="domestic";
+  let units=[],actU=[],cRoutes=[],photosN=0,anyItems=false;
+  try{
+    photosN=pack.photos.length;
+    units=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="unit"));
+    actU=units.filter(u=>u.provision!=="passive");
+    anyItems=pack.photos.some(p=>p.items.length>0);
+    cRoutes=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="route"&&["swa","run","hituff","tails"].includes(i.kind)).map(i=>({len:(routeLen(i,p)||0)})));
+  }catch(_){ }
+  /* Survey */
+  try{
+    const sp=surveyProgress();
+    const miss=[];
+    if(!(pack.name||"").trim()) miss.push(["Site name","stage:survey|focus:pkSiteName","Needed for the title block, saved projects and every export."]);
+    if(!((pack.address||"").trim()||(pack.postcode||"").trim())) miss.push(["Site address","stage:survey|focus:pkAddr","Shows on exports and feeds the DNO application data."]);
+    if(!pack.earthing) miss.push(["Earthing arrangement","stage:survey|focus:earthing","Drives PEN protection, RCD selection and the Zs checks."]);
+    if(!(pack.mainFuse||"").trim()) miss.push([dom?"Main fuse rating":"Main fuse / cut-out rating","stage:survey|focus:mainFuse","The load check tests connected charger load against this rating."]);
+    if(!dom&&!(pack.supplyRating||"").trim()) miss.push(["Supply rating / headroom","stage:survey|focus:supplyRating","The load check needs the supply rating to test capacity on a commercial job."]);
+    const infoN=(pack.infoNeeds||[]).length;
+    const infoOut=(pack.outcome==="moreinfo"||pack.outcome==="permission")&&infoN>0&&!pack.readyToProceed;
+    const started=photosN>0||sp.started||!!((pack.name||"").trim()||(pack.address||"").trim()||(pack.postcode||"").trim()||pack.earthing||(pack.mainFuse||"").trim()||(pack.supplyRating||"").trim()||(pack.custName||"").trim());
+    let s="none",why=[];
+    if(infoOut){ s="block"; why=["Waiting on client information · "+infoN+" item"+(infoN===1?"":"s")+" outstanding"]; }
+    else if(!started){ why=["No site information or photos yet"]; }
+    else if(miss.length){ s="prog"; why=["Missing: "+miss.map(m=>m[0]).join(", ")]; }
+    else if(photosN===0){ s="prog"; why=["Site details recorded · no photos or plans yet"]; }
+    else if(sp.total>0&&sp.done>=sp.total){ s="done"; why=["Site details recorded and the guided survey is complete"]; }
+    else{ s="ready"; why=["Minimum survey details for a "+(dom?"domestic":"commercial")+" job are recorded"]; if(sp.started&&sp.done<sp.total) why.push("guided survey "+sp.done+" of "+sp.total+" shots"); }
+    S("survey",s,why,(started?miss.length:0)+(infoOut?infoN:0));
+    if(infoOut) I("crit","survey","Waiting on client information",infoN+" item"+(infoN===1?"":"s")+" requested from the client "+(infoN===1?"is":"are")+" still outstanding. Tick Ready to proceed in the install review once it lands.","stage:install|focus:readyProceed");
+    if(started) miss.forEach(m=>{ const cr=(m[0]==="Earthing arrangement"&&actU.length>0); I(cr?"crit":"warn","survey",m[0]+" missing",m[2],m[1]); });
+    if(started&&photosN===0) I("info","survey","No photos or plans yet","Add site photos, a PDF drawing or a starter layout; everything you mark up feeds the calcs and exports.","stage:survey|fn:addphotos");
+    if(photosN>0&&sp.started&&sp.done<sp.total) I("adv","survey","Guided survey incomplete",sp.done+" of "+sp.total+" survey shots filed. The site walk catches what a desk review misses.","stage:survey|fn:walk");
+  }catch(_){ S("survey","none",[],0); }
+  /* Design */
+  try{
+    const noLen=cRoutes.filter(r=>!(r.len>0)).length;
+    let s="none",why=[];
+    if(!photosN&&!anyItems){ why=["Nothing drawn yet"]; }
+    else if(actU.length>0&&cRoutes.some(r=>r.len>0)){ s="ready"; why=[actU.length+" active charger"+(actU.length===1?"":"s")+" placed with a measured supply route"]; }
+    else{ s="prog"; why=[!units.length?"Plan started · no chargers placed yet":(cRoutes.length?"Cable route drawn but it has no length yet":"Chargers placed · no supply route drawn yet")]; }
+    S("design",s,why,(units.length&&!cRoutes.length?1:0)+noLen);
+    if(photosN>0&&!units.length) I("info","design","No charger on the plan yet","Place a charge point from the Chargers palette; quantities, calcs and pricing all build from the markup.","stage:design");
+    if(units.length&&!cRoutes.length) I("warn","design","Charger has no cable route","Draw the supply route (SWA, cable run or tails) from the board to the charger so lengths, calcs and materials count up.","stage:design");
+    if(noLen) I("warn","design",noLen+" cable route"+(noLen===1?"":"s")+" missing a length","Set the run length on each route, or set the photo scale, so the capacity and volt-drop checks can run.","fn:cablecheck");
+  }catch(_){ S("design","none",[],0); }
+  /* Verify */
+  try{
+    const rows=cableCheckData(); const lc=loadCheck();
+    const n=x=>rows.filter(r=>r.st===x).length;
+    const fail=n("fail"),nolen=n("nolen"),tbc=n("tbc"),warn=n("warn");
+    const over=!!(lc.units&&lc.cap&&lc.tot>lc.cap);
+    const needEarth=actU.length>0&&!pack.earthing;
+    let s="none",why=[];
+    if(!lc.units&&!rows.length){ why=["No chargers or sized runs to check yet"]; }
+    else if(fail||over||needEarth){ s="block"; if(fail) why.push(fail+" cable run"+(fail===1?"":"s")+" failing the BS 7671 checks"); if(over) why.push("connected load exceeds the supply rating"); if(needEarth) why.push("earthing arrangement not confirmed"); }
+    else if(nolen||tbc){ s="prog"; if(nolen) why.push(nolen+" run"+(nolen===1?"":"s")+" without a length"); if(tbc) why.push(tbc+" cable type"+(tbc===1?"":"s")+" to confirm"); }
+    else{ s="ready"; why=["Load check and every sized run pass"+(warn?" · "+warn+" near a limit, worth a look":"")]; }
+    S("verify",s,why,fail+nolen+tbc+(over?1:0)+(needEarth?1:0));
+    if(fail) I("crit","verify",fail+" cable run"+(fail===1?"":"s")+" failing the checks","Capacity, volt drop, Zs or CPC is failing. Open the calculator and clear the failing checks before ordering cable.","fn:cablecheck");
+    if(over) I("crit","verify","Connected load over the supply rating","The connected charger load exceeds the supply. Group chargers under load management or review charger count and power.","stage:verify|flash:openSim");
+    if(tbc) I("adv","verify",tbc+" cable type"+(tbc===1?"":"s")+" to confirm","Pick the cable family and size on each run so the checks can complete.","fn:cablecheck");
+    if(lc.units&&!lc.cap) I("adv","verify","Load check has no supply rating to test against","Set the main fuse"+(dom?"":" and supply rating")+" in the Survey stage to give the load check a capacity.","stage:survey|focus:mainFuse");
+  }catch(_){ S("verify","none",[],0); }
+  /* Price */
+  try{
+    const bl=budgetLines(); let qd=null; try{ qd=quoteDrift(); }catch(_){ }
+    const qn=qd?esc(qd.number||"Quote"):"";
+    let s="none",why=[];
+    if(!bl.length&&!qd){ why=["No priced quantities yet · they build from the markup"]; }
+    else if(qd&&/accepted|paid/i.test(qd.status||"")){ s="done"; why=["Quote "+qn+" "+esc(String(qd.status||"").toLowerCase())]; }
+    else if(qd&&qd.n===0){ s="ready"; why=["Quote "+qn+" matches this plan"+(qd.status?" · "+esc(qd.status):"")]; }
+    else if(qd){ s="prog"; why=["Quote "+qn+" is "+qd.n+" line"+(qd.n===1?"":"s")+" out of step with this plan"]; }
+    else{ s="prog"; why=["Quantities are priced up · no quote linked yet"]; }
+    S("price",s,why,qd?qd.n:0);
+    if(bl.length&&!qd) I("adv","price","No quote linked to this plan","Send the marked-up quantities to Quotes and invoices to price the job and track it to payment.","stage:price|flash:mkQuote");
+    if(qd&&qd.n>0) I("warn","price","Quote out of step with the plan",qd.n+" line"+(qd.n===1?"":"s")+" changed since "+qn+" was drafted. Open Quotes and invoices and re-sync it.","fn:quotes");
+  }catch(_){ S("price","none",[],0); }
+  /* Plan */
+  try{
+    const pr=compProgress();
+    const progOn=!!(pack.programme&&pack.programme.start);
+    const attN=(pack.attachments||[]).length;
+    const waiting=(pack.outcome==="dno"||pack.outcome==="permission")&&!pack.readyToProceed;
+    let s="none",why=[];
+    if(waiting){ s="block"; why=[pack.outcome==="dno"?("Waiting on the DNO"+(pack.dnoRef?" · ref "+esc(pack.dnoRef):"")):"Waiting on permission (landlord, freeholder or planning)"]; }
+    else if(!pr.done&&!progOn&&!attN&&!pack.dnoRef){ why=["No compliance items, programme or documents recorded yet"]; }
+    else if(pr.applicable>0&&pr.out===0){ s="done"; why=["All "+pr.applicable+" applicable compliance items are closed"]; }
+    else{ s="prog"; why=[pr.out?(pr.out+" compliance item"+(pr.out===1?"":"s")+" outstanding"):"Programme and documents in hand"]; }
+    const planStarted=pr.done>0||progOn||attN>0||!!pack.dnoRef;
+    S("plan",s,why,(planStarted?pr.out:0)+(waiting?1:0));
+    if(planStarted&&pr.out>0) I("adv","plan",pr.out+" compliance item"+(pr.out===1?"":"s")+" outstanding","Work the list down or mark items not required; it prints as a status page in the engineer PDF.","stage:plan");
+    if(waiting) I("info","plan",pack.outcome==="dno"?"Waiting on DNO approval":"Waiting on permission","Recorded from the install review. Tick Ready to proceed once approval lands.","stage:install|focus:readyProceed");
+  }catch(_){ S("plan","none",[],0); }
+  /* Install */
+  try{
+    const sg=snagStats(); const tasks=punchTasks(); const openP=tasks.filter(t=>!t.done).length;
+    const signed=snagSignedOff();
+    let s="none",why=[];
+    if(sg.safety){ s="block"; why=[sg.safety+" safety snag"+(sg.safety===1?"":"s")+" open"]; }
+    else if(!sg.total&&!tasks.length&&!pack.outcome){ why=["No install tasks, snags or install review yet"]; }
+    else if(sg.total&&signed&&!openP){ s="done"; why=["All snags closed and signed off"+((pack.snagSign||{}).date?" · "+esc((pack.snagSign||{}).date):"")]; }
+    else if(!sg.open&&!openP&&(sg.total||tasks.length)){ s="ready"; why=[sg.total?"All snags fixed · awaiting sign-off":"Punch list complete"]; }
+    else{ s="prog"; why=[[sg.open?(sg.open+" snag"+(sg.open===1?"":"s")+" open"):"",openP?(openP+" install task"+(openP===1?"":"s")+" to do"):""].filter(Boolean).join(" · ")||"Install review recorded"]; }
+    S("install",s,why,sg.open+openP);
+    if(sg.safety) I("crit","install",sg.safety+" safety snag"+(sg.safety===1?"":"s")+" open","Safety snags need putting right before handover. Tap a snag row to jump to its pin on the photo.","stage:install");
+    else if(sg.open) I("warn","install",sg.open+" snag"+(sg.open===1?"":"s")+" open","Open snags print as outstanding on the export, with signature lines to close out.","stage:install");
+    if(openP) I("adv","install",openP+" install task"+(openP===1?"":"s")+" outstanding","Callout stamps, drill points and notes become install-day tasks; tick them off as they are done.","stage:install");
+  }catch(_){ S("install","none",[],0); }
+  /* Handover */
+  try{
+    const cs=commStats(); const c=commRoot();
+    const signStarted=!!(String(c.by||"").trim()||String(c.accept||"").trim()||String(c.eicRef||"").trim());
+    let s="none",why=[];
+    if(!cs.total){ why=["No active chargers to commission yet"]; }
+    else if(cs.complete&&String(c.by||"").trim()&&String(c.accept||"").trim()){ s="done"; why=["All "+cs.total+" charger"+(cs.total===1?"":"s")+" commissioned and signed off"]; }
+    else if(cs.complete){ s="ready"; why=["All chargers commissioned · add the sign-off names to finish"]; }
+    else if(signStarted){ s="block"; why=["Sign-off entered but only "+cs.done+" of "+cs.total+" chargers are fully commissioned"]; }
+    else if(cs.started){ s="prog"; why=[cs.done+" of "+cs.total+" chargers commissioned"]; }
+    else{ why=[cs.total+" charger"+(cs.total===1?"":"s")+" awaiting commissioning"]; }
+    S("handover",s,why,(cs.started||signStarted)&&cs.total?cs.total-cs.done:0);
+    if(signStarted&&!cs.complete&&cs.total) I("warn","handover","Handover sign-off before commissioning is complete","Each charger needs its serial, Zs, RCD time and PEN test recorded before the certificate means anything.","stage:handover");
+    else if(cs.started&&!cs.complete) I("adv","handover",(cs.total-cs.done)+" charger"+((cs.total-cs.done)===1?"":"s")+" still to commission","Record serial, Zs, RCD trip time and the PEN test per charger; they print on the handover certificate.","stage:handover");
+    else if(cs.complete&&!(String(c.by||"").trim()&&String(c.accept||"").trim())) I("adv","handover","Add the handover sign-off names","Commissioned by and accepted by both print on the certificate.","stage:handover");
+  }catch(_){ S("handover","none",[],0); }
+  /* order issues: severity first, then journey order */
+  const sevRank={crit:0,warn:1,adv:2,info:3};
+  issues.sort((a,b)=>((sevRank[a.sev]||9)-(sevRank[b.sev]||9))||(STAGE_ORDER.indexOf(a.stage)-STAGE_ORDER.indexOf(b.stage)));
+  /* next action: worst open issue, else the first stage that still needs work */
+  let next=null;
+  const top=issues.find(i=>i.sev==="crit")||issues.find(i=>i.sev==="warn");
+  if(top) next={title:top.title,why:top.why,stage:top.stage,act:top.act||("stage:"+top.stage),label:"Open"};
+  if(!next){
+    const d=(stage,title,why,act,label)=>({stage,title,why,act,label:label||"Open"});
+    const stg=k=>st[k]?st[k].st:"none";
+    if(stg("survey")==="none") next=d("survey","Start the survey","Add site photos, a PDF drawing or a starter layout, or walk the site with the guided camera.","stage:survey|fn:addphotos","Add photos or a plan");
+    else if(stg("survey")==="prog") next=d("survey","Finish the survey basics","A few site details are still missing; they feed the checks, the exports and the DNO data.","stage:survey","Open Survey");
+    else if(!units.length) next=d("design","Place the first charger","Pick a charge point from the palette and drop it on the plan; everything builds from the markup.","stage:design","Open Design");
+    else if(stg("design")!=="ready") next=d("design","Draw and measure the supply route","Route the supply from the board to each charger and set run lengths so calcs and materials count up.","stage:design","Open Design");
+    else if(stg("verify")==="prog") next=d("verify","Clear the electrical checks","Confirm cable types and lengths so capacity, volt drop, Zs and CPC all pass.","fn:cablecheck","Open cable calculations");
+    else if(stg("price")==="none"||stg("price")==="prog") next=d("price","Price this plan","Review the estimated budget, then send the quantities to Quotes and invoices.","stage:price","Open Price");
+    else if(stg("plan")!=="done"&&stg("plan")!=="block") next=d("plan","Work through the pre-start plan","Compliance items, the job programme and the DNO application data live here.","stage:plan","Open Plan");
+    else if(stg("install")==="prog"||stg("install")==="ready") next=d("install","Close out the install","Work the punch list and snags down to zero, then sign off.","stage:install","Open Install");
+    else if(stg("handover")!=="done"&&st.handover&&st.handover.count) next=d("handover","Complete commissioning and handover","Record each charger's serial and test results, then issue the handover certificate.","stage:handover","Open Handover");
+    else next=d("handover","Export the project pack","The stages are in good shape. Produce the engineer pack, client pack or summary from Export.","fn:exportpack","Engineer PDF");
+  }
+  __evCache={stages:st,issues,next}; __evDirty=false;
+  return __evCache;
+}
+function cap1(s){ s=String(s||""); return s?s.charAt(0).toUpperCase()+s.slice(1):s; }
+/* compact stage header shown at the top of each stage panel */
+function stageHeadHtml(k,ev){
+  if(k==="overview"||!STAGE_META[k]) return "";
+  const d=(ev.stages||{})[k]||{st:"none",why:[],count:0};
+  const m=STAGE_STATES[d.st]||STAGE_STATES.none;
+  const n=(ev.issues||[]).filter(i=>i.stage===k).length;
+  return `<div class="stghead"><div class="sh-top"><b>${STAGE_META[k].label}</b><span class="stchip ${m.cls}">${m.label}</span></div>${(d.why||[]).length?`<div class="sh-why">${cap1(d.why.join(" · "))}</div>`:""}${n?`<button type="button" class="sh-link" data-ovact="stage:overview">${n} open issue${n===1?"":"s"} for this stage · view in Overview</button>`:""}</div>`;
+}
+/* the project overview: summary, next action, stages and issues - real data only */
+function overviewBody(ev){
+  const s=ev.stages||{}, issues=ev.issues||[], nx=ev.next;
+  const chip=k=>{ const d=s[k]||{st:"none"}; const m=STAGE_STATES[d.st]||STAGE_STATES.none; return `<span class="stchip ${m.cls}">${m.label}</span>`; };
+  let units=[]; try{ units=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="unit")); }catch(_){ }
+  const actN=units.filter(u=>u.provision!=="passive").length, pasN=units.length-actN;
+  const kwMix=(()=>{ const by={}; units.filter(u=>u.provision!=="passive").forEach(u=>{ const k=(u.kw||"7")+" kW"; by[k]=(by[k]||0)+1; }); const ks=Object.keys(by).sort((a,b)=>parseFloat(a)-parseFloat(b)); return ks.map(k=>by[k]+" × "+k).join(" · "); })();
+  const saved=(()=>{ try{ if(!pack.projId) return null; return (projIndex().find(x=>x.id===pack.projId)||{}).date||null; }catch(_){ return null; } })();
+  let qd=null; try{ qd=quoteDrift(); }catch(_){ }
+  let links=[]; try{ if(pack.projId) links=projLinks(pack.projId); }catch(_){ }
+  const blocked=STAGE_ORDER.filter(k=>(s[k]||{}).st==="block");
+  const curStage=blocked[0]||STAGE_ORDER.find(k=>{ const x=(s[k]||{}).st; return x==="none"||x==="prog"; })||"handover";
+  const overall=blocked.length?{cls:"block",label:"Blocked"}:(STAGE_ORDER.every(k=>(s[k]||{}).st==="done")?{cls:"done",label:"Complete"}:(STAGE_ORDER.every(k=>(s[k]||{}).st==="none")?{cls:"none",label:"Not started"}:{cls:"prog",label:"In progress"}));
+  const title=(pack.name||"").trim()||"Untitled project";
+  const attN=(pack.attachments||[]).length;
+  const sevDot=v=>`<span class="sevdot" style="background:${(ISSUE_SEVS[v]||ISSUE_SEVS.info).col}" title="${(ISSUE_SEVS[v]||ISSUE_SEVS.info).label}"></span>`;
+  const issueRows=issues.map(i=>`<button type="button" class="ovrow" data-ovact="${i.act||("stage:"+i.stage)}">${sevDot(i.sev)}<span class="ov-tx"><b>${i.title}</b><em>${i.why}</em></span><span class="ov-r"><span class="ov-st">${STAGE_META[i.stage]?STAGE_META[i.stage].label:""}</span></span></button>`).join("");
+  const stageRows=STAGE_ORDER.map(k=>{ const d=s[k]||{st:"none",why:[],count:0}; return `<button type="button" class="ovrow" data-ovact="stage:${k}"><span class="stgdot ${d.st==="none"?"":d.st}" style="margin-top:4px"></span><span class="ov-tx"><b>${STAGE_META[k].label}</b><em>${cap1((d.why||[])[0]||"")}</em></span><span class="ov-r">${d.count?`<span class="stgn">${d.count}</span>`:""}${chip(k)}</span></button>`; }).join("");
+  const nxHtml=nx?`<div class="ovnext"><div class="nx-kick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>Next action</div><b class="nx-t">${nx.title}</b><div class="nx-d">${nx.why}</div><div class="nx-row"><button type="button" class="nx-go" data-ovact="${nx.act}">${nx.label||"Open"}</button><span class="nx-stage">${STAGE_META[nx.stage]?STAGE_META[nx.stage].label+" stage":""}</span></div></div>`:"";
+  const kv=(t,v,actSpec,actLbl)=>`<dt>${t}</dt><dd class="${v?"":"na"}">${v||(actSpec?`<button type="button" class="kv-act" data-ovact="${actSpec}">${actLbl||"Add"}</button>`:"Not set")}</dd>`;
+  const linkRows=links.map(l=>`<a href="${l.href}" style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin:0 -8px;border-radius:8px;font-size:12px;font-weight:600;color:var(--ink);text-decoration:none"><span style="width:8px;height:8px;border-radius:50%;background:${l.dot};flex:none"></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.lab}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" style="flex:none"><path d="M7 17L17 7M9 7h8v8"/></svg></a>`).join("");
+  return `
+  <div class="stghead">
+    <div class="sh-top"><b>${esc(title)}</b><span class="stchip ${overall.cls}">${overall.label}</span></div>
+    <div class="sh-why">${[pack.mode==="domestic"?"Domestic":"Commercial",pack.jobRef?("Ref "+esc(pack.jobRef)):"","Rev "+esc(pack.rev||"A"),"At: "+STAGE_META[curStage].label,saved?("Saved "+esc(saved)):"Not saved to Projects yet"].filter(Boolean).join(" · ")}</div>
+  </div>
+  ${nxHtml}
+  <div class="card"><h3><span class="dot"></span>Stages</h3>${stageRows}</div>
+  <div class="card"><h3><span class="dot" style="background:${issues.length?(ISSUE_SEVS[issues[0].sev]||ISSUE_SEVS.info).col:"#4BA069"}"></span>Open issues · ${issues.length}</h3>${issues.length?issueRows:'<div style="font-size:12px;color:var(--dim)">No open issues found by the project checks.</div>'}</div>
+  <div class="card"><h3><span class="dot"></span>Project summary</h3>
+    <dl class="ovkv">
+      ${kv("Client",esc(pack.custName||""),"stage:survey|focus:pkClient")}
+      ${kv("Address",esc([pack.address,pack.postcode].filter(Boolean).join(", ")),"stage:survey|focus:pkAddr")}
+      ${kv("Mode",(pack.mode==="domestic"?"Domestic":"Commercial")+' · <button type="button" class="kv-act" data-ovact="fn:welcome">Switch</button>')}
+      ${kv("Chargers",units.length?(actN+" active"+(pasN?" · "+pasN+" passive":"")+(kwMix?" · "+kwMix:"")):"","stage:design","Add on the plan")}
+      ${kv("Plans / photos",pack.photos.length?String(pack.photos.length):"","stage:survey|fn:addphotos")}
+      ${kv("Design option",(pack.optionView&&pack.optionView!=="all")?("Option "+esc(pack.optionView)):"All options shown")}
+      ${kv("Quote",qd?esc((qd.number||"Quote")+(qd.status?" · "+qd.status:"")+(qd.n?" · "+qd.n+" line"+(qd.n===1?"":"s")+" out of step":" · in sync")):"","stage:price|flash:mkQuote","Price the plan")}
+      ${kv("Documents",attN?(attN+" attached"):"","stage:plan|flash:addAttach")}
+    </dl>
+    ${linkRows?`<div style="margin-top:9px;border-top:1px dashed var(--line);padding-top:7px"><div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:3px">Linked records</div>${linkRows}</div>`:""}
+    ${(pack.revHistory&&pack.revHistory.length)?`<div style="margin-top:9px;border-top:1px dashed var(--line);padding-top:7px"><div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:3px">Recent activity</div>${pack.revHistory.slice(-3).reverse().map(r=>`<div style="font-size:11px;color:var(--dim);line-height:1.5"><b style="color:var(--ink)">Rev ${esc(r.rev)}</b> · ${esc(r.at||"")}${r.by?" · "+esc(r.by):""}${r.note?" · "+esc(r.note):""}</div>`).join("")}</div>`:""}
+  </div>`;
+}
+/* stage bar (top navigation) */
+function buildStageBar(){
+  const bar=document.getElementById("stagebar"); if(!bar) return;
+  const chev='<svg class="stgsep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  bar.innerHTML='<button type="button" class="stgbtn" data-stage="overview" title="'+STAGE_META.overview.tip+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Overview</button><span class="catdiv" style="margin:-5px 7px -5px 5px"></span>'
+    +STAGE_ORDER.map((k,i)=>(i?chev:"")+'<button type="button" class="stgbtn" data-stage="'+k+'" title="'+STAGE_META[k].tip+'"><span class="stgdot"></span>'+STAGE_META[k].label+'<span class="stgn" style="display:none"></span></button>').join("");
+  bar.querySelectorAll("[data-stage]").forEach(b=>b.onclick=()=>setStage(b.dataset.stage));
+  syncStageBar();
+}
+function syncStageBar(){
+  const bar=document.getElementById("stagebar"); if(!bar||!bar.firstChild) return;
+  let e=null; try{ e=evalProject(); }catch(_){ return; }
+  bar.querySelectorAll("[data-stage]").forEach(b=>{
+    const k=b.dataset.stage;
+    const on=(sideTab==="pack"&&packSec===k);
+    b.classList.toggle("on",on);
+    if(on) b.setAttribute("aria-current","true"); else b.removeAttribute("aria-current");
+    if(k==="overview") return;
+    const d=(e.stages||{})[k]||{st:"none",why:[],count:0};
+    const m=STAGE_STATES[d.st]||STAGE_STATES.none;
+    const dot=b.querySelector(".stgdot"); if(dot) dot.className="stgdot"+(d.st!=="none"?" "+d.st:"");
+    const nn=b.querySelector(".stgn"); if(nn){ nn.style.display=d.count?"":"none"; nn.textContent=d.count; }
+    b.classList.toggle("blk",d.st==="block");
+    b.title=STAGE_META[k].tip+" · "+m.label+((d.why||[]).length?" · "+d.why.join(" · ").replace(/<[^>]*>/g,""):"");
+  });
+}
+/* stage switching: only the side panel changes; the canvas, tools and selection stay put */
+function setStage(k){
+  if(!STAGE_META[k]) k="overview";
+  packSec=k; try{ localStorage.setItem("evsp_packsec",k); }catch(_){ }
+  sideTab="pack";
+  const sd=document.getElementById("side");
+  if(sd){ sd.classList.remove("hidedesk"); if(window.innerWidth<=959) sd.classList.add("open"); }
+  setSideTab();
+  const sc=document.getElementById("sideScroll"); if(sc) sc.scrollTop=0;
+}
+/* deterministic action runner for Next action, issues and empty states */
+(function(){
+  const FN={
+    cablecheck:()=>{ try{ openCableCheck(); }catch(_){ } },
+    sim:()=>{ try{ openSim(); }catch(_){ } },
+    earthwiz:()=>{ try{ openEarthWiz(); }catch(_){ } },
+    walk:()=>{ try{ openSiteWalk(); }catch(_){ } },
+    addphotos:()=>{ try{ pendingShotKey=null; const f=document.getElementById("filePhoto"); if(f) f.click(); }catch(_){ } },
+    projects:()=>{ try{ openProjects(); }catch(_){ } },
+    quotes:()=>{ try{ openQuotesTool(); }catch(_){ } },
+    bom:()=>{ try{ openBom(); }catch(_){ } },
+    programme:()=>{ try{ openProgramme(); }catch(_){ } },
+    dno:()=>{ try{ openDnoHelper(); }catch(_){ } },
+    handovercert:()=>{ try{ buildHandoverPdf(); }catch(_){ } },
+    exportpack:()=>{ const b=document.getElementById("btnPdf"); if(b) b.click(); },
+    welcome:()=>{ try{ openWelcome(); }catch(_){ } },
+    snagtool:()=>{ try{ setTool("mark:snag"); const sd=document.getElementById("side"); if(sd&&window.innerWidth<=959) sd.classList.remove("open"); toast("Tap the plan to pin a snag"); }catch(_){ } }
+  };
+  function runOvAct(spec){
+    if(!spec) return;
+    let focusId=null, flashId=null;
+    String(spec).split("|").forEach(p=>{
+      const ix=p.indexOf(":"); if(ix<0) return;
+      const op=p.slice(0,ix), val=p.slice(ix+1);
+      if(op==="stage") setStage(val);
+      else if(op==="fn"&&FN[val]) FN[val]();
+      else if(op==="focus") focusId=val;
+      else if(op==="flash") flashId=val;
+      else if(op==="tool"){ try{ setTool(val); }catch(_){ } }
+    });
+    if(focusId||flashId){
+      setTimeout(()=>{
+        const el=document.getElementById(focusId||flashId); if(!el) return;
+        const c=el.closest(".card")||el;
+        try{ c.scrollIntoView({block:"center",behavior:"smooth"}); }catch(_){ try{ c.scrollIntoView(); }catch(__){ } }
+        c.classList.add("flashcard"); setTimeout(()=>c.classList.remove("flashcard"),1700);
+        if(focusId){ try{ el.focus({preventScroll:true}); }catch(_){ } }
+      },80);
+    }
+  }
+  window.__runOvAct=runOvAct;
+  document.addEventListener("click",e=>{
+    const b=e.target.closest("[data-ovact]"); if(!b) return;
+    e.preventDefault();
+    runOvAct(b.getAttribute("data-ovact"));
+  });
+})();
 
 /* per-item drawing view + 3D tilt controls - equipment that can be drawn side-on (elevation) or overhead (plan) */
 function eqViewCtl(it){
@@ -9736,6 +10108,7 @@ function wireSide(){
     t.addEventListener("drop",e=>{ if(dragIdx==null)return; e.preventDefault(); t.classList.remove("dropbefore"); const to=+t.dataset.idx; if(dragIdx===to)return; pushHist(); const arr=pack.photos; const [m]=arr.splice(dragIdx,1); arr.splice(to,0,m); dragIdx=null; draw(); renderSide(); });
   });
   const sn=document.getElementById("pkSiteName"); if(sn) sn.oninput=()=>{ pack.name=sn.value; syncSiteChip(); autosave(); };
+  const pcl=document.getElementById("pkClient"); if(pcl) pcl.oninput=()=>{ pack.custName=pcl.value; autosave(); };
   const pa=document.getElementById("pkAddr"); if(pa) pa.oninput=()=>{ pack.address=pa.value; syncSiteChip(); autosave(); };
   const pp=document.getElementById("pkPc"); if(pp){ pp.oninput=()=>{ pack.postcode=pp.value.toUpperCase(); syncSiteChip(); autosave(); }; attachPostcodeLookup(pp, document.getElementById("pkSug"), pc=>{ pp.value=pc; postcodePicked(pc, pa); if(pa) pa.focus(); }); }
   const jr=document.getElementById("jobRef"); if(jr) jr.oninput=()=>pack.jobRef=jr.value;
@@ -10316,7 +10689,7 @@ function postcodePicked(pc, addrEl){
   pcI.oninput=()=>{ pack.postcode=pcI.value.toUpperCase(); syncSiteChip(); autosave(); };
   attachPostcodeLookup(pcI, document.getElementById("spSug"), pc=>{ pcI.value=pc; postcodePicked(pc, addrI); addrI.focus(); });
 })();
-document.getElementById("btnNew").onclick=async()=>{ if(pack.photos.length){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } pack=newPack(); imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; draw(); renderSide(); };
+document.getElementById("btnNew").onclick=async()=>{ if(pack.photos.length){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } pack=newPack(); imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; packSec="survey"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty(); draw(); renderSide(); };
 function imgKeys(){ for(const k in imgCache) delete imgCache[k]; }
 document.getElementById("btnSave").onclick=()=>{
   normalisePack(pack);
@@ -12557,7 +12930,7 @@ function askInput(opts){
 }
 /* sandbox-safe confirm - native confirm() is silently blocked in some embedded previews */
 function askConfirm(opts){ opts=opts||{}; return askInput({title:opts.title||"Are you sure?", label:opts.label||"", okText:opts.okText||"OK", confirm:true}).then(v=>v!==null); }
-document.getElementById("btnSide").onclick=()=>document.getElementById("side").classList.toggle("open");
+document.getElementById("btnSide").onclick=()=>{ const sd=document.getElementById("side"); if(window.innerWidth>959) sd.classList.toggle("hidedesk"); else sd.classList.toggle("open"); };
 document.getElementById("mask").onclick=()=>document.getElementById("side").classList.remove("open");
 document.getElementById("btnUndo").onclick=undo;
 document.getElementById("btnRedo").onclick=redo;
@@ -13616,8 +13989,7 @@ window.openPhotoEditor=openPhotoEditor;
 (function(){
   const sc=document.getElementById("sideScroll"); if(!sc) return;
   sc.addEventListener("click", e=>{
-    const psb=e.target.closest("[data-psec]"); if(psb){ packSec=psb.dataset.psec; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } renderSide(); sc.scrollTop=0; return; }
-        const ps=e.target.closest("[data-pscheme]"); if(ps){ pack.unitScheme=ps.dataset.pscheme; buildRail(); renderSide(); draw(); autosave(); return; }
+    const ps=e.target.closest("[data-pscheme]"); if(ps){ pack.unitScheme=ps.dataset.pscheme; buildRail(); renderSide(); draw(); autosave(); return; }
     const p3=e.target.closest("[data-p3d]"); if(p3){ pack.unit3d=p3.dataset.p3d==="1"; pack.unit3dSet=1; renderSide(); draw(); autosave(); return; }
     const pdz=e.target.closest("[data-pdesign]"); if(pdz){ pack.unitDesign=pdz.dataset.pdesign; buildRail(); renderSide(); draw(); autosave(); return; }
     const sk3=e.target.closest("[data-skit3d]"); if(sk3){ if(window.openCharger3D) window.openCharger3D({variant:"kit_"+sk3.dataset.skit3d}); return; }
@@ -14062,7 +14434,8 @@ function projLinks(id){
     });
   }catch(_){ }
   try{
-    const s=JSON.parse(localStorage.getItem("evsp_ps_v1")||"null");
+    /* Project Support writes evsp_ps_v2 (the v1 key was never used by the live tool) */
+    const s=JSON.parse(localStorage.getItem("evsp_ps_v2")||localStorage.getItem("evsp_ps_v1")||"null");
     const reqs=(s&&Array.isArray(s.requests))?s.requests:[];
     reqs.forEach(rq=>{
       if(!rq||rq.packId!==id) return;
@@ -14102,7 +14475,9 @@ function loadProject(id){
     imgKeys(); history=[]; redoStack=[]; updateUndo(); sel=null; draftRoute=null; draftScale=null;
     pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
     syncSiteChip();
+    packSec="overview"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty();
     syncBrand(); applyMode(false); buildRail(); sideTab="pack"; setSideTab(); fitView(); draw(); autosave();
+    const sdw=document.getElementById("side"); if(sdw){ sdw.classList.remove("hidedesk"); if(window.innerWidth<=959) sdw.classList.add("open"); }
     document.getElementById("projBackdrop").classList.remove("show");
     toast(d.slim&&!(d.pack.photos||[]).length?"Project opened, but its photos couldn't be stored on this device":"Project opened");
   };
@@ -14195,7 +14570,9 @@ function quoteDrift(){
     {t:"3D showroom",s:"Spin every charger and piece of site kit as a true 3D model",g:"Visualise",k:"3d model spin rotate zoom viewer showroom charger kit feeder pillar substation bollard sign lamp preview",run:()=>{ if(window.openCharger3D) window.openCharger3D(); }},
     {t:"Job programme",s:"Editable phase timeline from the markup",g:"Documents",k:"gantt schedule timeline phases days",run:()=>openProgramme()},
     {t:"Projects on this device",s:"Every saved job with live status",g:"Jobs",k:"dashboard jobs list status switch recent",run:()=>openProjects()},
-    {t:"Switch mode · domestic / commercial",s:"Change what this pack plans for",g:"Setup",k:"mode home workplace fleet destination",run:()=>openWelcome()}
+    {t:"Switch mode · domestic / commercial",s:"Change what this pack plans for",g:"Setup",k:"mode home workplace fleet destination",run:()=>openWelcome()},
+    {t:"Project overview",s:"Status, next action and open issues",g:"Stages",k:"overview dashboard summary next action issues stage status",run:()=>setStage("overview")},
+    ...STAGE_ORDER.map(k=>({t:"Stage: "+STAGE_META[k].label,s:STAGE_META[k].tip,g:"Stages",k:"stage journey "+k+" "+STAGE_META[k].tip.toLowerCase(),run:()=>setStage(k)}))
   ];
   function buildIndex(){
     items=[]; const seen=new Set();
@@ -15288,7 +15665,9 @@ try{
 }catch(_){}
 syncSiteChip();
 applyMode(false); syncBrand();
-loadUnits(); buildRail(); resize(); setSideTab(); updateUndo();
+/* a project with content opens on the overview; a fresh pack starts at the survey stage */
+if(pack.photos.length||(pack.name||"").trim()) packSec="overview";
+loadUnits(); buildRail(); resize(); buildStageBar(); setSideTab(); updateUndo();
 try{ if(!localStorage.getItem("evsp_welcomed")) openWelcome(); }catch(_){}
 /* first run on tablet/phone: the start cards on the canvas carry onboarding; the pack drawer stays shut so nothing covers them */
 /* IndexedDB recovery - photo-heavy packs live here; localStorage above is just the legacy/fallback copy */
@@ -15301,6 +15680,8 @@ try{ idbGet("autosave").then(d=>{
   if(d.view && typeof d.view.zoom==="number") view=d.view;
   imgKeys(); pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
   syncSiteChip();
+  if(pack.photos.length||(pack.name||"").trim()) packSec="overview";
+  evalMarkDirty();
   syncBrand(); applyMode(false); buildRail(); setSideTab(); fitView(); draw();
   if(!__restoredTs) setTimeout(()=>toast("Recovered your last survey"),300);
 }).catch(()=>{}); }catch(_){ }
