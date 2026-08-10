@@ -1,406 +1,710 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-GB">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EV Site Planner | Plan professional EV installations</title>
+  <meta name="description" content="Plan clear, professional domestic and commercial EV installations. Mark up photos and plans, position charging equipment, map cable routes and export a project pack. Free during beta.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#14222c">
+  <link rel="canonical" href="https://www.ev-site-planner.co.uk/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="EV Site Planner">
+  <meta property="og:title" content="EV Site Planner | Plan professional EV installations">
+  <meta property="og:description" content="A practical planning and visual communication tool for domestic and commercial EV charging projects. Free during beta.">
+  <meta property="og:url" content="https://www.ev-site-planner.co.uk/">
+  <meta name="twitter:card" content="summary">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "EV Site Planner",
+    "url": "https://www.ev-site-planner.co.uk/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "description": "A browser-based planning and visual communication tool for domestic and commercial EV charging projects.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "GBP",
+      "description": "Free during beta"
+    }
+  }
+  </script>
+  <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet data-dc-atomics>
-<link rel="stylesheet" href="vendor/fonts.css">
-<style>
-html{scroll-behavior:smooth}
-body{margin:0;background:#FBF8F2;font-family:"Hanken Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-</style>
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <style>
+    :root {
+      --ink: #16232e;
+      --ink-soft: #46545f;
+      --muted: #6f7b84;
+      --paper: #fbf8f2;
+      --paper-deep: #f4efe5;
+      --white: #ffffff;
+      --line: #e5ddcf;
+      --line-strong: #d5c9b5;
+      --blue: #1e6bff;
+      --blue-dark: #1556d8;
+      --blue-soft: #ebf1ff;
+      --green: #287a47;
+      --green-soft: #eaf6ee;
+      --night: #14222c;
+      --night-deep: #0d171f;
+      --orange: #ee7a33;
+      --shadow: 0 22px 60px -32px rgba(13, 23, 31, .42);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Hanken Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; }
+    img, svg { display: block; max-width: 100%; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid rgba(30, 107, 255, .42); outline-offset: 3px; }
+    .skip-link {
+      position: fixed;
+      left: 16px;
+      top: 12px;
+      z-index: 200;
+      transform: translateY(-180%);
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--night);
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .container { width: min(1160px, calc(100% - 80px)); margin: 0 auto; }
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #1043b0;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, .brand, .display {
+      font-family: "Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
+    }
+    h1, h2, h3, p { text-wrap: pretty; }
+    h1 { text-wrap: balance; }
+    .button {
+      display: inline-flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 20px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.2;
+      text-decoration: none;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .button:hover { transform: translateY(-1px); }
+    .button-primary { background: var(--blue); color: white; box-shadow: 0 10px 24px -15px rgba(30, 107, 255, .95); }
+    .button-primary:hover { background: var(--blue-dark); box-shadow: 0 14px 28px -15px rgba(30, 107, 255, .95); }
+    .button-secondary { border-color: var(--line-strong); background: rgba(255,255,255,.62); color: var(--ink); }
+    .button-secondary:hover { border-color: #9f9483; background: white; }
+    .button-light { background: white; color: var(--night); }
+    .button-light:hover { background: #edf3ff; }
+
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(213, 201, 181, .86);
+      background: rgba(251, 248, 242, .93);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+    }
+    .nav-inner { display: flex; min-height: 68px; align-items: center; gap: 20px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 800; letter-spacing: -.02em; text-decoration: none; white-space: nowrap; }
+    .brand img { width: 31px; height: 31px; }
+    .nav-links { display: flex; align-items: center; gap: 2px; margin-left: 20px; }
+    .nav-links a { padding: 8px 11px; border-radius: 7px; color: var(--ink-soft); font-size: 14px; font-weight: 650; text-decoration: none; }
+    .nav-links a:hover { background: var(--paper-deep); color: var(--ink); }
+    .nav-spacer { flex: 1; }
+    .nav-note { color: var(--muted); font-size: 12.5px; font-weight: 650; }
+    .nav-cta { min-height: 40px; padding: 9px 17px; font-size: 14px; }
+
+    .hero { overflow: hidden; background: var(--paper-deep); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(420px, .98fr); min-height: 620px; }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; padding: 82px 68px 82px 0; }
+    .beta-pill {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding: 7px 12px;
+      border: 1px solid #b4caff;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: #1043b0;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .beta-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(40,122,71,.12); }
+    .hero h1 { max-width: 650px; margin: 0 0 22px; font-size: clamp(46px, 5vw, 68px); font-weight: 760; letter-spacing: -.045em; line-height: .99; }
+    .hero h1 em { color: var(--blue); font-style: normal; }
+    .hero-lead { max-width: 610px; margin: 0 0 32px; color: var(--ink-soft); font-size: 18px; line-height: 1.62; }
+    .hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .hero-proof { display: flex; align-items: center; gap: 10px 18px; margin-top: 25px; color: var(--muted); font-size: 13px; font-weight: 650; flex-wrap: wrap; }
+    .proof-item { display: inline-flex; align-items: center; gap: 7px; }
+    .proof-tick { display: inline-grid; width: 18px; height: 18px; place-items: center; border-radius: 50%; background: rgba(40,122,71,.11); color: var(--green); font-size: 11px; font-weight: 900; }
+
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      padding: 54px 0 54px 54px;
+      isolation: isolate;
+    }
+    .hero-visual::before {
+      position: absolute;
+      inset: 0 calc((100vw - min(1160px, calc(100vw - 80px))) / -2) 0 0;
+      z-index: -2;
+      background: var(--night);
+      content: "";
+    }
+    .hero-visual::after {
+      position: absolute;
+      inset: 0 calc((100vw - min(1160px, calc(100vw - 80px))) / -2) 0 0;
+      z-index: -1;
+      background: radial-gradient(circle at 60% 18%, rgba(30,107,255,.30), transparent 45%), radial-gradient(circle at 95% 90%, rgba(238,122,51,.13), transparent 34%);
+      content: "";
+    }
+    .app-window { width: min(100%, 560px); overflow: hidden; border: 1px solid rgba(255,255,255,.14); border-radius: 18px; background: white; box-shadow: 0 34px 70px -26px rgba(0,0,0,.62); }
+    .window-bar { display: flex; min-height: 49px; align-items: center; gap: 9px; padding: 0 15px; border-bottom: 1px solid var(--line); background: #fff; }
+    .window-bar img { width: 23px; height: 23px; }
+    .window-title { font-size: 13px; font-weight: 800; }
+    .window-project { margin-left: auto; padding: 4px 9px; border: 1px solid #b4caff; border-radius: 999px; background: var(--blue-soft); color: #1043b0; font-family: "Space Grotesk", monospace; font-size: 10.5px; font-weight: 700; }
+    .window-tabs { display: flex; align-items: center; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--paper); }
+    .window-tab { padding: 4px 9px; border-radius: 999px; color: var(--muted); font-size: 10.5px; font-weight: 700; }
+    .window-tab.active { border: 1px solid var(--line); background: white; color: var(--ink); }
+    .plan-canvas { position: relative; height: 285px; overflow: hidden; background: #d9d4c9; }
+    .parking-bays { position: absolute; inset: 17px 18px 35px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; transform: perspective(600px) rotateX(2deg); }
+    .parking-bay { position: relative; border: 2px solid rgba(255,255,255,.82); border-bottom-width: 5px; background: linear-gradient(160deg, #9a9d9d 0%, #7f8384 100%); box-shadow: inset 0 0 26px rgba(16,23,29,.14); }
+    .parking-bay::after { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); color: rgba(255,255,255,.78); font-family: "Space Grotesk", monospace; font-size: 10px; font-weight: 700; content: attr(data-bay); }
+    .charger { position: absolute; top: 38px; width: 19px; height: 37px; border: 3px solid white; border-radius: 5px 5px 3px 3px; background: var(--blue); box-shadow: 0 5px 12px rgba(0,0,0,.32); }
+    .charger::after { position: absolute; left: 50%; top: 6px; width: 7px; height: 7px; transform: translateX(-50%); border-radius: 50%; background: white; content: ""; }
+    .charger.c1 { left: 10%; } .charger.c2 { left: 35%; } .charger.c3 { left: 61%; } .charger.c4 { left: 86%; }
+    .cable-route { position: absolute; left: 9%; right: 7%; bottom: 28px; height: 0; border-top: 4px dashed var(--orange); filter: drop-shadow(0 1px 1px rgba(0,0,0,.28)); }
+    .evdb { position: absolute; right: 14px; bottom: 13px; padding: 5px 8px; border: 2px solid white; border-radius: 5px; background: #d0443f; color: white; font-family: "Space Grotesk", monospace; font-size: 9px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,.28); }
+    .plan-label { position: absolute; padding: 4px 7px; border: 1px solid rgba(22,35,46,.13); border-radius: 5px; background: rgba(255,255,255,.94); color: var(--ink); font-family: "Space Grotesk", monospace; font-size: 9px; font-weight: 750; box-shadow: 0 3px 10px rgba(0,0,0,.18); }
+    .label-a { left: 10%; top: 84px; } .label-b { left: 60%; top: 84px; } .label-c { left: 38%; bottom: 13px; color: #8f3e12; }
+    .window-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line); background: white; }
+    .summary-cell { padding: 12px 11px; border-right: 1px solid var(--line); }
+    .summary-cell:last-child { border-right: 0; }
+    .summary-label { color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    .summary-value { margin-top: 3px; color: var(--ink); font-family: "Space Grotesk", monospace; font-size: 15px; font-weight: 750; }
+    .summary-value.ready { color: var(--green); }
+    .floating-note { position: absolute; right: -18px; bottom: 34px; display: flex; align-items: center; gap: 10px; max-width: 210px; padding: 12px 14px; border: 1px solid rgba(255,255,255,.24); border-radius: 12px; background: rgba(13,23,31,.94); color: white; box-shadow: 0 20px 35px -20px rgba(0,0,0,.72); }
+    .floating-note strong { display: block; font-size: 12px; }
+    .floating-note span { display: block; margin-top: 2px; color: #acbac4; font-size: 10.5px; }
+    .note-icon { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border-radius: 9px; background: rgba(30,107,255,.22); color: #8eb0ff; font-weight: 900; }
+
+    .outcome-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: white; }
+    .outcome-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .outcome { display: flex; gap: 14px; padding: 25px 28px; border-right: 1px solid var(--line); }
+    .outcome:first-child { padding-left: 0; }
+    .outcome:last-child { border-right: 0; padding-right: 0; }
+    .outcome-number { color: var(--blue); font-family: "Space Grotesk", monospace; font-size: 12px; font-weight: 800; }
+    .outcome strong { display: block; margin-bottom: 3px; font-size: 14px; }
+    .outcome p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    .section { padding: 88px 0; scroll-margin-top: 72px; }
+    .section-white { border-top: 1px solid var(--line); background: white; }
+    .section-night { border-top: 1px solid #23333e; background: var(--night-deep); color: white; }
+    .section-head { max-width: 710px; margin-bottom: 42px; }
+    .section-head h2 { margin: 0 0 14px; font-size: clamp(35px, 4vw, 48px); font-weight: 760; letter-spacing: -.035em; line-height: 1.06; }
+    .section-head p { margin: 0; color: var(--ink-soft); font-size: 17px; line-height: 1.6; }
+    .section-night .eyebrow { color: #8eb0ff; }
+    .section-night .section-head p { color: #a9b7c1; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .step { position: relative; min-height: 235px; padding: 29px; border: 1px solid var(--line); border-radius: 16px; background: white; box-shadow: 0 18px 42px -36px rgba(13,23,31,.55); }
+    .step-number { margin-bottom: 28px; color: var(--blue); font-family: "Space Grotesk", monospace; font-size: 12px; font-weight: 800; }
+    .step h3 { margin: 0 0 9px; font-size: 22px; letter-spacing: -.02em; }
+    .step p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.58; }
+    .step::after { position: absolute; top: 39px; right: 28px; width: 34px; height: 1px; background: var(--line-strong); content: ""; }
+
+    .use-case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .use-card { position: relative; overflow: hidden; min-height: 360px; padding: 38px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); }
+    .use-card.commercial { background: var(--night); color: white; border-color: var(--night); }
+    .use-tag { display: inline-flex; margin-bottom: 42px; padding: 6px 10px; border-radius: 999px; background: var(--blue-soft); color: #1043b0; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .commercial .use-tag { background: rgba(30,107,255,.19); color: #9ab7ff; }
+    .use-card h3 { max-width: 440px; margin: 0 0 12px; font-size: 30px; letter-spacing: -.03em; line-height: 1.08; }
+    .use-card p { max-width: 470px; margin: 0 0 23px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+    .commercial p { color: #a9b7c1; }
+    .use-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .use-list li { display: flex; gap: 9px; align-items: baseline; color: var(--ink-soft); font-size: 14px; }
+    .commercial .use-list li { color: #d9e1e6; }
+    .use-list li::before { color: var(--green); font-weight: 900; content: "✓"; }
+    .commercial .use-list li::before { color: #6dc88e; }
+    .use-graphic { position: absolute; right: -28px; top: 18px; width: 190px; height: 120px; opacity: .12; }
+    .use-graphic .line { position: absolute; height: 4px; border-radius: 99px; background: var(--blue); transform-origin: left center; }
+    .use-graphic .line.a { left: 15px; top: 32px; width: 120px; transform: rotate(18deg); }
+    .use-graphic .line.b { left: 20px; top: 80px; width: 145px; transform: rotate(-12deg); background: var(--orange); }
+    .use-graphic .node { position: absolute; width: 18px; height: 18px; border: 4px solid currentColor; border-radius: 50%; color: var(--blue); background: transparent; }
+    .use-graphic .node.n1 { left: 2px; top: 20px; } .use-graphic .node.n2 { right: 40px; top: 55px; } .use-graphic .node.n3 { left: 8px; bottom: 10px; color: var(--orange); }
+
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature { min-height: 180px; padding: 24px; border: 1px solid rgba(255,255,255,.12); border-radius: 15px; background: #14232d; }
+    .feature-icon { display: grid; width: 38px; height: 38px; margin-bottom: 21px; place-items: center; border-radius: 10px; background: rgba(30,107,255,.16); color: #8eb0ff; font-family: "Space Grotesk", monospace; font-size: 13px; font-weight: 800; }
+    .feature h3 { margin: 0 0 7px; color: white; font-size: 18px; letter-spacing: -.015em; }
+    .feature p { margin: 0; color: #9eacb5; font-size: 13.5px; line-height: 1.55; }
+
+    .credibility { display: grid; grid-template-columns: .82fr 1.18fr; gap: 70px; align-items: center; }
+    .cred-mark { position: relative; display: grid; min-height: 330px; place-items: center; overflow: hidden; border-radius: 20px; background: var(--paper-deep); }
+    .cred-mark::before { position: absolute; width: 300px; height: 300px; border: 1px solid var(--line-strong); border-radius: 50%; content: ""; }
+    .cred-mark::after { position: absolute; width: 210px; height: 210px; border: 1px solid var(--line-strong); border-radius: 50%; content: ""; }
+    .cred-mark img { position: relative; z-index: 1; width: 92px; height: 92px; filter: drop-shadow(0 18px 24px rgba(13,23,31,.18)); }
+    .cred-copy h2 { margin: 0 0 18px; font-size: clamp(35px, 4vw, 50px); font-weight: 760; letter-spacing: -.04em; line-height: 1.04; }
+    .cred-copy > p { margin: 0 0 26px; color: var(--ink-soft); font-size: 17px; line-height: 1.65; }
+    .cred-points { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .cred-point { padding: 14px 16px; border: 1px solid var(--line); border-radius: 11px; background: var(--paper); color: var(--ink-soft); font-size: 13px; font-weight: 700; }
+    .cred-point::before { display: inline-block; width: 8px; height: 8px; margin-right: 9px; border-radius: 50%; background: var(--green); content: ""; }
+    .disclaimer { margin-top: 20px !important; color: var(--muted) !important; font-size: 12.5px !important; line-height: 1.5 !important; }
+
+    .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .tool-card { display: flex; min-height: 225px; flex-direction: column; padding: 27px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); text-decoration: none; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+    .tool-card:hover { transform: translateY(-3px); border-color: var(--line-strong); box-shadow: var(--shadow); }
+    .tool-kicker { margin-bottom: 28px; color: var(--blue); font-family: "Space Grotesk", monospace; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .tool-card h3 { margin: 0 0 8px; font-size: 21px; letter-spacing: -.02em; }
+    .tool-card p { margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .tool-link { margin-top: auto; color: var(--blue); font-size: 13px; font-weight: 800; }
+
+    .authority-band { margin-top: 22px; padding: 30px 32px; border-radius: 16px; background: var(--night); color: white; }
+    .authority-inner { display: grid; grid-template-columns: 1fr auto; gap: 34px; align-items: center; }
+    .authority-band h3 { margin: 0 0 7px; font-size: 24px; letter-spacing: -.025em; }
+    .authority-band p { max-width: 760px; margin: 0; color: #a9b7c1; font-size: 14.5px; line-height: 1.55; }
+
+    .faq-grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 70px; align-items: start; }
+    .faq-intro h2 { margin: 0 0 15px; font-size: clamp(35px, 4vw, 48px); font-weight: 760; letter-spacing: -.04em; line-height: 1.04; }
+    .faq-intro p { margin: 0; color: var(--ink-soft); font-size: 16px; line-height: 1.6; }
+    .faqs { border-top: 1px solid var(--line); }
+    details { border-bottom: 1px solid var(--line); }
+    summary { position: relative; padding: 22px 42px 22px 0; cursor: pointer; font-size: 16px; font-weight: 780; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { position: absolute; right: 4px; top: 21px; color: var(--blue); font-family: "Space Grotesk", monospace; font-size: 21px; content: "+"; }
+    details[open] summary::after { content: "−"; }
+    details p { margin: -5px 0 22px; padding-right: 34px; color: var(--muted); font-size: 14.5px; line-height: 1.62; }
+
+    .final-cta { padding: 76px 0; background: var(--blue); color: white; }
+    .final-inner { display: grid; grid-template-columns: 1fr auto; gap: 45px; align-items: center; }
+    .final-cta h2 { max-width: 720px; margin: 0 0 11px; font-size: clamp(35px, 4vw, 50px); font-weight: 760; letter-spacing: -.04em; line-height: 1.04; }
+    .final-cta p { margin: 0; color: #dce7ff; font-size: 16px; }
+    .final-actions { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+    .final-note { color: #dce7ff; font-size: 11.5px; font-weight: 650; text-align: center; }
+
+    footer { padding: 42px 0 28px; background: var(--night-deep); color: white; }
+    .footer-top { display: flex; align-items: center; gap: 14px; padding-bottom: 26px; border-bottom: 1px solid rgba(255,255,255,.11); }
+    .footer-top img { width: 34px; height: 34px; }
+    .footer-brand { font-family: "Bricolage Grotesque", sans-serif; font-size: 18px; font-weight: 800; }
+    .footer-tag { margin-left: auto; color: #9eacb5; font-size: 13px; }
+    .footer-bottom { display: flex; align-items: flex-start; gap: 20px; padding-top: 22px; color: #8e9da7; font-size: 12.5px; flex-wrap: wrap; }
+    .footer-bottom a { text-decoration: none; }
+    .footer-bottom a:hover { color: white; }
+    .footer-spacer { flex: 1; }
+    .footer-disclaimer { max-width: 430px; font-size: 11.5px; line-height: 1.5; text-align: right; }
+
+    @media (max-width: 1040px) {
+      .nav-note { display: none; }
+      .hero-grid { grid-template-columns: 1fr 1fr; }
+      .hero-copy { padding-right: 44px; }
+      .hero-visual { padding-left: 35px; }
+      .floating-note { right: 10px; }
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .container { width: min(100% - 48px, 760px); }
+      .nav-links { display: none; }
+      .nav-cta { margin-left: auto; }
+      .hero .container { width: 100%; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-copy { padding: 72px max(24px, calc((100vw - min(100vw - 48px, 760px)) / 2)); }
+      .hero-visual { min-height: 500px; padding: 48px max(24px, calc((100vw - min(100vw - 48px, 760px)) / 2)); }
+      .hero-visual::before, .hero-visual::after { inset: 0; }
+      .outcome-grid { grid-template-columns: 1fr; }
+      .outcome, .outcome:first-child, .outcome:last-child { padding: 20px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .outcome:last-child { border-bottom: 0; }
+      .steps { grid-template-columns: 1fr; }
+      .step { min-height: 0; }
+      .use-case-grid { grid-template-columns: 1fr; }
+      .credibility { grid-template-columns: 1fr; gap: 44px; }
+      .cred-mark { min-height: 260px; }
+      .tool-grid { grid-template-columns: 1fr; }
+      .tool-card { min-height: 0; }
+      .faq-grid { grid-template-columns: 1fr; gap: 42px; }
+      .final-inner { grid-template-columns: 1fr; }
+      .final-actions { align-items: flex-start; }
+      .final-note { text-align: left; }
+    }
+    @media (max-width: 640px) {
+      .container { width: calc(100% - 36px); }
+      .nav-inner { min-height: 62px; }
+      .brand { font-size: 15px; }
+      .brand img { width: 28px; height: 28px; }
+      .nav-cta { min-height: 38px; padding: 8px 13px; font-size: 13px; }
+      .hero-copy { padding: 58px 18px 55px; }
+      .hero h1 { font-size: clamp(42px, 13vw, 56px); }
+      .hero-lead { font-size: 16.5px; }
+      .hero-actions .button { width: 100%; }
+      .hero-proof { align-items: flex-start; flex-direction: column; }
+      .hero-visual { min-height: 420px; padding: 32px 18px 50px; }
+      .app-window { border-radius: 13px; }
+      .plan-canvas { height: 220px; }
+      .window-project { display: none; }
+      .window-tab:nth-child(n+4) { display: none; }
+      .window-summary { grid-template-columns: repeat(2, 1fr); }
+      .summary-cell:nth-child(2) { border-right: 0; }
+      .summary-cell:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .floating-note { right: 25px; bottom: 20px; }
+      .section { padding: 70px 0; }
+      .section-head { margin-bottom: 32px; }
+      .step, .use-card { padding: 24px; }
+      .use-card { min-height: 0; }
+      .use-tag { margin-bottom: 28px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature { min-height: 0; }
+      .cred-points { grid-template-columns: 1fr; }
+      .authority-band { padding: 25px; }
+      .authority-inner { grid-template-columns: 1fr; gap: 22px; }
+      .authority-inner .button { width: 100%; }
+      .final-cta { padding: 62px 0; }
+      .final-actions, .final-actions .button { width: 100%; }
+      .footer-top { align-items: flex-start; flex-wrap: wrap; }
+      .footer-tag { width: 100%; margin-left: 48px; }
+      .footer-bottom { flex-direction: column; }
+      .footer-spacer { display: none; }
+      .footer-disclaimer { text-align: left; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
 </helmet>
 
-<!-- ================= NAV ================= -->
-<nav data-screen-label="Nav" style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;padding:0 40px;height:64px;background:rgba(251,248,242,.92);backdrop-filter:blur(10px);border-bottom:1px solid #E7DFD0">
-  <a href="#top" style="display:flex;align-items:center;gap:10px;text-decoration:none">
-    <img src="assets/logo-mark.svg" alt="EV Site Planner" style="width:30px;height:30px;display:block">
-    <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16.5px;letter-spacing:-0.015em;color:#16232E">EV Site Planner</span>
-  </a>
-  <div style="display:flex;gap:2px;margin-left:28px">
-    <a href="#how" style="font-size:14px;font-weight:500;color:#5C6770;padding:7px 12px;border-radius:7px;text-decoration:none" style-hover="color:#16232E;background:#F4EFE5">How it works</a>
-    <a href="#product" style="font-size:14px;font-weight:500;color:#5C6770;padding:7px 12px;border-radius:7px;text-decoration:none" style-hover="color:#16232E;background:#F4EFE5">What's inside</a>
-    <a href="#checks" style="font-size:14px;font-weight:500;color:#5C6770;padding:7px 12px;border-radius:7px;text-decoration:none" style-hover="color:#16232E;background:#F4EFE5">The checks</a>
-    <a href="#pricing" style="font-size:14px;font-weight:500;color:#5C6770;padding:7px 12px;border-radius:7px;text-decoration:none" style-hover="color:#16232E;background:#F4EFE5">Pricing</a>
-    <a href="#councils" style="font-size:14px;font-weight:500;color:#5C6770;padding:7px 12px;border-radius:7px;text-decoration:none" style-hover="color:#16232E;background:#F4EFE5">Local authorities</a>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<nav class="site-nav" aria-label="Primary navigation">
+  <div class="container nav-inner">
+    <a class="brand" href="#top" aria-label="EV Site Planner home">
+      <img src="assets/logo-mark.svg" alt="">
+      <span>EV Site Planner</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#features">Features</a>
+      <a href="#resources">Resources</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <span class="nav-spacer"></span>
+    <span class="nav-note">Free during beta</span>
+    <a class="button button-primary nav-cta" href="EV Site Planner.html">Open planner</a>
   </div>
-  <span style="flex:1"></span>
-  <span style="font-size:12.5px;font-weight:500;color:#8C97A0">Built by EV installers, for the trade</span>
-  <a href="#pricing" style="display:inline-flex;align-items:center;padding:9px 18px;border-radius:10px;background:#1E6BFF;color:#FBF8F2;font-weight:600;font-size:14px;text-decoration:none" style-hover="background:#1556E0">{{ navCta }}</a>
 </nav>
 
-<!-- ================= HERO ================= -->
-<header id="top" data-screen-label="Hero" style="display:grid;grid-template-columns:1fr 1fr;min-height:560px">
-  <div style="padding:72px 48px 72px 40px;display:flex;flex-direction:column;justify-content:center;background:#F4EFE5">
-    <span style="display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1043B0;background:#EBF1FF;border:1px solid #AEC8FF;padding:6px 12px;border-radius:999px;margin-bottom:22px;width:fit-content">For UK EV installers</span>
-    <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:52px;font-weight:700;letter-spacing:-0.025em;line-height:1.05;color:#16232E;text-wrap:balance;margin:0 0 20px;max-width:560px">Site photo to install-ready pack, <em style="font-style:normal;color:#1E6BFF">in one visit.</em></h1>
-    <p style="font-size:17px;line-height:1.6;color:#5C6770;max-width:460px;margin:0 0 34px">Mark chargers, cable runs and supplies straight onto site photos. Cable sizing, volt drop and load checks run as you draw; the customer quote and DNO pack are ready before you leave.</p>
-    <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
-      <a href="#pricing" style="display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:10px;background:#1E6BFF;color:#FBF8F2;font-weight:600;font-size:15px;text-decoration:none" style-hover="background:#1556E0;box-shadow:0 6px 20px -6px rgba(30,107,255,.5)">{{ heroCta }}</a>
-      <a href="EV Site Planner.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 18px;border-radius:10px;background:transparent;color:#16232E;font-weight:500;font-size:15px;border:1.5px solid #D6CBB6;text-decoration:none" style-hover="border-color:#5C6770;background:#EBE3D4">Try the live app →</a>
-    </div>
-    <div style="display:flex;gap:18px;margin-top:26px;font-size:13px;color:#8C97A0;font-weight:500;flex-wrap:wrap">
-      <span>Works offline in the van</span><span>·</span><span>Touch-first on tablet</span><span>·</span><span>14-day trial on installer plans</span>
-    </div>
-  </div>
-
-  <div style="background:#14222C;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:40px 36px">
-    <div style="position:absolute;inset:0;background:radial-gradient(circle at 72% 24%,rgba(30,107,255,.22),transparent 62%)"></div>
-    <div style="width:100%;max-width:480px;border-radius:14px;box-shadow:0 24px 50px -18px rgba(11,22,34,.5),0 8px 16px -8px rgba(11,22,34,.2);overflow:hidden;position:relative;z-index:1;background:#FFFFFF">
-      <div style="display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid #E7DFD0;background:#FFFFFF">
-        <img src="assets/logo-mark.svg" alt="" style="width:22px;height:22px">
-        <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13.5px;color:#16232E">Site Planner</span>
-        <span style="font-family:'Space Grotesk',monospace;font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:#EBF1FF;color:#1043B0;border:1px solid #AEC8FF;margin-left:auto">14 Oakfield Drive</span>
-        <span style="font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:#F4EFE5;color:#5C6770">Domestic</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:4px;padding:7px 12px;background:#FBF8F2;border-bottom:1px solid #E7DFD0">
-        <span style="font-size:10.5px;font-weight:700;color:#16232E;background:#FFFFFF;border:1px solid #D6CBB6;border-radius:999px;padding:3px 10px">Garage elevation</span>
-        <span style="font-size:10.5px;font-weight:600;color:#8C97A0;padding:3px 7px">Cut-out</span>
-        <span style="font-size:10.5px;font-weight:600;color:#8C97A0;padding:3px 7px">Board</span>
-        <span style="font-size:10.5px;font-weight:600;color:#8C97A0;padding:3px 7px">Route</span>
-        <span style="flex:1"></span>
-        <span style="font-family:'Space Grotesk',monospace;font-size:10px;font-weight:600;color:#5C6770">Photo 2/6 · scale ✓</span>
-      </div>
-      <div style="height:232px;position:relative;overflow:hidden;background:#95836F">
-        <div style="position:absolute;left:0;right:0;top:0;height:16%;background:linear-gradient(#C4D1DB,#DDE2E4)"></div>
-        <div style="position:absolute;left:0;right:0;top:15%;height:5%;background:linear-gradient(#F0ECE1,#D6D0C1);box-shadow:0 2px 4px rgba(18,24,30,.3)"></div>
-        <div style="position:absolute;left:0;right:0;top:20%;height:58%;background-image:repeating-linear-gradient(180deg,rgba(58,33,22,.26) 0 1.5px,transparent 1.5px 11px),repeating-linear-gradient(90deg,rgba(58,33,22,.1) 0 1px,transparent 1px 26px),linear-gradient(#A8755C,#8F6049)"></div>
-        <div style="position:absolute;left:0;right:0;bottom:0;height:22%;background-image:repeating-linear-gradient(90deg,rgba(40,40,38,.14) 0 1px,transparent 1px 64px),linear-gradient(#A09D94,#716E67)"></div>
-        <div style="position:absolute;left:48%;top:29%;width:45%;height:49%;background:repeating-linear-gradient(180deg,#CDC8BC 0 15px,#B1AC9F 15px 18px);border:3px solid #857E71;border-bottom:none;box-shadow:inset 0 8px 16px rgba(0,0,0,.2)"></div>
-        <div style="position:absolute;left:8%;top:15%;width:9px;height:63%;background:linear-gradient(90deg,#45443F,#6C6B64 45%,#3B3A36);border-radius:2px"></div>
-        <div style="position:absolute;inset:0;background:radial-gradient(130% 95% at 50% 36%,transparent 52%,rgba(12,18,26,.4)),linear-gradient(rgba(255,214,150,.09),rgba(18,28,42,.14))"></div>
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"><polyline points="15,47 15,60 40,60" style="fill:none;stroke:#FF8A3D;stroke-width:2;stroke-dasharray:3 2.2;vector-effect:non-scaling-stroke"></polyline></svg>
-        <div style="position:absolute;left:15%;top:40%;transform:translate(-50%,-50%);width:15px;height:15px;background:#D42626;border:2px solid #FFFFFF;border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.45)"></div>
-        <span style="position:absolute;left:19%;top:33%;font-family:'Space Grotesk',monospace;font-size:9.5px;background:rgba(255,255,255,.95);color:#16232E;padding:2px 6px;border-radius:4px;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.3)">CU · 100A</span>
-        <span style="position:absolute;left:19%;top:66%;font-family:'Space Grotesk',monospace;font-size:9.5px;background:rgba(22,29,36,.88);border:1px solid rgba(255,138,61,.6);color:#FFC59B;padding:2px 6px;border-radius:4px;font-weight:600">6mm² SWA · 14 m</span>
-        <div style="position:absolute;left:40%;top:60%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:#1E6BFF;border:2.5px solid #FFFFFF;box-shadow:0 3px 10px rgba(0,0,0,.5)"></div>
-        <span style="position:absolute;left:44%;top:53%;font-family:'Space Grotesk',monospace;font-size:9.5px;background:rgba(255,255,255,.95);color:#16232E;padding:2px 6px;border-radius:4px;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.3)">CP-01 · 7kW</span>
-        <span style="position:absolute;right:3%;bottom:5%;font-family:'Space Grotesk',monospace;font-size:9px;background:rgba(22,29,36,.85);color:#DDE2E4;padding:2px 7px;border-radius:4px;font-weight:600">scale · door = 2.13 m</span>
-      </div>
-      <div style="display:flex;gap:9px;padding:12px 14px;background:#FBF8F2;border-top:1px solid #E7DFD0">
-        <div style="flex:1;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:9px;padding:9px 11px">
-          <div style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C97A0">Volt drop</div>
-          <div style="font-family:'Space Grotesk',monospace;font-weight:600;font-size:17px;color:#267A43;margin-top:2px">1.4% ✓</div>
+<main id="main">
+  <header id="top" class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="beta-pill"><span class="beta-dot"></span>Free public beta</span>
+        <h1>Plan professional EV installations <em>with clarity.</em></h1>
+        <p class="hero-lead">Bring photos, plans and survey information together in one visual workspace. Position chargers, map cable routes and key equipment, then export a clear project pack for domestic or commercial installations.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="EV Site Planner.html">Open the free planner <span aria-hidden="true">→</span></a>
+          <a class="button button-secondary" href="#how">See how it works</a>
         </div>
-        <div style="flex:1;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:9px;padding:9px 11px">
-          <div style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C97A0">Max demand</div>
-          <div style="font-family:'Space Grotesk',monospace;font-weight:600;font-size:17px;color:#16232E;margin-top:2px">92 <span style="font-size:12px;color:#8C97A0">/ 100 A</span></div>
-        </div>
-        <div style="flex:1;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:9px;padding:9px 11px">
-          <div style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C97A0">Quote</div>
-          <div style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:17px;color:#16232E;margin-top:2px">£1,180</div>
+        <div class="hero-proof" role="group" aria-label="Beta access details">
+          <span class="proof-item"><span class="proof-tick">✓</span>No account required</span>
+          <span class="proof-item"><span class="proof-tick">✓</span>Domestic and commercial modes</span>
+          <span class="proof-item"><span class="proof-tick">✓</span>Built for UK EV workflows</span>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#FFFFFF;border-top:1px solid #E7DFD0">
-        <span style="font-size:12px;color:#5C6770;font-weight:600">Pack ready: quote · SLD · DNO form</span>
-        <span style="flex:1"></span>
-        <span style="display:inline-flex;align-items:center;background:#1E6BFF;color:#FBF8F2;font-size:12px;font-weight:600;padding:7px 12px;border-radius:7px">Export PDF</span>
+
+      <div class="hero-visual" role="img" aria-label="Illustration of a commercial EV installation plan">
+        <div class="app-window">
+          <div class="window-bar">
+            <img src="assets/logo-mark.svg" alt="">
+            <span class="window-title">Installation plan</span>
+            <span class="window-project">Riverside House</span>
+          </div>
+          <div class="window-tabs">
+            <span class="window-tab active">Site plan</span>
+            <span class="window-tab">Electrical</span>
+            <span class="window-tab">Equipment</span>
+            <span class="window-tab">Project notes</span>
+          </div>
+          <div class="plan-canvas">
+            <div class="parking-bays">
+              <div class="parking-bay" data-bay="01"></div>
+              <div class="parking-bay" data-bay="02"></div>
+              <div class="parking-bay" data-bay="03"></div>
+              <div class="parking-bay" data-bay="04"></div>
+              <div class="charger c1"></div>
+              <div class="charger c2"></div>
+              <div class="charger c3"></div>
+              <div class="charger c4"></div>
+            </div>
+            <div class="cable-route"></div>
+            <span class="plan-label label-a">CP-01/02 · 7kW</span>
+            <span class="plan-label label-b">CP-03/04 · 7kW</span>
+            <span class="plan-label label-c">Cable route · 42m</span>
+            <span class="evdb">EVDB-01</span>
+          </div>
+          <div class="window-summary">
+            <div class="summary-cell"><div class="summary-label">Chargepoints</div><div class="summary-value">4</div></div>
+            <div class="summary-cell"><div class="summary-label">Routes</div><div class="summary-value">2</div></div>
+            <div class="summary-cell"><div class="summary-label">Equipment</div><div class="summary-value">6</div></div>
+            <div class="summary-cell"><div class="summary-label">Status</div><div class="summary-value ready">Ready</div></div>
+          </div>
+        </div>
+        <div class="floating-note" aria-hidden="true">
+          <span class="note-icon">↗</span>
+          <span><strong>Project pack ready</strong><span>Clear enough for review, quotation and delivery</span></span>
+        </div>
       </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<!-- ================= STANDARDS STRIP ================= -->
-<div data-screen-label="Standards strip" style="display:flex;align-items:center;gap:12px;padding:18px 40px;background:#FFFFFF;border-top:1px solid #E7DFD0;border-bottom:1px solid #E7DFD0;flex-wrap:wrap">
-  <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8C97A0">Designed around UK regs</span>
-  <span style="flex:1"></span>
-  <span style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:#5C6770;border:1px solid #E7DFD0;border-radius:999px;padding:5px 12px">BS 7671 · Section 722</span>
-  <span style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:#5C6770;border:1px solid #E7DFD0;border-radius:999px;padding:5px 12px">IET Code of Practice</span>
-  <span style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:#5C6770;border:1px solid #E7DFD0;border-radius:999px;padding:5px 12px">Building Regs Part S</span>
-  <span style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:#5C6770;border:1px solid #E7DFD0;border-radius:999px;padding:5px 12px">DNO / ENA process</span>
-</div>
-
-<!-- ================= HOW IT WORKS ================= -->
-<section id="how" data-screen-label="How it works" style="padding:72px 40px;background:#FBF8F2;scroll-margin-top:64px">
-  <div style="max-width:1160px;margin:0 auto">
-    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1043B0;margin-bottom:10px">How it works</div>
-    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:700;letter-spacing:-0.015em;color:#16232E;margin:0 0 40px">Three steps. One visit.</h2>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:28px;position:relative">
-        <div style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:#1E6BFF;margin-bottom:14px">01</div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;color:#16232E;margin-bottom:8px">Survey on site</div>
-        <p style="font-size:14.5px;line-height:1.55;color:#5C6770;margin:0">Photograph the cut-out, board and route. Set a scale reference per photo. The site walk captures everything the office needs.</p>
-      </div>
-      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:28px;position:relative">
-        <div style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:#1E6BFF;margin-bottom:14px">02</div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;color:#16232E;margin-bottom:8px">Design with checks</div>
-        <p style="font-size:14.5px;line-height:1.55;color:#5C6770;margin:0">Drop chargers, draw cable runs, place boards and supplies. Cable sizing, volt drop and load-vs-main-fuse checks run as you draw.</p>
-      </div>
-      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:28px;position:relative">
-        <div style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:#1E6BFF;margin-bottom:14px">03</div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;color:#16232E;margin-bottom:8px">Send the pack</div>
-        <p style="font-size:14.5px;line-height:1.55;color:#5C6770;margin:0">Branded customer quote, engineer pack with single-line diagram, and the DNO application, exported as PDF before you leave.</p>
-      </div>
+  <div class="outcome-strip" role="region" aria-label="Key outcomes">
+    <div class="container outcome-grid">
+      <div class="outcome"><span class="outcome-number">01</span><div><strong>Make the design visible</strong><p>Show charger positions, equipment and routes in context.</p></div></div>
+      <div class="outcome"><span class="outcome-number">02</span><div><strong>Reduce interpretation</strong><p>Give project teams and customers one clear reference point.</p></div></div>
+      <div class="outcome"><span class="outcome-number">03</span><div><strong>Keep the detail together</strong><p>Build a coherent pack instead of scattered photos and notes.</p></div></div>
     </div>
   </div>
-</section>
 
-<!-- ================= WHAT'S INSIDE ================= -->
-<section id="product" data-screen-label="What's inside" style="padding:72px 40px;background:#FFFFFF;border-top:1px solid #E7DFD0;scroll-margin-top:64px">
-  <div style="max-width:1160px;margin:0 auto">
-    <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1043B0;margin-bottom:10px">What's inside</div>
-    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:700;letter-spacing:-0.015em;color:#16232E;margin:0 0 12px">One subscription. The whole job.</h2>
-    <p style="font-size:15.5px;color:#5C6770;margin:0 0 40px;max-width:560px">Every plan includes the lot: no modules, no per-feature add-ons.</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-      <a href="EV Site Planner.html" style="display:flex;flex-direction:column;border:1px solid #E7DFD0;border-radius:16px;padding:24px;background:#FBF8F2;transition:all .2s;text-decoration:none" style-hover="box-shadow:0 12px 28px -10px rgba(16,24,40,.16);transform:translateY(-3px);border-color:#D6CBB6">
-        <div style="width:44px;height:44px;border-radius:10px;background:#16232E;display:grid;place-items:center;margin-bottom:16px"><span style="width:16px;height:16px;border-radius:4px;background:#4D82FF"></span></div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:#16232E;margin-bottom:6px">Survey & design canvas</div>
-        <div style="font-size:13.5px;color:#5C6770;line-height:1.5">Touch-first markup on photos and plans. Single-line diagram generated from the design.</div>
-        <div style="margin-top:auto;padding-top:14px;font-size:13px;font-weight:600;color:#1E6BFF">Open →</div>
-      </a>
-      <a href="Quotes%20%26%20Invoices.dc.html" style="display:flex;flex-direction:column;border:1px solid #E7DFD0;border-radius:16px;padding:24px;background:#FBF8F2;transition:all .2s;text-decoration:none" style-hover="box-shadow:0 12px 28px -10px rgba(16,24,40,.16);transform:translateY(-3px);border-color:#D6CBB6">
-        <div style="width:44px;height:44px;border-radius:10px;background:#16232E;display:grid;place-items:center;margin-bottom:16px"><span style="width:16px;height:16px;border-radius:50%;background:#4BA069"></span></div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:#16232E;margin-bottom:6px">Quotes & invoices</div>
-        <div style="font-size:13.5px;color:#5C6770;line-height:1.5">Quotes built straight from the survey pack. Track drift against the survey, invoice the job.</div>
-        <div style="margin-top:auto;padding-top:14px;font-size:13px;font-weight:600;color:#1E6BFF">Open →</div>
-      </a>
-      <a href="Learning%20Hub.dc.html" style="display:flex;flex-direction:column;border:1px solid #E7DFD0;border-radius:16px;padding:24px;background:#FBF8F2;transition:all .2s;text-decoration:none" style-hover="box-shadow:0 12px 28px -10px rgba(16,24,40,.16);transform:translateY(-3px);border-color:#D6CBB6">
-        <div style="width:44px;height:44px;border-radius:10px;background:#16232E;display:grid;place-items:center;margin-bottom:16px"><span style="width:16px;height:16px;transform:rotate(45deg);background:#C89A14"></span></div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:#16232E;margin-bottom:6px">Learning Hub</div>
-        <div style="font-size:13.5px;color:#5C6770;line-height:1.5">Interactive courses with quizzes: domestic installs and commercial multi-charger sites.</div>
-        <div style="margin-top:auto;padding-top:14px;font-size:13px;font-weight:600;color:#1E6BFF">Open →</div>
-      </a>
-      <a href="Guide%20Library.dc.html" style="display:flex;flex-direction:column;border:1px solid #E7DFD0;border-radius:16px;padding:24px;background:#FBF8F2;transition:all .2s;text-decoration:none" style-hover="box-shadow:0 12px 28px -10px rgba(16,24,40,.16);transform:translateY(-3px);border-color:#D6CBB6">
-        <div style="width:44px;height:44px;border-radius:10px;background:#16232E;display:grid;place-items:center;margin-bottom:16px"><span style="width:16px;height:4px;border-radius:2px;background:#F1EFE9;box-shadow:0 7px 0 #F1EFE9,0 -7px 0 #F1EFE9"></span></div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:#16232E;margin-bottom:6px">Guide Library</div>
-        <div style="font-size:13.5px;color:#5C6770;line-height:1.5">Reference guides for the awkward bits: earthing decisions, open-PEN, DNO forms.</div>
-        <div style="margin-top:auto;padding-top:14px;font-size:13px;font-weight:600;color:#1E6BFF">Open →</div>
-      </a>
-      <a href="Project%20Support.dc.html" style="display:flex;flex-direction:column;border:1px solid #E7DFD0;border-radius:16px;padding:24px;background:#FBF8F2;transition:all .2s;text-decoration:none" style-hover="box-shadow:0 12px 28px -10px rgba(16,24,40,.16);transform:translateY(-3px);border-color:#D6CBB6">
-        <div style="width:44px;height:44px;border-radius:10px;background:#16232E;display:grid;place-items:center;margin-bottom:16px"><span style="width:16px;height:16px;border-radius:50% 50% 50% 4px;background:#7FA6FF"></span></div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:#16232E;margin-bottom:6px">Project Support</div>
-        <div style="font-size:13.5px;color:#5C6770;line-height:1.5">Stuck on an awkward site? Send the pack in; a qualified engineer reviews it against your actual design.</div>
-        <div style="margin-top:auto;padding-top:14px;font-size:13px;font-weight:600;color:#1E6BFF">Open →</div>
-      </a>
-      <a href="RAMS Builder.dc.html" style="display:flex;flex-direction:column;border:1px solid #E7DFD0;border-radius:16px;padding:24px;background:#FBF8F2;transition:all .2s;text-decoration:none" style-hover="box-shadow:0 12px 28px -10px rgba(16,24,40,.16);transform:translateY(-3px);border-color:#D6CBB6">
-        <div style="width:44px;height:44px;border-radius:10px;background:#16232E;display:grid;place-items:center;margin-bottom:16px"><span style="width:17px;height:15px;background:#DE9A1C;clip-path:polygon(50% 0,100% 100%,0 100%)"></span></div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:#16232E">RAMS Builder</span><span style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#B4590A;background:#FBEFD9;border:1px solid #EED9AE;border-radius:999px;padding:2px 7px">Coming soon</span></div>
-        <div style="font-size:13.5px;color:#5C6770;line-height:1.5">Risk assessments and method statements drafted from the site design itself, not a blank template.</div>
-        <div style="margin-top:auto;padding-top:14px;font-size:13px;font-weight:600;color:#8C97A0">Preview →</div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ================= CHECKS (dark) ================= -->
-<section id="checks" data-screen-label="Engineering checks" style="background:#0E1820;border-top:1px solid #E7DFD0;scroll-margin-top:64px">
-  <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr">
-    <div style="padding:72px 48px 72px 0;display:flex;flex-direction:column;justify-content:center">
-      <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7FA6FF;margin-bottom:10px;padding-left:40px">The checks are built in</div>
-      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:700;letter-spacing:-0.015em;color:#F1EFE9;margin:0 0 18px;text-wrap:balance;padding-left:40px">It's a design tool that knows the regs.</h2>
-      <p style="font-size:15.5px;line-height:1.6;color:#9DAAB0;margin:0 0 26px;max-width:440px;padding-left:40px">Every cable you draw is sized and checked against BS 7671 as you go. No spreadsheet on the bonnet of the van.</p>
-      <div style="display:flex;flex-direction:column;gap:11px;padding-left:40px">
-        <div style="display:flex;gap:10px;align-items:baseline"><span style="color:#4BA069;font-weight:700">✓</span><span style="font-size:14.5px;color:#F1EFE9">Automatic cable sizing and volt-drop checks per run</span></div>
-        <div style="display:flex;gap:10px;align-items:baseline"><span style="color:#4BA069;font-weight:700">✓</span><span style="font-size:14.5px;color:#F1EFE9">Load assessment against the main fuse, with diversity</span></div>
-        <div style="display:flex;gap:10px;align-items:baseline"><span style="color:#4BA069;font-weight:700">✓</span><span style="font-size:14.5px;color:#F1EFE9">Single-line diagram generated from the markup</span></div>
-        <div style="display:flex;gap:10px;align-items:baseline"><span style="color:#4BA069;font-weight:700">✓</span><span style="font-size:14.5px;color:#F1EFE9">DNO application helper with the site pack attached</span></div>
-        <div style="display:flex;gap:10px;align-items:baseline"><span style="color:#4BA069;font-weight:700">✓</span><span style="font-size:14.5px;color:#F1EFE9">Earthing and open-PEN prompts per supply type</span></div>
+  <section id="how" class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>From project information to a plan people can use.</h2>
+        <p>The planner is flexible enough to support an early concept, a detailed survey or a delivery-ready markup without forcing every project through the same rigid process.</p>
       </div>
-      <p style="font-size:12px;line-height:1.5;color:#5C6770;margin:26px 0 0;max-width:440px;padding-left:40px">EV Site Planner assists design decisions; the final design and certification remain with the qualified installer.</p>
-    </div>
-    <div style="padding:56px 40px 56px 0;display:flex;align-items:center">
-      <div style="width:100%;background:#14222C;border:1px solid rgba(157,170,176,.2);border-radius:14px;overflow:hidden">
-        <div style="display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(157,170,176,.16)">
-          <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9DAAB0">Circuit schedule · live</span>
-          <span style="flex:1"></span>
-          <span style="font-size:11px;font-weight:700;color:#4BA069;background:rgba(75,160,105,.14);border:1px solid rgba(75,160,105,.4);padding:3px 9px;border-radius:999px">All checks passing</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1.1fr 1.3fr .7fr .9fr;gap:0;padding:10px 16px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5C6770">
-          <span>Circuit</span><span>Cable</span><span>Run</span><span style="text-align:right">Volt drop</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1.1fr 1.3fr .7fr .9fr;padding:11px 16px;border-top:1px solid rgba(157,170,176,.12);font-family:'Space Grotesk',monospace;font-size:13px;color:#F1EFE9">
-          <span>CP-01/02</span><span style="color:#F2B98C">70mm² SWA</span><span>85 m</span><span style="text-align:right;color:#4BA069">1.5% ✓</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1.1fr 1.3fr .7fr .9fr;padding:11px 16px;border-top:1px solid rgba(157,170,176,.12);font-family:'Space Grotesk',monospace;font-size:13px;color:#F1EFE9">
-          <span>CP-03/04</span><span style="color:#F2B98C">35mm² SWA</span><span>52 m</span><span style="text-align:right;color:#4BA069">1.9% ✓</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1.1fr 1.3fr .7fr .9fr;padding:11px 16px;border-top:1px solid rgba(157,170,176,.12);font-family:'Space Grotesk',monospace;font-size:13px;color:#F1EFE9">
-          <span>CP-05/06</span><span style="color:#F2B98C">25mm² SWA</span><span>34 m</span><span style="text-align:right;color:#4BA069">2.3% ✓</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1.1fr 1.3fr .7fr .9fr;padding:11px 16px;border-top:1px solid rgba(157,170,176,.12);font-family:'Space Grotesk',monospace;font-size:13px;color:#F1EFE9">
-          <span>EVDB feed</span><span style="color:#F2B98C">120mm² SWA</span><span>18 m</span><span style="text-align:right;color:#4BA069">0.4% ✓</span>
-        </div>
+      <div class="steps">
+        <article class="step">
+          <div class="step-number">01 · Add context</div>
+          <h3>Start with the site</h3>
+          <p>Bring in a photograph, drawing or plan, then record the project details and installation constraints that matter.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">02 · Build the layout</div>
+          <h3>Map the proposal</h3>
+          <p>Place chargers and equipment, draw routes, identify working areas and add notes directly against the design.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">03 · Share the outcome</div>
+          <h3>Export a clear pack</h3>
+          <p>Create a consistent visual record that can support customer agreement, technical review, quotation and project delivery.</p>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ================= TRADE STRIP ================= -->
-<section data-screen-label="Trade strip" style="padding:72px 40px;background:#F4EFE5;border-top:1px solid #E7DFD0">
-  <div style="max-width:860px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center">
-    <img src="assets/logo-mark.svg" alt="" style="width:40px;height:40px;margin-bottom:22px">
-    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:40px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;color:#16232E;text-wrap:balance;margin:0 0 18px">Built by someone who's pulled <em style="font-style:normal;color:#1E6BFF">real cable.</em></h2>
-    <p style="font-size:16.5px;line-height:1.65;color:#5C6770;max-width:600px;margin:0 0 28px">EV Site Planner is built and used by a practising UK installer. The checks, the forms, the defaults: they're the ones we use on our own jobs, not a dev's guess at what the trade needs.</p>
-    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
-      <span style="display:inline-flex;align-items:center;gap:10px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:11px;padding:11px 16px;font-size:13px;font-weight:600;color:#3E4A53"><span style="width:8px;height:8px;border-radius:50%;background:#4BA069"></span>Real BS 7671 checks</span>
-      <span style="display:inline-flex;align-items:center;gap:10px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:11px;padding:11px 16px;font-size:13px;font-weight:600;color:#3E4A53"><span style="width:8px;height:8px;border-radius:50%;background:#DE9A1C"></span>Real DNO paperwork</span>
-      <span style="display:inline-flex;align-items:center;gap:10px;background:#FFFFFF;border:1px solid #E7DFD0;border-radius:11px;padding:11px 16px;font-size:13px;font-weight:600;color:#3E4A53"><span style="width:8px;height:8px;border-radius:50%;background:#1E6BFF"></span>Works offline in the van</span>
-    </div>
-  </div>
-</section>
-
-<!-- ================= LOCAL AUTHORITIES ================= -->
-<section id="councils" data-screen-label="Local authorities" style="padding:72px 40px;background:#FFFFFF;border-top:1px solid #E7DFD0;scroll-margin-top:64px">
-  <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:clamp(24px,4vw,48px);align-items:center">
-    <div>
-      <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1043B0;margin-bottom:10px">For local authorities &amp; councils</div>
-      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:34px;font-weight:700;letter-spacing:-0.02em;line-height:1.12;color:#16232E;margin:0 0 16px;text-wrap:balance">Independent compliance review for council charging networks.</h2>
-      <p style="font-size:16px;line-height:1.6;color:#5C6770;margin:0 0 14px;max-width:520px">Most council estates were installed before the Public Charge Point Regulations 2023, before PAS 1899, and before LEVI due diligence started asking about the sites you already own. Review every site against every framework (payment, electrical, accessibility, highways and grant conditions) and turn the findings into a grant-readiness report.</p>
-      <p style="font-size:14px;line-height:1.6;color:#8C97A0;margin:0 0 26px;max-width:520px">Surveys are carried out on the ground by our installer network, in the same tool they already use.</p>
-      <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
-        <a href="Council Estate Review.dc.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:10px;background:#1E6BFF;color:#FBF8F2;font-weight:600;font-size:15px;text-decoration:none" style-hover="background:#1556E0">Open Estate Review</a>
-        <a href="Council Estate Review.dc.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 18px;border-radius:10px;background:transparent;color:#16232E;font-weight:500;font-size:15px;border:1.5px solid #D6CBB6;text-decoration:none" style-hover="border-color:#1E6BFF;color:#1043B0">Explore the Averton worked example</a>
+  <section id="use-cases" class="section section-white">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">One tool, two workflows</p>
+        <h2>Scale the detail to the installation.</h2>
+        <p>Switch between focused domestic planning and more structured commercial layouts while keeping the same clear visual language.</p>
+      </div>
+      <div class="use-case-grid">
+        <article class="use-card">
+          <div class="use-graphic" aria-hidden="true"><span class="line a"></span><span class="line b"></span><span class="node n1"></span><span class="node n2"></span><span class="node n3"></span></div>
+          <span class="use-tag">Domestic</span>
+          <h3>Explain a home installation before work begins.</h3>
+          <p>Create a straightforward proposal that connects the charger position, supply equipment, route and installation notes.</p>
+          <ul class="use-list">
+            <li>Photo-based markup and equipment placement</li>
+            <li>Customer-friendly installation overview</li>
+            <li>Clear record for the installing engineer</li>
+          </ul>
+        </article>
+        <article class="use-card commercial">
+          <div class="use-graphic" aria-hidden="true"><span class="line a"></span><span class="line b"></span><span class="node n1"></span><span class="node n2"></span><span class="node n3"></span></div>
+          <span class="use-tag">Commercial</span>
+          <h3>Coordinate equipment, bays and routes across a wider site.</h3>
+          <p>Build a visual layout that helps surveyors, project managers, estimators, contractors and clients work from the same proposal.</p>
+          <ul class="use-list">
+            <li>Multi-charger and bay planning</li>
+            <li>Electrical equipment and route annotation</li>
+            <li>Project notes, zones and delivery context</li>
+          </ul>
+        </article>
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px">
-        <div style="background:#FBF8F2;border:1px solid #E7DFD0;border-radius:13px;padding:18px 20px">
-          <div style="font-family:'Space Grotesk',monospace;font-size:24px;font-weight:700;color:#16232E;letter-spacing:-0.01em">0 <span style="font-size:14px;color:#8C97A0">of 15,000</span></div>
-          <div style="font-size:12.5px;line-height:1.45;color:#5C6770;margin-top:5px">UK rapid chargepoints fully meet the PAS 1899 accessibility standard <span style="color:#8C97A0">Public Accounts Committee, 2025</span></div>
-        </div>
-        <div style="background:#FBF8F2;border:1px solid #E7DFD0;border-radius:13px;padding:18px 20px">
-          <div style="font-family:'Space Grotesk',monospace;font-size:24px;font-weight:700;color:#16232E;letter-spacing:-0.01em">111 <span style="font-size:14px;color:#8C97A0">of 289</span></div>
-          <div style="font-size:12.5px;line-height:1.45;color:#5C6770;margin-top:5px">councils have no accessible on-street charging at all <span style="color:#8C97A0">FOI research, 2025</span></div>
-        </div>
-        <div style="background:#FBF8F2;border:1px solid #E7DFD0;border-radius:13px;padding:18px 20px">
-          <div style="font-family:'Space Grotesk',monospace;font-size:24px;font-weight:700;color:#16232E;letter-spacing:-0.01em">£10k</div>
-          <div style="font-size:12.5px;line-height:1.45;color:#5C6770;margin-top:5px">maximum civil penalty per chargepoint under the Public Charge Point Regulations 2023</div>
-        </div>
-        <div style="background:#FBF8F2;border:1px solid #E7DFD0;border-radius:13px;padding:18px 20px">
-          <div style="font-family:'Space Grotesk',monospace;font-size:24px;font-weight:700;color:#16232E;letter-spacing:-0.01em">£m</div>
-          <div style="font-size:12.5px;line-height:1.45;color:#5C6770;margin-top:5px">LEVI capital tranches are conditional; estate stewardship is part of the evidence</div>
-        </div>
-      </div>
-      <div style="background:#16232E;border-radius:13px;padding:16px 20px;font-size:13px;line-height:1.55;color:#9DAAB0"><b style="color:#F1EFE9">Compliant when installed ≠ still compliant.</b> The review checks each site across five groups (payment &amp; consumer, electrical safety, accessibility, highways &amp; traffic, and grant conditions) and lists the frameworks that don't apply, so nothing is assumed.</div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- ================= PRICING ================= -->
-<section id="pricing" data-screen-label="Pricing" style="padding:72px 40px;background:#FBF8F2;border-top:1px solid #E7DFD0;scroll-margin-top:64px">
-  <div style="max-width:1160px;margin:0 auto">
-    <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:40px">
-      <div style="flex:1;min-width:320px">
-        <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1043B0;margin-bottom:10px">Pricing</div>
-        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:700;letter-spacing:-0.015em;color:#16232E;margin:0 0 12px">Everything included. Pick a size.</h2>
-        <p style="font-size:15.5px;color:#5C6770;margin:0;max-width:560px">Both installer plans get the full toolkit: canvas, checks, quotes, courses, guides and Project Support. 14-day trial, then paid. Prices exclude VAT.</p>
+  <section id="features" class="section section-night">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Practical by design</p>
+        <h2>The useful detail, without heavyweight CAD.</h2>
+        <p>EV Site Planner is intended to close the gap between a rough site sketch and a formal design package, making professional planning more accessible and consistent.</p>
       </div>
-      <sc-if value="{{ isMonthly }}" hint-placeholder-val="{{ true }}">
-        <div style="display:flex;border:1.5px solid #D6CBB6;border-radius:11px;overflow:hidden;background:#FFFFFF">
-          <button onClick="{{ setMonthly }}" style="font-family:inherit;font-size:13.5px;font-weight:700;padding:10px 18px;border:none;cursor:pointer;background:#16232E;color:#FBF8F2">Monthly</button>
-          <button onClick="{{ setAnnual }}" style="font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 18px;border:none;cursor:pointer;background:transparent;color:#5C6770">Annual · 2 months free</button>
-        </div>
-      </sc-if>
-      <sc-if value="{{ isAnnual }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;border:1.5px solid #D6CBB6;border-radius:11px;overflow:hidden;background:#FFFFFF">
-          <button onClick="{{ setMonthly }}" style="font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 18px;border:none;cursor:pointer;background:transparent;color:#5C6770">Monthly</button>
-          <button onClick="{{ setAnnual }}" style="font-family:inherit;font-size:13.5px;font-weight:700;padding:10px 18px;border:none;cursor:pointer;background:#16232E;color:#FBF8F2">Annual · 2 months free</button>
-        </div>
-      </sc-if>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch">
-      <div style="background:#FFFFFF;border:2px solid #1E6BFF;border-radius:16px;padding:28px;display:flex;flex-direction:column;position:relative;box-shadow:0 12px 28px -10px rgba(30,107,255,.25)">
-        <span style="position:absolute;top:-11px;left:28px;font-size:11px;font-weight:700;letter-spacing:.06em;background:#1E6BFF;color:#FBF8F2;padding:4px 10px;border-radius:999px">Most popular</span>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px;color:#16232E">Solo</div>
-        <div style="font-size:13.5px;color:#5C6770;margin-top:4px">One installer, unlimited jobs</div>
-        <div style="margin:18px 0 20px;display:flex;align-items:baseline;gap:6px"><span style="font-family:'Space Grotesk',monospace;font-size:38px;font-weight:700;letter-spacing:-0.02em;color:#16232E">{{ soloPriceLabel }}</span><span style="font-size:14px;color:#8C97A0;font-weight:500">{{ periodLabel }}</span><span style="font-size:12.5px;color:#8C97A0;margin-left:6px">{{ soloSubLabel }}</span></div>
-        <div style="display:flex;flex-direction:column;gap:9px;font-size:14px;color:#3E4A53">
-          <span>✓&nbsp; Unlimited projects, domestic &amp; commercial</span>
-          <span>✓&nbsp; All checks, SLD &amp; DNO pack</span>
-          <span>✓&nbsp; Quotes, invoicing &amp; drift tracking</span>
-          <span>✓&nbsp; Your logo on every document</span>
-          <span>✓&nbsp; Full Learning Hub &amp; Guide Library</span>
-          <span>✓&nbsp; Project Support: engineer review</span>
-          <span>✓&nbsp; Offline in the van · CSV / PNG / .evplan</span>
-        </div>
-        <span style="flex:1"></span>
-        <a href="#pricing" style="display:inline-flex;justify-content:center;margin-top:24px;padding:12px 18px;border-radius:10px;background:#1E6BFF;color:#FBF8F2;font-weight:600;font-size:14.5px;text-decoration:none" style-hover="background:#1556E0">Start 14-day trial</a>
-      </div>
-
-      <div style="background:#FFFFFF;border:1px solid #E7DFD0;border-radius:16px;padding:28px;display:flex;flex-direction:column">
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px;color:#16232E">Team</div>
-        <div style="font-size:13.5px;color:#5C6770;margin-top:4px">Contractors &amp; fleets</div>
-        <div style="margin:18px 0 20px;display:flex;align-items:baseline;gap:6px"><span style="font-family:'Space Grotesk',monospace;font-size:38px;font-weight:700;letter-spacing:-0.02em;color:#16232E">{{ teamPriceLabel }}</span><span style="font-size:14px;color:#8C97A0;font-weight:500">{{ periodLabel }}</span><span style="font-size:12.5px;color:#8C97A0;margin-left:6px">5 seats</span></div>
-        <div style="display:flex;flex-direction:column;gap:9px;font-size:14px;color:#3E4A53">
-          <span>✓&nbsp; Everything in Solo</span>
-          <span>✓&nbsp; 5 seats, +£12 per extra</span>
-          <span>✓&nbsp; Shared rate cards, kit lists &amp; templates</span>
-          <span>✓&nbsp; Company-wide project library</span>
-          <span>✓&nbsp; Priority support &amp; onboarding call</span>
-        </div>
-        <span style="flex:1"></span>
-        <a href="#pricing" style="display:inline-flex;justify-content:center;margin-top:24px;padding:12px 18px;border-radius:10px;border:1.5px solid #D6CBB6;color:#16232E;font-weight:600;font-size:14.5px;text-decoration:none" style-hover="background:#EBE3D4">Talk to us</a>
-      </div>
-
-      <div style="background:#16232E;border:1px solid #16232E;border-radius:16px;padding:28px;display:flex;flex-direction:column">
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px;color:#F1EFE9">Estate Review</div>
-        <div style="font-size:13.5px;color:#9DAAB0;margin-top:4px">Local authorities &amp; councils</div>
-        <div style="margin:18px 0 20px"><div style="display:flex;align-items:baseline;gap:6px"><span style="font-family:'Space Grotesk',monospace;font-size:24px;font-weight:700;letter-spacing:-0.02em;color:#F1EFE9;white-space:nowrap">Per estate</span><span style="font-size:14px;color:#8C97A0;font-weight:500">/year</span></div><div style="font-size:12.5px;color:#8C97A0;margin-top:4px">on chargepoints in scope</div></div>
-        <div style="display:flex;flex-direction:column;gap:9px;font-size:14px;color:#C9D2DA">
-          <span>✓&nbsp; Whole-estate annual licence</span>
-          <span>✓&nbsp; Unlimited officer seats + contractor access</span>
-          <span>✓&nbsp; 56 checks across 5 frameworks</span>
-          <span>✓&nbsp; Grant-readiness, s.149 &amp; funder packs</span>
-        </div>
-        <span style="flex:1"></span>
-        <a href="Estate Review One-Pager.dc.html" style="display:inline-flex;justify-content:center;margin-top:24px;padding:12px 18px;border-radius:10px;border:1.5px solid rgba(157,170,176,.5);color:#F1EFE9;font-weight:600;font-size:14.5px;text-decoration:none" style-hover="border-color:#7FA6FF;color:#7FA6FF">Read the one-pager</a>
+      <div class="feature-grid">
+        <article class="feature"><span class="feature-icon">01</span><h3>Photo and plan markup</h3><p>Work over real site context so the proposal is immediately understandable.</p></article>
+        <article class="feature"><span class="feature-icon">02</span><h3>EV-specific equipment</h3><p>Place chargers, distribution equipment and infrastructure using a purpose-built symbol library.</p></article>
+        <article class="feature"><span class="feature-icon">03</span><h3>Route and area tools</h3><p>Show cable routes, working zones, bays and other important spatial information.</p></article>
+        <article class="feature"><span class="feature-icon">04</span><h3>Domestic and commercial modes</h3><p>Use a workflow and level of detail suited to the scale of the project.</p></article>
+        <article class="feature"><span class="feature-icon">05</span><h3>Charger visualisation</h3><p>Help customers and project teams understand how equipment will sit within the proposed location.</p></article>
+        <article class="feature"><span class="feature-icon">06</span><h3>Consistent exports</h3><p>Turn the working markup into a more professional record for review and delivery.</p></article>
       </div>
     </div>
+  </section>
 
-    <p style="font-size:13px;color:#8C97A0;margin:22px 0 0">Winning one extra domestic job pays for a year of Solo. Trials run on the full product; no card up front.</p>
-  </div>
-</section>
-
-<!-- ================= FOOTER ================= -->
-<footer data-screen-label="Footer" style="background:#16232E;padding:48px 40px 28px">
-  <div style="max-width:1160px;margin:0 auto">
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:30px;flex-wrap:wrap">
-      <img src="assets/logo-mark-reversed.svg" alt="" style="width:36px;height:36px">
-      <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:#FBF8F2;flex:1;letter-spacing:-0.01em">Spend the evening quoting, or don't.</span>
-      <a href="#pricing" style="display:inline-flex;align-items:center;padding:11px 20px;border-radius:10px;background:#1E6BFF;color:#FBF8F2;font-weight:600;font-size:14px;text-decoration:none" style-hover="background:#1556E0">{{ navCta }}</a>
+  <section class="section section-white">
+    <div class="container credibility">
+      <div class="cred-mark" aria-hidden="true"><img src="assets/logo-mark.svg" alt=""></div>
+      <div class="cred-copy">
+        <p class="eyebrow">Built from real project delivery</p>
+        <h2>Shaped by electrical and EV experience, not generic software assumptions.</h2>
+        <p>Created by a qualified electrician and commercial EV project manager, EV Site Planner is built around the information installers, surveyors, project managers and customers actually need to understand a proposed installation.</p>
+        <div class="cred-points">
+          <div class="cred-point">Installation-led workflows</div>
+          <div class="cred-point">Domestic and commercial context</div>
+          <div class="cred-point">Clear stakeholder communication</div>
+          <div class="cred-point">Designed for practical use</div>
+        </div>
+        <p class="disclaimer">EV Site Planner supports planning and communication. It does not certify a design or replace the competent person’s technical assessment, regulatory duties or installation responsibility.</p>
+      </div>
     </div>
-    <div style="display:flex;gap:22px;border-top:1px solid rgba(157,170,176,.2);padding-top:20px;align-items:baseline;flex-wrap:wrap">
-      <span style="font-size:12.5px;color:#9DAAB0">© 2026 EV Site Planner</span>
-      <a href="EV Site Planner.html" style="font-size:12.5px;color:#9DAAB0;text-decoration:none" style-hover="color:#F1EFE9">Live app</a>
-      <a href="Learning%20Hub.dc.html" style="font-size:12.5px;color:#9DAAB0;text-decoration:none" style-hover="color:#F1EFE9">Learning Hub</a>
-      <a href="Guide%20Library.dc.html" style="font-size:12.5px;color:#9DAAB0;text-decoration:none" style-hover="color:#F1EFE9">Guide Library</a>
-      <a href="Quotes%20%26%20Invoices.dc.html" style="font-size:12.5px;color:#9DAAB0;text-decoration:none" style-hover="color:#F1EFE9">Quotes & Invoices</a>
-      <a href="Project%20Support.dc.html" style="font-size:12.5px;color:#9DAAB0;text-decoration:none" style-hover="color:#F1EFE9">Project Support</a>
-      <a href="Council%20Estate%20Review.dc.html" style="font-size:12.5px;color:#9DAAB0;text-decoration:none" style-hover="color:#F1EFE9">Estate Review</a>
-      <a href="https://github.com/benhitchins-stack/ev-site-planner/issues/new" target="_blank" rel="noopener" style="font-size:12.5px;color:#9DAAB0;text-decoration:none" style-hover="color:#F1EFE9">Report a snag</a>
-      <span style="flex:1"></span>
-      <span style="font-size:11.5px;color:#5C6770;max-width:460px;text-align:right">Design assistance, not certification; responsibility for the final design remains with the qualified installer.</span>
+  </section>
+
+  <section id="resources" class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">More than the canvas</p>
+        <h2>Useful supporting tools, kept in their proper place.</h2>
+        <p>The planner is the main product. These secondary tools add reference, learning and commercial support when you need them.</p>
+      </div>
+      <div class="tool-grid">
+        <a class="tool-card" href="Guide%20Library.dc.html">
+          <span class="tool-kicker">Reference</span>
+          <h3>Guide Library</h3>
+          <p>Practical reference material for common EV installation decisions and awkward project questions.</p>
+          <span class="tool-link">Browse the guides →</span>
+        </a>
+        <a class="tool-card" href="Learning%20Hub.dc.html">
+          <span class="tool-kicker">Learning</span>
+          <h3>Learning Hub</h3>
+          <p>Structured learning content covering domestic installations and commercial EV infrastructure.</p>
+          <span class="tool-link">Open the Learning Hub →</span>
+        </a>
+        <a class="tool-card" href="Quotes%20%26%20Invoices.dc.html">
+          <span class="tool-kicker">Commercial</span>
+          <h3>Quotes and invoices</h3>
+          <p>Build the commercial record alongside the installation proposal rather than starting again elsewhere.</p>
+          <span class="tool-link">Open quoting tools →</span>
+        </a>
+      </div>
+
+      <div class="authority-band">
+        <div class="authority-inner">
+          <div>
+            <h3>Planning or reviewing a local authority charging estate?</h3>
+            <p>Explore the separate estate review workflow for structured site records, accessibility considerations and programme-level oversight.</p>
+          </div>
+          <a class="button button-light" href="Council%20Estate%20Review.dc.html">Explore Estate Review</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="section section-white">
+    <div class="container faq-grid">
+      <div class="faq-intro">
+        <p class="eyebrow">Common questions</p>
+        <h2>What to know before you start.</h2>
+        <p>The current release is an open beta. Use it on real projects, but retain your normal technical checks and project controls.</p>
+      </div>
+      <div class="faqs">
+        <details open>
+          <summary>Is EV Site Planner really free?</summary>
+          <p>Yes. The current beta is free to use and does not require an account or payment card. Paid features may be introduced later, but the page will be updated before that changes.</p>
+        </details>
+        <details>
+          <summary>Who is it designed for?</summary>
+          <p>It is designed for EV installers, electrical contractors, surveyors, estimators, project managers and client teams planning domestic or commercial chargepoint installations.</p>
+        </details>
+        <details>
+          <summary>Does it replace electrical design or certification?</summary>
+          <p>No. It supports planning, visual communication and project documentation. The final design, regulatory assessment, installation and certification remain the responsibility of the relevant competent persons.</p>
+        </details>
+        <details>
+          <summary>Can I use it for both homes and commercial sites?</summary>
+          <p>Yes. The planner includes distinct domestic and commercial workflows so the information, symbols and outputs can match the scale of the proposed installation.</p>
+        </details>
+        <details>
+          <summary>How can I report a problem or suggest an improvement?</summary>
+          <p>Use the feedback link in the footer to report a snag or suggest a feature. Clear examples, screenshots and the steps that caused an issue are especially helpful during beta.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container final-inner">
+      <div>
+        <h2>Build a clearer EV installation plan.</h2>
+        <p>Open the planner and start with a domestic or commercial project.</p>
+      </div>
+      <div class="final-actions">
+        <a class="button button-light" href="EV Site Planner.html">Open EV Site Planner <span aria-hidden="true">→</span></a>
+        <span class="final-note">Free during beta · no account required</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <img src="assets/logo-mark-reversed.svg" alt="">
+      <span class="footer-brand">EV Site Planner</span>
+      <span class="footer-tag">Clearer planning for better EV projects.</span>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 EV Site Planner</span>
+      <a href="EV Site Planner.html">Open planner</a>
+      <a href="Guide%20Library.dc.html">Guides</a>
+      <a href="Learning%20Hub.dc.html">Learning</a>
+      <a href="Council%20Estate%20Review.dc.html">Estate Review</a>
+      <a href="https://github.com/benhitchins-stack/ev-site-planner/issues/new?title=EV%20Site%20Planner%20feedback" target="_blank" rel="noopener noreferrer">Send feedback</a>
+      <span class="footer-spacer"></span>
+      <span class="footer-disclaimer">Planning and communication support only. Responsibility for technical design, compliance, installation and certification remains with the relevant competent persons.</span>
     </div>
   </div>
 </footer>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;ctaMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;trial-first&quot;,&quot;demo-first&quot;],&quot;default&quot;:&quot;trial-first&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Calls to action&quot;},&quot;soloPrice&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:29,&quot;min&quot;:19,&quot;max&quot;:59,&quot;unit&quot;:&quot;£/mo&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;teamPrice&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:79,&quot;min&quot;:39,&quot;max&quot;:149,&quot;unit&quot;:&quot;£/mo&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Pricing&quot;}}">
-class Component extends DCLogic {
-  state = { billing: 'monthly' };
 
-  renderVals() {
-    const demo = (this.props.ctaMode ?? 'trial-first') === 'demo-first';
-    const solo = this.props.soloPrice ?? 29;
-    const team = this.props.teamPrice ?? 79;
-    const monthly = this.state.billing === 'monthly';
-    return {
-      navCta: demo ? 'Book a demo' : 'Start 14-day trial',
-      heroCta: demo ? 'Book a 15-minute demo' : 'Start your 14-day trial',
-      isMonthly: monthly,
-      isAnnual: !monthly,
-      setMonthly: () => this.setState({ billing: 'monthly' }),
-      setAnnual: () => this.setState({ billing: 'annual' }),
-      periodLabel: monthly ? '/month' : '/year',
-      soloPriceLabel: monthly ? '£' + solo : '£' + solo * 10,
-      teamPriceLabel: monthly ? '£' + team : '£' + team * 10,
-      soloSubLabel: monthly ? 'or £' + solo * 10 + '/yr' : '2 months free',
-    };
-  }
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  renderVals() { return {}; }
 }
 </script>
 </body>
