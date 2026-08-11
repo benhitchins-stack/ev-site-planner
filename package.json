@@ -6,9 +6,17 @@
   "type": "module",
   "scripts": {
     "start": "node serve.mjs",
-    "serve": "node serve.mjs"
+    "serve": "node serve.mjs",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:desktop": "playwright test --project=desktop-chromium",
+    "test:report": "playwright show-report"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
   }
 }

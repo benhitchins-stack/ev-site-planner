@@ -855,9 +855,9 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
       <p class="fine">Or drop files anywhere on this canvas &middot; iPhone HEIC photos are pulled out automatically &middot; PDF pages become plans</p>
     </div>
     <div class="zoombar">
-      <button id="zin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
-      <button id="zfit" title="Fit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-      <button id="zout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
+      <button id="zin" title="Zoom in" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button id="zfit" title="Fit" aria-label="Fit plan to screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button id="zout" title="Zoom out" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
     </div>
     <button class="legendpill" id="legendPill" type="button" title="Show / hide the plan key"></button>
     </div>
@@ -1074,6 +1074,8 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
 .flashcard{animation:cardflash 1.6s ease;}
 @keyframes cardflash{0%{box-shadow:0 0 0 3px rgba(30,107,255,.55);}100%{box-shadow:0 0 0 3px rgba(30,107,255,0);}}
 @media (prefers-reduced-motion:reduce){ .flashcard{animation:none;} }
+/* consistent, branded keyboard focus for the main controls (replaces the varied browser defaults) */
+.hbtn:focus-visible,.cattab:focus-visible,.ptool:focus-visible,.tool:focus-visible,.emi:focus-visible,.side .tab button:focus-visible,.pbtn:focus-visible,.addbtn:focus-visible,.ptog:focus-visible,.seg button:focus-visible,.zoombar button:focus-visible,.sh-link:focus-visible,.kv-act:focus-visible,.nx-go:focus-visible{outline:none;box-shadow:var(--focus-ring);z-index:1;}
 </style>
 
 <div class="walk" id="walkRoot" role="dialog" aria-modal="true"></div>
@@ -8225,19 +8227,32 @@ function idbDel(k){ return idb().then(db=>new Promise((res,rej)=>{ const tx=db.t
 function serialisablePack(){ const out={...pack, photos:(pack.photos||[]).filter(p=>p&&p.src).map(p=>{ const q={...p}; delete q._pending; delete q._failed; if(q.srcOrig===q.src) delete q.srcOrig; return q; })}; delete out._ratesOpen; return out; }
 function autosaveNow(){
   try{ const el=document.getElementById("packname"); if(el && el.value) pack.name=el.value; }catch(_){ }
+  /* keep the jobs list complete & its status chips fresh - BEFORE the working-copy
+     snapshot, so the snapshot carries the projId the save assigns. Snapshotting
+     first meant a restored session lost its projId, minted a duplicate project
+     and orphaned any linked quote. */
+  try{
+    if(!pack.projId && ((pack.photos&&pack.photos.length)||pack.name)) saveCurrentToProjects(true);
+    else if(pack.projId) refreshProjIndexMeta();
+  }catch(_){ }
   const payload={pack:serialisablePack(), view, ts:Date.now()};
   idbSet("autosave",payload).then(()=>{ try{ localStorage.removeItem(LS_KEY); }catch(_){ } }).catch(()=>{
     try{ localStorage.setItem(LS_KEY, JSON.stringify(payload)); }
     catch(e){ if(!lsWarned){ lsWarned=true; toast("Autosave paused: storage is full. Use Save to keep your work."); } }
   });
-  /* keep the jobs list complete & its status chips fresh */
-  try{
-    if(!pack.projId && ((pack.photos&&pack.photos.length)||pack.name)) saveCurrentToProjects(true);
-    else if(pack.projId) refreshProjIndexMeta();
-  }catch(_){ }
 }
 function autosave(){ try{ evalMarkDirty(); }catch(_){ } clearTimeout(saveT); saveT=setTimeout(()=>{ saveT=null; autosaveNow(); try{ syncStageBar(); }catch(_){ } }, 700); }
 function clearAutosave(){ try{ localStorage.removeItem(LS_KEY); }catch(_){} idbDel("autosave").catch(()=>{}); }
+/* A pack is worth restoring when it has photos OR any real identity typed in.
+   Photo-less packs used to be dropped on reload, silently losing typed survey
+   details; the Projects list kept a copy but the working session lost it. */
+function packHasSubstance(pk){
+  try{
+    if(!pk||typeof pk!=="object") return false;
+    if(Array.isArray(pk.photos)&&pk.photos.length) return true;
+    return !!(String(pk.name||"").trim()||String(pk.address||"").trim()||String(pk.postcode||"").trim()||String(pk.custName||"").trim()||String(pk.jobRef||"").trim()||String(pk.notes||"").trim());
+  }catch(_){ return false; }
+}
 /* flush a pending autosave the moment the tab is backgrounded or closed */
 function flushAutosave(){ if(saveT){ clearTimeout(saveT); saveT=null; autosaveNow(); } }
 window.addEventListener("pagehide", flushAutosave);
@@ -9066,7 +9081,7 @@ const STAGE_META={
   install:{label:"Install",tip:"Punch list, snags and install review"},
   handover:{label:"Handover",tip:"Commissioning results and handover certificate"}
 };
-const STAGE_STATES={none:{label:"Not started",cls:"none"},prog:{label:"In progress",cls:"prog"},ready:{label:"Ready",cls:"ready"},done:{label:"Complete",cls:"done"},block:{label:"Blocked",cls:"block"}};
+const STAGE_STATES={none:{label:"Not started",cls:"none"},prog:{label:"In progress",cls:"prog"},ready:{label:"Ready for review",cls:"ready"},done:{label:"Complete",cls:"done"},block:{label:"Blocked",cls:"block"}};
 const ISSUE_SEVS={crit:{label:"Critical",col:"#CC382E"},warn:{label:"Warning",col:"#D9A21B"},adv:{label:"Advisory",col:"#1E6BFF"},info:{label:"Information",col:"#8C97A0"}};
 let __evDirty=true, __evCache=null;
 function evalMarkDirty(){ __evDirty=true; }
@@ -9144,11 +9159,11 @@ function evalProject(){
   /* Price */
   try{
     const bl=budgetLines(); let qd=null; try{ qd=quoteDrift(); }catch(_){ }
-    const qn=qd?esc(qd.number||"Quote"):"";
+    const qn=qd?String(qd.number||"Quote"):"";
     let s="none",why=[];
     if(!bl.length&&!qd){ why=["No priced quantities yet · they build from the markup"]; }
-    else if(qd&&/accepted|paid/i.test(qd.status||"")){ s="done"; why=["Quote "+qn+" "+esc(String(qd.status||"").toLowerCase())]; }
-    else if(qd&&qd.n===0){ s="ready"; why=["Quote "+qn+" matches this plan"+(qd.status?" · "+esc(qd.status):"")]; }
+    else if(qd&&/accepted|paid/i.test(qd.status||"")){ s="done"; why=["Quote "+qn+" "+String(qd.status||"").toLowerCase()]; }
+    else if(qd&&qd.n===0){ s="ready"; why=["Quote "+qn+" matches this plan"+(qd.status?" · "+qd.status:"")]; }
     else if(qd){ s="prog"; why=["Quote "+qn+" is "+qd.n+" line"+(qd.n===1?"":"s")+" out of step with this plan"]; }
     else{ s="prog"; why=["Quantities are priced up · no quote linked yet"]; }
     S("price",s,why,qd?qd.n:0);
@@ -9162,7 +9177,7 @@ function evalProject(){
     const attN=(pack.attachments||[]).length;
     const waiting=(pack.outcome==="dno"||pack.outcome==="permission")&&!pack.readyToProceed;
     let s="none",why=[];
-    if(waiting){ s="block"; why=[pack.outcome==="dno"?("Waiting on the DNO"+(pack.dnoRef?" · ref "+esc(pack.dnoRef):"")):"Waiting on permission (landlord, freeholder or planning)"]; }
+    if(waiting){ s="block"; why=[pack.outcome==="dno"?("Waiting on the DNO"+(pack.dnoRef?" · ref "+pack.dnoRef:"")):"Waiting on permission (landlord, freeholder or planning)"]; }
     else if(!pr.done&&!progOn&&!attN&&!pack.dnoRef){ why=["No compliance items, programme or documents recorded yet"]; }
     else if(pr.applicable>0&&pr.out===0){ s="done"; why=["All "+pr.applicable+" applicable compliance items are closed"]; }
     else{ s="prog"; why=[pr.out?(pr.out+" compliance item"+(pr.out===1?"":"s")+" outstanding"):"Programme and documents in hand"]; }
@@ -9178,7 +9193,7 @@ function evalProject(){
     let s="none",why=[];
     if(sg.safety){ s="block"; why=[sg.safety+" safety snag"+(sg.safety===1?"":"s")+" open"]; }
     else if(!sg.total&&!tasks.length&&!pack.outcome){ why=["No install tasks, snags or install review yet"]; }
-    else if(sg.total&&signed&&!openP){ s="done"; why=["All snags closed and signed off"+((pack.snagSign||{}).date?" · "+esc((pack.snagSign||{}).date):"")]; }
+    else if(sg.total&&signed&&!openP){ s="done"; why=["All snags closed and signed off"+((pack.snagSign||{}).date?" · "+(pack.snagSign||{}).date:"")]; }
     else if(!sg.open&&!openP&&(sg.total||tasks.length)){ s="ready"; why=[sg.total?"All snags fixed · awaiting sign-off":"Punch list complete"]; }
     else{ s="prog"; why=[[sg.open?(sg.open+" snag"+(sg.open===1?"":"s")+" open"):"",openP?(openP+" install task"+(openP===1?"":"s")+" to do"):""].filter(Boolean).join(" · ")||"Install review recorded"]; }
     S("install",s,why,sg.open+openP);
@@ -9233,7 +9248,7 @@ function stageHeadHtml(k,ev){
   const d=(ev.stages||{})[k]||{st:"none",why:[],count:0};
   const m=STAGE_STATES[d.st]||STAGE_STATES.none;
   const n=(ev.issues||[]).filter(i=>i.stage===k).length;
-  return `<div class="stghead"><div class="sh-top"><b>${STAGE_META[k].label}</b><span class="stchip ${m.cls}">${m.label}</span></div>${(d.why||[]).length?`<div class="sh-why">${cap1(d.why.join(" · "))}</div>`:""}${n?`<button type="button" class="sh-link" data-ovact="stage:overview">${n} open issue${n===1?"":"s"} for this stage · view in Overview</button>`:""}</div>`;
+  return `<div class="stghead"><div class="sh-top"><b>${STAGE_META[k].label}</b><span class="stchip ${m.cls}">${m.label}</span></div>${(d.why||[]).length?`<div class="sh-why">${esc(cap1(d.why.join(" · ")))}</div>`:""}${n?`<button type="button" class="sh-link" data-ovact="stage:overview">${n} open issue${n===1?"":"s"} for this stage · view in Overview</button>`:""}</div>`;
 }
 /* the project overview: summary, next action, stages and issues - real data only */
 function overviewBody(ev){
@@ -9251,9 +9266,9 @@ function overviewBody(ev){
   const title=(pack.name||"").trim()||"Untitled project";
   const attN=(pack.attachments||[]).length;
   const sevDot=v=>`<span class="sevdot" style="background:${(ISSUE_SEVS[v]||ISSUE_SEVS.info).col}" title="${(ISSUE_SEVS[v]||ISSUE_SEVS.info).label}"></span>`;
-  const issueRows=issues.map(i=>`<button type="button" class="ovrow" data-ovact="${i.act||("stage:"+i.stage)}">${sevDot(i.sev)}<span class="ov-tx"><b>${i.title}</b><em>${i.why}</em></span><span class="ov-r"><span class="ov-st">${STAGE_META[i.stage]?STAGE_META[i.stage].label:""}</span></span></button>`).join("");
-  const stageRows=STAGE_ORDER.map(k=>{ const d=s[k]||{st:"none",why:[],count:0}; return `<button type="button" class="ovrow" data-ovact="stage:${k}"><span class="stgdot ${d.st==="none"?"":d.st}" style="margin-top:4px"></span><span class="ov-tx"><b>${STAGE_META[k].label}</b><em>${cap1((d.why||[])[0]||"")}</em></span><span class="ov-r">${d.count?`<span class="stgn">${d.count}</span>`:""}${chip(k)}</span></button>`; }).join("");
-  const nxHtml=nx?`<div class="ovnext"><div class="nx-kick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>Next action</div><b class="nx-t">${nx.title}</b><div class="nx-d">${nx.why}</div><div class="nx-row"><button type="button" class="nx-go" data-ovact="${nx.act}">${nx.label||"Open"}</button><span class="nx-stage">${STAGE_META[nx.stage]?STAGE_META[nx.stage].label+" stage":""}</span></div></div>`:"";
+  const issueRows=issues.map(i=>`<button type="button" class="ovrow" data-ovact="${i.act||("stage:"+i.stage)}">${sevDot(i.sev)}<span class="ov-tx"><b>${esc(i.title)}</b><em>${esc(i.why)}</em></span><span class="ov-r"><span class="ov-st">${STAGE_META[i.stage]?STAGE_META[i.stage].label:""}</span></span></button>`).join("");
+  const stageRows=STAGE_ORDER.map(k=>{ const d=s[k]||{st:"none",why:[],count:0}; return `<button type="button" class="ovrow" data-ovact="stage:${k}"><span class="stgdot ${d.st==="none"?"":d.st}" style="margin-top:4px" aria-hidden="true"></span><span class="ov-tx"><b>${STAGE_META[k].label}</b><em>${esc(cap1((d.why||[])[0]||""))}</em></span><span class="ov-r">${d.count?`<span class="stgn">${d.count}</span>`:""}${chip(k)}</span></button>`; }).join("");
+  const nxHtml=nx?`<div class="ovnext"><div class="nx-kick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>Next action</div><b class="nx-t">${esc(nx.title)}</b><div class="nx-d">${esc(nx.why)}</div><div class="nx-row"><button type="button" class="nx-go" data-ovact="${nx.act}">${nx.label||"Open"}</button><span class="nx-stage">${STAGE_META[nx.stage]?STAGE_META[nx.stage].label+" stage":""}</span></div></div>`:"";
   const kv=(t,v,actSpec,actLbl)=>`<dt>${t}</dt><dd class="${v?"":"na"}">${v||(actSpec?`<button type="button" class="kv-act" data-ovact="${actSpec}">${actLbl||"Add"}</button>`:"Not set")}</dd>`;
   const linkRows=links.map(l=>`<a href="${l.href}" style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin:0 -8px;border-radius:8px;font-size:12px;font-weight:600;color:var(--ink);text-decoration:none"><span style="width:8px;height:8px;border-radius:50%;background:${l.dot};flex:none"></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.lab}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" style="flex:none"><path d="M7 17L17 7M9 7h8v8"/></svg></a>`).join("");
   return `
@@ -9283,8 +9298,8 @@ function overviewBody(ev){
 function buildStageBar(){
   const bar=document.getElementById("stagebar"); if(!bar) return;
   const chev='<svg class="stgsep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-  bar.innerHTML='<button type="button" class="stgbtn" data-stage="overview" title="'+STAGE_META.overview.tip+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Overview</button><span class="catdiv" style="margin:-5px 7px -5px 5px"></span>'
-    +STAGE_ORDER.map((k,i)=>(i?chev:"")+'<button type="button" class="stgbtn" data-stage="'+k+'" title="'+STAGE_META[k].tip+'"><span class="stgdot"></span>'+STAGE_META[k].label+'<span class="stgn" style="display:none"></span></button>').join("");
+  bar.innerHTML='<button type="button" class="stgbtn" data-stage="overview" title="'+STAGE_META.overview.tip+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Overview</button><span class="catdiv" style="margin:-5px 7px -5px 5px"></span>'
+    +STAGE_ORDER.map((k,i)=>(i?chev:"")+'<button type="button" class="stgbtn" data-stage="'+k+'" title="'+STAGE_META[k].tip+'"><span class="stgdot" aria-hidden="true"></span>'+STAGE_META[k].label+'<span class="stgn" style="display:none" aria-hidden="true"></span></button>').join("");
   bar.querySelectorAll("[data-stage]").forEach(b=>b.onclick=()=>setStage(b.dataset.stage));
   syncStageBar();
 }
@@ -9295,14 +9310,15 @@ function syncStageBar(){
     const k=b.dataset.stage;
     const on=(sideTab==="pack"&&packSec===k);
     b.classList.toggle("on",on);
-    if(on) b.setAttribute("aria-current","true"); else b.removeAttribute("aria-current");
-    if(k==="overview") return;
+    if(on) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current");
+    if(k==="overview"){ b.setAttribute("aria-label","Overview: "+STAGE_META.overview.tip); return; }
     const d=(e.stages||{})[k]||{st:"none",why:[],count:0};
     const m=STAGE_STATES[d.st]||STAGE_STATES.none;
     const dot=b.querySelector(".stgdot"); if(dot) dot.className="stgdot"+(d.st!=="none"?" "+d.st:"");
     const nn=b.querySelector(".stgn"); if(nn){ nn.style.display=d.count?"":"none"; nn.textContent=d.count; }
     b.classList.toggle("blk",d.st==="block");
-    b.title=STAGE_META[k].tip+" · "+m.label+((d.why||[]).length?" · "+d.why.join(" · ").replace(/<[^>]*>/g,""):"");
+    b.title=STAGE_META[k].tip+" · "+m.label+((d.why||[]).length?" · "+d.why.join(" · "):"");
+    b.setAttribute("aria-label",STAGE_META[k].label+": "+m.label+(d.count?", "+d.count+" open item"+(d.count===1?"":"s"):"")+((d.why||[]).length?". "+cap1(d.why[0]):""));
   });
 }
 /* stage switching: only the side panel changes; the canvas, tools and selection stay put */
@@ -9361,6 +9377,20 @@ function setStage(k){
     e.preventDefault();
     runOvAct(b.getAttribute("data-ovact"));
   });
+  /* Escape closes the standard dialogs (welcome, projects, programme, DNO, simulator, wizard)
+     through their existing Close / Skip buttons. Overlays with their own Escape handling
+     (find palette, prompts, site walk, photo editor, 3D viewer) are untouched. */
+  window.addEventListener("keydown",function(e){
+    if(e.key!=="Escape") return;
+    const sp=document.getElementById("starterPick");
+    if(sp){ e.preventDefault(); e.stopImmediatePropagation(); sp.remove(); return; }
+    const shown=[...document.querySelectorAll(".wlc-backdrop")].filter(b=>b.classList.contains("show"));
+    if(!shown.length) return;
+    const bd=shown[shown.length-1];
+    e.preventDefault(); e.stopImmediatePropagation();
+    const btn=bd.querySelector(".wlc-foot .hbtn");
+    if(btn) btn.click(); else bd.classList.remove("show");
+  },true);
 })();
 
 /* per-item drawing view + 3D tilt controls - equipment that can be drawn side-on (elevation) or overhead (plan) */
@@ -10689,7 +10719,7 @@ function postcodePicked(pc, addrEl){
   pcI.oninput=()=>{ pack.postcode=pcI.value.toUpperCase(); syncSiteChip(); autosave(); };
   attachPostcodeLookup(pcI, document.getElementById("spSug"), pc=>{ pcI.value=pc; postcodePicked(pc, addrI); addrI.focus(); });
 })();
-document.getElementById("btnNew").onclick=async()=>{ if(pack.photos.length){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } pack=newPack(); imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; packSec="survey"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty(); draw(); renderSide(); };
+document.getElementById("btnNew").onclick=async()=>{ if(pack.photos.length){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } const __keepMode=(pack.mode==="domestic")?"domestic":"commercial"; pack=newPack(); pack.mode=__keepMode; imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; packSec="survey"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty(); applyMode(false); buildRail(); syncSiteChip(); draw(); renderSide(); };
 function imgKeys(){ for(const k in imgCache) delete imgCache[k]; }
 document.getElementById("btnSave").onclick=()=>{
   normalisePack(pack);
@@ -15655,7 +15685,7 @@ normalisePack(pack);
 let __restoredTs=0;
 try{
   const __saved=JSON.parse(localStorage.getItem(LS_KEY)||"null");
-  if(__saved && __saved.pack && Array.isArray(__saved.pack.photos) && __saved.pack.photos.length){
+  if(__saved && __saved.pack && Array.isArray(__saved.pack.photos) && packHasSubstance(__saved.pack)){
     pack=normalisePack(__saved.pack);
     if(__saved.view && typeof __saved.view.zoom==="number") view=__saved.view;
     __restoredTs=__saved.ts||1;
@@ -15672,10 +15702,10 @@ try{ if(!localStorage.getItem("evsp_welcomed")) openWelcome(); }catch(_){}
 /* first run on tablet/phone: the start cards on the canvas carry onboarding; the pack drawer stays shut so nothing covers them */
 /* IndexedDB recovery - photo-heavy packs live here; localStorage above is just the legacy/fallback copy */
 try{ idbGet("autosave").then(d=>{
-  if(!d||!d.pack||!Array.isArray(d.pack.photos)||!d.pack.photos.length) return;
+  if(!d||!d.pack||!Array.isArray(d.pack.photos)||!packHasSubstance(d.pack)) return;
   if((d.ts||0)<=__restoredTs) return;                 // localStorage copy was newer
   if(history.length||redoStack.length) return;        // user is already editing
-  if(pack.photos.length && !__restoredTs) return;      // user already brought their own photos in
+  if(packHasSubstance(pack) && !__restoredTs) return;  // user already started their own pack in this session
   pack=normalisePack(d.pack);
   if(d.view && typeof d.view.zoom==="number") view=d.view;
   imgKeys(); pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
