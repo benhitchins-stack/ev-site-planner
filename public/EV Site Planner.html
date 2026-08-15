@@ -735,6 +735,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
   *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;scroll-behavior:auto !important;}
 }
 </style>
+<link rel="stylesheet" href="cdm-controls.css">
 </head>
 <body>
 <template id="__bundler_thumbnail">
@@ -1801,6 +1802,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
 <script src="vendor/heic2any.min.js"></script>
+<script src="cdm-controls.js"></script>
 <script>
 "use strict";
 /* ============================================================ EV Site Planner - domestic & commercial - self-contained ============================================================ */
@@ -1963,9 +1965,10 @@ const ROUTE_DEFS = {
   fence: {name:"Fence line",  short:"Fence", note:"Fence · site context",    color:"#8A6E4B", width:6,  cls:"sitefeat", mode:"none"},
   wallline:{name:"Wall line", short:"Wall", note:"Wall · site context",     color:"#98A3AE", width:9,  cls:"sitefeat", mode:"none"},
   heras: {name:"Heras fencing", short:"Heras", note:"Temporary barrier · public segregation", color:"#C2452D", width:9, cls:"sitefeat", mode:"none"},
+  cones: {name:"Cone line", short:"Cones", note:"Traffic cones · temporary demarcation", color:"#E8731F", width:10, cls:"sitefeat", mode:"none"},
   __area:{name:"Area", short:"Area", note:"Surface / reinstatement area", color:"#E8C547", width:2, cls:"areafill", mode:"none"},
 };
-const SITE_ROUTE_KINDS=["hedge","fence","wallline","heras"];
+const SITE_ROUTE_KINDS=["hedge","fence","wallline","heras","cones"];
 let DUCT_LABEL = "63–110mm twin-wall duct · 450mm deep (600mm under roads)";
 let TRUNK_LABEL = "150×150 3-comp metal trunking";
 const MARK_DEFS = {
@@ -2017,6 +2020,9 @@ const SITE_DEFS={
   container: {name:"Storage container",     lab:"Storage container",w:.15,  ratio:.4,  mW:6.1,  leg:"ST", col:"#4C6178", big:true, mode:"commercial"},
   toilet:    {name:"Portable toilet",       lab:"WC",              w:.045, ratio:1.05,mW:1.2,  leg:"WC", col:"#3B7BB8", mode:"commercial"},
   skip:      {name:"Skip",                  lab:"Skip",            w:.10,  ratio:.48, mW:3.7,  leg:"SK", col:"#B06A1F", mode:"commercial"},
+  inspectionpit:{name:"Inspection pit",     lab:"Inspection pit",  w:.09,  ratio:.72, mW:.9,   leg:"IP", col:"#6B7480", mode:"commercial"},
+  signboard: {name:"Site safety signboard", lab:"Site safety signage",w:.075,ratio:.7,mW:1.5,  leg:"SB", col:"#C9A227", mode:"commercial"},
+  spoil:     {name:"Spoil heap",            lab:"Spoil heap",      w:.11,  ratio:.78, mW:2.6,  leg:"SH", col:"#7A5A33", mode:"commercial"},
 };
 const SITE_BIG=["house","commbld","garage","cabin","container"]; // drawn + hit-tested UNDER cables & equipment
 /* site kit with true-3D artwork (same engine as the chargers) · a = drawn aspect (h/w, plinth included) · spin = orientation worth angling */
@@ -2274,7 +2280,7 @@ function budgetQty(opt){
     gencable: +sumKind(["run"]).toFixed(1),
     datacab: +sumKind(["data"]).toFixed(1),
     contain: +sumKind(["tray","mt2","basket"]).toFixed(1),
-    area: +ph.flatMap(p=>p.items.filter(i=>i.type==="route"&&i.kind==="__area").map(i=>areaSqm(i,p)||0)).reduce((s,v)=>s+v,0).toFixed(1),
+    area: +ph.flatMap(p=>p.items.filter(i=>i.type==="route"&&i.kind==="__area"&&!((AREA_SURFACES[i.surface||"tarmac"]||{}).safety)).map(i=>areaSqm(i,p)||0)).reduce((s,v)=>s+v,0).toFixed(1),
     bay: ph.flatMap(p=>p.items.filter(i=>i.type==="bay")).length,
     base: ph.flatMap(p=>p.items.filter(i=>(i.type==="unit"&&UNIT_PAD[i.variant]&&i.pad!==false)||(i.type==="feeder"&&i.pad!==false))).length,
     fpwired: ph.flatMap(p=>p.items.filter(i=>i.type==="feeder"&&i.fpBuild!=="shell")).length,
@@ -2446,11 +2452,11 @@ const COMPLIANCE_DEFS={
   {k:"evidence", t:"Photo record complete", s:"Everything photographed before it gets covered up.", d:"Supply head, protection, cable runs, spares and bare bases photographed and filed with the job before surfacing or backfill covers them."},
   {k:"afdd", t:"AFDD provision reviewed", s:"Arc-fault protection decision made and written down.", d:"BS 7671:2018+A4:2026 extends AFDD requirements to more premises, including EV charging circuits. Confirm whether these final circuits need arc fault protection and record the decision.", opt:true},
   {k:"pcpr", t:"Public charging consumer rules", s:"Payment, pricing and helpline rules covered for public units.", d:"Publicly accessible chargers only (Public Charge Point Regs 2023): contactless payment on ≥8 kW units, price in p/kWh displayed, free 24/7 helpline, OCPI open data. Rapid networks also carry the 99% annual reliability duty and roaming via at least one provider.", opt:true},
-  {k:"cdm", t:"CDM duties & construction phase plan", s:"Site roles appointed and a plan in place.", d:"Principal designer and principal contractor appointed, with a construction phase plan in place, where more than one contractor is on site. Mark N/A where it doesn't apply.", opt:true},
+  {k:"cdm", t:"CDM duties, appointments & phase plan", s:"Dutyholders recorded and a proportionate plan ready.", d:"A construction phase plan must be prepared before construction begins on every construction project. Where more than one contractor is involved, the commercial client must appoint a principal designer and principal contractor in writing. Mark N/A only where CDM 2015 genuinely does not apply."},
   {k:"welfare", t:"Welfare & site setup arranged", s:"Toilets, washing and a rest area from day one, plus cabin & storage positions.", d:"CDM Schedule 2 welfare from day one (toilet, washing, drinking water and a rest area): a welfare unit on site, or the client's facilities agreed in writing. Cabin, storage container and skip positions agreed and shown on the plan. Mark N/A where it doesn't apply.", opt:true},
   {k:"services", t:"Buried services checked & permits in place", s:"CAT scanned, drawings on site, dig permit signed.", d:"Utility drawings obtained and on site, the route CAT & Genny scanned and marked, hand-dig within 500 mm of marked services, and any permit-to-dig / isolation / hot-works permits signed before excavation. Mark N/A where nothing is dug or drilled.", opt:true},
-  {k:"public", t:"Public & pedestrians segregated", s:"Barriers and a safe walkway keep the public clear of the works.", d:"Work areas and open trenches fenced off (Heras or equivalent), excavations covered or fenced whenever unattended, a signed and lit pedestrian diversion, and plant movements controlled. Draw the Heras fencing line on the plan. Mark N/A for sites closed to the public.", opt:true},
-  {k:"f10", t:"F10 notified to HSE", s:"HSE told about notifiable construction work.", d:"Notifiable where work exceeds 30 working days with 20+ workers at once, or 500 person-days: submit the F10 before site set-up and display a copy in the welfare unit. Mark N/A for shorter jobs.", opt:true},
+  {k:"public", t:"Public & pedestrians segregated", s:"Barriers and a safe walkway keep the public clear of the works.", d:"Work areas and open trenches fenced off (Heras or equivalent), excavations covered or fenced whenever unattended, a signed and lit pedestrian diversion, and plant movements controlled. Draw the barriers, cone line, exclusion zone, pedestrian route and safety signboard on the plan. Mark N/A for sites closed to the public.", opt:true},
+  {k:"f10", t:"F10 assessment & HSE notification", s:"Notification threshold assessed and any submission evidenced.", d:"Notifiable where work is scheduled to last longer than 30 working days and have more than 20 workers working simultaneously at any point, or exceed 500 person-days. For a commercial client, the client must notify HSE. Record the assessment, then the submission date and HSE reference where notifiable.", opt:true},
   {k:"asbestos", t:"Asbestos checked before drilling", s:"Register / survey checked before disturbing pre-2000 fabric.", d:"For buildings built or refurbished before 2000: check the asbestos register or management survey before drilling, chasing or lifting fabric, and stop if suspect material appears. Mark no-drill zones with the asbestos callout stamp. Mark N/A for new builds and outdoor-only works.", opt:true},
   {k:"emergency", t:"First aid & emergency arrangements", s:"First aider, kit, fire point and muster point sorted.", d:"Appointed first aider and kit on site, extinguishers at the work area, muster point agreed and the nearest A&E in the induction. Pin the first aid and fire points on the plan. Mark N/A where the client's arrangements cover the works.", opt:true},
   {k:"rams", t:"RAMS issued and accepted", s:"Safety paperwork written for this site and accepted.", d:"Site-specific risk assessments and method statements accepted before work starts. Mark N/A where they aren't required.", opt:true}
@@ -2468,7 +2474,35 @@ const COMPLIANCE_DEFS={
 function complianceList(){ return COMPLIANCE_DEFS[pack.mode==="domestic"?"domestic":"commercial"]; }
 function compState(k){ return (pack.compliance||[]).includes(k) ? "done" : ((pack.complianceNA||[]).includes(k) ? "na" : "todo"); }
 /* ---------- CDM named roles & F10 status (stored with the pack) ---------- */
-function cdmInfo(){ if(!pack.cdm||typeof pack.cdm!=="object") pack.cdm={pd:"",pc:"",f10:"",f10Ref:"",f10Date:""}; return pack.cdm; }
+function plannerCdmFallbackPack(){
+  return {
+    version:0, route:"", client:"", clientContact:"", contractor:"", pd:"", pc:"",
+    appointmentsConfirmed:false, appointmentDate:"", appointmentEvidence:"",
+    pdAppointmentConfirmed:false, pdAppointmentDate:"", pdAppointmentEvidence:"",
+    pcAppointmentConfirmed:false, pcAppointmentDate:"", pcAppointmentEvidence:"",
+    siteManager:"", firstAider:"", safetyAdviser:"", startDate:"", finishDate:"",
+    welfare:"", induction:"", publicProtection:"", emergency:"", monitoring:"",
+    f10:"", f10Ref:"", f10Date:"", f10LongAndTwenty:"unknown", f10PersonDays:"unknown",
+    docs:{}, risks:[], activeTab:"overview"
+  };
+}
+function plannerNewCdmPack(){
+  const api=window.EvspCdmControls;
+  if(api&&typeof api.newPack==="function") return api.newPack();
+  if(typeof window.newCdmPack==="function") try{ return window.newCdmPack(); }catch(_){ }
+  return plannerCdmFallbackPack();
+}
+function plannerNormaliseCdmPack(value){
+  const api=window.EvspCdmControls;
+  if(api&&typeof api.normalisePack==="function") return api.normalisePack(value);
+  if(typeof window.normaliseCdmPack==="function") try{ return window.normaliseCdmPack(value); }catch(_){ }
+  const src=value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+  const out=Object.assign(plannerCdmFallbackPack(),src);
+  out.docs=src.docs&&typeof src.docs==="object"&&!Array.isArray(src.docs)?src.docs:{};
+  out.risks=Array.isArray(src.risks)?src.risks:[];
+  return out;
+}
+function cdmInfo(){ if(!pack.cdm||typeof pack.cdm!=="object") pack.cdm=plannerNewCdmPack(); return pack.cdm; }
 const F10_LABELS={notreq:"Not notifiable", tofile:"Notifiable \u00b7 to file", filed:"Filed"};
 function f10StatusLine(){ const c=cdmInfo(); if(!c.f10) return ""; if(c.f10!=="filed") return F10_LABELS[c.f10]||""; const bits=["Filed"]; if(c.f10Date){ const d=new Date(c.f10Date+"T12:00:00"); if(!isNaN(d)) bits.push(d.toLocaleDateString("en-GB")); } if(c.f10Ref) bits.push("HSE ref "+c.f10Ref); return bits.join(" \u00b7 "); }
 function compExtraLines(k){ const c=cdmInfo(); if(k==="cdm"){ if(!c.pd&&!c.pc) return []; return ["Principal designer: "+(c.pd||"TBC")+"   \u00b7   Principal contractor: "+(c.pc||"TBC")]; } if(k==="f10"){ const s=f10StatusLine(); return s?["F10 status: "+s]:[]; } return []; }
@@ -2516,11 +2550,11 @@ const HINTS={
   c_evidence:{t:"Shoot as you go: supply head with ratings legible, board protection, runs and glands, coiled spares and bare bases. File everything against the job before backfill or surfacing hides it.", g:"cert", gl:"Photo record & certification"},
   c_afdd:{t:"Decide whether these EV final circuits need arc fault protection for this premises type and write it down (EIC / design record). 'Assessed, not required' is a valid outcome if justified.", g:"afdd", gl:"AFDD decisions guide"},
   c_pcpr:{t:"Applies from the day a public charger goes live: contactless on \u22658 kW units, p/kWh price displayed, free 24/7 helpline and OCPI open data. Rapids also carry the 99% reliability duty.", g:"pcpr", gl:"Public charging rules"},
-  c_cdm:{t:"With more than one contractor on site, appoint a principal designer and principal contractor and have the construction phase plan ready before work starts. Record who holds each role below; the names print on the compliance page, and the CPP template gives you a plan to complete and keep on site.", g:"cdm", gl:"CDM & RAMS guide"},
+  c_cdm:{t:"A proportionate construction phase plan is required before construction starts on every project. Where more than one contractor is involved, the commercial client must appoint the principal designer and principal contractor in writing. Use CDM project controls to record appointments, design risks and the controlled document set.", g:"cdm", gl:"CDM & RAMS guide"},
   c_welfare:{t:"Sort welfare before day one, not on it: a welfare unit / site cabin for anything beyond a day or two, or written agreement to use the client's toilets, washing and rest facilities. Place the site cabin, storage container, WC and skip with the Site & surroundings tools so their positions (and any bays or access they take out) are agreed up front.", g:"cdm", gl:"CDM & RAMS guide"},
   c_services:{t:"Free plant enquiries via LSBUD cover most utilities; the DNO and water company may need asking directly. Scan with CAT & Genny before and during the dig, mark the ground, and hand-dig trial holes within 500 mm of anything marked. Keep the permits with the RAMS.", g:"cdm", gl:"CDM & RAMS guide"},
-  c_public:{t:"Fence the work area before breaking ground and never leave an open trench unfenced, even for a tea break. Draw the Heras fencing line from Site & surroundings so the exclusion zone, walkway diversion and any lost bays are agreed on the drawing.", g:"cdm", gl:"CDM & RAMS guide"},
-  c_f10:{t:"File online with HSE before mobilising and display a copy in the welfare unit. It's the principal contractor's job on multi-contractor sites; commercial EV works only reach the threshold on the biggest hub jobs. Track the status below; once filed, the date and HSE reference print on the compliance page.", g:"cdm", gl:"CDM & RAMS guide"},
+  c_public:{t:"Fence the work area before breaking ground and never leave an open trench unfenced, even for a tea break. Use the Public protection tools to draw Heras, cone lines, exclusion zones, protected walkways and the safety signboard so they are agreed on the drawing.", g:"cdm", gl:"CDM & RAMS guide"},
+  c_f10:{t:"Assess both statutory tests: longer than 30 working days with more than 20 workers working simultaneously at any point, or more than 500 person-days. For a commercial client, the client must notify HSE. A notifiable assessment is not a completed submission until its date and HSE reference are recorded.", g:"cdm", gl:"CDM & RAMS guide"},
   c_asbestos:{t:"Anything built before 2000 can contain it: Artex coatings, soffits, garage roofs, flue boards, old switchrooms. Ask for the asbestos register before drilling and mark no-drill zones with the 'Asbestos risk' callout stamp. If suspect material turns up, stop and get it tested.", g:"cdm", gl:"CDM & RAMS guide"},
   c_emergency:{t:"Name the first aider in the induction, keep the kit and an extinguisher at the work area (not locked in the van), and agree the muster point. Pin the First aid and Fire point markers from Site & surroundings so everyone can find them on the plan.", g:"cdm", gl:"CDM & RAMS guide"},
   c_rams:{t:"Write the RAMS for this site rather than reusing a generic template: name the address, the tasks and the real hazards. Have them accepted before work starts, and attach a copy to the project pack.", g:"cdm", gl:"CDM & RAMS guide"},
@@ -2538,6 +2572,7 @@ function compHintBox(n){ const k='c_'+n.k; if(!openHints.has(k)) return ""; cons
 /* inline detail blocks on the CDM and F10 compliance rows: named roles, F10 tracker, CPP export */
 const CDM_INP="flex:1;min-width:0;height:24px;border:1px solid var(--line2);border-radius:6px;background:var(--panel);color:var(--ink);font:inherit;font-size:11px;padding:0 7px";
 function compDetail(n){
+  if((n.k==="cdm"||n.k==="f10")&&typeof evspCdmComplianceDetailHTML==="function") return evspCdmComplianceDetailHTML(n.k,pack);
   if(n.k==="cdm"){
     if(compState("cdm")==="na") return "";
     const c=cdmInfo();
@@ -2594,6 +2629,7 @@ const RUN_NOTE_PRESETS = {
   fence:["Remove panel(s) for access","Reinstate after works","Route passes under fence","Protect & retain"],
   wallline:["Core drill through wall","Route clipped along wall","No fixings to this wall","Protect & retain"],
   heras:["Erect before works start","Double-clipped panels","Pedestrian walkway this side","Vehicle gate here","Signage & lamps fitted","Remove on completion"],
+  cones:["Temporary demarcation only","Maintain a clear pedestrian route","Add lamps for low-light conditions","Replace with rigid barriers at open excavations","Remove on completion"],
 };
 function runNotePresets(kind){
   if(kind==="mt2" && pack.mode==="domestic") return RUN_NOTE_PRESETS.mt2dom;
@@ -2689,7 +2725,7 @@ let viewIsFit = true; // true while the view still matches fitView(); cleared on
 
 function deviceBrand(){ try{ return JSON.parse(localStorage.getItem("evsp_brand")||"{}")||{}; }catch(_){ return {}; } }
 function newPack(){
-  return { v:1, mode:"commercial", role:"", optionView:"all", unitStyle:"illustrated", unitScheme:"white", unitDesign:"classic", attachments:[], rates:deviceRates(), compliance:[], complianceNA:[], cdm:{pd:"",pc:"",f10:"",f10Ref:"",f10Date:""}, brandName:(deviceBrand().name||""), brandLogo:(deviceBrand().logo||""), replyEmail:(deviceBrand().email||""), name:"", jobRef:"", custName:"", surveyedBy:"", surveyDate:new Date().toISOString().slice(0,10), notes:"", engineerNote:"", earthing:"", mainFuse:"", mcbRequired:false, mcbBrand:"", mcbBrandCustom:false, mcbCurve:"C", mcbRating:"40", readyToProceed:false, spareWays:"", connector:"", outcome:"", outcomeNote:"", dnoRef:"", infoNeeds:[], extraGround:"", extraCable:"", extraTrunk:"", extraFee:"200", payLink:"", coverSummary:"", custLetter:"", delivery:"", bomRef:"", scopeRef:"", supplyRating:"", capacityNote:"", enablingWorks:[], enablingNote:"", snagSign:{by:"",accept:"",date:""}, replyPhone:(deviceBrand().phone||""), commissioning:{units:{},eicRef:"",by:"",accept:"",date:""}, earthWiz:null, sim:null, photos:[], active:null, showLabels:true, showLegend:true, showRouteLen:true, showChargerNos:true };
+  return { v:1, mode:"commercial", role:"", optionView:"all", unitStyle:"illustrated", unitScheme:"white", unitDesign:"classic", attachments:[], rates:deviceRates(), compliance:[], complianceNA:[], cdm:plannerNewCdmPack(), brandName:(deviceBrand().name||""), brandLogo:(deviceBrand().logo||""), replyEmail:(deviceBrand().email||""), name:"", jobRef:"", custName:"", surveyedBy:"", surveyDate:new Date().toISOString().slice(0,10), notes:"", engineerNote:"", earthing:"", mainFuse:"", mcbRequired:false, mcbBrand:"", mcbBrandCustom:false, mcbCurve:"C", mcbRating:"40", readyToProceed:false, spareWays:"", connector:"", outcome:"", outcomeNote:"", dnoRef:"", infoNeeds:[], extraGround:"", extraCable:"", extraTrunk:"", extraFee:"200", payLink:"", coverSummary:"", custLetter:"", delivery:"", bomRef:"", scopeRef:"", supplyRating:"", capacityNote:"", enablingWorks:[], enablingNote:"", snagSign:{by:"",accept:"",date:""}, replyPhone:(deviceBrand().phone||""), commissioning:{units:{},eicRef:"",by:"",accept:"",date:""}, earthWiz:null, sim:null, photos:[], active:null, showLabels:true, showLegend:true, showRouteLen:true, showChargerNos:true };
 }
 function uid(){ return Math.random().toString(36).slice(2,10); }
 function activePhoto(){ return pack.photos.find(p=>p.id===pack.active) || null; }
@@ -2744,7 +2780,7 @@ function normalisePack(pk){
   pk.rates = (pk.rates && typeof pk.rates==="object") ? pk.rates : {};
   pk.compliance = Array.isArray(pk.compliance) ? pk.compliance.filter(k=>typeof k==="string") : [];
   pk.complianceNA = Array.isArray(pk.complianceNA) ? pk.complianceNA.filter(k=>typeof k==="string" && !pk.compliance.includes(k)) : [];
-  { const cd=pk.cdm, stv=["notreq","tofile","filed"]; pk.cdm=(cd&&typeof cd==="object")?{pd:String(cd.pd||""),pc:String(cd.pc||""),f10:stv.includes(cd.f10)?cd.f10:"",f10Ref:String(cd.f10Ref||""),f10Date:String(cd.f10Date||"")}:{pd:"",pc:"",f10:"",f10Ref:"",f10Date:""}; }
+  pk.cdm=plannerNormaliseCdmPack(pk.cdm);
   { const ss=pk.snagSign; pk.snagSign=(ss&&typeof ss==="object")?{by:String(ss.by||""),accept:String(ss.accept||""),date:String(ss.date||"")}:{by:"",accept:"",date:""}; }
   pk.optionView = (["all","A","B","C"].includes(pk.optionView)) ? pk.optionView : "all";
   pk.programme = (pk.programme && typeof pk.programme==="object" && !Array.isArray(pk.programme)) ? pk.programme : {};
@@ -2850,7 +2886,9 @@ function normalisePack(pk){
         } else { delete it.ducts; delete it.ductCables; }
         if(it.kind==="duct") it.cables=Math.round(clampNum(it.cables,0,24,1)); else delete it.cables;
         if(it.kind==="duct"||it.kind==="trench"){ if(it.depth!=null){ it.depth=+it.depth; if(![450,600].includes(it.depth)) delete it.depth; } } else delete it.depth;
-        if(it.kind==="trench"||it.kind==="__area"){ if(it.surface!=null && !["tarmac","concrete","paving","soft","road","driveway","footpath","grass","gravel"].includes(it.surface)) delete it.surface; } else delete it.surface;
+        if(it.kind==="trench"){ if(it.surface!=null && !["tarmac","concrete","paving","soft","road","driveway","footpath","grass","gravel"].includes(it.surface)) delete it.surface; }
+        else if(it.kind==="__area"){ if(it.surface!=null && !["tarmac","concrete","paving","soft","road","driveway","footpath","grass","gravel","exclusion","pedestrian"].includes(it.surface)) delete it.surface; }
+        else delete it.surface;
       } else if(it.type==="mark"){
         if(!MARK_DEFS[it.kind]) it.kind="drill";
         if(it.kind==="snag"){ it.sev=["minor","major","safety"].includes(it.sev)?it.sev:"minor"; it.st=(it.st==="fixed")?"fixed":"open"; it.n=Math.max(0,Math.round(num(it.n,0))); if(typeof it.who!=="string") it.who=""; if(typeof it.fixedOn!=="string") it.fixedOn=""; ["ph1","ph2"].forEach(k=>{ if(typeof it[k]!=="string"||it[k].slice(0,10)!=="data:image") delete it[k]; }); } else { delete it.sev; delete it.st; delete it.who; delete it.fixedOn; delete it.ph1; delete it.ph2; }
@@ -5837,6 +5875,37 @@ function drawSite(c,vw,it,labelK,forExport){
     });
     c.restore();
     c.strokeStyle="rgba(30,20,6,.8)"; c.lineWidth=lw*1.5; rrect(c,-w/2,-h/2,w,h,r); c.stroke();
+  } else if(K==="inspectionpit"){
+    const r=Math.max(1.5,w*.04);
+    c.save(); c.shadowColor="rgba(0,0,0,.42)"; c.shadowBlur=8; c.shadowOffsetY=3;
+    const g=c.createLinearGradient(0,-h/2,0,h/2); g.addColorStop(0,"#9AA0A6"); g.addColorStop(1,"#6E747B");
+    c.fillStyle=g; rrect(c,-w/2,-h/2,w,h,r); c.fill(); c.restore();
+    c.strokeStyle="rgba(16,24,30,.82)"; c.lineWidth=lw*1.6; rrect(c,-w/2,-h/2,w,h,r); c.stroke();
+    const fw=w*.80, fh=h*.74, fr=Math.max(1,w*.03);
+    c.fillStyle="rgba(10,16,20,.44)"; rrect(c,-fw/2-lw,-fh/2-lw,fw+2*lw,fh+2*lw,fr); c.fill();
+    const iw=fw-lw*1.2, ih=fh-lw*1.2, ir=Math.max(1,w*.02);
+    const lg=c.createLinearGradient(0,-ih/2,0,ih/2); lg.addColorStop(0,"#6B7078"); lg.addColorStop(.5,"#565C64"); lg.addColorStop(1,"#474C53");
+    c.fillStyle=lg; rrect(c,-iw/2,-ih/2,iw,ih,ir); c.fill();
+    c.save(); rrect(c,-iw/2,-ih/2,iw,ih,ir); c.clip(); c.strokeStyle="rgba(255,255,255,.13)"; c.lineWidth=Math.max(.5,lw*.45);
+    const sp=Math.max(3.2,w*.06); for(let d=-iw-ih;d<iw+ih;d+=sp){ c.beginPath(); c.moveTo(-iw/2+d,-ih/2); c.lineTo(-iw/2+d+ih,ih/2); c.stroke(); }
+    c.restore();
+    c.fillStyle="rgba(12,18,24,.72)"; const sl=Math.max(2.2,iw*.16), sh=Math.max(1.2,ih*.08);
+    [-iw*.24,iw*.24].forEach(sx=>{ rrect(c,sx-sl/2,-sh/2,sl,sh,sh/2); c.fill(); });
+  } else if(K==="signboard"){
+    const r=Math.max(1.2,w*.05), pw=Math.max(1.6,lw*2);
+    c.fillStyle="rgba(40,48,56,.9)"; c.fillRect(-w*.32,h/2,pw,h*.16); c.fillRect(w*.32-pw,h/2,pw,h*.16);
+    c.save(); c.shadowColor="rgba(0,0,0,.4)"; c.shadowBlur=7; c.shadowOffsetY=3; c.fillStyle="#F4F1E8"; rrect(c,-w/2,-h/2,w,h,r); c.fill(); c.restore();
+    c.fillStyle="#C22B22"; c.fillRect(-w/2+lw,-h/2+lw,w-2*lw,h*.2);
+    const cw=w*.24, ch=h*.24;
+    ["#1E6BFF","#F2C21C","#C22B22","#1E8A4C","#3B6FB4","#E8731F"].forEach((col,i)=>{ const gx=-w*.42+(i%3)*(cw+w*.065), gy=-h*.07+Math.floor(i/3)*(ch+h*.07); c.fillStyle=col; c.fillRect(gx,gy,cw,ch); });
+    c.strokeStyle="rgba(20,30,40,.8)"; c.lineWidth=lw*1.5; rrect(c,-w/2,-h/2,w,h,r); c.stroke();
+  } else if(K==="spoil"){
+    const R=w/2;
+    c.save(); c.shadowColor="rgba(0,0,0,.35)"; c.shadowBlur=9; c.shadowOffsetY=3;
+    const g=c.createRadialGradient(-R*.25,-R*.3,R*.15,0,0,R); g.addColorStop(0,"#9A7A4E"); g.addColorStop(.6,"#7A5A33"); g.addColorStop(1,"#5C3F20"); c.fillStyle=g;
+    c.beginPath(); for(let i=0;i<=40;i++){ const a=i/40*Math.PI*2, rr=R*(.82+.18*Math.sin(a*3+1.3)), px=Math.cos(a)*rr, py=Math.sin(a)*rr*(h/w); i?c.lineTo(px,py):c.moveTo(px,py); } c.closePath(); c.fill(); c.restore();
+    c.strokeStyle="rgba(40,26,10,.6)"; c.lineWidth=Math.max(1,lw); c.stroke();
+    c.fillStyle="rgba(255,255,255,.16)"; c.beginPath(); c.ellipse(-R*.24,-R*.26,R*.34,R*.2,-.5,0,Math.PI*2); c.fill();
   }
   if(sel===it.id && !forExport) siteSel(c,w,h);
   c.restore();
@@ -6270,6 +6339,21 @@ function paintRoute(c,pts,kind,W,wk,meta){
       c.fillStyle="rgba(40,48,56,.85)"; c.fillRect(x-fw/2,y-fw/2,fw,fw);
     });
     c.lineCap="round";
+  } else if(kind==="cones"){
+    /* traffic cones along a faint dashed demarcation line */
+    c.setLineDash([Math.max(5,W*.7),Math.max(5,W*.7)]);
+    strokePoly(c,pts,Math.max(1.2,W*.16),"rgba(232,115,31,.55)");
+    c.setLineDash([]);
+    routeTicks(c,pts,Math.max(16,W*2),(x,y)=>{
+      const s=Math.max(4,W*.62);
+      c.save(); c.translate(x,y);
+      c.fillStyle="rgba(6,14,22,.28)"; c.beginPath(); c.ellipse(0,s*.62,s*.78,s*.3,0,0,Math.PI*2); c.fill();
+      c.fillStyle="#E8731F"; c.beginPath(); c.moveTo(0,-s*.95); c.lineTo(-s*.62,s*.55); c.lineTo(s*.62,s*.55); c.closePath(); c.fill();
+      c.strokeStyle="rgba(120,50,8,.55)"; c.lineWidth=Math.max(.7,s*.1); c.stroke();
+      c.fillStyle="rgba(255,255,255,.92)"; c.fillRect(-s*.34,-s*.28,s*.68,s*.24);
+      c.fillStyle="rgba(6,14,22,.5)"; c.beginPath(); c.ellipse(0,s*.55,s*.62,s*.16,0,0,Math.PI); c.fill();
+      c.restore();
+    });
   } else if(kind==="wallline"){
     /* wall: masonry band with joint ticks */
     c.save();
@@ -7056,6 +7140,7 @@ function drawLegend(c, vw, p, labelK, forExport){
   const unitsOnPlan=p.items.filter(i=>i.type==="unit");
   const rows=[];
   usedR.forEach(kk=>{ if(kk==="__area") return; const d=ROUTE_DEFS[kk]; let nm=kk==="duct"?DUCT_LABEL:(kk==="mt2"?TRUNK_LABEL:d.name); if(kk==="earthcable") nm="Green/yellow earth cable"; rows.push({route:true,kind:kk,name:nm}); });
+  [...new Set(p.items.filter(i=>i.type==="route"&&i.kind==="__area"&&((AREA_SURFACES[i.surface||"tarmac"]||{}).safety)).map(i=>i.surface))].forEach(sf=>{ const d=AREA_SURFACES[sf]; if(d) rows.push({color:d.color,letter:sf==="exclusion"?"XZ":"PW",name:d.label+" · construction phase"}); });
   if(hasEvdb) rows.push({evdb:true,name:"EVDB · C40 DP Type A RCBO"+(p.items.some(i=>i.type==="evdb"&&i.spd===true)?" + optional SPD":"")});
   if(hasIpEvdb) rows.push({ipevdb:true,name:"IP rated EVDB · C40 DP Type A RCBO"+(p.items.some(i=>i.type==="ipevdb"&&i.spd===true)?" + optional SPD":"")});
   if(hasIpBox) rows.push({ipbox:true,name:"IP adaptable box"});
@@ -7207,7 +7292,9 @@ const AREA_SURFACES={
   driveway:{label:"Driveway",color:"#6E5B49"},
   footpath:{label:"Footpath / walkway",color:"#9A8F7A"},
   grass:{label:"Grass / lawn",color:"#57A24C"},
-  gravel:{label:"Gravel",color:"#A79A80"}
+  gravel:{label:"Gravel",color:"#A79A80"},
+  exclusion:{label:"Exclusion zone",color:"#CC382E",safety:true},
+  pedestrian:{label:"Pedestrian walkway",color:"#1E8A74",safety:true}
 };
 function areaSqm(it,p){
   if(!p||!p.scale||!p.scale.pxPerM||!Array.isArray(it.pts)||it.pts.length<3) return null;
@@ -7230,7 +7317,15 @@ function drawAreaPoly(c,vw,it,labelK,forExport,p,isDraft){
     let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; pts.forEach(q=>{x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1]);});
     const sp=Math.max(10,Math.min(30,((x1-x0)+(y1-y0))*0.05));
     const sf=it.surface||"tarmac";
-    if(sf==="grass"||sf==="soft"){
+    if(sf==="exclusion"){
+      c.strokeStyle="rgba(204,56,46,.38)"; c.lineWidth=2;
+      for(let x=x0-(y1-y0);x<x1;x+=sp*.75){ c.beginPath(); c.moveTo(x,y1); c.lineTo(x+(y1-y0),y0); c.stroke(); }
+    } else if(sf==="pedestrian"){
+      c.strokeStyle="rgba(255,255,255,.48)"; c.lineWidth=2; c.setLineDash([8,7]);
+      c.beginPath(); c.moveTo(x0+5,(y0+y1)/2); c.lineTo(x1-5,(y0+y1)/2); c.stroke(); c.setLineDash([]);
+      const cy=(y0+y1)/2;
+      for(let x=x0+sp;x<x1-4;x+=sp*1.5){ c.fillStyle="rgba(255,255,255,.55)"; c.beginPath(); c.moveTo(x+5,cy); c.lineTo(x-3,cy-4); c.lineTo(x-3,cy+4); c.closePath(); c.fill(); }
+    } else if(sf==="grass"||sf==="soft"){
       c.strokeStyle="rgba(255,255,255,.26)"; c.lineWidth=1.1; c.lineCap="round";
       for(let y=y0;y<y1;y+=sp) for(let x=x0+((Math.round(y/sp)%2)?sp/2:0);x<x1;x+=sp){ c.beginPath(); c.moveTo(x-2.2,y+2.4); c.lineTo(x,y-2.6); c.moveTo(x,y-2.6); c.lineTo(x+2.2,y+2.4); c.stroke(); }
     } else if(sf==="gravel"){
@@ -7255,7 +7350,7 @@ function drawAreaPoly(c,vw,it,labelK,forExport,p,isDraft){
     const cx=pts.reduce((s,q)=>s+q[0],0)/pts.length, cy=pts.reduce((s,q)=>s+q[1],0)/pts.length;
     const sq=areaSqm(it,p);
     const txt=(it.label||sd.label)+(sq!=null?" \u00b7 "+sq+" m\u00b2":"");
-    glyphLabelRot(c, cx, cy, 0, 0, 0, txt, "#0c1206", "#E8C547", labK(it,labelK));
+    glyphLabelRot(c, cx, cy, 0, 0, 0, txt, sd.safety?"#FFFFFF":"#0c1206", sd.color, labK(it,labelK));
   }
 }
 /* ---------- freehand ink (pen / highlighter) ---------- */
@@ -7397,12 +7492,16 @@ function buildRail(){
     container:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="7" width="18" height="10" rx="1"/><path d="M7.5 9.5v5M12 9.5v5M16.5 9.5v5"/></svg>',
     toilet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7.5" y="3.5" width="9" height="17" rx="1.5"/><path d="M13.8 3.5v17"/><path d="M10.5 11.5h1"/></svg>',
     skip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 8.5h15L17.5 19h-11z"/><path d="M2.5 8.5L5 5.5M21.5 8.5L19 5.5"/><path d="M8 12h8"/></svg>',
+    inspectionpit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><rect x="7" y="8" width="10" height="8" rx="1"/><path d="M9 10l6 4M15 10l-6 4"/></svg>',
+    signboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3.5" width="16" height="12" rx="1.5"/><path d="M8 15.5V21M16 15.5V21M7 21h10"/><path d="M12 6.5l-3 5h6z"/></svg>',
+    spoil:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 19c2.5-7 5-10 8-8 2-4 5-3 6 1 2 1 3 3 4 7z"/><path d="M7 16l2-2M14 16l2-2"/></svg>',
   };
   const aic={
     road:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 21L10 3M17.5 21L14 3"/><path d="M12 5.5v2.5M12 11v2.5M12 16.5V19"/></svg>',
     driveway:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4.5 21L9 4h6l4.5 17"/><path d="M12 7.5v2M12 13v2M12 18.5V20"/></svg>',
     footpath:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 21c4-4.5 1-9 5-13s7-2.5 7-5" stroke-dasharray="3.4 3"/></svg>',
     grass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4.5 20c1.5-3 1-6 0-8M9 20c2-4 1.5-7.5.5-9.5M13.5 20c2-3.5 2-7 1-9.5M18 20c2-3 1.3-5.5.8-7.5"/><path d="M3 20.5h18"/></svg>',
+    exclusion:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"><path d="M4 5.5h16v13H4z"/><path d="M6 16L17 7M10 18l10-8M4 13l9-8"/></svg>',
   };
   const icoScale='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17L17 3l4 4L7 21z"/><path d="M8 16l1.6 1.6M11 13l1.6 1.6M14 10l1.6 1.6M17 7l1.6 1.6"/></svg>';
   const icoMeasure='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M6.5 17.5L17.5 6.5"/></svg>';
@@ -7454,7 +7553,9 @@ function buildRail(){
         G("Boundaries & access",[rt("hedge"),rt("fence"),rt("wallline"),st("gate")]),
         G("Landscape & street",[st("tree"),st("bush"),st("lamp"),st("bollard"),st("wheelstop"),st("cabinet"),st("sign"),st("bench"),st("bin")]),
         G("Surfaces & areas",[T("area:road","Road area",aic.road),T("area:driveway","Driveway area",aic.driveway),T("area:footpath","Footpath area",aic.footpath),T("area:grass","Grass / lawn area",aic.grass)]),
-        G("Site setup & welfare",[st("cabin"),st("container"),st("toilet"),st("skip"),rt("heras"),T("mark:firstaid","First aid point",pinMini("FA","#1E8A4C")),T("mark:fire","Fire point",pinMini("FP","#C22B22"))]),
+        G("Public protection",[rt("heras"),rt("cones"),T("area:exclusion","Exclusion zone",aic.exclusion),T("area:pedestrian","Pedestrian walkway",aic.footpath),st("signboard")]),
+        G("Welfare & logistics",[st("cabin"),st("container"),st("toilet"),st("skip"),T("mark:firstaid","First aid point",pinMini("FA","#1E8A4C")),T("mark:fire","Fire point",pinMini("FP","#C22B22"))]),
+        G("Groundworks safety",[st("inspectionpit"),st("spoil")]),
       ]},
       {id:"notes",tab:"Notes",full:"Notes, marks & snagging",icon:cico.notes,groups:noteGroups},
     ];
@@ -7901,6 +8002,7 @@ document.addEventListener("wheel", e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
 // long-press / right-click context menu over the drawing surface interferes with markup
 cv.addEventListener("contextmenu", e=>e.preventDefault());
 window.addEventListener("keydown", e=>{
+  if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return;
   const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return;
   if(e.key==="Shift") shiftDown=true;
   if(e.code==="Space"){ if(!e.repeat && !dragItem){ spacePan=true; cv.style.cursor="grab"; } e.preventDefault(); return; }
@@ -8222,7 +8324,53 @@ function idb(){
 function idbSet(k,v){ return idb().then(db=>new Promise((res,rej)=>{ const tx=db.transaction(IDB_KV,"readwrite"); tx.objectStore(IDB_KV).put(v,k); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); tx.onabort=()=>rej(tx.error||new Error("idb abort")); })); }
 function idbGet(k){ return idb().then(db=>new Promise((res,rej)=>{ const tx=db.transaction(IDB_KV,"readonly"); const rq=tx.objectStore(IDB_KV).get(k); rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); })); }
 function idbDel(k){ return idb().then(db=>new Promise((res,rej)=>{ const tx=db.transaction(IDB_KV,"readwrite"); tx.objectStore(IDB_KV).delete(k); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); })); }
-function serialisablePack(){ const out={...pack, photos:(pack.photos||[]).filter(p=>p&&p.src).map(p=>{ const q={...p}; delete q._pending; delete q._failed; if(q.srcOrig===q.src) delete q.srcOrig; return q; })}; delete out._ratesOpen; return out; }
+const MEANINGFUL_PROJECT_TEXT_FIELDS=[
+  "name","address","postcode","jobRef","custName","surveyedBy","notes","engineerNote",
+  "earthing","mainFuse","outcome","outcomeNote","dnoRef","spareWays","connector","delivery",
+  "extraGround","extraCable","extraTrunk","payLink","coverSummary","custLetter","bomRef","scopeRef",
+  "supplyRating","capacityNote","enablingNote"
+];
+const MEANINGFUL_CDM_TEXT_FIELDS=[
+  "route","client","clientContact","contractor","pd","pc","appointmentDate","appointmentEvidence",
+  "pdAppointmentDate","pdAppointmentEvidence","pcAppointmentDate","pcAppointmentEvidence",
+  "siteManager","firstAider","safetyAdviser","startDate","finishDate","welfare","induction",
+  "publicProtection","emergency","monitoring","f10","f10Ref","f10Date"
+];
+function plannerValueHasContent(value){
+  if(value==null||value===false||value===0||value==="") return false;
+  if(typeof value==="string") return Boolean(value.trim());
+  if(Array.isArray(value)) return value.some(plannerValueHasContent);
+  if(typeof value==="object") return Object.values(value).some(plannerValueHasContent);
+  return true;
+}
+function cdmHasMeaningfulContent(value){
+  const c=value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+  if(MEANINGFUL_CDM_TEXT_FIELDS.some(k=>Boolean(String(c[k]||"").trim()))) return true;
+  if(c.appointmentsConfirmed===true||c.pdAppointmentConfirmed===true||c.pcAppointmentConfirmed===true) return true;
+  if((c.f10LongAndTwenty&&c.f10LongAndTwenty!=="unknown")||(c.f10PersonDays&&c.f10PersonDays!=="unknown")) return true;
+  if(Array.isArray(c.risks)&&c.risks.length) return true;
+  return Object.values(c.docs&&typeof c.docs==="object"?c.docs:{}).some(r=>r&&typeof r==="object"&&(
+    (r.status&&r.status!=="not_started")||[r.owner,r.revision,r.date,r.notes].some(v=>Boolean(String(v||"").trim()))
+  ));
+}
+function hasMeaningfulPackContent(candidate){
+  const p=candidate&&typeof candidate==="object"?candidate:{};
+  if((Array.isArray(p.photos)&&p.photos.length)||(Array.isArray(p.attachments)&&p.attachments.length)) return true;
+  if(MEANINGFUL_PROJECT_TEXT_FIELDS.some(k=>Boolean(String(p[k]||"").trim()))) return true;
+  if((Array.isArray(p.compliance)&&p.compliance.length)||(Array.isArray(p.complianceNA)&&p.complianceNA.length)) return true;
+  if((Array.isArray(p.infoNeeds)&&p.infoNeeds.length)||(Array.isArray(p.enablingWorks)&&p.enablingWorks.length)) return true;
+  if(p.readyToProceed===true||p.mcbRequired===true) return true;
+  if([p.programme,p.survey,p.earthWiz,p.sim,p.punch,p.revHistory,p.snagSign,p.commissioning].some(plannerValueHasContent)) return true;
+  return cdmHasMeaningfulContent(p.cdm);
+}
+function cdmRiskIsFullyControlled(risk){
+  if(!risk||typeof risk!=="object") return false;
+  const controlledStatus=["actioned","closed","transferred"].includes(String(risk.status||"").toLowerCase());
+  const scores=[risk.initialLikelihood,risk.initialSeverity,risk.residualLikelihood,risk.residualSeverity];
+  const ratingsComplete=scores.every(v=>Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=5);
+  return controlledStatus&&ratingsComplete&&[risk.hazard,risk.decision,risk.residual,risk.owner].every(v=>Boolean(String(v||"").trim()));
+}
+function serialisablePack(){ const out={...pack, photos:(pack.photos||[]).filter(p=>p&&p.src).map(p=>{ const q={...p}; delete q._pending; delete q._failed; if(q.srcOrig===q.src) delete q.srcOrig; return q; })}; delete out._ratesOpen; try{ const safety=projectSafetySummary(); if(safety) out.safetySummary=safety; else delete out.safetySummary; }catch(_){ } return out; }
 function autosaveNow(){
   try{ const el=document.getElementById("packname"); if(el && el.value) pack.name=el.value; }catch(_){ }
   const payload={pack:serialisablePack(), view, ts:Date.now()};
@@ -8232,7 +8380,7 @@ function autosaveNow(){
   });
   /* keep the jobs list complete & its status chips fresh */
   try{
-    if(!pack.projId && ((pack.photos&&pack.photos.length)||pack.name)) saveCurrentToProjects(true);
+    if(!pack.projId && hasMeaningfulPackContent(pack)) saveCurrentToProjects(true);
     else if(pack.projId) refreshProjIndexMeta();
   }catch(_){ }
 }
@@ -8923,11 +9071,11 @@ function packPanel(){
     ${(pack.attachments&&pack.attachments.length)?`<div class="thumbs">${pack.attachments.map(a=>`
       <div class="thumb" style="cursor:default">
         <div class="thumb-top">
-          ${(a.type||'').startsWith('image/')?`<img src="${a.src}">`:`<div style="width:52px;height:40px;border-radius:5px;background:var(--panel);display:grid;place-items:center;flex-shrink:0;font-size:9.5px;font-weight:800;color:var(--dim);letter-spacing:.5px">${esc((a.name.split('.').pop()||'DOC').toUpperCase().slice(0,4))}</div>`}
-          <div class="meta"><b>${esc(a.name)}</b><small>${a.size?(a.size/1024/1024).toFixed(2)+' MB':''}${(a.type||'').startsWith('image/')?' &middot; prints in the engineer PDF':' &middot; listed in the PDF appendix'}</small></div>
+          ${(a.type||'').startsWith('image/')&&a.src?`<img src="${a.src}">`:`<div style="width:52px;height:40px;border-radius:5px;background:var(--panel);display:grid;place-items:center;flex-shrink:0;font-size:9.5px;font-weight:800;color:var(--dim);letter-spacing:.5px">${esc((a.name.split('.').pop()||'DOC').toUpperCase().slice(0,4))}</div>`}
+          <div class="meta"><b>${esc(a.name)}</b><small>${a.size?(a.size/1024/1024).toFixed(2)+' MB':''}${!a.src?' &middot; file details only':((a.type||'').startsWith('image/')?' &middot; prints in the engineer PDF':' &middot; listed in the PDF appendix')}</small></div>
           <button class="x" data-attdel="${a.id}" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>
-        <div class="thumb-actions"><button class="thumb-action" data-attdl="${a.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</button></div>
+        <div class="thumb-actions"><button class="thumb-action" data-attdl="${a.id}" ${a.src?'':'disabled title="File contents are not stored in this device snapshot"'}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</button></div>
       </div>`).join('')}</div>`:`<div style="color:var(--faint);font-size:12px">Attach EICs, EICRs, board schedules, quotes, RAMS&hellip; They save inside the project file and travel with the pack.</div>`}
     <button class="addbtn" id="addAttach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add documents</button>
   </div>`;
@@ -9039,6 +9187,7 @@ function packPanel(){
     <div class="sub" style="color:var(--faint);font-size:11px;margin-top:8px">The programme, DNO data and materials list are compiled live from this pack's markup.</div>
   </div>`;
   const emptyCard=(t,d,act,lbl)=>`<div class="card"><h3><span class="dot" style="background:#8A98A8"></span>${t}</h3><div style="font-size:12px;color:var(--dim);line-height:1.55;margin-bottom:${act?'10px':'0'}">${d}</div>${act?`<button class="pbtn go" data-ovact="${act}" style="width:100%">${lbl}</button>`:''}</div>`;
+  const cardCdm=typeof evspCdmCardHTML==="function"?evspCdmCardHTML(pack):"";
   const ev=evalProject();
   const STAGE_BODY={
     overview: overviewBody(ev),
@@ -9046,11 +9195,11 @@ function packPanel(){
     design: cardTotals+cardAppearance+cardDisplay+cardLegend,
     verify: ((cardLoad||cardCables)?cardLoad+cardCables:emptyCard("Electrical checks","No checks to run yet. Place a charger and draw its supply route on the plan; the load check and cable calculations then run automatically.","stage:design","Open the Design stage"))+cardReadiness,
     price: cardBudget+cardBranding,
-    plan: cardCompliance+cardPlanActions+cardDocs,
+    plan: cardCdm+cardCompliance+cardPlanActions+cardDocs,
     install: cardPunch+cardSnags+((cardPunch||cardSnags)?'':emptyCard("Snagging","No snags recorded yet. Pin snags on the photos with the snag tool; each pin tracks severity, owner and before and after evidence.","fn:snagtool","Pick up the snag tool"))+cardOutcome,
     handover: cardCommissioning||emptyCard("Commissioning &amp; handover","Commissioning records unlock once at least one active charger is placed on a plan. Each charger gets its serial, test results and sign-off, and they feed the handover certificate.","stage:design","Open the Design stage")
   };
-  if(!(packSec in STAGE_BODY)) packSec=(pack.photos.length||pack.name)?"overview":"survey";
+  if(!(packSec in STAGE_BODY)) packSec=hasMeaningfulPackContent(pack)?"overview":"survey";
   return stageHeadHtml(packSec,ev)+STAGE_BODY[packSec];
 }
 
@@ -9161,14 +9310,19 @@ function evalProject(){
     const progOn=!!(pack.programme&&pack.programme.start);
     const attN=(pack.attachments||[]).length;
     const waiting=(pack.outcome==="dno"||pack.outcome==="permission")&&!pack.readyToProceed;
+    const ca=(!dom&&typeof evspCdmAssessment==="function")?evspCdmAssessment(pack):null;
+    const cdmActive=!!(ca&&ca.status!=="not_started");
+    const cdmBlockers=cdmActive?(ca.blockingIssues||[]):[];
     let s="none",why=[];
     if(waiting){ s="block"; why=[pack.outcome==="dno"?("Waiting on the DNO"+(pack.dnoRef?" · ref "+esc(pack.dnoRef):"")):"Waiting on permission (landlord, freeholder or planning)"]; }
+    else if(cdmBlockers.length){ s="block"; why=["CDM control: "+cdmBlockers[0].text]; }
     else if(!pr.done&&!progOn&&!attN&&!pack.dnoRef){ why=["No compliance items, programme or documents recorded yet"]; }
     else if(pr.applicable>0&&pr.out===0){ s="done"; why=["All "+pr.applicable+" applicable compliance items are closed"]; }
     else{ s="prog"; why=[pr.out?(pr.out+" compliance item"+(pr.out===1?"":"s")+" outstanding"):"Programme and documents in hand"]; }
-    const planStarted=pr.done>0||progOn||attN>0||!!pack.dnoRef;
-    S("plan",s,why,(planStarted?pr.out:0)+(waiting?1:0));
+    const planStarted=pr.done>0||progOn||attN>0||!!pack.dnoRef||cdmActive;
+    S("plan",s,why,(planStarted?pr.out:0)+(waiting?1:0)+cdmBlockers.length);
     if(planStarted&&pr.out>0) I("adv","plan",pr.out+" compliance item"+(pr.out===1?"":"s")+" outstanding","Work the list down or mark items not required; it prints as a status page in the engineer PDF.","stage:plan");
+    if(cdmBlockers.length) I("crit","plan","CDM project controls incomplete",cdmBlockers[0].text,"stage:plan|flash:evspCdmOpen");
     if(waiting) I("info","plan",pack.outcome==="dno"?"Waiting on DNO approval":"Waiting on permission","Recorded from the install review. Tick Ready to proceed once approval lands.","stage:install|focus:readyProceed");
   }catch(_){ S("plan","none",[],0); }
   /* Install */
@@ -9968,7 +10122,7 @@ function propsPanel(){
       <label>Trench depth</label>
       <div class="seg"><button data-rdepth="450" class="${it.depth===450?'on':''}">450 mm</button><button data-rdepth="600" class="${it.depth===600?'on':''}">600 mm · under road</button></div>
       <label>Reinstatement</label>
-      <div class="seg grid3">${Object.entries(AREA_SURFACES).map(([sk,s])=>`<button data-trsurf="${sk}" class="${it.surface===sk?'on':''}">${s.label.split(' ')[0]}</button>`).join("")}</div>
+      <div class="seg grid3">${Object.entries(AREA_SURFACES).filter(([,s])=>!s.safety).map(([sk,s])=>`<button data-trsurf="${sk}" class="${it.surface===sk?'on':''}">${s.label.split(' ')[0]}</button>`).join("")}</div>
       <div class="sub" style="color:var(--faint);font-size:11px">Depth and surface show on the run label and PDF; tap again to clear. For a measured m² of reinstatement, draw an <b>Area</b> over the surface.</div>`:''}
       ${(ROUTE_DEFS[it.kind]&&ROUTE_DEFS[it.kind].cls==="cable"&&it.kind!=="run")?(()=>{ const spec=(it.ccores||"4C")+" "+(it.vdCsa||6)+"mm\u00b2"+(it.kind==="swa"?" SWA":""); const on=noteHasPart(it.note,spec); return `<label>Cores${hintBtn('cores')}</label>${hintBox('cores')}
       <div class="seg">${["2C","3C","4C","5C"].map(cc=>`<button data-ccr="${cc}" class="${(it.ccores||'4C')===cc?'on':''}">${cc}</button>`).join("")}</div>
@@ -10689,7 +10843,7 @@ function postcodePicked(pc, addrEl){
   pcI.oninput=()=>{ pack.postcode=pcI.value.toUpperCase(); syncSiteChip(); autosave(); };
   attachPostcodeLookup(pcI, document.getElementById("spSug"), pc=>{ pcI.value=pc; postcodePicked(pc, addrI); addrI.focus(); });
 })();
-document.getElementById("btnNew").onclick=async()=>{ if(pack.photos.length){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } pack=newPack(); imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; packSec="survey"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty(); draw(); renderSide(); };
+document.getElementById("btnNew").onclick=async()=>{ if(hasMeaningfulPackContent(pack)){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } pack=newPack(); imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; packSec="survey"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty(); draw(); renderSide(); };
 function imgKeys(){ for(const k in imgCache) delete imgCache[k]; }
 document.getElementById("btnSave").onclick=()=>{
   normalisePack(pack);
@@ -10699,7 +10853,7 @@ document.getElementById("btnSave").onclick=()=>{
   a.download=(pack.name||"survey").replace(/[^\w\-]+/g,"_")+".evplan.json"; a.click();
   toast("Survey saved");
 };
-document.getElementById("btnOpen").onclick=()=>document.getElementById("fileOpen").click();
+document.getElementById("btnOpen").onclick=async()=>{ if(hasMeaningfulPackContent(pack)){ const ok=await askConfirm({title:"Open another survey?", label:"The current project will be replaced. Save a file copy first if you need one.", okText:"Choose file"}); if(!ok) return; } document.getElementById("fileOpen").click(); };
 document.getElementById("fileOpen").addEventListener("change", e=>{
   const f=e.target.files[0]; if(!f)return; const fr=new FileReader();
   fr.onload=()=>{ try{ const d=JSON.parse(fr.result); if(!d.photos)throw 0; pack=normalisePack(d); imgKeys(); history=[]; redoStack=[]; updateUndo();
@@ -10870,7 +11024,7 @@ function buildWebPack(){
   const cpr=compProgress();
   const snItems=snagList(); const snSt=snagStats(); const snSigned=snagSignedOff(); const snSign=pack.snagSign||{};
   const snRows=snItems.map(({it,photo})=>{ const open=it.st!=="fixed"; const shots=(it.ph1||it.ph2)?('<span style="display:flex;gap:6px;margin-top:6px">'+(it.ph1?'<img src="'+it.ph1+'" alt="Before" style="width:104px;height:78px;object-fit:cover;border-radius:8px;border:1px solid #E2E8F0">':'')+(it.ph2?'<img src="'+it.ph2+'" alt="After" style="width:104px;height:78px;object-fit:cover;border-radius:8px;border:1px solid #E2E8F0">':'')+'</span>'):''; return '<div class="row" style="align-items:flex-start"><span><b>#'+(it.n||'')+'</b> '+e2(it.label||'Snag')+' <small style="color:#8A98A8">\u00b7 '+e2(photo.name||'photo')+'</small>'+shots+'</span><span class="'+(open?'todo':'ok')+'">'+(open?'to put right':'\u2713 fixed'+(it.fixedOn?' '+e2(it.fixedOn):''))+'</span></div>'; }).join("");
-  const docs=(pack.attachments||[]).map(a=>'<li><a download="'+e2(a.name)+'" href="'+a.src+'">'+e2(a.name)+'</a> <small>'+(a.size/1048576).toFixed(2)+' MB</small></li>').join("");
+  const docs=(pack.attachments||[]).map(a=>'<li>'+(a.src?'<a download="'+e2(a.name)+'" href="'+a.src+'">'+e2(a.name)+'</a>':e2(a.name)+' <small>file details only</small>')+' <small>'+((a.size||0)/1048576).toFixed(2)+' MB</small></li>').join("");
   const logoImg=pack.brandLogo?'<img src="'+pack.brandLogo+'" style="width:40px;height:36px;object-fit:contain">':"";
   const rows=scope.map(l=>'<div class="row"><span>'+e2(l.label)+'</span><b>'+l.qty+(l.unit==="m"?" m":(l.unit==="m2"?" m\u00b2":""))+(l.total!=null?" \u00b7 "+fmtGBP(l.total):"")+'</b></div>').join("");
   const html='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+e2(pack.name||"EV charging plan")+' \u00b7 '+brand+'</title><style>'
@@ -12809,15 +12963,15 @@ async function buildPdf(opts){
   }
   // Project pack appendix - attached documents
   if((pack.attachments||[]).length){
-    const imgsA=pack.attachments.filter(a=>(a.type||"").startsWith("image/"));
-    const docsA=pack.attachments.filter(a=>!(a.type||"").startsWith("image/"));
+    const imgsA=pack.attachments.filter(a=>(a.type||"").startsWith("image/")&&a.src);
+    const docsA=pack.attachments.filter(a=>!(a.type||"").startsWith("image/")||!a.src);
     if(docsA.length){
       doc.addPage(); bg(); y=M+16;
       if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
       doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
       doc.text("Project pack: attached documents", M+12, M+5);
       doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
-      doc.splitTextToSize("These documents are stored inside the project file (.evplan.json) and issued alongside this PDF.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.2; });
+      doc.splitTextToSize(docsA.some(a=>!a.src)?"These project-pack records include file details only. Obtain any missing file contents from the original project source before issue.":"These documents are stored inside the project file (.evplan.json) and issued alongside this PDF.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.2; });
       y+=4;
       docsA.forEach(a=>{
         ensureSpace(15);
@@ -12934,7 +13088,7 @@ document.getElementById("btnSide").onclick=()=>{ const sd=document.getElementByI
 document.getElementById("mask").onclick=()=>document.getElementById("side").classList.remove("open");
 document.getElementById("btnUndo").onclick=undo;
 document.getElementById("btnRedo").onclick=redo;
-window.addEventListener("keydown",e=>{ const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return; if((e.metaKey||e.ctrlKey)&&(e.key==="z"||e.key==="Z")){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); } else if((e.metaKey||e.ctrlKey)&&(e.key==="y"||e.key==="Y")){ e.preventDefault(); redo(); } });
+window.addEventListener("keydown",e=>{ if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return; const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return; if((e.metaKey||e.ctrlKey)&&(e.key==="z"||e.key==="Z")){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); } else if((e.metaKey||e.ctrlKey)&&(e.key==="y"||e.key==="Y")){ e.preventDefault(); redo(); } });
 
 /* ============================================================ CABLE CALCULATIONS (single-circuit check to the BS 7671 method) ============================================================ */
 /* Ratings data DRAFT v0.9: typical manufacturer-published figures for the common EV cable families.
@@ -13276,6 +13430,8 @@ async function exportCppTemplate(){
   const bg=()=>{ doc.setFillColor(...BEIGE); doc.rect(0,0,PW,PH,"F"); };
   const logo=await logoPngDataUrl("rgb(21,42,57)",132);
   const c=cdmInfo();
+  const cppContractor=c.route==="single_contractor"?(c.contractor||""):(c.pc||"");
+  const recordedRisks=(Array.isArray(c.risks)?c.risks:[]).filter(r=>r&&["actioned","closed","transferred"].includes(String(r.status||"").toLowerCase())&&[r.hazard,r.decision,r.residual,r.owner].every(v=>Boolean(String(v||"").trim())));
   let un=0; try{ un=commUnits().length; }catch(_){ }
   bg();
   if(logo) doc.addImage(logo,"PNG",M,M,13,13*40/45);
@@ -13288,50 +13444,53 @@ async function exportCppTemplate(){
   const ensure=(h)=>{ if(y>PH-M-h){ doc.addPage(); bg(); y=M+6; } };
   const sec=(t)=>{ ensure(16); y+=2; doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text(t,M,y); doc.setDrawColor(...LINE); doc.setLineWidth(0.3); doc.line(M,y+2,PW-M,y+2); y+=8; };
   const line=(label,val)=>{ ensure(9); doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(...DIM); doc.text(label, M, y); if(val){ doc.setFont("helvetica","normal"); doc.setTextColor(...NAVY); doc.text(doc.splitTextToSize(String(val), PW-2*M-60)[0]||"", M+58, y); } else { doc.setDrawColor(...FAINT); doc.setLineWidth(0.2); doc.line(M+58,y+0.8,PW-M,y+0.8); } y+=7; };
-  const prompt=(t,val)=>{ ensure(11); doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...NAVY); doc.text("\u2022  "+t, M, y); if(val){ doc.setFont("helvetica","bold"); doc.setFontSize(8.4); doc.setTextColor(...DIM); doc.text(val, PW-M, y, {align:"right"}); } doc.setDrawColor(...FAINT); doc.setLineWidth(0.2); doc.line(M+4,y+4.6,PW-M,y+4.6); y+=9.5; };
+  const prompt=(t,val)=>{ const raw=String(val||"").trim(), value=raw.length>2400?raw.slice(0,2399)+"\u2026":raw, labels=doc.splitTextToSize("\u2022  "+String(t||"").slice(0,320),PW-2*M), values=value?doc.splitTextToSize(value,PW-2*M-5):[]; ensure(labels.length*4.5+7); doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...NAVY); labels.forEach(ln=>{ doc.text(ln,M,y); y+=4.4; }); if(values.length){ doc.setFontSize(8.4); doc.setTextColor(...DIM); values.forEach(ln=>{ ensure(5); doc.text(ln,M+5,y); y+=4.1; }); y+=2; } else { doc.setDrawColor(...FAINT); doc.setLineWidth(0.2); doc.line(M+4,y+1,PW-M,y+1); y+=6; } };
   sec("Project details");
   line("Site", pack.name||"");
   line("Address", siteAddressLine());
   if(pack.jobRef) line("Case reference", pack.jobRef);
   line("Description of works", un?("Supply and installation of "+un+" EV charge point"+(un===1?"":"s")+", cabling, civils and reinstatement."):"");
-  line("Planned start date", "");
-  line("Expected duration", "");
+  line("Planned start date", c.startDate||"");
+  line("Planned finish date", c.finishDate||"");
   sec("Roles (CDM 2015)");
-  line("Client", "");
+  line("Client", c.client||pack.custName||"");
   line("Principal designer", c.pd||"");
-  line("Principal contractor", c.pc||"");
-  line("Site supervisor", "");
-  line("First aider", "");
+  line(c.route==="single_contractor"?"Contractor":"Principal contractor", cppContractor);
+  line("Site supervisor", c.siteManager||"");
+  line("First aider", c.firstAider||"");
   line("F10 notification", f10StatusLine());
   sec("Management of the work");
-  prompt("Site induction: who gives it and what it covers");
+  prompt("Site induction: who gives it and what it covers",c.induction||"");
   prompt("RAMS: site-specific RAMS issued and accepted before start", compState("rams")==="done"?"Accepted":"");
   prompt("Permits: dig / isolation / hot works, and who signs them", compState("services")==="done"?"Services checked":"");
   prompt("Hours of work and site rules");
-  prompt("How this plan is kept up to date as the job changes");
+  prompt("How this plan is kept up to date as the job changes",c.monitoring||"");
   sec("Key risks & site-specific controls");
-  ensure(8); doc.setFont("helvetica","normal"); doc.setFontSize(8.6); doc.setTextColor(...DIM); doc.text("Standard controls live in the RAMS. Write in what is specific to this site.", M, y); y+=6;
+  ensure(12); doc.setFont("helvetica","normal"); doc.setFontSize(8.6); doc.setTextColor(...DIM); doc.splitTextToSize("Prefilled records below remain a working aid. A competent person must review them with the appointed duty holders before this plan is issued.",PW-2*M).forEach(ln=>{ doc.text(ln,M,y); y+=4.2; }); y+=2;
+  recordedRisks.slice(0,12).forEach(r=>prompt("Recorded design risk: "+r.hazard,"Control: "+r.decision+". Residual risk: "+r.residual+". Owner: "+r.owner+"."));
+  if(recordedRisks.length>12) prompt("Further controlled design risks",(recordedRisks.length-12)+" additional records remain in the CDM project controls pack and must be reviewed before issue.");
   prompt("Buried services along the dig route");
   prompt("Live working & isolation");
-  prompt("Open excavations & the public");
+  prompt("Open excavations & the public",c.publicProtection||"");
   prompt("Plant & vehicle movements");
   prompt("Asbestos (pre-2000 fabric)", compState("asbestos")==="done"?"Checked":"");
   prompt("Other");
   sec("Welfare & first aid");
-  prompt("Welfare: unit on site, or client facilities agreed in writing", compState("welfare")==="done"?"Arranged":"");
-  prompt("First aid kit location & appointed first aider");
+  prompt("Welfare: unit on site, or client facilities agreed in writing",c.welfare||(compState("welfare")==="done"?"Arranged":""));
+  prompt("First aid kit location & appointed first aider",c.firstAider||"");
   sec("Emergency arrangements");
+  prompt("Project emergency arrangements",c.emergency||"");
   prompt("Muster point");
   prompt("Fire point & extinguishers");
   prompt("Nearest A&E");
   y+=4; ensure(34);
   const bw=(PW-2*M-8)/2;
   const sbox=(bx,label,name)=>{ doc.setFillColor(...WHITE); doc.roundedRect(bx,y,bw,26,3,3,"F"); doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.roundedRect(bx,y,bw,26,3,3,"S"); doc.setFont("helvetica","bold"); doc.setFontSize(8.6); doc.setTextColor(...DIM); doc.text(label,bx+5,y+6); doc.setTextColor(...NAVY); doc.setFontSize(10); if(name) doc.text(name,bx+5,y+12.5); doc.setDrawColor(...FAINT); doc.setLineWidth(0.2); doc.line(bx+5,y+19,bx+bw-5,y+19); doc.setFont("helvetica","normal"); doc.setFontSize(7.4); doc.setTextColor(...FAINT); doc.text("Signature / date",bx+5,y+22.4); };
-  sbox(M,"Prepared by (principal contractor)",c.pc||"");
+  sbox(M,c.route==="single_contractor"?"Prepared by (contractor)":"Prepared by (principal contractor)",cppContractor);
   sbox(M+bw+8,"Reviewed with (client / principal designer)",c.pd||"");
   y+=32; ensure(12);
   doc.setFont("helvetica","normal"); doc.setFontSize(8.4); doc.setTextColor(...FAINT);
-  doc.splitTextToSize("Keep the plan on site and update it as the work changes. A proportionate plan of a few pages is enough for most EV installations (HSE, Managing health and safety in construction, L153).", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=4.2; });
+  doc.splitTextToSize("This template is prefilled from the project's working CDM controls. A competent person and the appointed duty holders must review project-specific suitability and completeness before issue, keep the plan on site and update it as the work changes.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=4.2; });
   doc.save((pack.name?pack.name.replace(/[\\/:*?"<>|]+/g,"").trim()+" \u00b7 ":"")+"Construction phase plan.pdf");
   toast("CPP template exported \u00b7 complete it and keep it on site");
 }
@@ -14002,7 +14161,7 @@ window.openPhotoEditor=openPhotoEditor;
     const sj=e.target.closest("[data-snagjump]"); if(sj){ const sid=sj.dataset.snagjump; const ph=pack.photos.find(p=>p.items.some(i=>i.id===sid)); if(ph){ const switched=pack.active!==ph.id; pack.active=ph.id; sel=sid; selSet=new Set([sid]); sideTab="props"; setSideTab(); if(switched) fitView(); draw(); } return; }
     const f10b=e.target.closest("[data-f10st]"); if(f10b){ const cdc=cdmInfo(); const v=f10b.dataset.f10st; cdc.f10=(cdc.f10===v)?"":v; pack.compliance=(pack.compliance||[]).filter(x=>x!=="f10"); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!=="f10"); if(cdc.f10==="filed") pack.compliance.push("f10"); else if(cdc.f10==="notreq") pack.complianceNA.push("f10"); renderSide(); autosave(); return; }
     if(e.target.closest("#cppBtn")){ exportCppTemplate(); return; }
-    const cpb=e.target.closest("button[data-comp]"); if(cpb){ const k=cpb.dataset.comp, cst=cpb.dataset.cst; pack.compliance=(pack.compliance||[]).filter(x=>x!==k); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!==k); if(cpb.dataset.on!=="1"){ if(cst==="done") pack.compliance.push(k); else pack.complianceNA.push(k); } renderSide(); autosave(); return; }
+    const cpb=e.target.closest("button[data-comp]"); if(cpb){ const k=cpb.dataset.comp, cst=cpb.dataset.cst; if(k==="rams"&&pack.cdm&&typeof pack.cdm==="object"){ pack.cdm.ramsComplianceManaged=false; pack.cdm.ramsComplianceManual=true; } pack.compliance=(pack.compliance||[]).filter(x=>x!==k); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!==k); if(cpb.dataset.on!=="1"){ if(cst==="done") pack.compliance.push(k); else pack.complianceNA.push(k); } renderSide(); autosave(); return; }
     const us=e.target.closest("[data-uscheme]"); if(us){ const p=activePhoto(); const it=p?p.items.find(i=>i.id===sel):null; if(it){ if(us.dataset.uscheme) it.scheme=us.dataset.uscheme; else delete it.scheme; renderSide(); draw(); autosave(); } return; }
   });
   sc.addEventListener("input", e=>{
@@ -14034,7 +14193,7 @@ function syncBrand(){
 (function(){
   const sc=document.getElementById("sideScroll"); if(!sc) return;
   const fi=document.getElementById("fileAttach"), bl=document.getElementById("fileBrandLogo");
-  sc.addEventListener("click", e=>{
+  sc.addEventListener("click", async e=>{
     const rv=e.target.closest("[data-rev]"); if(rv){ const nv=rv.dataset.rev; if(nv===(pack.rev||"A")) return; pack.rev=nv; renderSide(); autosave(); askInput({title:"Revision "+nv, label:"What changed? Logged in the revision table on the engineer PDF (leave blank to skip the note).", placeholder:"e.g. Charger moved to bay 3", okText:"Log", chips:["Issued for review","Client comments incorporated","Charger position revised","Cable route revised","Issued for construction"]}).then(v=>{ (pack.revHistory=pack.revHistory||[]).push({rev:nv, note:(v==null?"":String(v)).trim(), at:new Date().toISOString().slice(0,10), by:(pack.surveyedBy||"").trim()}); renderSide(); autosave(); }); return; }
     const scl2=e.target.closest("[data-shotclear]"); if(scl2){ pushHist(); pack.survey=pack.survey||{}; delete pack.survey[scl2.dataset.shotclear]; renderSide(); autosave(); return; }
     const sn2=e.target.closest("[data-shotna]"); if(sn2){ pushHist(); const k=sn2.dataset.shotna; pack.survey=pack.survey||{}; if(pack.survey[k]&&pack.survey[k].na) delete pack.survey[k]; else pack.survey[k]={na:1}; renderSide(); autosave(); return; }
@@ -14060,8 +14219,8 @@ function syncBrand(){
     if(e.target.closest("#addGrid")){ addGridPlan(); return; }
     if(e.target.closest("#addStarter")){ addStarter(); return; }
     if(e.target.closest("#addAttach")){ fi.value=""; fi.click(); return; }
-    const dl=e.target.closest("[data-attdl]"); if(dl){ const a=(pack.attachments||[]).find(x=>x.id===dl.dataset.attdl); if(a){ const el=document.createElement("a"); el.href=a.src; el.download=a.name; el.click(); } return; }
-    const del=e.target.closest("[data-attdel]"); if(del){ pack.attachments=(pack.attachments||[]).filter(x=>x.id!==del.dataset.attdel); renderSide(); autosave(); toast("Removed from the pack"); return; }
+    const dl=e.target.closest("[data-attdl]"); if(dl){ const a=(pack.attachments||[]).find(x=>x.id===dl.dataset.attdl); if(a&&a.src){ const el=document.createElement("a"); el.href=a.src; el.download=a.name; el.click(); } else if(a) toast("File contents are not stored on this device"); return; }
+    const del=e.target.closest("[data-attdel]"); if(del){ const a=(pack.attachments||[]).find(x=>x.id===del.dataset.attdel); if(!a) return; const ok=await askConfirm({title:"Remove this document?",label:a.name+" will be removed from the project pack.",okText:"Remove"}); if(!ok) return; pack.attachments=(pack.attachments||[]).filter(x=>x.id!==del.dataset.attdel); renderSide(); autosave(); document.dispatchEvent(new CustomEvent("evsp:attachments-changed")); toast("Removed from the pack"); return; }
     if(e.target.closest("#brandLogoBtn")){ bl.value=""; bl.click(); return; }
     if(e.target.closest("#brandLogoClear")){ pack.brandLogo=""; saveDeviceBrand(); syncBrand(); renderSide(); autosave(); return; }
     if(e.target.closest("#ovAdd")||e.target.closest("#ovReplace")){ const fo=document.getElementById("fileOverlay"); fo.value=""; fo.click(); return; }
@@ -14099,13 +14258,16 @@ function syncBrand(){
   }
   fi.onchange=async()=>{
     const files=[...(fi.files||[])]; if(!files.length) return;
+    let added=0, skipped=0;
     for(const f of files){
-      if(f.size>8*1024*1024){ toast(f.name+" is over 8 MB, too large to store in the pack"); continue; }
+      if(f.size>8*1024*1024){ skipped++; toast(f.name+" is over 8 MB, too large to store in the pack"); continue; }
       const data=await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.onerror=()=>r(null); fr.readAsDataURL(f); });
-      if(!data){ toast("Could not read "+f.name); continue; }
+      if(!data){ skipped++; toast("Could not read "+f.name); continue; }
       (pack.attachments=pack.attachments||[]).push({id:uid(), name:f.name, type:f.type||"", size:f.size, src:data, note:""});
+      added++;
     }
-    renderSide(); autosave(); toast("Added to the project pack");
+    if(added){ renderSide(); autosave(); document.dispatchEvent(new CustomEvent("evsp:attachments-changed")); toast(added+" document"+(added===1?"":"s")+" added"+(skipped?" \u00b7 "+skipped+" skipped":"")); }
+    else toast("No documents were added");
   };
   bl.onchange=()=>{
     const f=bl.files&&bl.files[0]; if(!f) return;
@@ -14376,24 +14538,57 @@ function buildStarter(preset){
 /* ---------- project dashboard (device-local snapshots) ---------- */
 function projIndex(){ try{ return JSON.parse(localStorage.getItem("evsp_projects")||"[]")||[]; }catch(_){ return []; } }
 function saveProjIndex(ix){ try{ localStorage.setItem("evsp_projects", JSON.stringify(ix)); }catch(_){ } }
-function saveCurrentToProjects(quiet){
+function projectSafetySummary(){
+  if(pack.mode==="domestic") return null;
+  const api=window.EvspCdmControls, c=plannerNormaliseCdmPack(pack.cdm);
+  const facts=api&&typeof api.planFacts==="function"?api.planFacts(pack):{};
+  const fv=api&&typeof api.f10Verdict==="function"?api.f10Verdict(c):((c.f10LongAndTwenty==="yes"||c.f10PersonDays==="yes")?{code:"notifiable"}:((c.f10LongAndTwenty==="no"&&c.f10PersonDays==="no")?{code:"not_required"}:{code:"incomplete"}));
+  const docDefs=api?(api.documentDefinitions||api.docDefs||[]):Object.keys(c.docs||{}).map(k=>({k}));
+  const documents={}; docDefs.forEach(d=>{ const r=(c.docs||{})[d.k]||{}; documents[d.k]={status:r.status||"not_started",revision:r.revision||"",owner:r.owner||"",date:r.date||""}; });
+  return {
+    version:1,
+    facts,
+    startDate:c.startDate||"",
+    finishDate:c.finishDate||"",
+    programme:{startDate:c.startDate||"",finishDate:c.finishDate||""},
+    route:c.route||"",
+    dutyHolders:{
+      client:c.client||pack.custName||"",contractor:c.contractor||"",pd:c.pd||"",pc:c.pc||"",
+      principalDesigner:c.pd||"",principalContractor:c.pc||"",siteManager:c.siteManager||"",
+      firstAider:c.firstAider||"",safetyAdviser:c.safetyAdviser||"",
+      appointmentsConfirmed:c.appointmentsConfirmed===true,appointmentDate:c.appointmentDate||"",appointmentEvidence:c.appointmentEvidence||"",
+      pdAppointmentConfirmed:c.pdAppointmentConfirmed===true,pdAppointmentDate:c.pdAppointmentDate||"",pdAppointmentEvidence:c.pdAppointmentEvidence||"",
+      pcAppointmentConfirmed:c.pcAppointmentConfirmed===true,pcAppointmentDate:c.pcAppointmentDate||"",pcAppointmentEvidence:c.pcAppointmentEvidence||"",
+      principalDesignerAppointment:{confirmed:c.pdAppointmentConfirmed===true,date:c.pdAppointmentDate||"",evidence:c.pdAppointmentEvidence||""},
+      principalContractorAppointment:{confirmed:c.pcAppointmentConfirmed===true,date:c.pcAppointmentDate||"",evidence:c.pcAppointmentEvidence||""}
+    },
+    f10:{verdict:fv.code,answerLongAndTwenty:c.f10LongAndTwenty,answerPersonDays:c.f10PersonDays,status:c.f10||"",reference:c.f10Ref||"",submitted:c.f10Date||"",date:c.f10Date||""},
+    risks:(c.risks||[]).map(r=>({id:r.id,presetKey:r.presetKey||"",hazard:r.hazard||"",who:r.who||"",hierarchy:r.hierarchy||"",decision:r.decision||"",residual:r.residual||"",owner:r.owner||"",due:r.dueDate||"",status:r.status||"open",controlled:cdmRiskIsFullyControlled(r),source:r.source||"",initialLikelihood:r.initialLikelihood||"",initialSeverity:r.initialSeverity||"",residualLikelihood:r.residualLikelihood||"",residualSeverity:r.residualSeverity||""})),
+    documents,
+    siteSetup:{welfare:c.welfare||"",induction:c.induction||"",publicProtection:c.publicProtection||"",emergency:c.emergency||"",monitoring:c.monitoring||"",welfareItems:facts.siteSetupCount||0,barrierRoutes:facts.herasCount||0,coneRoutes:facts.coneCount||0,exclusionZones:facts.exclusionCount||0,pedestrianRoutes:facts.pedestrianCount||0,safetySignboards:facts.signboardCount||0,firstAidPoints:facts.firstAidCount||0,firePoints:facts.fireCount||0}
+  };
+}
+function slimProjectSnapshot(full){
+  const sourcePack=full&&full.pack&&typeof full.pack==="object"?full.pack:{};
+  const sourceAttachments=Array.isArray(sourcePack.attachments)?sourcePack.attachments:[];
+  const attachments=sourceAttachments.map(a=>{ const meta={...a,src:""}; return meta; });
+  return {...full,pack:{...sourcePack,photos:[],brandLogo:"",attachments},slim:true,fullPhotoCount:(Array.isArray(sourcePack.photos)?sourcePack.photos.length:0),attachmentPayloadsOmitted:sourceAttachments.some(a=>a&&a.src)};
+}
+function saveCurrentToProjects(quiet,requireLocalSnapshot){
   normalisePack(pack);
   pack.projId=pack.projId||uid();
-  const full={pack:serialisablePack(), budget:{lines:budgetLines(), at:new Date().toISOString(), name:pack.name||"", mode:pack.mode||"", jobRef:pack.jobRef||"", custName:pack.custName||""}};
+  const savedPack=serialisablePack();
+  const full={pack:savedPack, budget:{lines:budgetLines(), at:new Date().toISOString(), name:pack.name||"", mode:pack.mode||"", jobRef:pack.jobRef||"", custName:pack.custName||""}};
   let idbTried=false;
   try{ if(window.indexedDB){ idbTried=true; idbSet("proj_"+pack.projId, full).catch(()=>{}); } }catch(_){ }
   let lsOk=false;
-  try{ localStorage.setItem("evsp_proj_"+pack.projId, JSON.stringify(full)); lsOk=true; }
-  catch(e){
-    // photos don't fit in localStorage - keep a slim copy (the Quotes tool only needs the priced lines) and rely on IndexedDB for the full pack
-    try{ localStorage.setItem("evsp_proj_"+pack.projId, JSON.stringify({pack:{...full.pack, photos:[]}, budget:full.budget, slim:true})); lsOk=true; }catch(e2){ }
-  }
+  try{ localStorage.setItem("evsp_proj_"+pack.projId, JSON.stringify(slimProjectSnapshot(full))); lsOk=true; }catch(_){ }
   if(!lsOk && !idbTried){ if(!quiet) toast("Device storage is full. Use Save to keep a file copy"); return false; }
   const ix=projIndex().filter(x=>x.id!==pack.projId);
   const ph=pack.photos[0];
   ix.unshift({id:pack.projId, name:pack.name||document.getElementById("packname").value||"Untitled", mode:pack.mode, date:new Date().toISOString().slice(0,10), thumb:(ph&&ph.thumb)||"", n:pack.photos.length, cust:pack.custName||"", ref:pack.jobRef||"", ...projStatusMeta()});
   saveProjIndex(ix.slice(0,30));
-  return true;
+  return requireLocalSnapshot?lsOk:(lsOk||idbTried);
 }
 /* live status for the jobs list - cheap enough to refresh on every autosave */
 function projStatusMeta(){
@@ -14470,7 +14665,7 @@ function openProjects(){ renderProjList(); document.getElementById("projBackdrop
 function loadProject(id){
   const apply=d=>{
     if(!d||!d.pack){ toast("Couldn't open that project"); return; }
-    if(pack.photos.length||pack.name) saveCurrentToProjects(true);
+    if(hasMeaningfulPackContent(pack)) saveCurrentToProjects(true);
     pack=normalisePack(d.pack); pack.projId=id;
     imgKeys(); history=[]; redoStack=[]; updateUndo(); sel=null; draftRoute=null; draftScale=null;
     pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
@@ -14479,23 +14674,23 @@ function loadProject(id){
     syncBrand(); applyMode(false); buildRail(); sideTab="pack"; setSideTab(); fitView(); draw(); autosave();
     const sdw=document.getElementById("side"); if(sdw){ sdw.classList.remove("hidedesk"); if(window.innerWidth<=959) sdw.classList.add("open"); }
     document.getElementById("projBackdrop").classList.remove("show");
-    toast(d.slim&&!(d.pack.photos||[]).length?"Project opened, but its photos couldn't be stored on this device":"Project opened");
+    toast(d.slim&&d.fullPhotoCount?"Project opened, but its photos couldn't be stored on this device":(d.slim&&d.attachmentPayloadsOmitted?"Project opened with document details only; file contents were not stored":"Project opened"));
   };
   const fromLs=()=>{ try{ apply(JSON.parse(localStorage.getItem("evsp_proj_"+id)||"null")); }catch(e){ toast("Couldn't open that project"); } };
-  try{ idbGet("proj_"+id).then(d=>{ if(d&&d.pack&&(d.pack.photos||[]).length) apply(d); else fromLs(); }).catch(fromLs); }
+  try{ idbGet("proj_"+id).then(d=>{ if(d&&d.pack&&hasMeaningfulPackContent(d.pack)) apply(d); else fromLs(); }).catch(fromLs); }
   catch(_){ fromLs(); }
 }
 function openQuotesTool(){
   const pn=document.getElementById("packname"); if(pn&&pn.value) pack.name=pn.value;
-  const hasWork=!!(pack.photos.length||pack.name);
-  const ok=hasWork?saveCurrentToProjects(true):false;
+  const hasWork=hasMeaningfulPackContent(pack);
+  const ok=hasWork?saveCurrentToProjects(true,true):false;
   try{ autosave(); }catch(_){ }
   location.href="Quotes & Invoices.dc.html"+(ok&&pack.projId?"#from="+encodeURIComponent(pack.projId):"");
 }
 function openSupportTool(){
   const pn=document.getElementById("packname"); if(pn&&pn.value) pack.name=pn.value;
-  const hasWork=!!(pack.photos.length||pack.name);
-  const ok=hasWork?saveCurrentToProjects(true):false;
+  const hasWork=hasMeaningfulPackContent(pack);
+  const ok=hasWork?saveCurrentToProjects(true,true):false;
   try{ autosave(); }catch(_){ }
   location.href="Project Support.dc.html"+(ok&&pack.projId?"#from="+encodeURIComponent(pack.projId):"");
 }
@@ -14503,8 +14698,8 @@ const RAMS_TOOL_LIVE=false; /* flip to true when the RAMS builder ships */
 function openRamsTool(){
   if(!RAMS_TOOL_LIVE){ toast("RAMS builder is coming soon"); return; }
   const pn=document.getElementById("packname"); if(pn&&pn.value) pack.name=pn.value;
-  const hasWork=!!(pack.photos.length||pack.name);
-  const ok=hasWork?saveCurrentToProjects(true):false;
+  const hasWork=hasMeaningfulPackContent(pack);
+  const ok=hasWork?saveCurrentToProjects(true,true):false;
   try{ autosave(); }catch(_){ }
   location.href="RAMS Builder.dc.html"+(ok&&pack.projId?"#from="+encodeURIComponent(pack.projId):"");
 }
@@ -14629,6 +14824,7 @@ function quoteDrift(){
     else if(e.key==="Escape"){ e.preventDefault(); close(); }
   });
   document.addEventListener("keydown",e=>{
+    if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return;
     const tag=((e.target&&e.target.tagName)||"").toLowerCase();
     const typing=tag==="input"||tag==="textarea"||(e.target&&e.target.isContentEditable);
     if(((e.metaKey||e.ctrlKey)&&String(e.key).toLowerCase()==="k")||(e.key==="/"&&!typing)){ e.preventDefault(); if(bd.classList.contains("show")) close(); else open(); }
@@ -15655,42 +15851,42 @@ normalisePack(pack);
 let __restoredTs=0;
 try{
   const __saved=JSON.parse(localStorage.getItem(LS_KEY)||"null");
-  if(__saved && __saved.pack && Array.isArray(__saved.pack.photos) && __saved.pack.photos.length){
+  if(__saved&&__saved.pack&&hasMeaningfulPackContent(__saved.pack)){
     pack=normalisePack(__saved.pack);
     if(__saved.view && typeof __saved.view.zoom==="number") view=__saved.view;
     __restoredTs=__saved.ts||1;
     pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
-    setTimeout(()=>toast("Recovered your last survey"), 500);
+    setTimeout(()=>toast("Recovered your last project"), 500);
   }
 }catch(_){}
 syncSiteChip();
 applyMode(false); syncBrand();
 /* a project with content opens on the overview; a fresh pack starts at the survey stage */
-if(pack.photos.length||(pack.name||"").trim()) packSec="overview";
+if(hasMeaningfulPackContent(pack)) packSec="overview";
 loadUnits(); buildRail(); resize(); buildStageBar(); setSideTab(); updateUndo();
 try{ if(!localStorage.getItem("evsp_welcomed")) openWelcome(); }catch(_){}
 /* first run on tablet/phone: the start cards on the canvas carry onboarding; the pack drawer stays shut so nothing covers them */
 /* IndexedDB recovery - photo-heavy packs live here; localStorage above is just the legacy/fallback copy */
 try{ idbGet("autosave").then(d=>{
-  if(!d||!d.pack||!Array.isArray(d.pack.photos)||!d.pack.photos.length) return;
+  if(!d||!d.pack||!hasMeaningfulPackContent(d.pack)) return;
   if((d.ts||0)<=__restoredTs) return;                 // localStorage copy was newer
   if(history.length||redoStack.length) return;        // user is already editing
-  if(pack.photos.length && !__restoredTs) return;      // user already brought their own photos in
+  if(hasMeaningfulPackContent(pack)&&!__restoredTs) return;
   pack=normalisePack(d.pack);
   if(d.view && typeof d.view.zoom==="number") view=d.view;
   imgKeys(); pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
   syncSiteChip();
-  if(pack.photos.length||(pack.name||"").trim()) packSec="overview";
+  if(hasMeaningfulPackContent(pack)) packSec="overview";
   evalMarkDirty();
   syncBrand(); applyMode(false); buildRail(); setSideTab(); fitView(); draw();
-  if(!__restoredTs) setTimeout(()=>toast("Recovered your last survey"),300);
+  if(!__restoredTs) setTimeout(()=>toast("Recovered your last project"),300);
 }).catch(()=>{}); }catch(_){ }
 /* one-off: move any old full-size project snapshots out of localStorage into IndexedDB (slim copy stays for the Quotes tool) */
 setTimeout(()=>{ try{
   projIndex().forEach(x=>{
     const raw=localStorage.getItem("evsp_proj_"+x.id); if(!raw||raw.length<200000) return;
     const d=JSON.parse(raw); if(!d||!d.pack) return;
-    idbSet("proj_"+x.id, d).then(()=>{ try{ localStorage.setItem("evsp_proj_"+x.id, JSON.stringify({pack:{...d.pack, photos:[]}, budget:d.budget, slim:true})); }catch(_){ } }).catch(()=>{});
+    idbSet("proj_"+x.id, d).then(()=>{ try{ localStorage.setItem("evsp_proj_"+x.id, JSON.stringify(slimProjectSnapshot(d))); }catch(_){ } }).catch(()=>{});
   });
 }catch(_){ } }, 2500);
 </script>

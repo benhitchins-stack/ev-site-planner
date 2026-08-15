@@ -16,6 +16,12 @@ npm start
 
 Then open http://localhost:8000. Set a different port with `PORT=3000 npm start`.
 
+Run the static integration and CDM lifecycle tests with:
+
+```
+npm test
+```
+
 No Node? Any static server works, pointed at the `public/` folder:
 
 ```
@@ -41,7 +47,7 @@ Entry point: `public/index.html` redirects to the landing page. From there the p
 | Page | What it is |
 |------|------------|
 | `Landing Page Final.dc.html` | Marketing landing page and pricing |
-| `EV Site Planner.html` | The core tool: photo survey, markup, cable sizing, load check, exports |
+| `EV Site Planner.html` | The core tool: photo survey, markup, cable sizing, load check, CDM project controls and exports |
 | `Quotes & Invoices.dc.html` | Price a plan, issue quotes and invoices, track the pipeline |
 | `Project Support.dc.html` | Workplace charging project management enquiry (bespoke quote) |
 | `Guide Library.dc.html` | How-to guides and useful links |
@@ -55,10 +61,11 @@ Entry point: `public/index.html` redirects to the landing page. From there the p
 Shared files, siblings of the pages so relative paths resolve:
 
 - `support.js`, `doc-page.js`, `estate-check-library.js` : shared runtime helpers.
+- `cdm-controls.js`, `cdm-controls.css` : the planner's commercial CDM workspace, controlled-document register, design-risk workflow and pack export.
 - `_ds/` : the EV Infrastructure Tools design system (CSS tokens, `styles.css`, `_ds_bundle.js`). Every `.dc.html` page loads it. Editing a token here changes every satellite page. The core planner (`EV Site Planner.html`) is self-contained and does not depend on the bundle the same way.
 - `assets/` : logo marks.
 
-The core planner is plain HTML/CSS/JS in a single file (it embeds jsPDF and a canvas markup engine). The satellite tools are `.dc.html` pages styled by the design system. This split is deliberate.
+The main planner page is plain HTML/CSS/JS and embeds jsPDF and its canvas markup engine. Its commercial CDM workspace is loaded from the sibling `cdm-controls.js` and `cdm-controls.css` files. The satellite tools are `.dc.html` pages styled by the design system. This split is deliberate.
 
 ## Repo layout
 

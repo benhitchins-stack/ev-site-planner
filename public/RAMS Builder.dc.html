@@ -50,7 +50,7 @@
 </helmet>
 
 <sc-if value="{{ gated }}" hint-placeholder-val="{{ true }}">
-<div class="no-print" data-screen-label="Coming soon" style="position:fixed; inset:0; z-index:600; background:var(--cream-200); display:flex; align-items:center; justify-content:center; padding:24px;">
+<div id="ramsGate" class="no-print" data-screen-label="Coming soon" role="dialog" aria-modal="true" aria-labelledby="ramsGateTitle" style="position:fixed; inset:0; z-index:600; background:var(--cream-200); display:flex; align-items:center; justify-content:center; padding:24px;">
   <div style="max-width:520px; width:100%; background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:18px; padding:34px 36px; box-shadow:var(--shadow-lg);">
     <div style="display:flex; align-items:center; gap:11px;">
       <svg width="34" height="34" viewBox="0 0 80 80" fill="none" role="img" aria-label="EV Infrastructure Tools" style="flex:none;">
@@ -63,10 +63,10 @@
         <span style="display:inline-flex; margin-top:4px; font-size:10px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; background:#F7EDD8; color:#9A6403; border-radius:999px; padding:3px 9px;">Coming soon</span>
       </div>
     </div>
-    <h1 style="font-family:var(--font-display); font-weight:800; font-size:26px; letter-spacing:-0.02em; line-height:1.15; color:var(--ink-900); margin:18px 0 0;">Site-specific RAMS, drafted from your plan.</h1>
+    <h1 id="ramsGateTitle" style="font-family:var(--font-display); font-weight:800; font-size:26px; letter-spacing:-0.02em; line-height:1.15; color:var(--ink-900); margin:18px 0 0;">Site-specific RAMS, drafted from your plan.</h1>
     <p style="font-size:13.5px; line-height:1.6; color:var(--ink-500); margin:12px 0 0; text-wrap:pretty;">Import a saved site plan and the hazards, method sequence and scope will be drafted for you to review, adapt and issue. The builder is being finalised and is not open yet.</p>
     <div style="display:flex; align-items:center; gap:10px; margin-top:22px; flex-wrap:wrap;">
-      <a href="EV Site Planner.html" style="display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:9px; padding:9px 15px; text-decoration:none;" style-hover="background:var(--accent-600);">
+      <a id="ramsGatePrimary" href="EV Site Planner.html" style="display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--accent-contrast); background:var(--accent-500); border:1px solid var(--accent-500); border-radius:9px; padding:9px 15px; text-decoration:none;" style-hover="background:var(--accent-600);">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"></path></svg>
         <span>Back to the planner</span>
       </a>
@@ -77,7 +77,7 @@
 </div>
 </sc-if>
 
-<div class="app" style="height:100vh; display:flex; flex-direction:column; background:var(--cream-200); color:var(--text-primary);">
+<div id="ramsApp" class="app" inert aria-hidden="true" style="height:100vh; display:flex; flex-direction:column; background:var(--cream-200); color:var(--text-primary);">
 
   <!-- ░░ TOP BAR ░░ -->
   <header class="rb-topbar no-print" data-screen-label="Top bar" style="flex:none; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 18px; background:var(--cream-100); border-bottom:1px solid var(--cream-border-strong);">
@@ -286,12 +286,12 @@
                     <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Site contact</label>
                     <input value="{{ det.siteContact }}" onChange="{{ det.onSiteContact }}" placeholder="Client / PC contact &amp; phone" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
                   </div>
-                  <div style="display:{{ cdmDisp }};">
-                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Principal designer (CDM)</label>
+                  <div style="display:{{ det.pdDisp }};">
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">{{ det.pdLabel }}</label>
                     <input value="{{ det.pd }}" onChange="{{ det.onPd }}" placeholder="Name / company" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
                   </div>
                   <div style="display:{{ cdmDisp }};">
-                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">Principal contractor (CDM)</label>
+                    <label style="display:block; font-size:11px; font-weight:650; color:var(--ink-600); margin:0 0 5px;">{{ det.pcLabel }}</label>
                     <input value="{{ det.pc }}" onChange="{{ det.onPc }}" placeholder="Name / company" style="width:100%; font-size:12.5px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:8px; padding:8px 10px; outline:none;" style-focus="border-color:var(--accent-400);">
                   </div>
                   <div>
@@ -391,10 +391,10 @@
                       <div style="display:flex; align-items:center; gap:7px;">
                         <span style="font-size:10.5px; font-weight:650; color:var(--ink-500);">Initial</span>
                         <select value="{{ h.li }}" onChange="{{ h.onLi }}" title="Likelihood" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
-                          <option value="1">L 1</option><option value="2">L 2</option><option value="3">L 3</option><option value="4">L 4</option><option value="5">L 5</option>
+                          <option value="">Rate L</option><option value="1">L 1</option><option value="2">L 2</option><option value="3">L 3</option><option value="4">L 4</option><option value="5">L 5</option>
                         </select>
                         <select value="{{ h.si }}" onChange="{{ h.onSi }}" title="Severity" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
-                          <option value="1">S 1</option><option value="2">S 2</option><option value="3">S 3</option><option value="4">S 4</option><option value="5">S 5</option>
+                          <option value="">Rate S</option><option value="1">S 1</option><option value="2">S 2</option><option value="3">S 3</option><option value="4">S 4</option><option value="5">S 5</option>
                         </select>
                         <span style="font-family:var(--font-data); font-size:11px; font-weight:700; border-radius:7px; padding:4px 8px; background:{{ h.bgI }}; color:{{ h.inkI }};">{{ h.scoreI }} · {{ h.bandI }}</span>
                       </div>
@@ -402,10 +402,10 @@
                       <div style="display:flex; align-items:center; gap:7px;">
                         <span style="font-size:10.5px; font-weight:650; color:var(--ink-500);">Residual</span>
                         <select value="{{ h.lr }}" onChange="{{ h.onLr }}" title="Likelihood after controls" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
-                          <option value="1">L 1</option><option value="2">L 2</option><option value="3">L 3</option><option value="4">L 4</option><option value="5">L 5</option>
+                          <option value="">Rate L</option><option value="1">L 1</option><option value="2">L 2</option><option value="3">L 3</option><option value="4">L 4</option><option value="5">L 5</option>
                         </select>
                         <select value="{{ h.sr }}" onChange="{{ h.onSr }}" title="Severity after controls" style="font-family:var(--font-data); font-size:12px; color:var(--ink-900); background:var(--color-surface); border:1px solid var(--cream-border-strong); border-radius:7px; padding:5px 6px; outline:none;">
-                          <option value="1">S 1</option><option value="2">S 2</option><option value="3">S 3</option><option value="4">S 4</option><option value="5">S 5</option>
+                          <option value="">Rate S</option><option value="1">S 1</option><option value="2">S 2</option><option value="3">S 3</option><option value="4">S 4</option><option value="5">S 5</option>
                         </select>
                         <span style="font-family:var(--font-data); font-size:11px; font-weight:700; border-radius:7px; padding:4px 8px; background:{{ h.bgR }}; color:{{ h.inkR }};">{{ h.scoreR }} · {{ h.bandR }}</span>
                       </div>
@@ -892,9 +892,9 @@
               <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pSiteContact }}</td>
             </tr>
             <tr style="display:{{ pdRowDisp }};">
-              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Principal designer</td>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">{{ pPdLabel }}</td>
               <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pPd }}</td>
-              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">Principal contractor</td>
+              <td style="background:#F7F4EA; border:1px solid #E3DECF; padding:6px 9px; font-weight:700; color:#5A6672;">{{ pPcLabel }}</td>
               <td style="border:1px solid #E3DECF; padding:6px 9px; color:#16232E;">{{ pPc }}</td>
             </tr>
             <tr>
@@ -1550,12 +1550,29 @@ class Component extends DCLogic {
       const demo = this.demoDoc(company);
       docs = { [demo.id]: demo }; order = [demo.id];
     }
-    this.setState({ docs, order, company }, () => this.afterMountSync());
+    this.setState({ docs, order, company }, () => {
+      this.syncGateDom();
+      this.afterMountSync();
+    });
   }
 
   /* Coming-soon gate: while gated the tool is read-only - no hash imports, no
      storage writes. Re-runs when the gate opens (previewUnlocked flips on). */
   gated() { return !(this.props.previewUnlocked ?? false); }
+
+  syncGateDom() {
+    const app = document.getElementById('ramsApp');
+    if (!app) return;
+    if (this.gated()) {
+      app.setAttribute('inert', '');
+      app.setAttribute('aria-hidden', 'true');
+      const first = document.getElementById('ramsGatePrimary');
+      if (first && document.activeElement !== first) first.focus();
+    } else {
+      app.removeAttribute('inert');
+      app.removeAttribute('aria-hidden');
+    }
+  }
 
   afterMountSync() {
     if (this.gated()) return;
@@ -1566,6 +1583,7 @@ class Component extends DCLogic {
   }
 
   componentDidUpdate(prevProps) {
+    this.syncGateDom();
     const was = !!(prevProps && (prevProps.previewUnlocked ?? false));
     const now = !!(this.props.previewUnlocked ?? false);
     if (!was && now) this.afterMountSync();
@@ -1591,24 +1609,151 @@ class Component extends DCLogic {
   readIndex() { try { return JSON.parse(localStorage.getItem('evsp_projects') || '[]') || []; } catch (e) { return []; } }
   readBlob(id) { try { return JSON.parse(localStorage.getItem('evsp_proj_' + id) || 'null'); } catch (e) { return null; } }
 
+  safetyText(value, max = 1200, multiline = false) {
+    if (value == null || (typeof value !== 'string' && typeof value !== 'number')) return '';
+    let out = String(value)
+      .replace(/[<>]/g, ' ')
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ' ');
+    if (multiline) out = out.split(/\r?\n/).map((line) => line.replace(/[\t ]+/g, ' ').trim()).filter(Boolean).join('\n');
+    else out = out.replace(/\s+/g, ' ').trim();
+    return out.slice(0, max);
+  }
+
+  safetyCount(value) {
+    if (typeof value !== 'number' && typeof value !== 'string') return 0;
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? Math.min(n, 100000) : 0;
+  }
+
+  safetySummaryOf(pack) {
+    const raw = pack && pack.safetySummary;
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    if (raw.version !== 1 && raw.version !== '1') return null;
+    const text = (v, max) => this.safetyText(v, max);
+    const lines = (v, max) => this.safetyText(v, max, true);
+    const sourceFacts = raw.facts && typeof raw.facts === 'object' && !Array.isArray(raw.facts) ? raw.facts : {};
+    const factKeys = [
+      'unitCount', 'bayCount', 'trenchCount', 'ductCount', 'herasCount', 'coneCount',
+      'exclusionCount', 'pedestrianCount', 'signboardCount', 'inspectionPitCount',
+      'spoilCount', 'electricalCount', 'heavyCount', 'highLevelCount', 'drillCount',
+      'siteSetupCount', 'firstAidCount', 'fireCount', 'trenchMetres', 'ductMetres',
+      'containmentMetres', 'earthRodCount', 'feederCount'
+    ];
+    const facts = {};
+    factKeys.forEach((key) => { facts[key] = this.safetyCount(sourceFacts[key]); });
+
+    const sourceHolders = raw.dutyHolders && typeof raw.dutyHolders === 'object' && !Array.isArray(raw.dutyHolders) ? raw.dutyHolders : {};
+    const dutyHolders = {
+      client: text(sourceHolders.client, 240),
+      contractor: text(sourceHolders.contractor, 240),
+      pd: text(sourceHolders.pd || sourceHolders.principalDesigner, 240),
+      pc: text(sourceHolders.pc || sourceHolders.principalContractor, 240),
+      siteManager: text(sourceHolders.siteManager, 240),
+      firstAider: text(sourceHolders.firstAider, 240),
+      safetyAdviser: text(sourceHolders.safetyAdviser, 240)
+    };
+
+    const sourceF10 = raw.f10 && typeof raw.f10 === 'object' && !Array.isArray(raw.f10) ? raw.f10 : {};
+    const f10 = {
+      code: text(sourceF10.code || sourceF10.verdict, 60),
+      status: text(sourceF10.status, 60),
+      reference: text(sourceF10.reference || sourceF10.ref, 160),
+      date: text(sourceF10.date || sourceF10.submitted, 20)
+    };
+
+    const sourceProgramme = raw.programme && typeof raw.programme === 'object' && !Array.isArray(raw.programme) ? raw.programme : {};
+    const safeDate = (value) => {
+      const date = text(value, 20);
+      return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : '';
+    };
+    const programme = {
+      startDate: safeDate(raw.startDate || sourceProgramme.startDate),
+      finishDate: safeDate(raw.finishDate || sourceProgramme.finishDate)
+    };
+
+    const sourceSetup = raw.siteSetup && typeof raw.siteSetup === 'object' && !Array.isArray(raw.siteSetup) ? raw.siteSetup : {};
+    const siteSetup = {
+      welfare: lines(sourceSetup.welfare, 1600),
+      induction: lines(sourceSetup.induction, 1600),
+      publicProtection: lines(sourceSetup.publicProtection || sourceSetup.security, 1600),
+      emergency: lines(sourceSetup.emergency, 1600),
+      monitoring: lines(sourceSetup.monitoring || sourceSetup.review, 1600)
+    };
+    facts.siteSetupCount = Math.max(facts.siteSetupCount, this.safetyCount(sourceSetup.welfareItems));
+    facts.herasCount = Math.max(facts.herasCount, this.safetyCount(sourceSetup.barrierRoutes));
+    facts.coneCount = Math.max(facts.coneCount, this.safetyCount(sourceSetup.coneRoutes));
+    facts.exclusionCount = Math.max(facts.exclusionCount, this.safetyCount(sourceSetup.exclusionZones));
+    facts.pedestrianCount = Math.max(facts.pedestrianCount, this.safetyCount(sourceSetup.pedestrianRoutes));
+    facts.signboardCount = Math.max(facts.signboardCount, this.safetyCount(sourceSetup.safetySignboards));
+    facts.firstAidCount = Math.max(facts.firstAidCount, this.safetyCount(sourceSetup.firstAidPoints));
+    facts.fireCount = Math.max(facts.fireCount, this.safetyCount(sourceSetup.firePoints));
+
+    const documents = {};
+    const sourceDocuments = raw.documents && typeof raw.documents === 'object' && !Array.isArray(raw.documents) ? raw.documents : {};
+    Object.keys(sourceDocuments).slice(0, 40).forEach((key) => {
+      const safeKey = text(key, 60); if (!safeKey || ['__proto__', 'prototype', 'constructor'].includes(safeKey)) return;
+      const record = sourceDocuments[key];
+      documents[safeKey] = typeof record === 'object' && record
+        ? { status: text(record.status, 60), owner: text(record.owner, 240), revision: text(record.revision, 80), date: text(record.date, 20) }
+        : { status: text(record, 60), owner: '', revision: '', date: '' };
+    });
+
+    const risks = (Array.isArray(raw.risks) ? raw.risks : []).slice(0, 80).map((risk, index) => {
+      if (!risk || typeof risk !== 'object' || Array.isArray(risk)) return null;
+      const status = text(risk.status, 60).toLowerCase();
+      const decision = lines(risk.decision || risk.control || risk.measure, 1800);
+      const residual = lines(risk.residual || risk.residualRisk, 1800);
+      const controlled = risk.controlled === true || (risk.controlled == null && ['actioned', 'closed', 'transferred', 'accepted', 'controlled'].includes(status));
+      const hazard = text(risk.hazard || risk.title || risk.risk, 320);
+      if (!controlled || !hazard || !decision) return null;
+      const score = (value) => {
+        if (typeof value !== 'number' && typeof value !== 'string') return '';
+        const rawScore = String(value).trim();
+        return /^[1-5]$/.test(rawScore) ? Number(rawScore) : '';
+      };
+      return {
+        id: text(risk.id, 80) || 'risk-' + (index + 1),
+        presetKey: text(risk.presetKey || risk.key, 80).toLowerCase(),
+        hazard, who: text(risk.who || risk.people, 240), decision, residual,
+        owner: text(risk.owner, 240), source: text(risk.source, 360), status,
+        li: score(risk.initialLikelihood || risk.li), si: score(risk.initialSeverity || risk.si),
+        lr: score(risk.residualLikelihood || risk.lr), sr: score(risk.residualSeverity || risk.sr)
+      };
+    }).filter(Boolean);
+
+    return {
+      version: text(raw.version, 30), facts,
+      route: text(raw.route, 80), dutyHolders, f10, programme, risks, documents, siteSetup
+    };
+  }
+
   ctxOf(blob) {
     const q = {};
     (((blob || {}).budget || {}).lines || []).forEach((l) => { if (l && l.k) q[l.k] = l.qty || 0; });
     const pack = (blob || {}).pack || {};
     const bud = (blob || {}).budget || {};
+    const safety = this.safetySummaryOf(pack);
+    const facts = safety ? safety.facts : {};
+    if (!(q.bay > 0) && facts.bayCount > 0) q.bay = facts.bayCount;
+    if (!(q.trench > 0) && facts.trenchMetres > 0) q.trench = facts.trenchMetres;
+    if (!(q.duct > 0) && facts.ductMetres > 0) q.duct = facts.ductMetres;
+    if (!(q.contain > 0) && facts.containmentMetres > 0) q.contain = facts.containmentMetres;
+    if (!(q.earthrod > 0) && facts.earthRodCount > 0) q.earthrod = facts.earthRodCount;
     const mode = (pack.mode === 'domestic' || bud.mode === 'domestic') ? 'domestic' : 'commercial';
     const earthing = String(pack.earthing || '');
-    const chargers = (q.charger7 || 0) + (q.charger11 || 0) + (q.charger22 || 0) + (q.chargerDC || 0);
+    const pricedChargers = (q.charger7 || 0) + (q.charger11 || 0) + (q.charger22 || 0) + (q.chargerDC || 0);
+    const chargers = Math.max(pricedChargers, facts.unitCount || 0);
+    const dig = (q.trench || 0) > 0 || (q.duct || 0) > 0 || (facts.trenchCount || 0) > 0 || (facts.ductCount || 0) > 0 || (facts.inspectionPitCount || 0) > 0 || (facts.spoilCount || 0) > 0;
     return {
       q, mode, com: mode === 'commercial', earthing,
       tt: /\btt\b/i.test(earthing), pme: /pme|tn-?c-?s/i.test(earthing),
       enabling: pack.enablingWorks || [],
-      chargers, fp: (q.fpwired || 0) + (q.fpshell || 0) > 0,
-      dig: (q.trench || 0) > 0 || (q.duct || 0) > 0,
-      digLen: Math.round(Math.max(q.trench || 0, q.duct || 0)),
+      chargers, fp: (q.fpwired || 0) + (q.fpshell || 0) > 0 || (facts.feederCount || 0) > 0,
+      dig, digLen: Math.round(Math.max(q.trench || 0, q.duct || 0, facts.trenchMetres || 0, facts.ductMetres || 0)),
       name: pack.name || bud.name || '', jobRef: pack.jobRef || bud.jobRef || '',
       custName: pack.custName || bud.custName || '',
       cdm: (pack.cdm && typeof pack.cdm === 'object') ? pack.cdm : {},
+      safety, facts,
       supplyRating: pack.supplyRating || '', mainFuse: pack.mainFuse || '', dnoRef: pack.dnoRef || ''
     };
   }
@@ -1645,10 +1790,123 @@ class Component extends DCLogic {
 
   deriveParts(c) {
     const uid = this.uid;
+    const methodRow = (m) => ({ id: uid(), k: m.k, t: m.t, steps: m.steps(c).join('\n'), auto: true, why: m.why(c) });
+    const hazardRow = (h) => ({ id: uid(), k: h.k, t: h.t, task: h.task, hz: h.hz, p: h.p, li: h.li, si: h.si, lr: h.lr, sr: h.sr, ctl: h.ctl.join('\n'), auto: true, why: h.why(c) });
+    const methods = this.METHODS.filter((m) => m.on(c)).map(methodRow);
+    const hazards = this.HZLIB.filter((h) => h.on(c)).map(hazardRow);
+    const methodKeys = new Set(methods.map((m) => m.k));
+    const hazardKeys = new Set(hazards.map((h) => h.k));
+    const addMethod = (key, why) => {
+      if (methodKeys.has(key)) return;
+      const source = this.METHODS.find((m) => m.k === key); if (!source) return;
+      const row = methodRow(source); if (why) row.why = why;
+      methods.push(row); methodKeys.add(key);
+    };
+    const addHazard = (key, why) => {
+      if (hazardKeys.has(key)) return;
+      const source = this.HZLIB.find((h) => h.k === key); if (!source) return;
+      const row = hazardRow(source); if (why) row.why = why;
+      hazards.push(row); hazardKeys.add(key);
+    };
+
+    if (c.safety) {
+      const f = c.facts || {};
+      const groundCount = f.trenchCount + f.ductCount + f.inspectionPitCount + f.spoilCount;
+      const buriedWhy = groundCount + ' marked ground-work or buried-route item' + (groundCount === 1 ? '' : 's') + ' on the linked site plan';
+      if (groundCount > 0) { addMethod('scan', buriedWhy); addMethod('civils', buriedWhy); addHazard('buried', buriedWhy); addHazard('excav', buriedWhy); }
+      if (f.highLevelCount > 0) { const why = f.highLevelCount + ' high-level route' + (f.highLevelCount === 1 ? '' : 's') + ' on the linked site plan'; addMethod('contain', why); addHazard('wah', why); }
+      if (f.heavyCount > 0) { addHazard('heavy'); addHazard('mh'); }
+      if (f.drillCount > 0) { addHazard('drill'); addHazard('asbestos'); }
+      if (f.unitCount > 0) { addMethod('mount'); addMethod('commission'); addHazard('evcp'); }
+      if (f.bayCount > 0) { addMethod('bays'); addHazard('vehicles'); }
+
+      const cleanKey = (value) => this.safetyText(value, 100).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const distinctLines = (value) => {
+        const seen = new Set();
+        return String(value || '').split(/\r?\n/).map((line) => this.safetyText(line, 700)).filter((line) => {
+          const key = cleanKey(line); if (!key || seen.has(key)) return false; seen.add(key); return true;
+        });
+      };
+      const aliases = {
+        excavation: ['buried', 'excav'], public_interface: ['vehicles', 'occupied'], electrical: ['safeiso', 'liveadj'],
+        manual_handling: ['mh', 'heavy'], work_at_height: ['wah'], building_fabric: ['asbestos', 'drill'],
+        temporary_works: ['occupied', 'vehicles']
+      };
+      const seenRisks = new Set();
+      (c.safety.risks || []).forEach((risk) => {
+        const fingerprint = cleanKey(risk.presetKey || risk.hazard); if (!fingerprint || seenRisks.has(fingerprint)) return;
+        seenRisks.add(fingerprint);
+        let target = null;
+        const candidates = aliases[risk.presetKey] || [];
+        for (let i = 0; i < candidates.length && !target; i += 1) target = hazards.find((h) => h.k === candidates[i]);
+        if (!target) {
+          const hazardName = cleanKey(risk.hazard);
+          target = hazards.find((h) => {
+            const title = cleanKey(h.t), detail = cleanKey(h.hz);
+            return title === hazardName || detail === hazardName || (hazardName.length > 14 && (title.includes(hazardName) || hazardName.includes(title)));
+          });
+        }
+        const controlLines = distinctLines([
+          'Designer control: ' + risk.decision,
+          risk.residual ? 'Residual risk to brief: ' + risk.residual : '',
+          risk.owner ? 'Action / information owner: ' + risk.owner : ''
+        ].filter(Boolean).join('\n'));
+        const sourceNote = risk.source ? 'Controlled design risk: ' + risk.source : 'Controlled design risk from the linked site plan';
+        if (target) {
+          target.ctl = distinctLines(target.ctl + '\n' + controlLines.join('\n')).join('\n');
+          if (!String(target.why || '').includes(sourceNote)) target.why = [target.why, sourceNote].filter(Boolean).join('; ');
+          return;
+        }
+        const slug = (risk.presetKey || risk.id || risk.hazard).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48) || 'risk';
+        hazards.push({
+          id: uid(), k: 'cdm-' + slug, t: risk.hazard,
+          task: risk.source || 'Work affected by a recorded design risk',
+          hz: risk.residual ? risk.hazard + '. Residual risk: ' + risk.residual : risk.hazard,
+          p: risk.who || 'Operatives, site users and others affected by the works',
+          li: risk.li, si: risk.si, lr: risk.lr, sr: risk.sr,
+          ctl: controlLines.join('\n'), auto: true, why: sourceNote
+        });
+      });
+
+      const setup = c.safety.siteSetup || {};
+      const setupSteps = [];
+      if ((c.safety.risks || []).length) setupSteps.push('Brief the installation team on the recorded designer controls and residual risks before work starts; record the briefing and escalate design changes.');
+      if (setup.induction) setupSteps.push('Induction and consultation: ' + setup.induction);
+      if (setup.publicProtection) setupSteps.push('Public protection and site security: ' + setup.publicProtection);
+      if (setup.welfare) setupSteps.push('Confirm welfare and site set-up: ' + setup.welfare);
+      if (setup.emergency) setupSteps.push('Confirm emergency arrangements: ' + setup.emergency);
+      if (setup.monitoring) setupSteps.push('Monitoring and review: ' + setup.monitoring);
+      if (!setup.publicProtection && (f.herasCount > 0 || f.coneCount > 0 || f.exclusionCount > 0 || f.pedestrianCount > 0 || f.signboardCount > 0)) setupSteps.push('Set out and maintain the marked fencing, cones, exclusion areas, safety signboards and protected pedestrian routes before starting work.');
+      if (f.inspectionPitCount > 0 || f.spoilCount > 0) setupSteps.push('Confirm the marked inspection points and keep spoil clear of excavation edges, traffic lanes and pedestrian routes.');
+      if (f.electricalCount > 0) setupSteps.push('Confirm the marked electrical equipment, cable routes and isolation points before work starts; brief any interfaces with existing live equipment.');
+      if (!setup.welfare && f.siteSetupCount > 0) setupSteps.push('Confirm the marked site-setup positions are available and record suitable welfare arrangements before work starts.');
+      if (!setup.emergency && (f.firstAidCount > 0 || f.fireCount > 0)) setupSteps.push('Confirm the marked first-aid and fire points remain visible and accessible throughout the works.');
+      if (setupSteps.length) {
+        methods.push({ id: uid(), k: 'cdm-controls', t: 'Design-risk briefing & site controls', steps: distinctLines(setupSteps.join('\n')).join('\n'), auto: true, why: 'Controls recorded on the linked site plan' });
+      }
+    }
+
+    let scope = this.scopeOf(c);
+    if (c.safety) {
+      const f = c.facts || {}, extra = [];
+      const priced = (c.q.charger7 || 0) + (c.q.charger11 || 0) + (c.q.charger22 || 0) + (c.q.chargerDC || 0);
+      if (!priced && f.unitCount > 0) {
+        const unitLine = 'Install ' + f.unitCount + ' charging unit position' + (f.unitCount === 1 ? '' : 's') + ' shown on the site plan; ratings and final equipment schedule to be confirmed';
+        const generic = c.com ? 'Install EV charge points and associated supply works (add detail here or re-derive from a plan)' : 'Install a domestic EV charge point and associated supply works';
+        if (scope.includes(generic)) scope = scope.replace(generic, unitLine); else extra.push(unitLine);
+      }
+      if (!(c.q.trench > 0) && !(c.q.duct > 0) && (f.trenchCount > 0 || f.ductCount > 0 || f.inspectionPitCount > 0 || f.spoilCount > 0)) extra.push('Complete the marked excavation, inspection-point and spoil-management works, subject to service checks and the final construction detail');
+      if (!(c.q.contain > 0) && f.highLevelCount > 0) extra.push('Install the marked high-level containment and cable routes using the specified access method');
+      if (f.herasCount > 0 || f.coneCount > 0 || f.exclusionCount > 0 || f.pedestrianCount > 0 || f.signboardCount > 0) extra.push('Set out the marked fencing, cones, safety signboards, work-zone segregation and protected pedestrian routes');
+      if (f.electricalCount > 0) extra.push('Coordinate the marked electrical equipment and cable-route interfaces with the agreed isolation sequence');
+      if (f.siteSetupCount > 0) extra.push('Establish the marked site-setup positions before construction starts');
+      if (f.firstAidCount > 0 || f.fireCount > 0) extra.push('Confirm the marked first-aid and fire points remain visible and accessible throughout the works');
+      if (extra.length) scope += '\n' + extra.join('\n');
+    }
     return {
-      scope: this.scopeOf(c),
-      method: this.METHODS.filter((m) => m.on(c)).map((m) => ({ id: uid(), k: m.k, t: m.t, steps: m.steps(c).join('\n'), auto: true, why: m.why(c) })),
-      hazards: this.HZLIB.filter((h) => h.on(c)).map((h) => ({ id: uid(), k: h.k, t: h.t, task: h.task, hz: h.hz, p: h.p, li: h.li, si: h.si, lr: h.lr, sr: h.sr, ctl: h.ctl.join('\n'), auto: true, why: h.why(c) })),
+      scope,
+      method: methods,
+      hazards,
       coshh: this.COSHH_LIB.filter((x) => x.on(c)).map((x) => ({ id: uid(), k: x.k, s: x.s, r: x.r, ctl: x.ctl, auto: true, why: x.why(c) })),
       ppe: { keys: this.PPE_DEFS.filter((p) => p.on(c)).map((p) => p.k), note: c.com ? 'Site rules take precedence where they require more. Task-specific PPE per the risk assessments below.' : 'Task-specific PPE per the risk assessments below.' }
     };
@@ -1657,10 +1915,52 @@ class Component extends DCLogic {
   uid() { return Math.random().toString(36).slice(2, 10); }
   today() { return new Date().toLocaleDateString('en-GB'); }
 
+  linkedArrangements(c, company) {
+    const com = c.com;
+    const safety = c.safety, setup = safety ? safety.siteSetup : {}, holders = safety ? safety.dutyHolders : {};
+    const route = safety ? safety.route : '';
+    const addControl = (base, label, value) => value ? base + '\n' + label + ': ' + value : base;
+    let rules = com
+      ? 'Site induction before starting work\nPPE per site rules and this assessment\nSign in / out daily at the agreed point\nWork areas barriered and signed before starting\nConfirm welfare arrangements before starting work'
+      : 'Working hours agreed with the customer\nCustomer told before any isolation of supply\nTools and leads kept tidy; no unattended exposed conductors\nWork area cleaned and made good before leaving';
+    if (safety) {
+      rules = addControl(rules, 'Linked site plan induction and consultation record', setup.induction);
+      rules = addControl(rules, 'Linked site plan public-protection and security record', setup.publicProtection);
+      rules = addControl(rules, 'Linked site plan monitoring and review record', setup.monitoring);
+    }
+    const welfare = setup.welfare
+      ? 'Linked site plan welfare record:\n' + setup.welfare
+      : (com
+        ? 'Welfare arrangements are not recorded in the linked site plan. Confirm suitable toilets, washing, drinking water and rest facilities before work starts.'
+        : 'Agree suitable welfare arrangements with the householder before work starts.');
+    let emergencyNotes = 'Record and report accidents and near misses to the office the same day. Escalate potentially RIDDOR-reportable events immediately.';
+    if (setup.emergency) emergencyNotes += '\nLinked site plan emergency record: ' + setup.emergency;
+    if (setup.monitoring) emergencyNotes += '\nLinked site plan review arrangement: ' + setup.monitoring;
+    return {
+      det: {
+        client: holders.client || c.custName || '',
+        supervisor: holders.siteManager || '',
+        pd: route === 'single_contractor' ? '' : (holders.pd || String((c.cdm && c.cdm.pd) || '')),
+        pc: route === 'single_contractor' ? (holders.contractor || '') : (holders.pc || String((c.cdm && c.cdm.pc) || '')),
+        cdmRoute: route,
+        start: safety && safety.programme ? safety.programme.startDate : '',
+        end: safety && safety.programme ? safety.programme.finishDate : ''
+      },
+      rules,
+      welfare,
+      emg: {
+        firstAider: holders.firstAider || (company && company.firstAider) || '',
+        assembly: com ? 'Not recorded - confirm at induction / on arrival' : 'Agree an assembly point with the householder before work starts',
+        notes: emergencyNotes
+      }
+    };
+  }
+
   mkDoc(blob, planId, company) {
     const c = this.ctxOf(blob);
     const parts = this.deriveParts(c);
     const com = c.com;
+    const linked = this.linkedArrangements(c, company);
     return {
       id: this.uid(), planId: planId || '', planName: c.name, planAt: (blob && blob.budget && blob.budget.at) || '', mode: c.mode,
       status: 'draft', rev: 'A',
@@ -1669,26 +1969,22 @@ class Component extends DCLogic {
       det: {
         title: c.name || 'EV charge point installation',
         siteAddress: '', location: com ? 'Car park / external areas' : 'Dwelling - driveway / garage',
-        client: c.custName || '', clientRef: '', projectRef: c.jobRef || '',
-        start: '', end: '', ae: '', supervisor: '', siteContact: '',
-        pd: String((c.cdm && c.cdm.pd) || ''), pc: String((c.cdm && c.cdm.pc) || ''),
+        client: linked.det.client, clientRef: '', projectRef: c.jobRef || '',
+        start: linked.det.start, end: linked.det.end, ae: '', supervisor: linked.det.supervisor, siteContact: '',
+        pd: linked.det.pd, pc: linked.det.pc, cdmRoute: linked.det.cdmRoute,
         supply: c.supplyRating || c.mainFuse || '', earthing: c.earthing || '', dnoRef: c.dnoRef || ''
       },
       scope: parts.scope, method: parts.method, hazards: parts.hazards, coshh: parts.coshh, ppe: parts.ppe,
       permits: com
         ? 'Permit to work for isolations, where the site operates a permit system\nAccess to switch rooms / risers arranged with the site contact\nHot works - not anticipated on this installation\nFurther permits per the site induction'
         : 'No formal permits anticipated - isolation agreed directly with the customer',
-      rules: com
-        ? 'Site induction before starting work\nPPE per site rules and this assessment\nSign in / out daily at the agreed point\nWork areas barriered and signed before starting\nWelfare facilities as designated at induction'
-        : 'Working hours agreed with the customer\nCustomer told before any isolation of supply\nTools and leads kept tidy; no unattended exposed conductors\nWork area cleaned and made good before leaving',
-      welfare: com
-        ? 'Welfare (toilets, washing, rest area, drinking water) is provided by the client / principal contractor in line with CDM 2015 Schedule 2, as confirmed at induction.'
-        : 'Welfare by arrangement with the householder.',
+      rules: linked.rules,
+      welfare: linked.welfare,
       emg: {
-        ae: '', firstAider: (company && company.firstAider) || '',
-        kit: 'First aid kit in each van; eye-wash and burns dressing included',
-        assembly: com ? 'Confirmed at induction / on arrival' : 'Front of the property',
-        notes: 'All accidents and near misses are recorded and reported to the office the same day. RIDDOR-reportable events are escalated immediately.'
+        ae: '', firstAider: linked.emg.firstAider,
+        kit: 'Confirm a suitable first-aid kit, eye-wash and burns dressing are available before work starts',
+        assembly: linked.emg.assembly,
+        notes: linked.emg.notes
       },
       training: (company && company.training) || this.TRAINING_DEFAULT,
       ops: [], acceptance: null, issue: null
@@ -1804,15 +2100,58 @@ class Component extends DCLogic {
     this.upDoc({ ppe: { ...d.ppe, keys: has ? d.ppe.keys.filter((x) => x !== k) : [...d.ppe.keys, k] } });
   };
 
+  derivedRowKey(row, fields) {
+    const key = this.safetyText(row && row.k, 100).toLowerCase();
+    if (key && key !== 'custom') return 'k:' + key;
+    const body = (fields || []).map((field) => this.safetyText(row && row[field], 500).toLowerCase()).filter(Boolean).join('|');
+    return body ? 'text:' + body : '';
+  }
+
+  mergeDerivedRows(fresh, edited, fields) {
+    const kept = new Map();
+    (edited || []).forEach((row) => {
+      const key = this.derivedRowKey(row, fields);
+      if (key) kept.set(key, row);
+      else kept.set('id:' + ((row && row.id) || this.uid()), row);
+    });
+    const editedKeys = new Set(kept.keys());
+    return [...(fresh || []).filter((row) => !editedKeys.has(this.derivedRowKey(row, fields))), ...kept.values()];
+  }
+
   reDerive = () => {
     const d = this.doc(); if (!d || !d.planId) return;
     const blob = this.readBlob(d.planId);
     if (!blob) { this.flash("Couldn't find that plan on this device"); return; }
-    const parts = this.deriveParts(this.ctxOf(blob));
+    const c = this.ctxOf(blob);
+    const parts = this.deriveParts(c);
     const keepM = d.method.filter((r) => !r.auto), keepH = d.hazards.filter((r) => !r.auto), keepC = d.coshh.filter((r) => !r.auto);
-    this.upDoc({ scope: parts.scope, method: [...parts.method, ...keepM], hazards: [...parts.hazards, ...keepH], coshh: [...parts.coshh, ...keepC], ppe: { ...parts.ppe, keys: Array.from(new Set([...parts.ppe.keys, ...d.ppe.keys])) }, planAt: (blob.budget && blob.budget.at) || '' });
+    const patch = {
+      scope: parts.scope,
+      method: this.mergeDerivedRows(parts.method, keepM, ['t', 'steps']),
+      hazards: this.mergeDerivedRows(parts.hazards, keepH, ['t', 'hz']),
+      coshh: this.mergeDerivedRows(parts.coshh, keepC, ['s', 'r']),
+      ppe: { ...parts.ppe, keys: Array.from(new Set([...parts.ppe.keys, ...d.ppe.keys])) },
+      planAt: (blob.budget && blob.budget.at) || ''
+    };
+    if (c.safety) {
+      const linked = this.linkedArrangements(c, this.state.company);
+      patch.det = {
+        ...d.det,
+        client: linked.det.client,
+        supervisor: linked.det.supervisor,
+        pd: linked.det.pd,
+        pc: linked.det.pc,
+        cdmRoute: linked.det.cdmRoute,
+        start: linked.det.start,
+        end: linked.det.end
+      };
+      patch.rules = linked.rules;
+      patch.welfare = linked.welfare;
+      patch.emg = { ...d.emg, firstAider: linked.emg.firstAider, assembly: linked.emg.assembly, notes: linked.emg.notes };
+    }
+    this.upDoc(patch);
     setTimeout(() => this.computeStale(), 0);
-    this.flash('Re-derived from the plan - your edited and added items were kept');
+    this.flash('Re-derived from the linked site plan - edited method, risk and COSHH items were kept; linked project details were refreshed');
   };
 
   /* ================= lifecycle actions ================= */
@@ -1854,8 +2193,18 @@ class Component extends DCLogic {
 
   /* ================= render ================= */
 
-  score(l, s) { return l * s; }
+  score(l, s) {
+    const rating = (value) => {
+      if (typeof value !== 'number' && typeof value !== 'string') return null;
+      const raw = String(value).trim();
+      return /^[1-5]$/.test(raw) ? Number(raw) : null;
+    };
+    const likelihood = rating(l), severity = rating(s);
+    if (likelihood == null || severity == null) return null;
+    return likelihood * severity;
+  }
   band(v) {
+    if (v == null) return { bg: '#EEF0F2', ink: '#5A6672', label: 'Review' };
     if (v <= 4) return { bg: '#E4F2E7', ink: '#1F5C31', label: 'Low' };
     if (v <= 9) return { bg: '#FBF3DC', ink: '#7A5A10', label: 'Medium' };
     if (v <= 15) return { bg: '#FDEBDD', ink: '#8A430F', label: 'High' };
@@ -1943,6 +2292,9 @@ class Component extends DCLogic {
         siteContact: d.det.siteContact || '', onSiteContact: this.edDet('siteContact'),
         pd: d.det.pd || '', onPd: this.edDet('pd'),
         pc: d.det.pc || '', onPc: this.edDet('pc'),
+        pdDisp: d.mode === 'commercial' && d.det.cdmRoute !== 'single_contractor' ? 'block' : 'none',
+        pdLabel: 'Principal designer (CDM)',
+        pcLabel: d.det.cdmRoute === 'single_contractor' ? 'Contractor preparing the CPP' : 'Principal contractor (CDM)',
         supply: d.det.supply || '', onSupply: this.edDet('supply'),
         earthing: d.det.earthing || '', onEarthing: this.edDet('earthing'),
         dnoRef: d.det.dnoRef || '', onDnoRef: this.edDet('dnoRef')
@@ -1970,10 +2322,11 @@ class Component extends DCLogic {
       hzRows = d.hazards.map((h, i) => {
         const vi = this.score(h.li, h.si), vr = this.score(h.lr, h.sr);
         const bi = this.band(vi), br = this.band(vr);
+        const scoreText = (l, s, value) => value == null ? 'Not rated' : (l + ' × ' + s + ' = ' + value);
         return {
           ...h, n: '2.' + (i + 1), whyShow: showWhy && h.auto && h.why ? h.why : '',
           li: String(h.li), si: String(h.si), lr: String(h.lr), sr: String(h.sr),
-          scoreI: h.li + ' × ' + h.si + ' = ' + vi, scoreR: h.lr + ' × ' + h.sr + ' = ' + vr,
+          scoreI: scoreText(h.li, h.si, vi), scoreR: scoreText(h.lr, h.sr, vr),
           bgI: bi.bg, inkI: bi.ink, bgR: br.bg, inkR: br.ink, bandI: bi.label, bandR: br.label,
           onT: this.edRow('hazards', h.id, 't'), onTask: this.edRow('hazards', h.id, 'task'), onHz: this.edRow('hazards', h.id, 'hz'),
           onP: this.edRow('hazards', h.id, 'p'), onCtl: this.edRow('hazards', h.id, 'ctl'),
@@ -2042,7 +2395,9 @@ class Component extends DCLogic {
         pClientRef: dt.clientRef || '-', pProjectRef: dt.projectRef || '-',
         pDates: (dt.start || dt.end) ? (this.fmtDate(dt.start) + (dt.end ? ' to ' + this.fmtDate(dt.end) : '')) : '-',
         pAe: dt.ae || '-', pSupervisor: dt.supervisor || '-', pSiteContact: dt.siteContact || '-',
-        pPd: dt.pd || 'TBC', pPc: dt.pc || 'TBC', pdRowDisp: com ? 'table-row' : 'none',
+        pPdLabel: dt.cdmRoute === 'single_contractor' ? 'Duty-holder route' : 'Principal designer',
+        pPcLabel: dt.cdmRoute === 'single_contractor' ? 'Contractor preparing CPP' : 'Principal contractor',
+        pPd: dt.cdmRoute === 'single_contractor' ? 'Single contractor' : (dt.pd || 'TBC'), pPc: dt.pc || 'TBC', pdRowDisp: com ? 'table-row' : 'none',
         pSupply: dt.supply || '-', pEarthing: dt.earthing || '-', pDnoRef: dt.dnoRef,
         pScope: this.lines(d.scope).map((t) => ({ t })),
         pMethod, pHz,
@@ -2052,7 +2407,7 @@ class Component extends DCLogic {
         pPermits: this.lines(d.permits).map((t) => ({ t })),
         pRules: this.lines(d.rules).map((t) => ({ t })),
         pWelfare: d.welfare, pCom: com,
-        pEmgAe: dt.ae || '-', pEmgFirstAider: d.emg.firstAider || 'Confirmed at induction', pEmgKit: d.emg.kit, pEmgAssembly: d.emg.assembly, pEmgNotes: d.emg.notes,
+        pEmgAe: dt.ae || '-', pEmgFirstAider: d.emg.firstAider || 'Not recorded', pEmgKit: d.emg.kit, pEmgAssembly: d.emg.assembly, pEmgNotes: d.emg.notes,
         pTraining: this.lines(d.training).map((t) => ({ t })),
         pLegis: this.LEGIS.map((t) => ({ t })), pCodes: this.CODES.map((t) => ({ t })),
         pOps: opsPad, pRevs: d.revs.map((r) => ({ ...r })),
