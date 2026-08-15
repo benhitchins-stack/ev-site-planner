@@ -1,7 +1,7 @@
 (function(){
   "use strict";
 
-  const EVSP_CDM_VERSION=2;
+  const EVSP_CDM_VERSION=3;
   const EVSP_CDM_DOC_STATUSES=[
     ["not_started","Not started"],
     ["draft","Draft"],
@@ -23,7 +23,7 @@
     {k:"incidents",title:"Incident and near-miss log",reg:"Project control record",purpose:"A consistent record of events, immediate action, investigation, reporting and close-out."}
   ];
   const EVSP_CDM_ROUTE_DEFS=[
-    {k:"delivery_appointed",title:"Multiple contractors, delivery organisation appointed PD and PC",body:"Record the written appointments and evidence. The delivery model alone does not create a legal appointment."},
+    {k:"delivery_appointed",title:"Multiple contractors, delivery organisation named as PD and PC",body:"Record the separate written appointments and evidence. The delivery model alone does not create a legal appointment."},
     {k:"other_appointed",title:"Multiple contractors, other organisations appointed PD and PC",body:"Record the organisations named in the written appointments and where the evidence is held."},
     {k:"single_contractor",title:"Single-contractor project",body:"No principal designer or principal contractor appointments are required, but the contractor must still prepare the construction phase plan."}
   ];
@@ -70,7 +70,11 @@
       decision:"Confirm current utility records, scan and mark the route, minimise excavation, and define hand-dig zones before machine work.",
       residual:"Unknown or inaccurately recorded services, ground instability and open excavation remain possible.",
       trigger:f=>f.trenchCount>0||f.ductCount>0||f.inspectionPitCount>0||f.spoilCount>0,
-      source:f=>(f.trenchCount+f.ductCount)+" trench or buried-route item"+(f.trenchCount+f.ductCount===1?"":"s")+", "+f.inspectionPitCount+" inspection pit"+(f.inspectionPitCount===1?"":"s")+" and "+f.spoilCount+" spoil area"+(f.spoilCount===1?"":"s")+" on the plan"
+      source:f=>evspCdmCountPhrases([
+        [f.trenchCount+f.ductCount,"trench or buried-route item"],
+        [f.inspectionPitCount,"inspection pit"],
+        [f.spoilCount,"spoil area"]
+      ],"Excavation scope")+" on the plan"
     },
     {
       k:"public_interface",
@@ -80,7 +84,13 @@
       decision:"Sequence work to reduce occupation, provide a protected pedestrian route, segregate the work area and control vehicle movements.",
       residual:"People may enter or pass close to the work area, especially outside supervised hours.",
       trigger:f=>f.unitCount>0||f.bayCount>0||f.herasCount>0||f.coneCount>0||f.exclusionCount>0||f.pedestrianCount>0,
-      source:f=>(f.herasCount+f.coneCount+f.exclusionCount+f.pedestrianCount)?(f.herasCount+" barrier route"+(f.herasCount===1?"":"s")+", "+f.coneCount+" cone route"+(f.coneCount===1?"":"s")+", "+f.exclusionCount+" exclusion zone"+(f.exclusionCount===1?"":"s")+" and "+f.pedestrianCount+" pedestrian route"+(f.pedestrianCount===1?"":"s")+" on the plan"):"Charging equipment or bays placed in an operational site"
+      source:f=>(f.herasCount+f.coneCount+f.exclusionCount+f.pedestrianCount+f.signboardCount)?evspCdmCountPhrases([
+        [f.herasCount,"barrier route"],
+        [f.coneCount,"cone route"],
+        [f.exclusionCount,"exclusion zone"],
+        [f.pedestrianCount,"pedestrian route"],
+        [f.signboardCount,"safety signboard"]
+      ],"Public-protection markup")+" on the plan":"Charging equipment or bays placed in an operational site"
     },
     {
       k:"electrical",
@@ -89,8 +99,12 @@
       hierarchy:"control",
       decision:"Design safe isolation points, lock-off arrangements, test-before-touch steps and controlled energisation into the work sequence.",
       residual:"Existing supplies and adjacent circuits may remain live while the work is undertaken.",
-      trigger:f=>f.unitCount>0||f.electricalCount>0,
-      source:f=>f.unitCount+" charging unit"+(f.unitCount===1?"":"s")+" and "+f.electricalCount+" electrical distribution item"+(f.electricalCount===1?"":"s")
+      trigger:f=>f.unitCount>0||f.electricalCount>0||f.liveCalloutCount>0,
+      source:f=>evspCdmCountPhrases([
+        [f.unitCount,"charging unit"],
+        [f.electricalCount,"electrical distribution item"],
+        [f.liveCalloutCount,"live-equipment callout"]
+      ],"Electrical scope")+" on the plan"
     },
     {
       k:"manual_handling",
@@ -119,8 +133,11 @@
       hierarchy:"eliminate",
       decision:"Use existing routes where practicable, confirm the asbestos information before disturbing pre-2000 fabric, and identify no-drill areas.",
       residual:"Concealed materials or services may not match the available records.",
-      trigger:f=>f.drillCount>0,
-      source:f=>f.drillCount+" drill location"+(f.drillCount===1?"":"s")+" marked on the plan"
+      trigger:f=>f.drillCount>0||f.asbestosCalloutCount>0,
+      source:f=>evspCdmCountPhrases([
+        [f.drillCount,"drill location"],
+        [f.asbestosCalloutCount,"asbestos-risk callout"]
+      ],"Building-fabric scope")+" on the plan"
     },
     {
       k:"temporary_works",
@@ -130,9 +147,23 @@
       decision:"Confirm welfare from day one, keep emergency access clear, sign the muster route and position first-aid and fire points where they remain accessible.",
       residual:"Site layout and client operations can change during the construction phase.",
       trigger:f=>f.siteSetupCount>0||f.firstAidCount>0||f.fireCount>0||f.signboardCount>0,
-      source:f=>f.siteSetupCount+" welfare or site-setup item"+(f.siteSetupCount===1?"":"s")+", "+(f.firstAidCount+f.fireCount)+" emergency marker"+(f.firstAidCount+f.fireCount===1?"":"s")+" and "+f.signboardCount+" safety signboard"+(f.signboardCount===1?"":"s")
+      source:f=>evspCdmCountPhrases([
+        [f.siteSetupCount,"welfare or site-setup item"],
+        [f.firstAidCount+f.fireCount,"emergency marker"],
+        [f.signboardCount,"safety signboard"]
+      ],"Temporary site arrangements")+" on the plan"
     }
   ];
+
+  function evspCdmCountPhrases(rows,fallback){
+    const parts=(rows||[]).filter(function(row){ return Number(row&&row[0])>0; }).map(function(row){
+      const count=Number(row[0]);
+      return count+" "+row[1]+(count===1?"":"s");
+    });
+    if(!parts.length) return fallback||"Plan markup";
+    if(parts.length===1) return parts[0];
+    return parts.slice(0,-1).join(", ")+" and "+parts[parts.length-1];
+  }
 
   function evspCdmId(){
     try{ if(typeof uid==="function") return uid(); }catch(_){ }
@@ -148,6 +179,23 @@
     if(!/^\d{4}-\d{2}-\d{2}$/.test(value)) return "";
     const parsed=new Date(value+"T00:00:00Z");
     return !isNaN(parsed.getTime())&&parsed.toISOString().slice(0,10)===value?value:"";
+  }
+  function evspCdmToday(){
+    const now=new Date(), y=now.getFullYear(), m=String(now.getMonth()+1).padStart(2,"0"), d=String(now.getDate()).padStart(2,"0");
+    return y+"-"+m+"-"+d;
+  }
+  function evspCdmDateNotFuture(value){
+    const clean=evspCdmCleanDate(value);
+    return Boolean(clean&&clean<=evspCdmToday());
+  }
+  function evspCdmDateOnOrBefore(value,limit){
+    const clean=evspCdmCleanDate(value), end=evspCdmCleanDate(limit);
+    return Boolean(clean&&(!end||clean<=end));
+  }
+  function evspCdmProgrammeValid(state){
+    const s=state&&typeof state==="object"?state:{};
+    const start=evspCdmCleanDate(s.startDate), finish=evspCdmCleanDate(s.finishDate);
+    return Boolean(start&&finish&&finish>=start);
   }
   function evspCdmOptionHtml(options,current){
     return options.map(function(pair){ return '<option value="'+evspCdmEsc(pair[0])+'" '+(pair[0]===current?'selected':'')+'>'+evspCdmEsc(pair[1])+'</option>'; }).join("");
@@ -195,6 +243,12 @@
       pd:"",
       pc:"",
       appointmentsConfirmed:false,
+      pdAppointmentConfirmed:false,
+      pdAppointmentDate:"",
+      pdAppointmentEvidence:"",
+      pcAppointmentConfirmed:false,
+      pcAppointmentDate:"",
+      pcAppointmentEvidence:"",
       siteManager:"",
       firstAider:"",
       safetyAdviser:"",
@@ -212,7 +266,12 @@
       f10Date:"",
       f10LongAndTwenty:"unknown",
       f10PersonDays:"unknown",
+      cdmComplianceManaged:false,
+      f10ComplianceManaged:false,
+      f10DocManaged:false,
+      f10DecisionManaged:false,
       ramsComplianceManaged:false,
+      ramsComplianceManual:false,
       docs:docs,
       risks:[],
       activeTab:"overview"
@@ -226,13 +285,23 @@
     out.version=EVSP_CDM_VERSION;
     const rawRoute=routeAliases[src.route]||src.route||routeAliases[src.dutyHolderRoute]||src.dutyHolderRoute;
     out.route=routes.includes(rawRoute)?rawRoute:"";
-    ["client","clientContact","contractor","pd","pc","appointmentEvidence","siteManager","firstAider","safetyAdviser","welfare","induction","publicProtection","emergency","monitoring","f10Ref"].forEach(function(k){ out[k]=evspCdmText(src[k]); });
+    ["client","clientContact","contractor","pd","pc","appointmentEvidence","pdAppointmentEvidence","pcAppointmentEvidence","siteManager","firstAider","safetyAdviser","welfare","induction","publicProtection","emergency","monitoring","f10Ref"].forEach(function(k){ out[k]=evspCdmText(src[k]); });
     out.startDate=evspCdmCleanDate(src.startDate);
     out.finishDate=evspCdmCleanDate(src.finishDate);
     out.appointmentDate=evspCdmCleanDate(src.appointmentDate);
+    out.pdAppointmentDate=evspCdmCleanDate(src.pdAppointmentDate);
+    out.pcAppointmentDate=evspCdmCleanDate(src.pcAppointmentDate);
     out.f10Date=evspCdmCleanDate(src.f10Date);
     out.appointmentsConfirmed=src.appointmentsConfirmed===true;
+    out.pdAppointmentConfirmed=src.pdAppointmentConfirmed===true;
+    out.pcAppointmentConfirmed=src.pcAppointmentConfirmed===true;
+    const hasManagedV3=Number(src.version)>=3;
+    out.cdmComplianceManaged=hasManagedV3&&src.cdmComplianceManaged===true;
+    out.f10ComplianceManaged=hasManagedV3&&src.f10ComplianceManaged===true;
+    out.f10DocManaged=hasManagedV3&&src.f10DocManaged===true;
+    out.f10DecisionManaged=hasManagedV3&&src.f10DecisionManaged===true;
     out.ramsComplianceManaged=src.ramsComplianceManaged===true;
+    out.ramsComplianceManual=src.ramsComplianceManual===true;
     out.f10=["notreq","tofile","filed"].includes(src.f10)?src.f10:"";
     const answers=["unknown","yes","no"];
     const legacyCriteria=src.f10Criteria&&typeof src.f10Criteria==="object"?src.f10Criteria:{};
@@ -241,9 +310,13 @@
     const docsSrc=src.docs&&typeof src.docs==="object"&&!Array.isArray(src.docs)?src.docs:(src.documents&&typeof src.documents==="object"?src.documents:{});
     out.docs={};
     EVSP_CDM_DOC_DEFS.forEach(function(def){ out.docs[def.k]=evspCdmDocRecord(docsSrc[def.k]); });
+    const riskIds=new Set();
     out.risks=Array.isArray(src.risks)?src.risks.filter(function(r){ return r&&typeof r==="object"; }).map(function(r){
+      let riskId=evspCdmText(r.id)||evspCdmId();
+      if(riskIds.has(riskId)) riskId=evspCdmId();
+      riskIds.add(riskId);
       return Object.assign({},r,{
-        id:evspCdmText(r.id)||evspCdmId(),
+        id:riskId,
         presetKey:evspCdmText(r.presetKey),
         hazard:evspCdmText(r.hazard),
         who:evspCdmText(r.who),
@@ -275,13 +348,16 @@
       if(!file.cdmCategory) file.cdmCategory=evspCdmGuessAttachmentCategory(file.name);
       if(!statusKeys.has(file.cdmStatus)) file.cdmStatus="";
       file.cdmProvider=evspCdmText(file.cdmProvider);
+      file.cdmReviewer=evspCdmText(file.cdmReviewer);
+      file.cdmReviewDate=evspCdmCleanDate(file.cdmReviewDate);
+      file.cdmRevision=evspCdmText(file.cdmRevision);
       file.cdmReviewNote=evspCdmText(file.cdmReviewNote);
     });
     return p.cdm;
   }
   function evspCdmPlanFacts(candidate){
     const p=evspCdmGetPack(candidate)||{};
-    const facts={unitCount:0,bayCount:0,trenchCount:0,ductCount:0,herasCount:0,coneCount:0,exclusionCount:0,pedestrianCount:0,signboardCount:0,inspectionPitCount:0,spoilCount:0,electricalCount:0,heavyCount:0,highLevelCount:0,drillCount:0,siteSetupCount:0,firstAidCount:0,fireCount:0,trenchMetres:0};
+    const facts={unitCount:0,bayCount:0,trenchCount:0,ductCount:0,herasCount:0,coneCount:0,exclusionCount:0,pedestrianCount:0,signboardCount:0,inspectionPitCount:0,spoilCount:0,electricalCount:0,heavyCount:0,highLevelCount:0,drillCount:0,liveCalloutCount:0,asbestosCalloutCount:0,siteSetupCount:0,firstAidCount:0,fireCount:0,trenchMetres:0};
     (Array.isArray(p.photos)?p.photos:[]).forEach(function(photo){
       (Array.isArray(photo.items)?photo.items:[]).forEach(function(item){
         if(item.type==="unit"){
@@ -309,6 +385,11 @@
         if(item.type==="mark"&&item.kind==="drill") facts.drillCount++;
         if(item.type==="mark"&&item.kind==="firstaid") facts.firstAidCount++;
         if(item.type==="mark"&&item.kind==="fire") facts.fireCount++;
+        if(item.type==="stamp"){
+          const stampText=evspCdmText(item.text||item.label).toLowerCase();
+          if(/\blive\b|energised|energized/.test(stampText)) facts.liveCalloutCount++;
+          if(/asbestos/.test(stampText)) facts.asbestosCalloutCount++;
+        }
         if(item.type==="site"&&["cabin","container","toilet","skip"].includes(item.kind)) facts.siteSetupCount++;
         if(item.type==="site"&&item.kind==="signboard") facts.signboardCount++;
         if(item.type==="site"&&item.kind==="inspectionpit") facts.inspectionPitCount++;
@@ -320,7 +401,7 @@
   }
   function evspCdmSuggestions(candidate){
     const p=evspCdmGetPack(candidate)||{};
-    const s=evspCdmEnsure(p);
+    const s=evspCdmNormalisePack(p.cdm);
     const facts=evspCdmPlanFacts(p);
     const existing=new Set(s.risks.map(function(r){ return r.presetKey; }).filter(Boolean));
     return EVSP_CDM_RISK_PRESETS.filter(function(def){ return !existing.has(def.k)&&def.trigger(facts); }).map(function(def){
@@ -346,12 +427,19 @@
   }
   function evspCdmF10FiledComplete(state){
     const s=state&&typeof state==="object"?state:evspCdmEnsure();
-    return evspCdmF10Verdict(s).code==="notifiable"&&s.f10==="filed"&&Boolean(s.f10Ref.trim())&&Boolean(evspCdmCleanDate(s.f10Date));
+    const start=evspCdmCleanDate(s.startDate), filed=evspCdmCleanDate(s.f10Date);
+    return evspCdmF10Verdict(s).code==="notifiable"&&s.f10==="filed"&&Boolean(evspCdmText(s.f10Ref).trim())&&Boolean(start)&&evspCdmDateNotFuture(filed)&&filed<=start;
   }
-  function evspCdmDocReady(record){
+  function evspCdmDocReady(record,state,key){
     const r=record&&typeof record==="object"?record:{};
     if(r.status==="not_applicable") return Boolean(evspCdmText(r.notes).trim());
-    return ["issued","accepted"].includes(r.status)&&Boolean(evspCdmText(r.owner).trim())&&Boolean(evspCdmText(r.revision).trim())&&Boolean(evspCdmCleanDate(r.date));
+    const controlled=["issued","accepted"].includes(r.status)&&Boolean(evspCdmText(r.owner).trim())&&Boolean(evspCdmText(r.revision).trim())&&evspCdmDateNotFuture(r.date);
+    if(!controlled) return false;
+    if((key==="cpp"||key==="f10")&&state){
+      const start=evspCdmCleanDate(state.startDate);
+      return Boolean(start&&evspCdmDateOnOrBefore(r.date,start));
+    }
+    return true;
   }
   function evspCdmDocStats(state){
     const s=state&&typeof state==="object"?state:evspCdmEnsure();
@@ -359,10 +447,24 @@
     EVSP_CDM_DOC_DEFS.forEach(function(def){
       const st=(s.docs[def.k]||{}).status||"not_started";
       if(st!=="not_applicable") active++;
-      if(evspCdmDocReady(s.docs[def.k])) ready++;
+      if(evspCdmDocReady(s.docs[def.k],s,def.k)) ready++;
       if(st==="accepted") accepted++;
     });
     return {ready:ready,total:EVSP_CDM_DOC_DEFS.length,active:active,accepted:accepted};
+  }
+  function evspCdmAppointmentReady(state,role){
+    const s=state&&typeof state==="object"?state:{};
+    const prefix=role==="pc"?"pc":"pd";
+    const date=s[prefix+"AppointmentDate"], evidence=evspCdmText(s[prefix+"AppointmentEvidence"]).trim();
+    return s[prefix+"AppointmentConfirmed"]===true&&Boolean(evidence)&&evspCdmDateNotFuture(date)&&Boolean(evspCdmCleanDate(s.startDate))&&evspCdmDateOnOrBefore(date,s.startDate);
+  }
+  function evspCdmPublicContext(candidate,facts){
+    const f=facts||evspCdmPlanFacts(candidate);
+    return Boolean(f.unitCount||f.bayCount||f.herasCount||f.coneCount||f.exclusionCount||f.pedestrianCount||f.signboardCount);
+  }
+  function evspCdmSupportingReady(file){
+    const a=file&&typeof file==="object"?file:{};
+    return a.cdmStatus==="accepted"&&Boolean(evspCdmText(a.cdmProvider).trim())&&Boolean(evspCdmText(a.cdmReviewer).trim())&&evspCdmDateNotFuture(a.cdmReviewDate)&&Boolean(evspCdmText(a.cdmRevision).trim()||evspCdmText(a.cdmReviewNote).trim());
   }
   function evspCdmSetCompliance(p,key,state){
     if(!p) return;
@@ -371,34 +473,63 @@
     if(state==="done") p.compliance.push(key);
     if(state==="na") p.complianceNA.push(key);
   }
+  function evspCdmComplianceState(p,key){
+    if(Array.isArray(p&&p.compliance)&&p.compliance.includes(key)) return "done";
+    if(Array.isArray(p&&p.complianceNA)&&p.complianceNA.includes(key)) return "na";
+    return "todo";
+  }
+  function evspCdmSetManagedCompliance(p,state,key,next,flag){
+    const managed=state[flag]===true, current=evspCdmComplianceState(p,key);
+    if(managed){
+      evspCdmSetCompliance(p,key,next);
+      if(next==="todo") state[flag]=false;
+      return;
+    }
+    if(current==="todo"&&next!=="todo"){
+      evspCdmSetCompliance(p,key,next);
+      state[flag]=true;
+    }
+  }
+  function evspCdmCoreReady(candidate,state,facts){
+    const p=evspCdmGetPack(candidate)||{}, s=state||evspCdmNormalisePack(p.cdm), f=facts||evspCdmPlanFacts(p);
+    const clientOk=Boolean(evspCdmText(s.client||p.custName).trim());
+    const rolesOk=s.route==="single_contractor"?Boolean(s.contractor.trim()):Boolean(s.pd.trim()&&s.pc.trim()&&evspCdmAppointmentReady(s,"pd")&&evspCdmAppointmentReady(s,"pc"));
+    const arrangementsOk=Boolean(s.siteManager.trim()&&s.firstAider.trim()&&s.welfare.trim()&&s.induction.trim()&&s.emergency.trim()&&s.monitoring.trim()&&(!evspCdmPublicContext(p,f)||s.publicProtection.trim()));
+    return Boolean(s.route&&clientOk&&rolesOk&&evspCdmProgrammeValid(s)&&arrangementsOk&&evspCdmDocReady(s.docs.cpp,s,"cpp"));
+  }
   function evspCdmSyncCompliance(candidate){
     const p=evspCdmGetPack(candidate);
     if(!p) return;
     const s=evspCdmEnsure(p);
     const f10=evspCdmF10Verdict(s);
-    if(f10.code==="notifiable"){
+    const autoF10Reason="Not notifiable on the recorded thresholds: both assessment answers are No.";
+    const clearManagedF10Document=function(){
+      if(!s.f10DocManaged) return;
       if(s.docs.f10.status==="not_applicable") s.docs.f10.status="not_started";
-      s.f10=s.f10==="filed"?"filed":"tofile";
-      evspCdmSetCompliance(p,"f10",evspCdmF10FiledComplete(s)?"done":"todo");
+      if(s.docs.f10.notes.trim()===autoF10Reason) s.docs.f10.notes="";
+      s.f10DocManaged=false;
+    };
+    if(f10.code==="notifiable"){
+      clearManagedF10Document();
+      if(s.f10!=="filed"&&(s.f10DecisionManaged||!s.f10)){ s.f10="tofile"; s.f10DecisionManaged=true; }
+      evspCdmSetManagedCompliance(p,s,"f10",evspCdmF10FiledComplete(s)?"done":"todo","f10ComplianceManaged");
     }else if(f10.code==="not_required"){
-      s.f10="notreq";
-      if(["not_started","not_applicable"].includes(s.docs.f10.status)){
+      if(s.f10!=="filed"&&(s.f10DecisionManaged||!s.f10)){ s.f10="notreq"; s.f10DecisionManaged=true; }
+      if(s.f10DocManaged||s.docs.f10.status==="not_started"){
         s.docs.f10.status="not_applicable";
-        if(!s.docs.f10.notes.trim()) s.docs.f10.notes="Not notifiable on the recorded thresholds: both assessment answers are No.";
+        if(!s.docs.f10.notes.trim()||s.f10DocManaged) s.docs.f10.notes=autoF10Reason;
+        s.f10DocManaged=true;
       }
-      evspCdmSetCompliance(p,"f10","na");
+      evspCdmSetManagedCompliance(p,s,"f10","na","f10ComplianceManaged");
     }else{
-      evspCdmSetCompliance(p,"f10","todo");
+      clearManagedF10Document();
+      if(s.f10DecisionManaged&&s.f10!=="filed"){ s.f10=""; s.f10DecisionManaged=false; }
+      evspCdmSetManagedCompliance(p,s,"f10","todo","f10ComplianceManaged");
     }
-    if(s.route){
-      const clientOk=Boolean((s.client||p.custName||"").trim());
-      const rolesOk=s.route==="single_contractor"?Boolean(s.contractor.trim()):Boolean(s.pd.trim()&&s.pc.trim()&&s.appointmentsConfirmed&&s.appointmentDate&&s.appointmentEvidence.trim());
-      const cppReady=evspCdmDocReady(s.docs.cpp);
-      evspCdmSetCompliance(p,"cdm",clientOk&&rolesOk&&cppReady?"done":"todo");
-    }else evspCdmSetCompliance(p,"cdm","todo");
-    const acceptedRams=(Array.isArray(p.attachments)?p.attachments:[]).some(function(a){ return a&&a.cdmCategory==="rams"&&a.cdmStatus==="accepted"; });
+    evspCdmSetManagedCompliance(p,s,"cdm",evspCdmCoreReady(p,s)?"done":"todo","cdmComplianceManaged");
+    const acceptedRams=(Array.isArray(p.attachments)?p.attachments:[]).some(function(a){ return a&&a.cdmCategory==="rams"&&evspCdmSupportingReady(a); });
     const alreadyDone=Array.isArray(p.compliance)&&p.compliance.includes("rams");
-    if(acceptedRams){
+    if(acceptedRams&&!s.ramsComplianceManual){
       if(!alreadyDone){ evspCdmSetCompliance(p,"rams","done"); s.ramsComplianceManaged=true; }
     }else if(s.ramsComplianceManaged){
       evspCdmSetCompliance(p,"rams","todo");
@@ -408,40 +539,65 @@
   function evspCdmAssessment(candidate){
     const p=evspCdmGetPack(candidate)||{};
     if(p.mode==="domestic") return {required:false,complete:true,score:100,status:"not_applicable",issues:[],blockingIssues:[],docs:{ready:0,total:0},f10:{code:"not_applicable",label:"Not applicable"}};
-    evspCdmSyncCompliance(p);
-    const s=evspCdmEnsure(p), issues=[], checks=[];
+    const s=evspCdmNormalisePack(p.cdm), facts=evspCdmPlanFacts(p), issues=[], checks=[];
     const addCheck=function(ok){ checks.push(Boolean(ok)); };
     if(!s.route) issues.push({severity:"warning",blocking:false,text:"Choose the CDM delivery and duty-holder arrangement."});
     addCheck(s.route);
-    const clientOk=Boolean((s.client||p.custName||"").trim());
+    const clientOk=Boolean(evspCdmText(s.client||p.custName).trim());
     if(s.route&&!clientOk) issues.push({severity:"warning",blocking:true,text:"Record the commercial client for the project."});
     addCheck(!s.route||clientOk);
     const rolesOk=s.route==="single_contractor"?Boolean(s.contractor.trim()):Boolean(s.pd.trim()&&s.pc.trim());
-    const apptOk=s.route==="single_contractor"||Boolean(s.appointmentsConfirmed&&s.appointmentDate&&s.appointmentEvidence.trim());
     if(s.route==="single_contractor"&&!rolesOk) issues.push({severity:"error",blocking:true,text:"Record the contractor responsible for preparing the construction phase plan."});
     if(s.route&&s.route!=="single_contractor"&&!rolesOk) issues.push({severity:"error",blocking:true,text:"Record both principal duty holders for this multi-contractor project."});
-    if(s.route&&s.route!=="single_contractor"&&!apptOk) issues.push({severity:"warning",blocking:true,text:"Confirm the written appointments and record their date and evidence reference."});
-    addCheck(!s.route||rolesOk&&apptOk);
+    const pdAppointmentOk=s.route==="single_contractor"||evspCdmAppointmentReady(s,"pd"), pcAppointmentOk=s.route==="single_contractor"||evspCdmAppointmentReady(s,"pc");
+    if(s.route&&s.route!=="single_contractor"&&!pdAppointmentOk) issues.push({severity:"warning",blocking:true,text:"Confirm the principal designer's written appointment with valid evidence dated no later than the planned start."});
+    if(s.route&&s.route!=="single_contractor"&&!pcAppointmentOk) issues.push({severity:"warning",blocking:true,text:"Confirm the principal contractor's written appointment with valid evidence dated no later than the planned start."});
+    addCheck(!s.route||rolesOk&&pdAppointmentOk&&pcAppointmentOk);
+    const programmeOk=evspCdmProgrammeValid(s);
+    if(s.route&&(!s.startDate||!s.finishDate)) issues.push({severity:"warning",blocking:true,text:"Record the planned construction start and finish dates."});
+    else if(s.route&&!programmeOk) issues.push({severity:"error",blocking:true,text:"The planned finish date must be on or after the planned start date."});
+    addCheck(!s.route||programmeOk);
+    const siteRolesOk=Boolean(s.siteManager.trim()&&s.firstAider.trim());
+    if(s.route&&!s.siteManager.trim()) issues.push({severity:"warning",blocking:true,text:"Record the site manager or supervisor."});
+    if(s.route&&!s.firstAider.trim()) issues.push({severity:"warning",blocking:true,text:"Record the first-aid appointment and contact."});
+    addCheck(!s.route||siteRolesOk);
+    const arrangementsOk=Boolean(s.welfare.trim()&&s.induction.trim()&&s.emergency.trim()&&s.monitoring.trim());
+    if(s.route&&!s.welfare.trim()) issues.push({severity:"error",blocking:true,text:"Record the welfare arrangements available from day one."});
+    if(s.route&&!s.induction.trim()) issues.push({severity:"warning",blocking:true,text:"Record the site induction and workforce consultation arrangements."});
+    if(s.route&&!s.emergency.trim()) issues.push({severity:"error",blocking:true,text:"Record the project emergency arrangements."});
+    if(s.route&&!s.monitoring.trim()) issues.push({severity:"warning",blocking:true,text:"Record how the construction arrangements will be monitored and reviewed."});
+    addCheck(!s.route||arrangementsOk);
+    const publicRequired=evspCdmPublicContext(p,facts), publicOk=!publicRequired||Boolean(s.publicProtection.trim());
+    if(s.route&&publicRequired&&!publicOk) issues.push({severity:"error",blocking:true,text:"The plan indicates a public or site-user interface. Record the segregation and public-protection arrangements."});
+    addCheck(!s.route||publicOk);
     const f10=evspCdmF10Verdict(s);
     if(s.route&&f10.code==="incomplete") issues.push({severity:"warning",blocking:true,text:"Complete the two F10 threshold questions."});
-    if(f10.code==="notifiable"&&!evspCdmF10FiledComplete(s)) issues.push({severity:"error",blocking:true,text:"The project is notifiable. Record it as filed with a valid submission date and HSE reference."});
+    if(f10.code==="notifiable"&&!evspCdmF10FiledComplete(s)) issues.push({severity:"error",blocking:true,text:"The project is notifiable. Record an HSE reference and a valid filing date that is not in the future or after the planned start."});
     addCheck(f10.code!=="incomplete"&&(f10.code!=="notifiable"||evspCdmF10FiledComplete(s)));
-    const cppReady=evspCdmDocReady(s.docs.cpp);
-    if(s.route&&!cppReady) issues.push({severity:"error",blocking:true,text:"Issue the construction phase plan with owner, revision and issue date before construction starts."});
+    const cppReady=evspCdmDocReady(s.docs.cpp,s,"cpp");
+    if(s.route&&!cppReady) issues.push({severity:"error",blocking:true,text:"Issue the construction phase plan with owner, revision and a non-future issue date no later than the planned start."});
     addCheck(cppReady);
-    const incompleteRisks=s.risks.filter(function(r){ return !r.hazard.trim()||!r.decision.trim()||!r.residual.trim()||!r.owner.trim()||r.status==="open"; });
+    const incompleteRisks=s.risks.filter(function(r){ return !r.hazard.trim()||!r.decision.trim()||!r.residual.trim()||!r.owner.trim()||!evspCdmCleanDate(r.dueDate)||r.status==="open"; });
     const unratedRisks=s.risks.filter(function(r){ return !r.initialLikelihood||!r.initialSeverity||!r.residualLikelihood||!r.residualSeverity; });
-    if(!s.risks.length) issues.push({severity:"warning",blocking:false,text:"Review the plan-derived design risks and record the design decisions."});
-    if(incompleteRisks.length) issues.push({severity:"warning",blocking:true,text:incompleteRisks.length+" design risk"+(incompleteRisks.length===1?" needs":"s need")+" an owner, design action, residual-risk record and controlled status."});
-    if(unratedRisks.length) issues.push({severity:"warning",blocking:false,text:unratedRisks.length+" design risk"+(unratedRisks.length===1?" has":"s have")+" incomplete initial or residual ratings."});
+    if(!s.risks.length) issues.push({severity:"warning",blocking:Boolean(s.route),text:"Review the plan-derived design risks and record the design decisions before marking the controls ready."});
+    if(incompleteRisks.length) issues.push({severity:"warning",blocking:true,text:incompleteRisks.length+" design risk"+(incompleteRisks.length===1?" needs":"s need")+" a due date, owner, design action, residual-risk record and controlled status."});
+    if(unratedRisks.length) issues.push({severity:"warning",blocking:true,text:unratedRisks.length+" design risk"+(unratedRisks.length===1?" has":"s have")+" incomplete initial or residual ratings."});
     addCheck(s.risks.length>0&&incompleteRisks.length===0&&unratedRisks.length===0);
     const docs=evspCdmDocStats(s);
-    const metadataGaps=EVSP_CDM_DOC_DEFS.filter(function(def){ const r=s.docs[def.k]; return ["issued","accepted"].includes(r.status)&&!evspCdmDocReady(r); });
-    if(metadataGaps.length) issues.push({severity:"warning",blocking:false,text:metadataGaps.length+" controlled document"+(metadataGaps.length===1?" has":"s have")+" issued or accepted status but incomplete owner, revision or date metadata."});
-    addCheck(docs.ready>=Math.max(1,Math.ceil(docs.total*.6)));
+    const metadataGaps=EVSP_CDM_DOC_DEFS.filter(function(def){ const r=s.docs[def.k]; return ["issued","accepted"].includes(r.status)&&!evspCdmDocReady(r,s,def.k); });
+    if(metadataGaps.length) issues.push({severity:"warning",blocking:false,text:metadataGaps.length+" controlled document"+(metadataGaps.length===1?" has":"s have")+" issued or accepted status but incomplete, future-dated or late metadata."});
+    const documentThreshold=Math.max(1,Math.ceil(docs.total*.6)), documentsOk=docs.ready>=documentThreshold;
+    if(s.route&&!documentsOk) issues.push({severity:"warning",blocking:true,text:"Complete or justify at least "+documentThreshold+" of the "+docs.total+" controlled document records before marking the controls ready."});
+    addCheck(documentsOk);
+    const invalidAccepted=(Array.isArray(p.attachments)?p.attachments:[]).filter(function(file){ return file&&file.cdmStatus==="accepted"&&!evspCdmSupportingReady(file); });
+    if(invalidAccepted.length) issues.push({severity:"warning",blocking:false,text:invalidAccepted.length+" supporting document"+(invalidAccepted.length===1?" is":"s are")+" marked accepted but lacks provider, reviewer, review date, or acceptance evidence."});
+    const manualCdm=evspCdmComplianceState(p,"cdm")!=="todo"&&!s.cdmComplianceManaged&&!evspCdmCoreReady(p,s,facts);
+    const expectedF10=f10.code==="not_required"?"na":(evspCdmF10FiledComplete(s)?"done":"todo");
+    const manualF10=evspCdmComplianceState(p,"f10")!=="todo"&&!s.f10ComplianceManaged&&evspCdmComplianceState(p,"f10")!==expectedF10;
+    if(manualCdm||manualF10) issues.push({severity:"warning",blocking:false,text:"A legacy or manually set compliance state has been preserved. Review it against the current CDM evidence before relying on it."});
     const score=Math.round(100*checks.filter(Boolean).length/Math.max(1,checks.length));
     const blockingIssues=issues.filter(function(i){ return i.blocking; });
-    const complete=Boolean(s.route)&&blockingIssues.length===0&&cppReady;
+    const complete=Boolean(s.route)&&blockingIssues.length===0&&cppReady&&documentsOk;
     return {required:true,complete:complete,score:score,status:complete?"ready":(s.route?"in_progress":"not_started"),issues:issues,blockingIssues:blockingIssues,docs:docs,f10:f10,risks:{total:s.risks.length,incomplete:incompleteRisks.length,unrated:unratedRisks.length},suggestions:evspCdmSuggestions(p).length};
   }
   function evspCdmRouteLabel(route){
@@ -451,7 +607,7 @@
   function evspCdmCardHTML(candidate){
     const p=evspCdmGetPack(candidate);
     if(!p||p.mode==="domestic") return "";
-    const a=evspCdmAssessment(p), s=evspCdmEnsure(p);
+    const a=evspCdmAssessment(p), s=evspCdmNormalisePack(p.cdm);
     const f10Class=a.f10.code==="notifiable"?(evspCdmF10FiledComplete(s)?"ok":"bad"):(a.f10.code==="not_required"?"ok":"warn");
     const docClass=a.docs.ready===a.docs.total?"ok":(a.docs.ready?"warn":"");
     const riskClass=a.risks.total&&a.risks.incomplete===0&&!a.risks.unrated?"ok":(a.risks.total?"warn":"");
@@ -472,7 +628,7 @@
   function evspCdmComplianceDetailHTML(key,candidate){
     const p=evspCdmGetPack(candidate);
     if(!p||p.mode==="domestic"||!["cdm","f10"].includes(key)) return "";
-    const a=evspCdmAssessment(p), s=evspCdmEnsure(p);
+    const a=evspCdmAssessment(p), s=evspCdmNormalisePack(p.cdm);
     const copy=key==="f10"?a.f10.label:(s.route?evspCdmRouteLabel(s.route):"Duty-holder arrangement not recorded");
     return '<div class="evsp-cdm-note" style="margin:4px 0 7px"><strong>'+evspCdmEsc(copy)+'</strong><div class="evsp-cdm-actions"><button type="button" class="evsp-cdm-btn" data-evsp-cdm-open="overview">Open CDM controls</button></div></div>';
   }
@@ -497,7 +653,7 @@
   function evspCdmOverviewHTML(candidate){
     const p=evspCdmGetPack(candidate)||{}, s=evspCdmEnsure(p), a=evspCdmAssessment(p), facts=evspCdmPlanFacts(p), f10=a.f10;
     const routes=EVSP_CDM_ROUTE_DEFS.map(function(def){
-      return '<button type="button" class="evsp-cdm-route '+(s.route===def.k?'on':'')+'" data-evsp-cdm-route="'+def.k+'"><b>'+evspCdmEsc(def.title)+'</b><span>'+evspCdmEsc(def.body)+'</span></button>';
+      return '<button type="button" class="evsp-cdm-route '+(s.route===def.k?'on':'')+'" data-evsp-cdm-route="'+def.k+'" aria-pressed="'+(s.route===def.k?'true':'false')+'"><b>'+evspCdmEsc(def.title)+'</b><span>'+evspCdmEsc(def.body)+'</span></button>';
     }).join("");
     const yesNo=[["unknown","Select"],["yes","Yes"],["no","No"]];
     const verdictClass=f10.code==="notifiable"?(evspCdmF10FiledComplete(s)?"ok":"bad"):(f10.code==="not_required"?"ok":"warn");
@@ -506,6 +662,7 @@
     if(facts.trenchCount||facts.ductCount) counts.push((facts.trenchCount+facts.ductCount)+" excavation or buried-route item"+(facts.trenchCount+facts.ductCount===1?"":"s"));
     if(facts.herasCount) counts.push(facts.herasCount+" barrier route"+(facts.herasCount===1?"":"s"));
     if(facts.siteSetupCount) counts.push(facts.siteSetupCount+" site-setup item"+(facts.siteSetupCount===1?"":"s"));
+    const legacyAppointment=(s.appointmentsConfirmed||s.appointmentDate||s.appointmentEvidence)?'<div class="evsp-cdm-note" style="margin-top:10px"><strong>Legacy combined appointment record retained.</strong> Reconfirm the principal designer and principal contractor separately before relying on it.'+(s.appointmentEvidence?'<br>Previous evidence reference: '+evspCdmEsc(s.appointmentEvidence):'')+'</div>':'';
     return '<div class="evsp-cdm-grid">'
       +'<section class="evsp-cdm-section full"><h3>Delivery and duty-holder arrangement</h3><p class="evsp-cdm-lead">Record how the project is organised. Principal designer and principal contractor duties apply when more than one contractor is, or is likely to be, involved.</p><div class="evsp-cdm-routes">'+routes+'</div></section>'
       +'<section class="evsp-cdm-section"><h3>Project and client</h3><p class="evsp-cdm-lead">These fields are specific to the construction phase and sit alongside the project details already held in the planner.</p><div class="evsp-cdm-fields">'
@@ -517,12 +674,11 @@
       +'<section class="evsp-cdm-section"><h3>Named project roles</h3><p class="evsp-cdm-lead">Use organisations as well as individual names where that makes the appointment clearer.</p><div class="evsp-cdm-fields">'
       +(s.route==="single_contractor"?evspCdmField("Contractor preparing the CPP","contractor",s.contractor,{placeholder:"Name and organisation"}):'')
       +(s.route!=="single_contractor"?evspCdmField("Principal designer","pd",s.pd,{placeholder:"Name and organisation"})+evspCdmField("Principal contractor","pc",s.pc,{placeholder:"Name and organisation"}):'')
-      +(s.route&&s.route!=="single_contractor"?evspCdmField("Written appointment date","appointmentDate",s.appointmentDate,{type:"date"})+evspCdmField("Appointment evidence","appointmentEvidence",s.appointmentEvidence,{placeholder:"File name, letter ref or project-pack record"}):'')
       +evspCdmField("Site manager","siteManager",s.siteManager,{placeholder:"Name and contact"})
       +evspCdmField("First aider","firstAider",s.firstAider,{placeholder:"Name and contact"})
       +evspCdmField("Safety adviser","safetyAdviser",s.safetyAdviser,{placeholder:"Optional"})
       +'</div>'
-      +(s.route&&s.route!=="single_contractor"?'<label class="evsp-cdm-check" style="margin-top:10px"><input type="checkbox" data-evsp-cdm-check="appointmentsConfirmed" '+(s.appointmentsConfirmed?'checked':'')+'><span>The principal designer and principal contractor appointments have been confirmed and accepted.</span></label>':'')
+      +(s.route&&s.route!=="single_contractor"?'<div class="evsp-cdm-appointments"><div class="evsp-cdm-appointment"><b>Principal designer appointment</b><div class="evsp-cdm-fields">'+evspCdmField("Written appointment date","pdAppointmentDate",s.pdAppointmentDate,{type:"date"})+evspCdmField("Evidence reference","pdAppointmentEvidence",s.pdAppointmentEvidence,{placeholder:"File name, letter reference or attachment"})+'</div><label class="evsp-cdm-check"><input type="checkbox" data-evsp-cdm-check="pdAppointmentConfirmed" '+(s.pdAppointmentConfirmed?'checked':'')+'><span>The written principal designer appointment has been checked and accepted.</span></label></div><div class="evsp-cdm-appointment"><b>Principal contractor appointment</b><div class="evsp-cdm-fields">'+evspCdmField("Written appointment date","pcAppointmentDate",s.pcAppointmentDate,{type:"date"})+evspCdmField("Evidence reference","pcAppointmentEvidence",s.pcAppointmentEvidence,{placeholder:"File name, letter reference or attachment"})+'</div><label class="evsp-cdm-check"><input type="checkbox" data-evsp-cdm-check="pcAppointmentConfirmed" '+(s.pcAppointmentConfirmed?'checked':'')+'><span>The written principal contractor appointment has been checked and accepted.</span></label></div></div>'+legacyAppointment:'')
       +'</section>'
       +'<section class="evsp-cdm-section full"><h3>F10 notification assessment</h3><p class="evsp-cdm-lead">A project is notifiable if either threshold below is met. Record the actual planned construction work, not the wider programme.</p>'
       +'<div class="evsp-cdm-f10-question"><b>Is the construction work scheduled to last longer than 30 working days and have more than 20 workers working simultaneously at any point?</b><select data-evsp-cdm-field="f10LongAndTwenty">'+evspCdmOptionHtml(yesNo,s.f10LongAndTwenty)+'</select></div>'
@@ -537,7 +693,7 @@
       +evspCdmField("Emergency arrangements","emergency",s.emergency,{type:"textarea",full:true,placeholder:"Muster point, first aid, fire, nearest A&E and emergency contacts"})
       +evspCdmField("Monitoring and review","monitoring",s.monitoring,{type:"textarea",full:true,placeholder:"Inspections, coordination meetings, change control and review frequency"})
       +'</div></section>'
-      +'<section class="evsp-cdm-section"><h3>Readiness and plan signals</h3><p class="evsp-cdm-lead">The planner has detected '+evspCdmEsc(counts.length?counts.join(", "):"no construction markup yet")+'.</p><div class="evsp-cdm-summary-list">'+evspCdmReadinessRows(a)+'</div>'
+      +'<section class="evsp-cdm-section"><h3>Readiness and marked-plan evidence</h3><p class="evsp-cdm-lead">The marked plans currently show '+evspCdmEsc(counts.length?counts.join(", "):"no construction markup yet")+'.</p><div class="evsp-cdm-summary-list">'+evspCdmReadinessRows(a)+'</div>'
       +(a.suggestions?'<div class="evsp-cdm-actions"><button type="button" class="evsp-cdm-btn" data-evsp-cdm-tab="risks">Review '+a.suggestions+' plan-derived risk suggestion'+(a.suggestions===1?'':'s')+'</button></div>':'')
       +'</section></div>';
   }
@@ -579,9 +735,9 @@
   function evspCdmDocumentsHTML(candidate){
     const p=evspCdmGetPack(candidate)||{}, s=evspCdmEnsure(p), stats=evspCdmDocStats(s);
     const docs=EVSP_CDM_DOC_DEFS.map(function(def){
-      const r=s.docs[def.k], ready=evspCdmDocReady(r), na=r.status==="not_applicable", metadataMissing=["issued","accepted"].includes(r.status)&&!ready, naReasonMissing=na&&!ready;
+      const r=s.docs[def.k], ready=evspCdmDocReady(r,s,def.k), na=r.status==="not_applicable", metadataMissing=["issued","accepted"].includes(r.status)&&!ready, naReasonMissing=na&&!ready;
       return '<details class="evsp-cdm-doc" data-evsp-cdm-doc-row="'+def.k+'">'
-        +'<summary><div class="evsp-cdm-doc-title"><b>'+evspCdmEsc(def.title)+'</b><small>'+evspCdmEsc(def.reg)+' | '+evspCdmEsc(def.purpose)+'</small></div><span class="evsp-cdm-status '+(ready?'ok':(metadataMissing||naReasonMissing||r.status==="draft"?'warn':(na?'na':'')))+'">'+evspCdmEsc(EVSP_CDM_DOC_STATUS_LABEL[r.status]+(metadataMissing?", metadata missing":(naReasonMissing?", reason missing":"")))+'</span></summary>'
+        +'<summary><div class="evsp-cdm-doc-title"><b>'+evspCdmEsc(def.title)+'</b><small>'+evspCdmEsc(def.reg)+' | '+evspCdmEsc(def.purpose)+'</small></div><span class="evsp-cdm-status '+(ready?'ok':(metadataMissing||naReasonMissing||r.status==="draft"?'warn':(na?'na':'')))+'">'+evspCdmEsc(EVSP_CDM_DOC_STATUS_LABEL[r.status]+(metadataMissing?", evidence incomplete or date invalid":(naReasonMissing?", reason missing":"")))+'</span></summary>'
         +'<div class="evsp-cdm-doc-body"><div class="evsp-cdm-doc-grid">'
         +'<label class="evsp-cdm-field"><span>Status</span><select data-evsp-cdm-doc-field="status">'+evspCdmOptionHtml(EVSP_CDM_DOC_STATUSES,r.status)+'</select></label>'
         +'<label class="evsp-cdm-field"><span>Owner</span><input data-evsp-cdm-doc-field="owner" value="'+evspCdmEsc(r.owner)+'" placeholder="Person or organisation"></label>'
@@ -590,42 +746,46 @@
         +'<label class="evsp-cdm-field full"><span>Notes, reference or next action</span><textarea data-evsp-cdm-doc-field="notes" placeholder="Document reference, recipient, acceptance evidence or outstanding action">'+evspCdmEsc(r.notes)+'</textarea></label>'
         +'</div></div></details>';
     }).join("");
-    return '<div class="evsp-cdm-grid"><section class="evsp-cdm-section full"><h3>CDM document register</h3><p class="evsp-cdm-lead">'+stats.ready+' of '+stats.total+' records are issued, accepted or marked not applicable. Expand a row to record ownership, revision, date and evidence.</p><div class="evsp-cdm-docs">'+docs+'</div></section></div>';
+    return '<div class="evsp-cdm-grid"><section class="evsp-cdm-section full"><h3>CDM document register</h3><p class="evsp-cdm-lead">'+stats.ready+' of '+stats.total+' records have controlled evidence or a justified not-applicable decision. Issued or accepted records need an owner, revision and non-future date. CPP and F10 evidence must not be dated after the planned start.</p><div class="evsp-cdm-docs">'+docs+'</div></section></div>';
   }
   function evspCdmSupportingHTML(candidate){
     const p=evspCdmGetPack(candidate)||{};
     const attachments=Array.isArray(p.attachments)?p.attachments:[];
     const rows=attachments.length?attachments.map(function(a){
       const ext=(String(a.name||"").split(".").pop()||"file").toUpperCase();
-      const status=a.cdmStatus||"";
+      const status=a.cdmStatus||"", acceptedReady=evspCdmSupportingReady(a), acceptedGap=status==="accepted"&&!acceptedReady;
       return '<details class="evsp-cdm-attachment" data-evsp-cdm-attachment-row="'+evspCdmEsc(a.id)+'">'
-        +'<summary><div class="evsp-cdm-attachment-title"><b>'+evspCdmEsc(a.name||"Project file")+'</b><small>'+evspCdmEsc(ext)+(a.cdmProvider?' | '+evspCdmEsc(a.cdmProvider):'')+'</small></div><span class="evsp-cdm-status '+(status==="accepted"?'ok':(status==="reviewed"?'warn':''))+'">'+evspCdmEsc((EVSP_CDM_SUPPORT_STATUSES.find(function(x){return x[0]===status;})||["","Not reviewed"])[1])+'</span></summary>'
+        +'<summary><div class="evsp-cdm-attachment-title"><b>'+evspCdmEsc(a.name||"Project file")+'</b><small>'+evspCdmEsc(ext)+(a.cdmProvider?' | '+evspCdmEsc(a.cdmProvider):'')+'</small></div><span class="evsp-cdm-status '+(acceptedReady?'ok':(status==="reviewed"||acceptedGap?'warn':''))+'">'+evspCdmEsc((EVSP_CDM_SUPPORT_STATUSES.find(function(x){return x[0]===status;})||["","Not reviewed"])[1]+(acceptedGap?", evidence incomplete":""))+'</span></summary>'
         +'<div class="evsp-cdm-attachment-body"><div class="evsp-cdm-attachment-grid">'
         +'<label class="evsp-cdm-field"><span>Document type</span><select data-evsp-cdm-attachment-field="cdmCategory">'+evspCdmOptionHtml(EVSP_CDM_SUPPORT_CATEGORIES,a.cdmCategory||"")+'</select></label>'
         +'<label class="evsp-cdm-field"><span>Review status</span><select data-evsp-cdm-attachment-field="cdmStatus">'+evspCdmOptionHtml(EVSP_CDM_SUPPORT_STATUSES,status)+'</select></label>'
         +'<label class="evsp-cdm-field"><span>Provided by</span><input data-evsp-cdm-attachment-field="cdmProvider" value="'+evspCdmEsc(a.cdmProvider||"")+'" placeholder="Contractor, client or adviser"></label>'
+        +'<label class="evsp-cdm-field"><span>Reviewed by</span><input data-evsp-cdm-attachment-field="cdmReviewer" value="'+evspCdmEsc(a.cdmReviewer||"")+'" placeholder="Name and organisation"></label>'
+        +'<label class="evsp-cdm-field"><span>Review date</span><input type="date" data-evsp-cdm-attachment-field="cdmReviewDate" value="'+evspCdmEsc(a.cdmReviewDate||"")+'"></label>'
+        +'<label class="evsp-cdm-field"><span>Revision or reference</span><input data-evsp-cdm-attachment-field="cdmRevision" value="'+evspCdmEsc(a.cdmRevision||"")+'" placeholder="e.g. Rev C01 or document reference"></label>'
         +'<label class="evsp-cdm-field full"><span>Review notes</span><textarea data-evsp-cdm-attachment-field="cdmReviewNote" placeholder="Scope reviewed, exclusions, acceptance evidence or follow-up">'+evspCdmEsc(a.cdmReviewNote||"")+'</textarea></label>'
         +'</div></div></details>';
     }).join(""):'<div class="evsp-cdm-empty">No project files are attached. Add RAMS, surveys, asbestos information, competence evidence and waste records to the project pack.</div>';
-    const acceptedRams=attachments.filter(function(a){ return a.cdmCategory==="rams"&&a.cdmStatus==="accepted"; }).length;
-    return '<div class="evsp-cdm-grid"><section class="evsp-cdm-section full"><h3>Supporting documents</h3><p class="evsp-cdm-lead">Classify the files already stored in the project pack and record whether they have been received, reviewed or accepted. Accepted RAMS update the existing compliance item.</p>'
+    const acceptedRams=attachments.filter(function(a){ return a.cdmCategory==="rams"&&evspCdmSupportingReady(a); }).length;
+    return '<div class="evsp-cdm-grid"><section class="evsp-cdm-section full"><h3>Supporting documents</h3><p class="evsp-cdm-lead">Classify the files already stored in the project pack and record their provider, reviewer, review date and evidence. RAMS only update the existing compliance item when the accepted record has this controlled metadata.</p>'
       +(acceptedRams?'<div class="evsp-cdm-note" style="margin-bottom:10px"><strong>'+acceptedRams+' accepted RAMS file'+(acceptedRams===1?'':'s')+'</strong> recorded for this project.</div>':'')
       +'<div class="evsp-cdm-attachments">'+rows+'</div><div class="evsp-cdm-actions"><button type="button" class="evsp-cdm-btn primary" data-evsp-cdm-add-attachment>Add project document</button></div></section></div>';
   }
+  let evspCdmOpener=null;
   function evspCdmEnsureModal(){
     let backdrop=document.getElementById("evspCdmBackdrop");
     if(backdrop) return backdrop;
     backdrop=document.createElement("div");
     backdrop.id="evspCdmBackdrop";
     backdrop.className="wlc-backdrop evsp-cdm-backdrop";
-    backdrop.innerHTML='<div class="wlc evsp-cdm-dialog" role="dialog" aria-modal="true" aria-labelledby="evspCdmTitle">'
-      +'<div class="evsp-cdm-head"><div class="evsp-cdm-head-copy"><h2 id="evspCdmTitle">CDM 2015 project controls</h2><p>Duty holders, F10 decision, design risks, controlled documents and supporting evidence in one project record.</p></div><button type="button" class="evsp-cdm-close" data-evsp-cdm-close aria-label="Close">&times;</button></div>'
-      +'<nav class="evsp-cdm-tabs" aria-label="CDM project control sections">'
-      +'<button type="button" data-evsp-cdm-tab="overview">Overview and duty holders</button>'
-      +'<button type="button" data-evsp-cdm-tab="risks">Design risks</button>'
-      +'<button type="button" data-evsp-cdm-tab="documents">Document register</button>'
-      +'<button type="button" data-evsp-cdm-tab="supporting">Supporting files</button>'
-      +'</nav><div class="evsp-cdm-body" id="evspCdmBody"></div>'
+    backdrop.innerHTML='<div class="wlc evsp-cdm-dialog" role="dialog" aria-modal="true" aria-labelledby="evspCdmTitle" aria-describedby="evspCdmDescription" tabindex="-1">'
+      +'<div class="evsp-cdm-head"><div class="evsp-cdm-head-copy"><h2 id="evspCdmTitle">CDM 2015 project controls</h2><p id="evspCdmDescription">Duty holders, F10 decision, design risks, controlled documents and supporting evidence in one project record.</p></div><button type="button" class="evsp-cdm-close" data-evsp-cdm-close aria-label="Close CDM project controls">&times;</button></div>'
+      +'<nav class="evsp-cdm-tabs" role="tablist" aria-label="CDM project control sections">'
+      +'<button type="button" id="evspCdmTab-overview" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="overview">Overview and duty holders</button>'
+      +'<button type="button" id="evspCdmTab-risks" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="risks">Design risks</button>'
+      +'<button type="button" id="evspCdmTab-documents" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="documents">Document register</button>'
+      +'<button type="button" id="evspCdmTab-supporting" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="supporting">Supporting files</button>'
+      +'</nav><div class="evsp-cdm-body" id="evspCdmBody" role="tabpanel" tabindex="0"></div>'
       +'<div class="evsp-cdm-foot"><span class="evsp-cdm-foot-note">Working record only. Have a competent person review project-specific suitability before issue. <a href="https://www.hse.gov.uk/construction/cdm/2015/index.htm" target="_blank" rel="noopener">HSE CDM 2015 guidance</a>.</span><button type="button" class="hbtn" data-evsp-cdm-close>Close</button><button type="button" class="hbtn primary" data-evsp-cdm-export>Save CDM pack PDF</button></div>'
       +'</div>';
     document.body.appendChild(backdrop);
@@ -635,7 +795,13 @@
     const p=evspCdmGetPack(candidate);
     if(!p) return;
     const s=evspCdmEnsure(p), backdrop=evspCdmEnsureModal(), body=backdrop.querySelector("#evspCdmBody");
-    backdrop.querySelectorAll("[data-evsp-cdm-tab]").forEach(function(btn){ btn.classList.toggle("on",btn.dataset.evspCdmTab===s.activeTab); });
+    backdrop.querySelectorAll("[data-evsp-cdm-tab]").forEach(function(btn){
+      const selected=btn.dataset.evspCdmTab===s.activeTab;
+      btn.classList.toggle("on",selected);
+      btn.setAttribute("aria-selected",selected?"true":"false");
+      btn.tabIndex=selected?0:-1;
+    });
+    body.setAttribute("aria-labelledby","evspCdmTab-"+s.activeTab);
     if(s.activeTab==="risks") body.innerHTML=evspCdmRisksHTML(p);
     else if(s.activeTab==="documents") body.innerHTML=evspCdmDocumentsHTML(p);
     else if(s.activeTab==="supporting") body.innerHTML=evspCdmSupportingHTML(p);
@@ -652,6 +818,17 @@
   }
   function evspCdmRerenderPreserving(attribute,value,candidate){
     const body=document.getElementById("evspCdmBody"), scroll=body?body.scrollTop:0;
+    const active=body&&body.contains(document.activeElement)?document.activeElement:null;
+    const focusAttrs=["data-evsp-cdm-field","data-evsp-cdm-check","data-evsp-cdm-doc-field","data-evsp-cdm-risk-field","data-evsp-cdm-attachment-field"];
+    let focusToken=null;
+    if(active){
+      const focusAttr=focusAttrs.find(function(name){ return active.hasAttribute&&active.hasAttribute(name); });
+      if(focusAttr){
+        const row=active.closest("[data-evsp-cdm-doc-row],[data-evsp-cdm-risk-row],[data-evsp-cdm-attachment-row]");
+        const rowAttr=row?(row.hasAttribute("data-evsp-cdm-doc-row")?"data-evsp-cdm-doc-row":(row.hasAttribute("data-evsp-cdm-risk-row")?"data-evsp-cdm-risk-row":"data-evsp-cdm-attachment-row")):"";
+        focusToken={attr:focusAttr,value:active.getAttribute(focusAttr),rowAttr:rowAttr,rowValue:rowAttr?row.getAttribute(rowAttr):"",start:active.selectionStart,end:active.selectionEnd};
+      }
+    }
     evspCdmRenderModal(candidate);
     const next=document.getElementById("evspCdmBody");
     if(!next) return;
@@ -659,6 +836,15 @@
     if(attribute&&value){
       const row=Array.from(next.querySelectorAll("["+attribute+"]")).find(function(el){ return el.getAttribute(attribute)===value; });
       if(row&&row.tagName==="DETAILS") row.open=true;
+    }
+    if(focusToken){
+      let scope=next;
+      if(focusToken.rowAttr) scope=Array.from(next.querySelectorAll("["+focusToken.rowAttr+"]")).find(function(el){ return el.getAttribute(focusToken.rowAttr)===focusToken.rowValue; })||next;
+      const target=Array.from(scope.querySelectorAll("["+focusToken.attr+"]")).find(function(el){ return el.getAttribute(focusToken.attr)===focusToken.value; });
+      if(target){
+        target.focus();
+        if(typeof target.setSelectionRange==="function"&&typeof focusToken.start==="number") try{ target.setSelectionRange(focusToken.start,focusToken.end); }catch(_){ }
+      }
     }
   }
   function evspCdmOpen(tab,candidate){
@@ -668,6 +854,8 @@
       try{ if(typeof toast==="function") toast("This control workspace is currently available in Commercial mode. CDM duties may still apply to domestic work."); }catch(_){ }
       return false;
     }
+    evspCdmOpener=document.activeElement&&typeof document.activeElement.focus==="function"?document.activeElement:null;
+    evspCdmSyncCompliance(p);
     const s=evspCdmEnsure(p);
     if(["overview","risks","documents","supporting"].includes(tab)) s.activeTab=tab;
     evspCdmRenderModal(p);
@@ -682,6 +870,8 @@
     if(backdrop) backdrop.classList.remove("show");
     document.documentElement.classList.remove("evsp-cdm-modal-open");
     evspCdmNotifyChanged(candidate,true);
+    const opener=evspCdmOpener; evspCdmOpener=null;
+    if(opener&&document.contains(opener)) setTimeout(function(){ try{ opener.focus(); }catch(_){ } },0);
   }
   function evspCdmAddRisk(record,candidate){
     const p=evspCdmGetPack(candidate), s=evspCdmEnsure(p);
@@ -695,8 +885,23 @@
     const p=evspCdmGetPack(candidate)||{};
     return (Array.isArray(p.attachments)?p.attachments:[]).find(function(a){ return a&&String(a.id)===String(id); });
   }
+  function evspCdmSelectRoute(state,nextRoute){
+    const s=state&&typeof state==="object"?state:null;
+    if(!s||!["delivery_appointed","other_appointed","single_contractor"].includes(nextRoute)||s.route===nextRoute) return false;
+    s.route=nextRoute;
+    s.pdAppointmentConfirmed=false;
+    s.pcAppointmentConfirmed=false;
+    return true;
+  }
+  function evspCdmConfirmRiskRemoval(){
+    try{
+      if(typeof askConfirm==="function") return Promise.resolve(askConfirm({title:"Remove this design risk?",label:"The risk record and its design decision will be removed from this project. This cannot be undone.",okText:"Remove risk"})).catch(function(){ return false; });
+    }catch(_){ }
+    try{ return Promise.resolve(typeof window.confirm==="function"&&window.confirm("Remove this design risk? This cannot be undone.")); }catch(_){ return Promise.resolve(false); }
+  }
 
   document.addEventListener("click",function(event){
+    if(!event.target||typeof event.target.closest!=="function") return;
     const openButton=event.target.closest("[data-evsp-cdm-open]");
     if(openButton){ event.preventDefault(); evspCdmOpen(openButton.dataset.evspCdmOpen||"overview"); return; }
     const backdrop=document.getElementById("evspCdmBackdrop");
@@ -714,7 +919,8 @@
     const routeButton=event.target.closest("[data-evsp-cdm-route]");
     if(routeButton){
       const s=evspCdmEnsure();
-      s.route=s.route===routeButton.dataset.evspCdmRoute?"":routeButton.dataset.evspCdmRoute;
+      const nextRoute=routeButton.dataset.evspCdmRoute;
+      if(!evspCdmSelectRoute(s,nextRoute)) return;
       evspCdmRenderModal();
       evspCdmNotifyChanged();
       return;
@@ -735,18 +941,24 @@
     }
     const removeRisk=event.target.closest("[data-evsp-cdm-remove-risk]");
     if(removeRisk){
-      const s=evspCdmEnsure();
-      s.risks=s.risks.filter(function(r){ return r.id!==removeRisk.dataset.evspCdmRemoveRisk; });
-      evspCdmRenderModal(); evspCdmNotifyChanged(); return;
+      const riskId=removeRisk.dataset.evspCdmRemoveRisk;
+      evspCdmConfirmRiskRemoval().then(function(confirmed){
+        if(!confirmed) return;
+        const s=evspCdmEnsure();
+        s.risks=s.risks.filter(function(r){ return r.id!==riskId; });
+        evspCdmRenderModal(); evspCdmNotifyChanged();
+      });
+      return;
     }
     if(event.target.closest("[data-evsp-cdm-add-attachment]")){
       const input=document.getElementById("fileAttach");
       if(input){ input.value=""; input.click(); }
       return;
     }
-    if(event.target.closest("[data-evsp-cdm-export]")){ evspCdmExportPdf(); }
+    if(event.target.closest("[data-evsp-cdm-export]")){ evspCdmRequestExport(); }
   });
   document.addEventListener("input",function(event){
+    if(!event.target||typeof event.target.closest!=="function") return;
     const backdrop=event.target.closest("#evspCdmBackdrop");
     if(!backdrop) return;
     const p=evspCdmGetPack(); if(!p) return;
@@ -755,7 +967,7 @@
     const docField=event.target.closest("[data-evsp-cdm-doc-field]");
     if(docField){
       const row=docField.closest("[data-evsp-cdm-doc-row]");
-      if(row) evspCdmEnsure(p).docs[row.dataset.evspCdmDocRow][docField.dataset.evspCdmDocField]=docField.value;
+      if(row){ const s=evspCdmEnsure(p); s.docs[row.dataset.evspCdmDocRow][docField.dataset.evspCdmDocField]=docField.value; if(row.dataset.evspCdmDocRow==="f10") s.f10DocManaged=false; }
       evspCdmNotifyChanged(p); return;
     }
     const riskField=event.target.closest("[data-evsp-cdm-risk-field]");
@@ -778,57 +990,93 @@
   });
   document.addEventListener("change",function(event){
     const p=evspCdmGetPack();
-    if(event.target&&event.target.id==="fileAttach"){
-      setTimeout(function(){ const backdrop=document.getElementById("evspCdmBackdrop"); if(backdrop&&backdrop.classList.contains("show")) evspCdmRenderModal(p); },500);
-      return;
-    }
     const backdrop=event.target.closest&&event.target.closest("#evspCdmBackdrop");
     if(!backdrop||!p) return;
     const check=event.target.closest("[data-evsp-cdm-check]");
-    if(check){ evspCdmEnsure(p)[check.dataset.evspCdmCheck]=check.checked; evspCdmNotifyChanged(p); return; }
+    if(check){ evspCdmEnsure(p)[check.dataset.evspCdmCheck]=check.checked; evspCdmNotifyChanged(p); evspCdmRerenderPreserving("","",p); return; }
     if(event.target.matches("[data-evsp-cdm-f10-filed]")){
-      evspCdmEnsure(p).f10=event.target.checked?"filed":"tofile";
-      evspCdmRenderModal(p); evspCdmNotifyChanged(p); return;
+      const s=evspCdmEnsure(p); s.f10=event.target.checked?"filed":"tofile"; s.f10DecisionManaged=true;
+      evspCdmNotifyChanged(p); evspCdmRerenderPreserving("","",p); return;
     }
     const stateField=event.target.closest("[data-evsp-cdm-field]");
     const docField=event.target.closest("[data-evsp-cdm-doc-field]");
     const riskField=event.target.closest("[data-evsp-cdm-risk-field]");
     const attachmentField=event.target.closest("[data-evsp-cdm-attachment-field]");
-    if(stateField){ evspCdmEnsure(p)[stateField.dataset.evspCdmField]=stateField.value; evspCdmNotifyChanged(p); if(["f10LongAndTwenty","f10PersonDays"].includes(stateField.dataset.evspCdmField)) evspCdmRenderModal(p); }
-    else if(docField){ const row=docField.closest("[data-evsp-cdm-doc-row]"); const rowKey=row?row.dataset.evspCdmDocRow:""; if(row) evspCdmEnsure(p).docs[rowKey][docField.dataset.evspCdmDocField]=docField.value; evspCdmNotifyChanged(p); evspCdmRerenderPreserving("data-evsp-cdm-doc-row",rowKey,p); }
-    else if(riskField){ const row=riskField.closest("[data-evsp-cdm-risk-row]"); const rowKey=row?row.dataset.evspCdmRiskRow:""; const risk=row?evspCdmFindRisk(rowKey,p):null; if(risk){ const key=riskField.dataset.evspCdmRiskField; risk[key]=["initialLikelihood","initialSeverity","residualLikelihood","residualSeverity"].includes(key)?(riskField.value?Number(riskField.value):""):riskField.value; } evspCdmNotifyChanged(p); if(["status","initialLikelihood","initialSeverity","residualLikelihood","residualSeverity"].includes(riskField.dataset.evspCdmRiskField)) evspCdmRerenderPreserving("data-evsp-cdm-risk-row",rowKey,p); }
-    else if(attachmentField){ const row=attachmentField.closest("[data-evsp-cdm-attachment-row]"); const rowKey=row?row.dataset.evspCdmAttachmentRow:""; const attachment=row?evspCdmFindAttachment(rowKey,p):null; if(attachment) attachment[attachmentField.dataset.evspCdmAttachmentField]=attachmentField.value; evspCdmNotifyChanged(p); if(["cdmStatus","cdmCategory"].includes(attachmentField.dataset.evspCdmAttachmentField)) evspCdmRerenderPreserving("data-evsp-cdm-attachment-row",rowKey,p); }
+    if(stateField){ evspCdmEnsure(p)[stateField.dataset.evspCdmField]=stateField.value; evspCdmNotifyChanged(p); evspCdmRerenderPreserving("","",p); }
+    else if(docField){ const row=docField.closest("[data-evsp-cdm-doc-row]"); const rowKey=row?row.dataset.evspCdmDocRow:""; if(row){ const s=evspCdmEnsure(p); s.docs[rowKey][docField.dataset.evspCdmDocField]=docField.value; if(rowKey==="f10") s.f10DocManaged=false; } evspCdmNotifyChanged(p); evspCdmRerenderPreserving("data-evsp-cdm-doc-row",rowKey,p); }
+    else if(riskField){ const row=riskField.closest("[data-evsp-cdm-risk-row]"); const rowKey=row?row.dataset.evspCdmRiskRow:""; const risk=row?evspCdmFindRisk(rowKey,p):null; if(risk){ const key=riskField.dataset.evspCdmRiskField; risk[key]=["initialLikelihood","initialSeverity","residualLikelihood","residualSeverity"].includes(key)?(riskField.value?Number(riskField.value):""):riskField.value; } evspCdmNotifyChanged(p); evspCdmRerenderPreserving("data-evsp-cdm-risk-row",rowKey,p); }
+    else if(attachmentField){ const row=attachmentField.closest("[data-evsp-cdm-attachment-row]"); const rowKey=row?row.dataset.evspCdmAttachmentRow:""; const attachment=row?evspCdmFindAttachment(rowKey,p):null; if(attachment) attachment[attachmentField.dataset.evspCdmAttachmentField]=attachmentField.value; evspCdmNotifyChanged(p); evspCdmRerenderPreserving("data-evsp-cdm-attachment-row",rowKey,p); }
   });
   document.addEventListener("evsp:attachments-changed",function(){
     const p=evspCdmGetPack(), backdrop=document.getElementById("evspCdmBackdrop");
-    if(p&&backdrop&&backdrop.classList.contains("show")) evspCdmRenderModal(p);
+    if(!p) return;
+    evspCdmNotifyChanged(p,true);
+    if(backdrop&&backdrop.classList.contains("show")) evspCdmRenderModal(p);
   });
   document.addEventListener("keydown",function(event){
-    if(event.key!=="Escape") return;
     const backdrop=document.getElementById("evspCdmBackdrop");
-    if(backdrop&&backdrop.classList.contains("show")) evspCdmClose();
-  });
+    if(!backdrop||!backdrop.classList.contains("show")) return;
+    event.stopImmediatePropagation();
+    if(event.key==="Escape"){ event.preventDefault(); evspCdmClose(); return; }
+    const tabs=Array.from(backdrop.querySelectorAll('[role="tab"]'));
+    const tabIndex=tabs.indexOf(document.activeElement);
+    if(tabIndex>=0&&["ArrowLeft","ArrowRight","Home","End"].includes(event.key)){
+      event.preventDefault();
+      let next=tabIndex;
+      if(event.key==="ArrowLeft") next=(tabIndex+tabs.length-1)%tabs.length;
+      if(event.key==="ArrowRight") next=(tabIndex+1)%tabs.length;
+      if(event.key==="Home") next=0;
+      if(event.key==="End") next=tabs.length-1;
+      tabs[next].focus(); tabs[next].click(); return;
+    }
+    if(event.key!=="Tab") return;
+    const focusable=Array.from(backdrop.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')).filter(function(el){ return el.offsetParent!==null; });
+    if(!focusable.length){ event.preventDefault(); backdrop.querySelector(".evsp-cdm-dialog").focus(); return; }
+    const first=focusable[0], last=focusable[focusable.length-1];
+    if(event.shiftKey&&document.activeElement===first){ event.preventDefault(); last.focus(); }
+    else if(!event.shiftKey&&document.activeElement===last){ event.preventDefault(); first.focus(); }
+  },true);
 
   function evspCdmPreflight(candidate){
-    const p=evspCdmGetPack(candidate)||{}, s=evspCdmEnsure(p), a=evspCdmAssessment(p), missing=[];
+    const p=evspCdmGetPack(candidate)||{}, s=evspCdmNormalisePack(p.cdm), a=evspCdmAssessment(p), facts=evspCdmPlanFacts(p), missing=[];
     if(!evspCdmText(p.name).trim()) missing.push("Project name is blank");
     if(!evspCdmText(p.address).trim()) missing.push("Site address is blank");
     if(!s.route) missing.push("Duty-holder arrangement is not selected");
+    if(s.route&&!evspCdmText(s.client||p.custName).trim()) missing.push("Commercial client is blank");
+    if(s.route==="single_contractor"&&!s.contractor.trim()) missing.push("Single contractor is blank");
     if(s.route&&s.route!=="single_contractor"){
       if(!s.pd.trim()) missing.push("Principal designer is blank");
       if(!s.pc.trim()) missing.push("Principal contractor is blank");
-      if(!s.appointmentsConfirmed||!s.appointmentDate||!s.appointmentEvidence.trim()) missing.push("Written appointment date or evidence is incomplete");
+      if(!evspCdmAppointmentReady(s,"pd")) missing.push("Principal designer written appointment needs separate confirmation, evidence and a valid date no later than the planned start");
+      if(!evspCdmAppointmentReady(s,"pc")) missing.push("Principal contractor written appointment needs separate confirmation, evidence and a valid date no later than the planned start");
     }
+    if(!s.startDate||!s.finishDate) missing.push("Planned construction start or finish date is blank");
+    else if(!evspCdmProgrammeValid(s)) missing.push("Planned finish date is before the planned start date");
+    if(!s.siteManager.trim()) missing.push("Site manager or supervisor is blank");
+    if(!s.firstAider.trim()) missing.push("First-aid appointment is blank");
+    if(!s.welfare.trim()) missing.push("Welfare arrangements are blank");
+    if(!s.induction.trim()) missing.push("Induction and consultation arrangements are blank");
+    if(!s.emergency.trim()) missing.push("Emergency arrangements are blank");
+    if(!s.monitoring.trim()) missing.push("Monitoring and review arrangements are blank");
+    if(evspCdmPublicContext(p,facts)&&!s.publicProtection.trim()) missing.push("Public-protection and segregation arrangements are blank for the marked plan context");
     if(a.f10.code==="incomplete") missing.push("F10 threshold assessment is incomplete");
-    if(a.f10.code==="notifiable"&&!evspCdmF10FiledComplete(s)) missing.push("F10 filing reference or submission date is incomplete");
-    if(!evspCdmDocReady(s.docs.cpp)) missing.push("Construction phase plan needs issued or accepted status plus owner, revision and valid date");
+    if(a.f10.code==="notifiable"&&!evspCdmF10FiledComplete(s)) missing.push("F10 filing needs a reference and a non-future submission date no later than the planned start");
+    if(!evspCdmDocReady(s.docs.cpp,s,"cpp")) missing.push("Construction phase plan needs issued or accepted status, owner, revision and a non-future date no later than the planned start");
     EVSP_CDM_DOC_DEFS.forEach(function(def){
       const r=s.docs[def.k];
-      if(["issued","accepted"].includes(r.status)&&!evspCdmDocReady(r)&&def.k!=="cpp") missing.push(def.title+" has incomplete controlled-document metadata");
-      if(r.status==="not_applicable"&&!evspCdmDocReady(r)) missing.push(def.title+" is marked not applicable without a reason");
+      if(["issued","accepted"].includes(r.status)&&!evspCdmDocReady(r,s,def.k)&&def.k!=="cpp") missing.push(def.title+" has incomplete, future-dated or late controlled-document evidence");
+      if(r.status==="not_applicable"&&!evspCdmDocReady(r,s,def.k)) missing.push(def.title+" is marked not applicable without a reason");
     });
+    const stats=evspCdmDocStats(s), documentThreshold=Math.max(1,Math.ceil(stats.total*.6));
+    if(stats.ready<documentThreshold) missing.push("Controlled document register has "+stats.ready+" of "+stats.total+" ready records; at least "+documentThreshold+" must be completed or justified");
     if(!s.risks.length) missing.push("Designer risk register is empty");
-    s.risks.forEach(function(r,i){ if(!r.hazard.trim()||!r.decision.trim()||!r.residual.trim()||!r.owner.trim()||r.status==="open") missing.push("Design risk "+(i+1)+" needs an owner, design action, residual-risk record and controlled status"); });
+    s.risks.forEach(function(r,i){
+      if(!r.hazard.trim()||!r.decision.trim()||!r.residual.trim()||!r.owner.trim()||!evspCdmCleanDate(r.dueDate)||r.status==="open") missing.push("Design risk "+(i+1)+" needs a due date, owner, design action, residual-risk record and controlled status");
+      if(!r.initialLikelihood||!r.initialSeverity||!r.residualLikelihood||!r.residualSeverity) missing.push("Design risk "+(i+1)+" needs complete initial and residual ratings");
+    });
+    (Array.isArray(p.attachments)?p.attachments:[]).forEach(function(file){
+      if(file&&file.cdmStatus==="accepted"&&!evspCdmSupportingReady(file)) missing.push((file.name||"Supporting document")+" is marked accepted without complete provider, reviewer, review date and acceptance evidence");
+    });
     return missing;
   }
   function evspCdmFormatDate(value){
@@ -877,12 +1125,16 @@
   }
   function evspCdmPdfHeading(ctx,text,level){
     const size=level===2?11.5:13.5;
-    evspCdmPdfEnsure(ctx,10);
-    ctx.doc.setTextColor(22,35,46);
-    ctx.doc.setFont("helvetica","bold");
-    ctx.doc.setFontSize(size);
-    ctx.doc.text(text,ctx.M,ctx.y);
-    ctx.y+=level===2?6:7;
+    const leading=level===2?5.4:6.2, lines=ctx.doc.splitTextToSize(evspCdmText(text),ctx.PW-2*ctx.M);
+    lines.forEach(function(line){
+      evspCdmPdfEnsure(ctx,leading+1);
+      ctx.doc.setTextColor(22,35,46);
+      ctx.doc.setFont("helvetica","bold");
+      ctx.doc.setFontSize(size);
+      ctx.doc.text(line,ctx.M,ctx.y);
+      ctx.y+=leading;
+    });
+    ctx.y+=1;
   }
   function evspCdmPdfParagraph(ctx,text,options){
     options=options||{};
@@ -891,21 +1143,26 @@
     ctx.doc.setFontSize(options.size||9.5);
     ctx.doc.setTextColor(options.dim?84:42,options.dim?103:57,options.dim?122:70);
     const lines=ctx.doc.splitTextToSize(text,options.width||ctx.PW-2*ctx.M);
-    const h=lines.length*(options.leading||4.6)+(options.after==null?3:options.after);
-    evspCdmPdfEnsure(ctx,h);
-    ctx.doc.text(lines,ctx.M,ctx.y);
-    ctx.y+=h;
+    const leading=options.leading||4.6;
+    lines.forEach(function(line){
+      evspCdmPdfEnsure(ctx,leading+1);
+      ctx.doc.text(line,ctx.M,ctx.y);
+      ctx.y+=leading;
+    });
+    ctx.y+=options.after==null?3:options.after;
   }
   function evspCdmPdfKeyValues(ctx,rows){
     rows.forEach(function(row){
       const label=evspCdmText(row[0]), value=evspCdmText(row[1]).trim()||"Not recorded";
       const labelW=44, valueLines=ctx.doc.splitTextToSize(value,ctx.PW-2*ctx.M-labelW-3);
-      const h=Math.max(5,valueLines.length*4.2+1);
-      evspCdmPdfEnsure(ctx,h);
-      ctx.doc.setFontSize(9);
-      ctx.doc.setFont("helvetica","bold"); ctx.doc.setTextColor(84,103,122); ctx.doc.text(label,ctx.M,ctx.y);
-      ctx.doc.setFont("helvetica","normal"); ctx.doc.setTextColor(22,35,46); ctx.doc.text(valueLines,ctx.M+labelW,ctx.y);
-      ctx.y+=h;
+      valueLines.forEach(function(line,index){
+        evspCdmPdfEnsure(ctx,5.2);
+        ctx.doc.setFontSize(9);
+        if(index===0){ ctx.doc.setFont("helvetica","bold"); ctx.doc.setTextColor(84,103,122); ctx.doc.text(label,ctx.M,ctx.y); }
+        ctx.doc.setFont("helvetica","normal"); ctx.doc.setTextColor(22,35,46); ctx.doc.text(line,ctx.M+labelW,ctx.y);
+        ctx.y+=4.2;
+      });
+      ctx.y+=1;
     });
     ctx.y+=2;
   }
@@ -919,17 +1176,26 @@
       headers.forEach(function(h,i){ doc.text(evspCdmText(h),x+padding,ctx.y+5.2); x+=widths[i]; });
       ctx.y+=8;
     };
+    const continueTable=function(){
+      doc.addPage(); ctx.y=17; doc.setTextColor(22,35,46); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text((ctx.pageTitle||"Register")+" (continued)",ctx.M,ctx.y); ctx.y+=7; drawHeader();
+    };
     drawHeader();
     rows.forEach(function(row,rowIndex){
       const cells=row.map(function(cell,i){ return doc.splitTextToSize(evspCdmText(cell)||" ",Math.max(4,widths[i]-2*padding)); });
       const lines=Math.max.apply(null,cells.map(function(c){ return c.length; }));
-      const h=Math.max(7,lines*lineH+2*padding);
-      if(ctx.y+h>ctx.PH-18){ doc.addPage(); ctx.y=17; doc.setTextColor(22,35,46); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text((ctx.pageTitle||"Register")+" (continued)",ctx.M,ctx.y); ctx.y+=7; drawHeader(); }
-      if(rowIndex%2===0){ doc.setFillColor(247,249,251); doc.rect(ctx.M,ctx.y,ctx.PW-2*ctx.M,h,"F"); }
-      doc.setDrawColor(221,228,234); doc.setLineWidth(.15); doc.line(ctx.M,ctx.y+h,ctx.PW-ctx.M,ctx.y+h);
-      let x=ctx.M; doc.setTextColor(42,57,70); doc.setFont("helvetica","normal"); doc.setFontSize(7.2);
-      cells.forEach(function(cell,i){ doc.text(cell,x+padding,ctx.y+padding+2.8); x+=widths[i]; });
-      ctx.y+=h;
+      let offset=0;
+      while(offset<lines){
+        let roomLines=Math.floor((ctx.PH-18-ctx.y-2*padding)/lineH);
+        if(roomLines<1){ continueTable(); roomLines=Math.max(1,Math.floor((ctx.PH-18-ctx.y-2*padding)/lineH)); }
+        const take=Math.min(lines-offset,roomLines), h=Math.max(7,take*lineH+2*padding);
+        if(ctx.y+h>ctx.PH-18){ continueTable(); continue; }
+        if(rowIndex%2===0){ doc.setFillColor(247,249,251); doc.rect(ctx.M,ctx.y,ctx.PW-2*ctx.M,h,"F"); }
+        doc.setDrawColor(221,228,234); doc.setLineWidth(.15); doc.line(ctx.M,ctx.y+h,ctx.PW-ctx.M,ctx.y+h);
+        let x=ctx.M; doc.setTextColor(42,57,70); doc.setFont("helvetica","normal"); doc.setFontSize(7.2);
+        cells.forEach(function(cell,i){ const chunk=cell.slice(offset,offset+take); doc.text(chunk.length?chunk:[" "],x+padding,ctx.y+padding+2.8); x+=widths[i]; });
+        ctx.y+=h; offset+=take;
+        if(offset<lines) continueTable();
+      }
     });
     ctx.y+=5;
   }
@@ -946,17 +1212,32 @@
       doc.text(page+" / "+pages,ctx.PW-ctx.M,ctx.PH-7,{align:"right"});
     }
   }
-  function evspCdmExportPdf(candidate){
+  function evspCdmDraftExportMessage(missing){
+    return "CDM pack preflight found "+missing.length+" gap"+(missing.length===1?"":"s")+":\n\n- "+missing.slice(0,7).join("\n- ")+(missing.length>7?"\n- and "+(missing.length-7)+" more":"")+"\n\nSave a draft PDF anyway?";
+  }
+  function evspCdmRequestExport(candidate){
+    const p=evspCdmGetPack(candidate);
+    if(!p) return Promise.resolve(false);
+    const missing=evspCdmPreflight(p);
+    if(missing.length&&typeof askConfirm==="function"){
+      return Promise.resolve(askConfirm({title:"Save a draft CDM PDF?",label:evspCdmDraftExportMessage(missing),okText:"Save draft PDF"})).then(function(confirmed){
+        return confirmed?evspCdmExportPdf(p,true):false;
+      }).catch(function(){ return false; });
+    }
+    return Promise.resolve(evspCdmExportPdf(p,false));
+  }
+  function evspCdmExportPdf(candidate,draftConfirmed){
     const p=evspCdmGetPack(candidate);
     if(!p) return false;
+    if(p.mode==="domestic"){ try{ if(typeof toast==="function") toast("This control workspace is currently available in Commercial mode. CDM duties may still apply to domestic work."); }catch(_){ } return false; }
     if(!window.jspdf||!window.jspdf.jsPDF){ try{ if(typeof toast==="function") toast("PDF engine unavailable. Reload and try again."); }catch(_){ } return false; }
+    evspCdmSyncCompliance(p);
     const missing=evspCdmPreflight(p);
     if(missing.length){
-      const message="CDM pack preflight found "+missing.length+" gap"+(missing.length===1?"":"s")+":\n\n- "+missing.slice(0,7).join("\n- ")+(missing.length>7?"\n- and "+(missing.length-7)+" more":"")+"\n\nSave a draft PDF anyway?";
-      if(typeof window.confirm==="function"&&!window.confirm(message)) return false;
+      const message=evspCdmDraftExportMessage(missing);
+      if(!draftConfirmed&&typeof window.confirm==="function"&&!window.confirm(message)) return false;
     }
-    evspCdmSyncCompliance(p);
-    const s=evspCdmEnsure(p), a=evspCdmAssessment(p), facts=evspCdmPlanFacts(p), doc=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait"}), ctx=evspCdmPdfContext(doc,p);
+    const s=evspCdmEnsure(p), a=evspCdmAssessment(p), ready=a.complete&&missing.length===0, facts=evspCdmPlanFacts(p), doc=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait"}), ctx=evspCdmPdfContext(doc,p);
     const today=new Date().toLocaleDateString("en-GB");
 
     doc.setFillColor(22,35,46); doc.rect(0,0,210,297,"F");
@@ -970,10 +1251,10 @@
     doc.setFontSize(9); doc.setTextColor(205,216,226);
     doc.text("Project reference",20,143); doc.text(p.jobRef||"Not recorded",70,143);
     doc.text("Duty-holder arrangement",20,153); doc.text(doc.splitTextToSize(evspCdmRouteLabel(s.route),110),70,153);
-    doc.text("Readiness",20,169); doc.text(a.complete?"Ready for competent-person review":"Draft with "+missing.length+" preflight gap"+(missing.length===1?"":"s"),70,169);
+    doc.text("Readiness",20,169); doc.text(ready?"Ready for competent-person review":"Draft with "+missing.length+" preflight gap"+(missing.length===1?"":"s"),70,169);
     doc.text("Generated",20,179); doc.text(today,70,179);
-    doc.setFillColor(a.complete?75:206,a.complete?160:158,a.complete?105:46); doc.roundedRect(20,199,170,18,3,3,"F");
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text(a.complete?"CONTROL RECORD READY FOR REVIEW":"DRAFT CONTROL RECORD",105,210,{align:"center"});
+    doc.setFillColor(ready?75:206,ready?160:158,ready?105:46); doc.roundedRect(20,199,170,18,3,3,"F");
+    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text(ready?"CONTROL RECORD READY FOR REVIEW":"DRAFT CONTROL RECORD",105,210,{align:"center"});
     doc.setFont("helvetica","normal"); doc.setTextColor(174,191,205); doc.setFontSize(8); doc.text(doc.splitTextToSize("Working record only. A competent person and the appointed duty holders must review project-specific suitability and completeness before issue.",170),20,239);
     doc.text("Official guidance: hse.gov.uk/construction/cdm/2015/",20,265);
 
@@ -982,14 +1263,16 @@
     evspCdmPdfKeyValues(ctx,[
       ["Project",p.name],["Site",[p.address,p.postcode].filter(Boolean).join(", ")],["Project reference",p.jobRef],["Client",s.client||p.custName],["Client contact",s.clientContact],
       ["Arrangement",evspCdmRouteLabel(s.route)],["Single contractor",s.route==="single_contractor"?s.contractor:"Not applicable on recorded multi-contractor route"],["Principal designer",s.route==="single_contractor"?"Not applicable on recorded single-contractor route":s.pd],["Principal contractor",s.route==="single_contractor"?"Not applicable on recorded single-contractor route":s.pc],
-      ["Appointment confirmed",s.route==="single_contractor"?"Not applicable":(s.appointmentsConfirmed?"Yes":"No")],["Written appointment date",s.route==="single_contractor"?"Not applicable":evspCdmFormatDate(s.appointmentDate)],["Appointment evidence",s.route==="single_contractor"?"Not applicable":s.appointmentEvidence],
+      ["PD appointment confirmed",s.route==="single_contractor"?"Not applicable":(s.pdAppointmentConfirmed?"Yes":"No")],["PD appointment date",s.route==="single_contractor"?"Not applicable":evspCdmFormatDate(s.pdAppointmentDate)],["PD appointment evidence",s.route==="single_contractor"?"Not applicable":s.pdAppointmentEvidence],
+      ["PC appointment confirmed",s.route==="single_contractor"?"Not applicable":(s.pcAppointmentConfirmed?"Yes":"No")],["PC appointment date",s.route==="single_contractor"?"Not applicable":evspCdmFormatDate(s.pcAppointmentDate)],["PC appointment evidence",s.route==="single_contractor"?"Not applicable":s.pcAppointmentEvidence],
+      ["Legacy combined appointment record",s.route==="single_contractor"?"Not applicable":((s.appointmentsConfirmed||s.appointmentDate||s.appointmentEvidence)?"Retained for reference only; separate verification required":"None recorded")],
       ["Site manager",s.siteManager],["First aider",s.firstAider],["Safety adviser",s.safetyAdviser],["Construction programme",evspCdmFormatDate(s.startDate)+" to "+evspCdmFormatDate(s.finishDate)]
     ]);
     evspCdmPdfHeading(ctx,"F10 notification decision",1);
     evspCdmPdfKeyValues(ctx,[
       ["30 days and 20 workers","Longer than 30 working days and more than 20 workers simultaneously: "+evspCdmAnswerLabel(s.f10LongAndTwenty)],
       ["500 person-days","Exceeds 500 person-days: "+evspCdmAnswerLabel(s.f10PersonDays)],
-      ["Decision",a.f10.label],["Filed with HSE",evspCdmF10FiledComplete(s)?"Yes":"No or incomplete"],["HSE reference",s.f10Ref],["Date filed",evspCdmFormatDate(s.f10Date)]
+      ["Decision",a.f10.label],["Filed with HSE",evspCdmF10FiledComplete(s)?"Yes":(s.f10==="filed"?"Historical filing details recorded; current validation incomplete":"No or incomplete")],["HSE reference",s.f10Ref],["Date filed",evspCdmFormatDate(s.f10Date)]
     ]);
     evspCdmPdfParagraph(ctx,"Notification threshold: construction work scheduled to last longer than 30 working days and have more than 20 workers working simultaneously at any point, or construction work scheduled to exceed 500 person-days.",{dim:true,size:8.3});
 
@@ -999,8 +1282,8 @@
     evspCdmPdfHeading(ctx,"Existing environment and electrical information",1);
     evspCdmPdfKeyValues(ctx,[
       ["Supply",p.supplyRating||p.mainFuse],["Earthing",p.earthing],["Capacity note",p.capacityNote],["DNO reference",p.dnoRef],
-      ["Plan safety controls",facts.herasCount+" barrier routes; "+facts.coneCount+" cone routes; "+facts.exclusionCount+" exclusion zones; "+facts.pedestrianCount+" pedestrian routes"],
-      ["Site setup",facts.siteSetupCount+" setup items; "+facts.signboardCount+" safety signboards; "+facts.firstAidCount+" first-aid markers; "+facts.fireCount+" fire markers"]
+      ["Plan safety controls",evspCdmCountPhrases([[facts.herasCount,"barrier route"],[facts.coneCount,"cone route"],[facts.exclusionCount,"exclusion zone"],[facts.pedestrianCount,"pedestrian route"]],"None marked")],
+      ["Site setup",evspCdmCountPhrases([[facts.siteSetupCount,"site-setup item"],[facts.signboardCount,"safety signboard"],[facts.firstAidCount,"first-aid marker"],[facts.fireCount,"fire marker"]],"None marked")]
     ]);
     evspCdmPdfHeading(ctx,"Known constraints and project notes",1);
     evspCdmPdfParagraph(ctx,p.notes,{empty:"No project notes have been recorded."});
@@ -1009,7 +1292,7 @@
 
     evspCdmPdfPage(ctx,"Controlled document register");
     evspCdmPdfTable(ctx,["Document","Status","Owner","Rev / date"],EVSP_CDM_DOC_DEFS.map(function(def){
-      const r=s.docs[def.k]; return [def.title,EVSP_CDM_DOC_STATUS_LABEL[r.status],r.owner,[r.revision,evspCdmFormatDate(r.date)].filter(function(x){return x&&x!=="Not recorded";}).join(" / ")];
+      const r=s.docs[def.k], controlled=evspCdmDocReady(r,s,def.k); return [def.title,EVSP_CDM_DOC_STATUS_LABEL[r.status]+((["issued","accepted"].includes(r.status)&&!controlled)?"; evidence incomplete":""),r.owner,[r.revision,evspCdmFormatDate(r.date)].filter(function(x){return x&&x!=="Not recorded";}).join(" / ")];
     }),[76,30,40,34]);
     EVSP_CDM_DOC_DEFS.forEach(function(def){ const r=s.docs[def.k]; if(r.notes){ evspCdmPdfHeading(ctx,def.title,2); evspCdmPdfParagraph(ctx,r.notes,{size:8.5}); } });
 
@@ -1019,7 +1302,7 @@
       evspCdmPdfEnsure(ctx,42);
       evspCdmPdfHeading(ctx,(index+1)+". "+(r.hazard||"Unnamed design risk"),1);
       const initial=Number(r.initialLikelihood)*Number(r.initialSeverity)||0, residual=Number(r.residualLikelihood)*Number(r.residualSeverity)||0;
-      evspCdmPdfKeyValues(ctx,[["Detected from",r.source],["Who may be affected",r.who],["Hierarchy",(EVSP_CDM_HIERARCHY.find(function(x){return x[0]===r.hierarchy;})||["",r.hierarchy])[1]],["Initial rating",initial?initial+" (L"+r.initialLikelihood+" x S"+r.initialSeverity+")":"Not rated"],["Design decision",r.decision],["Residual risk",r.residual],["Residual rating",residual?residual+" (L"+r.residualLikelihood+" x S"+r.residualSeverity+")":"Not rated"],["Owner / due",[r.owner,evspCdmFormatDate(r.dueDate)].filter(function(x){return x&&x!=="Not recorded";}).join(" / ")],["Status",evspCdmRiskStatusLabel(r.status)]]);
+      evspCdmPdfKeyValues(ctx,[["Source / location",r.source],["Who may be affected",r.who],["Hierarchy",(EVSP_CDM_HIERARCHY.find(function(x){return x[0]===r.hierarchy;})||["",r.hierarchy])[1]],["Initial rating",initial?initial+" (L"+r.initialLikelihood+" x S"+r.initialSeverity+")":"Not rated"],["Design decision",r.decision],["Residual risk",r.residual],["Residual rating",residual?residual+" (L"+r.residualLikelihood+" x S"+r.residualSeverity+")":"Not rated"],["Owner / due",[r.owner,evspCdmFormatDate(r.dueDate)].filter(function(x){return x&&x!=="Not recorded";}).join(" / ")],["Status",evspCdmRiskStatusLabel(r.status)]]);
     });
 
     evspCdmPdfPage(ctx,"Construction phase plan arrangements");
@@ -1028,7 +1311,8 @@
     evspCdmPdfHeading(ctx,"Minimum site rules for project review",1);
     ["Sign in, receive the site induction and follow the agreed access route.","Use only authorised isolations, permits and test equipment.","Keep pedestrians and vehicles outside the controlled work area.","Do not disturb ground or building fabric until the relevant information and permit have been checked.","Maintain housekeeping, safe storage, welfare and emergency access throughout the shift.","Report design changes, defects, incidents and near misses promptly."].forEach(function(rule,index){ evspCdmPdfParagraph(ctx,(index+1)+". "+rule,{size:9,after:1}); });
     evspCdmPdfHeading(ctx,"Sign-off",1);
-    evspCdmPdfTable(ctx,["Role","Name","Signature","Date"],[["Prepared by"," "," "," "],["Principal contractor review"," "," "," "],["Principal designer coordination review"," "," "," "]],[46,46,48,40]);
+    const signoffRows=s.route==="single_contractor"?[["Prepared by"," "," "," "],["Contractor review"," "," "," "],["Client review"," "," "," "]]:[["Prepared by"," "," "," "],["Principal contractor review"," "," "," "],["Principal designer coordination review"," "," "," "]];
+    evspCdmPdfTable(ctx,["Role","Name","Signature","Date"],signoffRows,[46,46,48,40]);
 
     evspCdmPdfPage(ctx,"Induction and briefing registers");
     evspCdmPdfHeading(ctx,"Site induction record",1);
@@ -1067,15 +1351,22 @@
     if(attachments.length) evspCdmPdfTable(ctx,["File","Type","Review","Provided by"],attachments.map(function(file){
       const category=(EVSP_CDM_SUPPORT_CATEGORIES.find(function(x){return x[0]===file.cdmCategory;})||["","Unclassified"])[1];
       const status=(EVSP_CDM_SUPPORT_STATUSES.find(function(x){return x[0]===file.cdmStatus;})||["","Not reviewed"])[1];
-      return [file.name,category,status,file.cdmProvider||""];
+      return [file.name,category,status+(file.cdmStatus==="accepted"&&!evspCdmSupportingReady(file)?"; evidence incomplete":""),file.cdmProvider||""];
     }),[72,42,32,34]);
     else evspCdmPdfParagraph(ctx,"No supporting files are attached.",{bold:true});
+    attachments.forEach(function(file,index){
+      if(!(file.cdmReviewer||file.cdmReviewDate||file.cdmRevision||file.cdmReviewNote)) return;
+      evspCdmPdfHeading(ctx,(index+1)+". "+(file.name||"Supporting document"),2);
+      evspCdmPdfKeyValues(ctx,[["Reviewed by",file.cdmReviewer],["Review date",evspCdmFormatDate(file.cdmReviewDate)],["Revision / reference",file.cdmRevision],["Review evidence / note",file.cdmReviewNote]]);
+    });
     evspCdmPdfHeading(ctx,"Handover confirmation",1);
-    evspCdmPdfTable(ctx,["Role","Name","Signature","Date"],[["File compiled by"," "," "," "],["Principal designer handover"," "," "," "],["Client receipt"," "," "," "]],[46,46,48,40]);
+    const handoverRows=s.route==="single_contractor"?[["Project records compiled by"," "," "," "],["Contractor handover"," "," "," "],["Client receipt"," "," "," "]]:[["File compiled by"," "," "," "],["Principal designer handover"," "," "," "],["Client receipt"," "," "," "]];
+    evspCdmPdfTable(ctx,["Role","Name","Signature","Date"],handoverRows,[46,46,48,40]);
     evspCdmPdfParagraph(ctx,"Official HSE CDM 2015 guidance: https://www.hse.gov.uk/construction/cdm/2015/",{dim:true,size:8});
 
     evspCdmPdfFooters(ctx);
-    const filename=(p.name||"EV-site").replace(/[^a-z0-9_-]+/gi,"_").replace(/^_+|_+$/g,"")+"_CDM_project_controls.pdf";
+    const safeName=(p.name||"EV-site").replace(/[^a-z0-9_-]+/gi,"_").replace(/^_+|_+$/g,"")||"EV-site";
+    const filename=safeName+"_CDM_project_controls.pdf";
     doc.save(filename);
     try{ if(typeof toast==="function") toast("CDM project controls PDF saved"); }catch(_){ }
     return true;
@@ -1096,6 +1387,14 @@
     suggestions:evspCdmSuggestions,
     f10Verdict:evspCdmF10Verdict,
     f10FiledComplete:evspCdmF10FiledComplete,
+    preflight:evspCdmPreflight,
+    documentReady:evspCdmDocReady,
+    supportingReady:evspCdmSupportingReady,
+    appointmentReady:evspCdmAppointmentReady,
+    selectRoute:evspCdmSelectRoute,
+    confirmRiskRemoval:evspCdmConfirmRiskRemoval,
+    dateNotFuture:evspCdmDateNotFuture,
+    programmeValid:evspCdmProgrammeValid,
     documentDefinitions:EVSP_CDM_DOC_DEFS.slice()
   };
   EVSP_CDM_API.docDefs=EVSP_CDM_API.documentDefinitions;

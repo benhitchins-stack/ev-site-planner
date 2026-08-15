@@ -18,11 +18,11 @@
 | 03 | **Sparks** | AI install assistant trained on EV regs (OZEV, DNO, BS 7671, equipment spec) | Planned |
 | 04 | **Foreman** | Project management built for EV installs — schedule engineers, track progress | Planned |
 
-Products have **distinct names** tied loosely to the master brand. "Conductor" (cable = conductor), "Sparks" (trade slang for electrician), "Foreman" (site management). These are proposals — adjust freely.
+Products have **distinct names** tied loosely to the master brand. "Conductor" refers to cable, "Sparks" uses trade slang for an electrician and "Foreman" refers to site management. These names remain provisional.
 
 ### Sources
-- **Real product:** `EV Site Planner (standalone).html` provided by the founder. The Site Planner UI kit is a faithful recreation; working decode at `uploads/planner_decoded.html`.
-- **Brand:** original ground-up design, chosen from a 3-direction exploration at `explorations/Company Brand Directions.html`. Accent refreshed from the original copper to a vivid electric blue (`#1E6BFF`) — more energetic and on-theme for EV/electric, while keeping the cream chrome + slate-navy ink structure.
+- **Product source:** the Site Planner establishes the interface patterns and installer terminology used across the suite.
+- **Brand source:** the selected direction uses a vivid electric blue (`#1E6BFF`) with cream chrome and slate-navy ink.
 
 ---
 
@@ -36,7 +36,7 @@ Products have **distinct names** tied loosely to the master brand. "Conductor" (
 - **Trust signal:** *"Built by EV installers, for the trade"* — use this, not a personal name.
 - **Tone examples:**
   - Hero: *"The toolkit for building the charging network."*
-  - Installer voice: *"Built by someone who's pulled real cable. Not a dev who Googled 'EV charger.'"*
+  - Installer voice: *"Built by EV installers, for the trade."*
   - Empty state: *"No photos yet — add one to start marking up."*
   - Status: `Within standard package` · `DNO application required` · `Scale not set`
 - **No emoji.** The equipment colour palette carries visual meaning instead.
@@ -129,11 +129,11 @@ Runtime namespace: **`EVInfrastructureToolsDesignSystem_7296fd`**.
 
 ---
 
-## Caveats & open questions
+## Implementation notes
 
-1. **Product names** (Conductor/Sparks/Foreman) are my proposals — confirm or rename.
-2. **Fonts** are Google Fonts CDN (Bricolage Grotesque, Hanken Grotesk, Space Grotesk). Want them self-hosted? Send the woff2s or say the word and I'll write the `@font-face` rules.
-3. **Icons** are Lucide — export the Site Planner's own glyphs and I'll swap them in.
-4. **Dashboard/site-map/mobile** kits are brand-consistent companions, not recreations (only Site Planner source was available). Share those screens and I'll align them precisely.
-5. **Emblem** is built from SVG. If you commission a proper logo, drop it into `assets/` and update the `@dsCard` brand card.
-6. **Website** — the `ui_kits/brand/index.html` is a hero + suite section starter. Ready to extend into a full marketing site.
+1. **Product names** (Conductor/Sparks/Foreman) are provisional.
+2. **Fonts** use Google Fonts CDN (Bricolage Grotesque, Hanken Grotesk, Space Grotesk); self-hosting requires equivalent WOFF2 files and `@font-face` rules.
+3. **Icons** use Lucide. Site Planner-specific glyphs can replace them when exported as shared assets.
+4. **Dashboard/site-map/mobile** kits are brand-consistent companion concepts rather than source-matched recreations.
+5. **Emblem** is built from SVG and can be replaced in `assets/` with corresponding brand-card updates.
+6. **Website** starts from the hero and suite section in `ui_kits/brand/index.html` and can be extended with further marketing sections.

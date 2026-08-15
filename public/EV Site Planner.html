@@ -2474,7 +2474,35 @@ const COMPLIANCE_DEFS={
 function complianceList(){ return COMPLIANCE_DEFS[pack.mode==="domestic"?"domestic":"commercial"]; }
 function compState(k){ return (pack.compliance||[]).includes(k) ? "done" : ((pack.complianceNA||[]).includes(k) ? "na" : "todo"); }
 /* ---------- CDM named roles & F10 status (stored with the pack) ---------- */
-function cdmInfo(){ if(!pack.cdm||typeof pack.cdm!=="object") pack.cdm=newCdmPack(); return pack.cdm; }
+function plannerCdmFallbackPack(){
+  return {
+    version:0, route:"", client:"", clientContact:"", contractor:"", pd:"", pc:"",
+    appointmentsConfirmed:false, appointmentDate:"", appointmentEvidence:"",
+    pdAppointmentConfirmed:false, pdAppointmentDate:"", pdAppointmentEvidence:"",
+    pcAppointmentConfirmed:false, pcAppointmentDate:"", pcAppointmentEvidence:"",
+    siteManager:"", firstAider:"", safetyAdviser:"", startDate:"", finishDate:"",
+    welfare:"", induction:"", publicProtection:"", emergency:"", monitoring:"",
+    f10:"", f10Ref:"", f10Date:"", f10LongAndTwenty:"unknown", f10PersonDays:"unknown",
+    docs:{}, risks:[], activeTab:"overview"
+  };
+}
+function plannerNewCdmPack(){
+  const api=window.EvspCdmControls;
+  if(api&&typeof api.newPack==="function") return api.newPack();
+  if(typeof window.newCdmPack==="function") try{ return window.newCdmPack(); }catch(_){ }
+  return plannerCdmFallbackPack();
+}
+function plannerNormaliseCdmPack(value){
+  const api=window.EvspCdmControls;
+  if(api&&typeof api.normalisePack==="function") return api.normalisePack(value);
+  if(typeof window.normaliseCdmPack==="function") try{ return window.normaliseCdmPack(value); }catch(_){ }
+  const src=value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+  const out=Object.assign(plannerCdmFallbackPack(),src);
+  out.docs=src.docs&&typeof src.docs==="object"&&!Array.isArray(src.docs)?src.docs:{};
+  out.risks=Array.isArray(src.risks)?src.risks:[];
+  return out;
+}
+function cdmInfo(){ if(!pack.cdm||typeof pack.cdm!=="object") pack.cdm=plannerNewCdmPack(); return pack.cdm; }
 const F10_LABELS={notreq:"Not notifiable", tofile:"Notifiable \u00b7 to file", filed:"Filed"};
 function f10StatusLine(){ const c=cdmInfo(); if(!c.f10) return ""; if(c.f10!=="filed") return F10_LABELS[c.f10]||""; const bits=["Filed"]; if(c.f10Date){ const d=new Date(c.f10Date+"T12:00:00"); if(!isNaN(d)) bits.push(d.toLocaleDateString("en-GB")); } if(c.f10Ref) bits.push("HSE ref "+c.f10Ref); return bits.join(" \u00b7 "); }
 function compExtraLines(k){ const c=cdmInfo(); if(k==="cdm"){ if(!c.pd&&!c.pc) return []; return ["Principal designer: "+(c.pd||"TBC")+"   \u00b7   Principal contractor: "+(c.pc||"TBC")]; } if(k==="f10"){ const s=f10StatusLine(); return s?["F10 status: "+s]:[]; } return []; }
@@ -2697,7 +2725,7 @@ let viewIsFit = true; // true while the view still matches fitView(); cleared on
 
 function deviceBrand(){ try{ return JSON.parse(localStorage.getItem("evsp_brand")||"{}")||{}; }catch(_){ return {}; } }
 function newPack(){
-  return { v:1, mode:"commercial", role:"", optionView:"all", unitStyle:"illustrated", unitScheme:"white", unitDesign:"classic", attachments:[], rates:deviceRates(), compliance:[], complianceNA:[], cdm:newCdmPack(), brandName:(deviceBrand().name||""), brandLogo:(deviceBrand().logo||""), replyEmail:(deviceBrand().email||""), name:"", jobRef:"", custName:"", surveyedBy:"", surveyDate:new Date().toISOString().slice(0,10), notes:"", engineerNote:"", earthing:"", mainFuse:"", mcbRequired:false, mcbBrand:"", mcbBrandCustom:false, mcbCurve:"C", mcbRating:"40", readyToProceed:false, spareWays:"", connector:"", outcome:"", outcomeNote:"", dnoRef:"", infoNeeds:[], extraGround:"", extraCable:"", extraTrunk:"", extraFee:"200", payLink:"", coverSummary:"", custLetter:"", delivery:"", bomRef:"", scopeRef:"", supplyRating:"", capacityNote:"", enablingWorks:[], enablingNote:"", snagSign:{by:"",accept:"",date:""}, replyPhone:(deviceBrand().phone||""), commissioning:{units:{},eicRef:"",by:"",accept:"",date:""}, earthWiz:null, sim:null, photos:[], active:null, showLabels:true, showLegend:true, showRouteLen:true, showChargerNos:true };
+  return { v:1, mode:"commercial", role:"", optionView:"all", unitStyle:"illustrated", unitScheme:"white", unitDesign:"classic", attachments:[], rates:deviceRates(), compliance:[], complianceNA:[], cdm:plannerNewCdmPack(), brandName:(deviceBrand().name||""), brandLogo:(deviceBrand().logo||""), replyEmail:(deviceBrand().email||""), name:"", jobRef:"", custName:"", surveyedBy:"", surveyDate:new Date().toISOString().slice(0,10), notes:"", engineerNote:"", earthing:"", mainFuse:"", mcbRequired:false, mcbBrand:"", mcbBrandCustom:false, mcbCurve:"C", mcbRating:"40", readyToProceed:false, spareWays:"", connector:"", outcome:"", outcomeNote:"", dnoRef:"", infoNeeds:[], extraGround:"", extraCable:"", extraTrunk:"", extraFee:"200", payLink:"", coverSummary:"", custLetter:"", delivery:"", bomRef:"", scopeRef:"", supplyRating:"", capacityNote:"", enablingWorks:[], enablingNote:"", snagSign:{by:"",accept:"",date:""}, replyPhone:(deviceBrand().phone||""), commissioning:{units:{},eicRef:"",by:"",accept:"",date:""}, earthWiz:null, sim:null, photos:[], active:null, showLabels:true, showLegend:true, showRouteLen:true, showChargerNos:true };
 }
 function uid(){ return Math.random().toString(36).slice(2,10); }
 function activePhoto(){ return pack.photos.find(p=>p.id===pack.active) || null; }
@@ -2752,7 +2780,7 @@ function normalisePack(pk){
   pk.rates = (pk.rates && typeof pk.rates==="object") ? pk.rates : {};
   pk.compliance = Array.isArray(pk.compliance) ? pk.compliance.filter(k=>typeof k==="string") : [];
   pk.complianceNA = Array.isArray(pk.complianceNA) ? pk.complianceNA.filter(k=>typeof k==="string" && !pk.compliance.includes(k)) : [];
-  pk.cdm=normaliseCdmPack(pk.cdm);
+  pk.cdm=plannerNormaliseCdmPack(pk.cdm);
   { const ss=pk.snagSign; pk.snagSign=(ss&&typeof ss==="object")?{by:String(ss.by||""),accept:String(ss.accept||""),date:String(ss.date||"")}:{by:"",accept:"",date:""}; }
   pk.optionView = (["all","A","B","C"].includes(pk.optionView)) ? pk.optionView : "all";
   pk.programme = (pk.programme && typeof pk.programme==="object" && !Array.isArray(pk.programme)) ? pk.programme : {};
@@ -7974,6 +8002,7 @@ document.addEventListener("wheel", e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
 // long-press / right-click context menu over the drawing surface interferes with markup
 cv.addEventListener("contextmenu", e=>e.preventDefault());
 window.addEventListener("keydown", e=>{
+  if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return;
   const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return;
   if(e.key==="Shift") shiftDown=true;
   if(e.code==="Space"){ if(!e.repeat && !dragItem){ spacePan=true; cv.style.cursor="grab"; } e.preventDefault(); return; }
@@ -8295,6 +8324,52 @@ function idb(){
 function idbSet(k,v){ return idb().then(db=>new Promise((res,rej)=>{ const tx=db.transaction(IDB_KV,"readwrite"); tx.objectStore(IDB_KV).put(v,k); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); tx.onabort=()=>rej(tx.error||new Error("idb abort")); })); }
 function idbGet(k){ return idb().then(db=>new Promise((res,rej)=>{ const tx=db.transaction(IDB_KV,"readonly"); const rq=tx.objectStore(IDB_KV).get(k); rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); })); }
 function idbDel(k){ return idb().then(db=>new Promise((res,rej)=>{ const tx=db.transaction(IDB_KV,"readwrite"); tx.objectStore(IDB_KV).delete(k); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); })); }
+const MEANINGFUL_PROJECT_TEXT_FIELDS=[
+  "name","address","postcode","jobRef","custName","surveyedBy","notes","engineerNote",
+  "earthing","mainFuse","outcome","outcomeNote","dnoRef","spareWays","connector","delivery",
+  "extraGround","extraCable","extraTrunk","payLink","coverSummary","custLetter","bomRef","scopeRef",
+  "supplyRating","capacityNote","enablingNote"
+];
+const MEANINGFUL_CDM_TEXT_FIELDS=[
+  "route","client","clientContact","contractor","pd","pc","appointmentDate","appointmentEvidence",
+  "pdAppointmentDate","pdAppointmentEvidence","pcAppointmentDate","pcAppointmentEvidence",
+  "siteManager","firstAider","safetyAdviser","startDate","finishDate","welfare","induction",
+  "publicProtection","emergency","monitoring","f10","f10Ref","f10Date"
+];
+function plannerValueHasContent(value){
+  if(value==null||value===false||value===0||value==="") return false;
+  if(typeof value==="string") return Boolean(value.trim());
+  if(Array.isArray(value)) return value.some(plannerValueHasContent);
+  if(typeof value==="object") return Object.values(value).some(plannerValueHasContent);
+  return true;
+}
+function cdmHasMeaningfulContent(value){
+  const c=value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+  if(MEANINGFUL_CDM_TEXT_FIELDS.some(k=>Boolean(String(c[k]||"").trim()))) return true;
+  if(c.appointmentsConfirmed===true||c.pdAppointmentConfirmed===true||c.pcAppointmentConfirmed===true) return true;
+  if((c.f10LongAndTwenty&&c.f10LongAndTwenty!=="unknown")||(c.f10PersonDays&&c.f10PersonDays!=="unknown")) return true;
+  if(Array.isArray(c.risks)&&c.risks.length) return true;
+  return Object.values(c.docs&&typeof c.docs==="object"?c.docs:{}).some(r=>r&&typeof r==="object"&&(
+    (r.status&&r.status!=="not_started")||[r.owner,r.revision,r.date,r.notes].some(v=>Boolean(String(v||"").trim()))
+  ));
+}
+function hasMeaningfulPackContent(candidate){
+  const p=candidate&&typeof candidate==="object"?candidate:{};
+  if((Array.isArray(p.photos)&&p.photos.length)||(Array.isArray(p.attachments)&&p.attachments.length)) return true;
+  if(MEANINGFUL_PROJECT_TEXT_FIELDS.some(k=>Boolean(String(p[k]||"").trim()))) return true;
+  if((Array.isArray(p.compliance)&&p.compliance.length)||(Array.isArray(p.complianceNA)&&p.complianceNA.length)) return true;
+  if((Array.isArray(p.infoNeeds)&&p.infoNeeds.length)||(Array.isArray(p.enablingWorks)&&p.enablingWorks.length)) return true;
+  if(p.readyToProceed===true||p.mcbRequired===true) return true;
+  if([p.programme,p.survey,p.earthWiz,p.sim,p.punch,p.revHistory,p.snagSign,p.commissioning].some(plannerValueHasContent)) return true;
+  return cdmHasMeaningfulContent(p.cdm);
+}
+function cdmRiskIsFullyControlled(risk){
+  if(!risk||typeof risk!=="object") return false;
+  const controlledStatus=["actioned","closed","transferred"].includes(String(risk.status||"").toLowerCase());
+  const scores=[risk.initialLikelihood,risk.initialSeverity,risk.residualLikelihood,risk.residualSeverity];
+  const ratingsComplete=scores.every(v=>Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=5);
+  return controlledStatus&&ratingsComplete&&[risk.hazard,risk.decision,risk.residual,risk.owner].every(v=>Boolean(String(v||"").trim()));
+}
 function serialisablePack(){ const out={...pack, photos:(pack.photos||[]).filter(p=>p&&p.src).map(p=>{ const q={...p}; delete q._pending; delete q._failed; if(q.srcOrig===q.src) delete q.srcOrig; return q; })}; delete out._ratesOpen; try{ const safety=projectSafetySummary(); if(safety) out.safetySummary=safety; else delete out.safetySummary; }catch(_){ } return out; }
 function autosaveNow(){
   try{ const el=document.getElementById("packname"); if(el && el.value) pack.name=el.value; }catch(_){ }
@@ -8305,7 +8380,7 @@ function autosaveNow(){
   });
   /* keep the jobs list complete & its status chips fresh */
   try{
-    if(!pack.projId && ((pack.photos&&pack.photos.length)||pack.name)) saveCurrentToProjects(true);
+    if(!pack.projId && hasMeaningfulPackContent(pack)) saveCurrentToProjects(true);
     else if(pack.projId) refreshProjIndexMeta();
   }catch(_){ }
 }
@@ -8996,11 +9071,11 @@ function packPanel(){
     ${(pack.attachments&&pack.attachments.length)?`<div class="thumbs">${pack.attachments.map(a=>`
       <div class="thumb" style="cursor:default">
         <div class="thumb-top">
-          ${(a.type||'').startsWith('image/')?`<img src="${a.src}">`:`<div style="width:52px;height:40px;border-radius:5px;background:var(--panel);display:grid;place-items:center;flex-shrink:0;font-size:9.5px;font-weight:800;color:var(--dim);letter-spacing:.5px">${esc((a.name.split('.').pop()||'DOC').toUpperCase().slice(0,4))}</div>`}
-          <div class="meta"><b>${esc(a.name)}</b><small>${a.size?(a.size/1024/1024).toFixed(2)+' MB':''}${(a.type||'').startsWith('image/')?' &middot; prints in the engineer PDF':' &middot; listed in the PDF appendix'}</small></div>
+          ${(a.type||'').startsWith('image/')&&a.src?`<img src="${a.src}">`:`<div style="width:52px;height:40px;border-radius:5px;background:var(--panel);display:grid;place-items:center;flex-shrink:0;font-size:9.5px;font-weight:800;color:var(--dim);letter-spacing:.5px">${esc((a.name.split('.').pop()||'DOC').toUpperCase().slice(0,4))}</div>`}
+          <div class="meta"><b>${esc(a.name)}</b><small>${a.size?(a.size/1024/1024).toFixed(2)+' MB':''}${!a.src?' &middot; file details only':((a.type||'').startsWith('image/')?' &middot; prints in the engineer PDF':' &middot; listed in the PDF appendix')}</small></div>
           <button class="x" data-attdel="${a.id}" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>
-        <div class="thumb-actions"><button class="thumb-action" data-attdl="${a.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</button></div>
+        <div class="thumb-actions"><button class="thumb-action" data-attdl="${a.id}" ${a.src?'':'disabled title="File contents are not stored in this device snapshot"'}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</button></div>
       </div>`).join('')}</div>`:`<div style="color:var(--faint);font-size:12px">Attach EICs, EICRs, board schedules, quotes, RAMS&hellip; They save inside the project file and travel with the pack.</div>`}
     <button class="addbtn" id="addAttach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add documents</button>
   </div>`;
@@ -9124,7 +9199,7 @@ function packPanel(){
     install: cardPunch+cardSnags+((cardPunch||cardSnags)?'':emptyCard("Snagging","No snags recorded yet. Pin snags on the photos with the snag tool; each pin tracks severity, owner and before and after evidence.","fn:snagtool","Pick up the snag tool"))+cardOutcome,
     handover: cardCommissioning||emptyCard("Commissioning &amp; handover","Commissioning records unlock once at least one active charger is placed on a plan. Each charger gets its serial, test results and sign-off, and they feed the handover certificate.","stage:design","Open the Design stage")
   };
-  if(!(packSec in STAGE_BODY)) packSec=(pack.photos.length||pack.name)?"overview":"survey";
+  if(!(packSec in STAGE_BODY)) packSec=hasMeaningfulPackContent(pack)?"overview":"survey";
   return stageHeadHtml(packSec,ev)+STAGE_BODY[packSec];
 }
 
@@ -10768,7 +10843,7 @@ function postcodePicked(pc, addrEl){
   pcI.oninput=()=>{ pack.postcode=pcI.value.toUpperCase(); syncSiteChip(); autosave(); };
   attachPostcodeLookup(pcI, document.getElementById("spSug"), pc=>{ pcI.value=pc; postcodePicked(pc, addrI); addrI.focus(); });
 })();
-document.getElementById("btnNew").onclick=async()=>{ if(pack.photos.length){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } pack=newPack(); imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; packSec="survey"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty(); draw(); renderSide(); };
+document.getElementById("btnNew").onclick=async()=>{ if(hasMeaningfulPackContent(pack)){ const ok=await askConfirm({title:"Start a new survey?", label:"Anything not saved to a file or Projects will be lost.", okText:"Start new"}); if(!ok) return; } pack=newPack(); imgKeys(); sel=null; history=[]; redoStack=[]; clearAutosave(); updateUndo(); document.getElementById("packname").value=pack.name; packSec="survey"; try{ localStorage.setItem("evsp_packsec",packSec); }catch(_){ } evalMarkDirty(); draw(); renderSide(); };
 function imgKeys(){ for(const k in imgCache) delete imgCache[k]; }
 document.getElementById("btnSave").onclick=()=>{
   normalisePack(pack);
@@ -10778,7 +10853,7 @@ document.getElementById("btnSave").onclick=()=>{
   a.download=(pack.name||"survey").replace(/[^\w\-]+/g,"_")+".evplan.json"; a.click();
   toast("Survey saved");
 };
-document.getElementById("btnOpen").onclick=()=>document.getElementById("fileOpen").click();
+document.getElementById("btnOpen").onclick=async()=>{ if(hasMeaningfulPackContent(pack)){ const ok=await askConfirm({title:"Open another survey?", label:"The current project will be replaced. Save a file copy first if you need one.", okText:"Choose file"}); if(!ok) return; } document.getElementById("fileOpen").click(); };
 document.getElementById("fileOpen").addEventListener("change", e=>{
   const f=e.target.files[0]; if(!f)return; const fr=new FileReader();
   fr.onload=()=>{ try{ const d=JSON.parse(fr.result); if(!d.photos)throw 0; pack=normalisePack(d); imgKeys(); history=[]; redoStack=[]; updateUndo();
@@ -10949,7 +11024,7 @@ function buildWebPack(){
   const cpr=compProgress();
   const snItems=snagList(); const snSt=snagStats(); const snSigned=snagSignedOff(); const snSign=pack.snagSign||{};
   const snRows=snItems.map(({it,photo})=>{ const open=it.st!=="fixed"; const shots=(it.ph1||it.ph2)?('<span style="display:flex;gap:6px;margin-top:6px">'+(it.ph1?'<img src="'+it.ph1+'" alt="Before" style="width:104px;height:78px;object-fit:cover;border-radius:8px;border:1px solid #E2E8F0">':'')+(it.ph2?'<img src="'+it.ph2+'" alt="After" style="width:104px;height:78px;object-fit:cover;border-radius:8px;border:1px solid #E2E8F0">':'')+'</span>'):''; return '<div class="row" style="align-items:flex-start"><span><b>#'+(it.n||'')+'</b> '+e2(it.label||'Snag')+' <small style="color:#8A98A8">\u00b7 '+e2(photo.name||'photo')+'</small>'+shots+'</span><span class="'+(open?'todo':'ok')+'">'+(open?'to put right':'\u2713 fixed'+(it.fixedOn?' '+e2(it.fixedOn):''))+'</span></div>'; }).join("");
-  const docs=(pack.attachments||[]).map(a=>'<li><a download="'+e2(a.name)+'" href="'+a.src+'">'+e2(a.name)+'</a> <small>'+(a.size/1048576).toFixed(2)+' MB</small></li>').join("");
+  const docs=(pack.attachments||[]).map(a=>'<li>'+(a.src?'<a download="'+e2(a.name)+'" href="'+a.src+'">'+e2(a.name)+'</a>':e2(a.name)+' <small>file details only</small>')+' <small>'+((a.size||0)/1048576).toFixed(2)+' MB</small></li>').join("");
   const logoImg=pack.brandLogo?'<img src="'+pack.brandLogo+'" style="width:40px;height:36px;object-fit:contain">':"";
   const rows=scope.map(l=>'<div class="row"><span>'+e2(l.label)+'</span><b>'+l.qty+(l.unit==="m"?" m":(l.unit==="m2"?" m\u00b2":""))+(l.total!=null?" \u00b7 "+fmtGBP(l.total):"")+'</b></div>').join("");
   const html='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+e2(pack.name||"EV charging plan")+' \u00b7 '+brand+'</title><style>'
@@ -12888,15 +12963,15 @@ async function buildPdf(opts){
   }
   // Project pack appendix - attached documents
   if((pack.attachments||[]).length){
-    const imgsA=pack.attachments.filter(a=>(a.type||"").startsWith("image/"));
-    const docsA=pack.attachments.filter(a=>!(a.type||"").startsWith("image/"));
+    const imgsA=pack.attachments.filter(a=>(a.type||"").startsWith("image/")&&a.src);
+    const docsA=pack.attachments.filter(a=>!(a.type||"").startsWith("image/")||!a.src);
     if(docsA.length){
       doc.addPage(); bg(); y=M+16;
       if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
       doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
       doc.text("Project pack: attached documents", M+12, M+5);
       doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
-      doc.splitTextToSize("These documents are stored inside the project file (.evplan.json) and issued alongside this PDF.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.2; });
+      doc.splitTextToSize(docsA.some(a=>!a.src)?"These project-pack records include file details only. Obtain any missing file contents from the original project source before issue.":"These documents are stored inside the project file (.evplan.json) and issued alongside this PDF.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.2; });
       y+=4;
       docsA.forEach(a=>{
         ensureSpace(15);
@@ -13013,7 +13088,7 @@ document.getElementById("btnSide").onclick=()=>{ const sd=document.getElementByI
 document.getElementById("mask").onclick=()=>document.getElementById("side").classList.remove("open");
 document.getElementById("btnUndo").onclick=undo;
 document.getElementById("btnRedo").onclick=redo;
-window.addEventListener("keydown",e=>{ const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return; if((e.metaKey||e.ctrlKey)&&(e.key==="z"||e.key==="Z")){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); } else if((e.metaKey||e.ctrlKey)&&(e.key==="y"||e.key==="Y")){ e.preventDefault(); redo(); } });
+window.addEventListener("keydown",e=>{ if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return; const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return; if((e.metaKey||e.ctrlKey)&&(e.key==="z"||e.key==="Z")){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); } else if((e.metaKey||e.ctrlKey)&&(e.key==="y"||e.key==="Y")){ e.preventDefault(); redo(); } });
 
 /* ============================================================ CABLE CALCULATIONS (single-circuit check to the BS 7671 method) ============================================================ */
 /* Ratings data DRAFT v0.9: typical manufacturer-published figures for the common EV cable families.
@@ -13356,6 +13431,7 @@ async function exportCppTemplate(){
   const logo=await logoPngDataUrl("rgb(21,42,57)",132);
   const c=cdmInfo();
   const cppContractor=c.route==="single_contractor"?(c.contractor||""):(c.pc||"");
+  const recordedRisks=(Array.isArray(c.risks)?c.risks:[]).filter(r=>r&&["actioned","closed","transferred"].includes(String(r.status||"").toLowerCase())&&[r.hazard,r.decision,r.residual,r.owner].every(v=>Boolean(String(v||"").trim())));
   let un=0; try{ un=commUnits().length; }catch(_){ }
   bg();
   if(logo) doc.addImage(logo,"PNG",M,M,13,13*40/45);
@@ -13368,7 +13444,7 @@ async function exportCppTemplate(){
   const ensure=(h)=>{ if(y>PH-M-h){ doc.addPage(); bg(); y=M+6; } };
   const sec=(t)=>{ ensure(16); y+=2; doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text(t,M,y); doc.setDrawColor(...LINE); doc.setLineWidth(0.3); doc.line(M,y+2,PW-M,y+2); y+=8; };
   const line=(label,val)=>{ ensure(9); doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(...DIM); doc.text(label, M, y); if(val){ doc.setFont("helvetica","normal"); doc.setTextColor(...NAVY); doc.text(doc.splitTextToSize(String(val), PW-2*M-60)[0]||"", M+58, y); } else { doc.setDrawColor(...FAINT); doc.setLineWidth(0.2); doc.line(M+58,y+0.8,PW-M,y+0.8); } y+=7; };
-  const prompt=(t,val)=>{ ensure(11); doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...NAVY); doc.text("\u2022  "+t, M, y); if(val){ doc.setFont("helvetica","bold"); doc.setFontSize(8.4); doc.setTextColor(...DIM); doc.text(val, PW-M, y, {align:"right"}); } doc.setDrawColor(...FAINT); doc.setLineWidth(0.2); doc.line(M+4,y+4.6,PW-M,y+4.6); y+=9.5; };
+  const prompt=(t,val)=>{ const raw=String(val||"").trim(), value=raw.length>2400?raw.slice(0,2399)+"\u2026":raw, labels=doc.splitTextToSize("\u2022  "+String(t||"").slice(0,320),PW-2*M), values=value?doc.splitTextToSize(value,PW-2*M-5):[]; ensure(labels.length*4.5+7); doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...NAVY); labels.forEach(ln=>{ doc.text(ln,M,y); y+=4.4; }); if(values.length){ doc.setFontSize(8.4); doc.setTextColor(...DIM); values.forEach(ln=>{ ensure(5); doc.text(ln,M+5,y); y+=4.1; }); y+=2; } else { doc.setDrawColor(...FAINT); doc.setLineWidth(0.2); doc.line(M+4,y+1,PW-M,y+1); y+=6; } };
   sec("Project details");
   line("Site", pack.name||"");
   line("Address", siteAddressLine());
@@ -13384,23 +13460,26 @@ async function exportCppTemplate(){
   line("First aider", c.firstAider||"");
   line("F10 notification", f10StatusLine());
   sec("Management of the work");
-  prompt("Site induction: who gives it and what it covers");
+  prompt("Site induction: who gives it and what it covers",c.induction||"");
   prompt("RAMS: site-specific RAMS issued and accepted before start", compState("rams")==="done"?"Accepted":"");
   prompt("Permits: dig / isolation / hot works, and who signs them", compState("services")==="done"?"Services checked":"");
   prompt("Hours of work and site rules");
-  prompt("How this plan is kept up to date as the job changes");
+  prompt("How this plan is kept up to date as the job changes",c.monitoring||"");
   sec("Key risks & site-specific controls");
-  ensure(8); doc.setFont("helvetica","normal"); doc.setFontSize(8.6); doc.setTextColor(...DIM); doc.text("Standard controls live in the RAMS. Write in what is specific to this site.", M, y); y+=6;
+  ensure(12); doc.setFont("helvetica","normal"); doc.setFontSize(8.6); doc.setTextColor(...DIM); doc.splitTextToSize("Prefilled records below remain a working aid. A competent person must review them with the appointed duty holders before this plan is issued.",PW-2*M).forEach(ln=>{ doc.text(ln,M,y); y+=4.2; }); y+=2;
+  recordedRisks.slice(0,12).forEach(r=>prompt("Recorded design risk: "+r.hazard,"Control: "+r.decision+". Residual risk: "+r.residual+". Owner: "+r.owner+"."));
+  if(recordedRisks.length>12) prompt("Further controlled design risks",(recordedRisks.length-12)+" additional records remain in the CDM project controls pack and must be reviewed before issue.");
   prompt("Buried services along the dig route");
   prompt("Live working & isolation");
-  prompt("Open excavations & the public");
+  prompt("Open excavations & the public",c.publicProtection||"");
   prompt("Plant & vehicle movements");
   prompt("Asbestos (pre-2000 fabric)", compState("asbestos")==="done"?"Checked":"");
   prompt("Other");
   sec("Welfare & first aid");
-  prompt("Welfare: unit on site, or client facilities agreed in writing", compState("welfare")==="done"?"Arranged":"");
-  prompt("First aid kit location & appointed first aider");
+  prompt("Welfare: unit on site, or client facilities agreed in writing",c.welfare||(compState("welfare")==="done"?"Arranged":""));
+  prompt("First aid kit location & appointed first aider",c.firstAider||"");
   sec("Emergency arrangements");
+  prompt("Project emergency arrangements",c.emergency||"");
   prompt("Muster point");
   prompt("Fire point & extinguishers");
   prompt("Nearest A&E");
@@ -13411,7 +13490,7 @@ async function exportCppTemplate(){
   sbox(M+bw+8,"Reviewed with (client / principal designer)",c.pd||"");
   y+=32; ensure(12);
   doc.setFont("helvetica","normal"); doc.setFontSize(8.4); doc.setTextColor(...FAINT);
-  doc.splitTextToSize("Keep the plan on site and update it as the work changes. A proportionate plan of a few pages is enough for most EV installations (HSE, Managing health and safety in construction, L153).", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=4.2; });
+  doc.splitTextToSize("This template is prefilled from the project's working CDM controls. A competent person and the appointed duty holders must review project-specific suitability and completeness before issue, keep the plan on site and update it as the work changes.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=4.2; });
   doc.save((pack.name?pack.name.replace(/[\\/:*?"<>|]+/g,"").trim()+" \u00b7 ":"")+"Construction phase plan.pdf");
   toast("CPP template exported \u00b7 complete it and keep it on site");
 }
@@ -14082,7 +14161,7 @@ window.openPhotoEditor=openPhotoEditor;
     const sj=e.target.closest("[data-snagjump]"); if(sj){ const sid=sj.dataset.snagjump; const ph=pack.photos.find(p=>p.items.some(i=>i.id===sid)); if(ph){ const switched=pack.active!==ph.id; pack.active=ph.id; sel=sid; selSet=new Set([sid]); sideTab="props"; setSideTab(); if(switched) fitView(); draw(); } return; }
     const f10b=e.target.closest("[data-f10st]"); if(f10b){ const cdc=cdmInfo(); const v=f10b.dataset.f10st; cdc.f10=(cdc.f10===v)?"":v; pack.compliance=(pack.compliance||[]).filter(x=>x!=="f10"); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!=="f10"); if(cdc.f10==="filed") pack.compliance.push("f10"); else if(cdc.f10==="notreq") pack.complianceNA.push("f10"); renderSide(); autosave(); return; }
     if(e.target.closest("#cppBtn")){ exportCppTemplate(); return; }
-    const cpb=e.target.closest("button[data-comp]"); if(cpb){ const k=cpb.dataset.comp, cst=cpb.dataset.cst; pack.compliance=(pack.compliance||[]).filter(x=>x!==k); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!==k); if(cpb.dataset.on!=="1"){ if(cst==="done") pack.compliance.push(k); else pack.complianceNA.push(k); } renderSide(); autosave(); return; }
+    const cpb=e.target.closest("button[data-comp]"); if(cpb){ const k=cpb.dataset.comp, cst=cpb.dataset.cst; if(k==="rams"&&pack.cdm&&typeof pack.cdm==="object"){ pack.cdm.ramsComplianceManaged=false; pack.cdm.ramsComplianceManual=true; } pack.compliance=(pack.compliance||[]).filter(x=>x!==k); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!==k); if(cpb.dataset.on!=="1"){ if(cst==="done") pack.compliance.push(k); else pack.complianceNA.push(k); } renderSide(); autosave(); return; }
     const us=e.target.closest("[data-uscheme]"); if(us){ const p=activePhoto(); const it=p?p.items.find(i=>i.id===sel):null; if(it){ if(us.dataset.uscheme) it.scheme=us.dataset.uscheme; else delete it.scheme; renderSide(); draw(); autosave(); } return; }
   });
   sc.addEventListener("input", e=>{
@@ -14114,7 +14193,7 @@ function syncBrand(){
 (function(){
   const sc=document.getElementById("sideScroll"); if(!sc) return;
   const fi=document.getElementById("fileAttach"), bl=document.getElementById("fileBrandLogo");
-  sc.addEventListener("click", e=>{
+  sc.addEventListener("click", async e=>{
     const rv=e.target.closest("[data-rev]"); if(rv){ const nv=rv.dataset.rev; if(nv===(pack.rev||"A")) return; pack.rev=nv; renderSide(); autosave(); askInput({title:"Revision "+nv, label:"What changed? Logged in the revision table on the engineer PDF (leave blank to skip the note).", placeholder:"e.g. Charger moved to bay 3", okText:"Log", chips:["Issued for review","Client comments incorporated","Charger position revised","Cable route revised","Issued for construction"]}).then(v=>{ (pack.revHistory=pack.revHistory||[]).push({rev:nv, note:(v==null?"":String(v)).trim(), at:new Date().toISOString().slice(0,10), by:(pack.surveyedBy||"").trim()}); renderSide(); autosave(); }); return; }
     const scl2=e.target.closest("[data-shotclear]"); if(scl2){ pushHist(); pack.survey=pack.survey||{}; delete pack.survey[scl2.dataset.shotclear]; renderSide(); autosave(); return; }
     const sn2=e.target.closest("[data-shotna]"); if(sn2){ pushHist(); const k=sn2.dataset.shotna; pack.survey=pack.survey||{}; if(pack.survey[k]&&pack.survey[k].na) delete pack.survey[k]; else pack.survey[k]={na:1}; renderSide(); autosave(); return; }
@@ -14140,8 +14219,8 @@ function syncBrand(){
     if(e.target.closest("#addGrid")){ addGridPlan(); return; }
     if(e.target.closest("#addStarter")){ addStarter(); return; }
     if(e.target.closest("#addAttach")){ fi.value=""; fi.click(); return; }
-    const dl=e.target.closest("[data-attdl]"); if(dl){ const a=(pack.attachments||[]).find(x=>x.id===dl.dataset.attdl); if(a){ const el=document.createElement("a"); el.href=a.src; el.download=a.name; el.click(); } return; }
-    const del=e.target.closest("[data-attdel]"); if(del){ pack.attachments=(pack.attachments||[]).filter(x=>x.id!==del.dataset.attdel); renderSide(); autosave(); document.dispatchEvent(new CustomEvent("evsp:attachments-changed")); toast("Removed from the pack"); return; }
+    const dl=e.target.closest("[data-attdl]"); if(dl){ const a=(pack.attachments||[]).find(x=>x.id===dl.dataset.attdl); if(a&&a.src){ const el=document.createElement("a"); el.href=a.src; el.download=a.name; el.click(); } else if(a) toast("File contents are not stored on this device"); return; }
+    const del=e.target.closest("[data-attdel]"); if(del){ const a=(pack.attachments||[]).find(x=>x.id===del.dataset.attdel); if(!a) return; const ok=await askConfirm({title:"Remove this document?",label:a.name+" will be removed from the project pack.",okText:"Remove"}); if(!ok) return; pack.attachments=(pack.attachments||[]).filter(x=>x.id!==del.dataset.attdel); renderSide(); autosave(); document.dispatchEvent(new CustomEvent("evsp:attachments-changed")); toast("Removed from the pack"); return; }
     if(e.target.closest("#brandLogoBtn")){ bl.value=""; bl.click(); return; }
     if(e.target.closest("#brandLogoClear")){ pack.brandLogo=""; saveDeviceBrand(); syncBrand(); renderSide(); autosave(); return; }
     if(e.target.closest("#ovAdd")||e.target.closest("#ovReplace")){ const fo=document.getElementById("fileOverlay"); fo.value=""; fo.click(); return; }
@@ -14179,13 +14258,16 @@ function syncBrand(){
   }
   fi.onchange=async()=>{
     const files=[...(fi.files||[])]; if(!files.length) return;
+    let added=0, skipped=0;
     for(const f of files){
-      if(f.size>8*1024*1024){ toast(f.name+" is over 8 MB, too large to store in the pack"); continue; }
+      if(f.size>8*1024*1024){ skipped++; toast(f.name+" is over 8 MB, too large to store in the pack"); continue; }
       const data=await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.onerror=()=>r(null); fr.readAsDataURL(f); });
-      if(!data){ toast("Could not read "+f.name); continue; }
+      if(!data){ skipped++; toast("Could not read "+f.name); continue; }
       (pack.attachments=pack.attachments||[]).push({id:uid(), name:f.name, type:f.type||"", size:f.size, src:data, note:""});
+      added++;
     }
-    renderSide(); autosave(); document.dispatchEvent(new CustomEvent("evsp:attachments-changed")); toast("Added to the project pack");
+    if(added){ renderSide(); autosave(); document.dispatchEvent(new CustomEvent("evsp:attachments-changed")); toast(added+" document"+(added===1?"":"s")+" added"+(skipped?" \u00b7 "+skipped+" skipped":"")); }
+    else toast("No documents were added");
   };
   bl.onchange=()=>{
     const f=bl.files&&bl.files[0]; if(!f) return;
@@ -14456,23 +14538,43 @@ function buildStarter(preset){
 /* ---------- project dashboard (device-local snapshots) ---------- */
 function projIndex(){ try{ return JSON.parse(localStorage.getItem("evsp_projects")||"[]")||[]; }catch(_){ return []; } }
 function saveProjIndex(ix){ try{ localStorage.setItem("evsp_projects", JSON.stringify(ix)); }catch(_){ } }
-/* Lightweight safety context survives the photo-free localStorage copy used by connected tools. */
 function projectSafetySummary(){
-  if(pack.mode==="domestic"||!window.EvspCdmControls) return null;
-  const api=window.EvspCdmControls, c=normaliseCdmPack(pack.cdm), facts=api.planFacts(pack), fv=api.f10Verdict(c);
-  const documents={}; (api.documentDefinitions||api.docDefs||[]).forEach(d=>{ const r=(c.docs||{})[d.k]||{}; documents[d.k]={status:r.status||"not_started",revision:r.revision||"",owner:r.owner||"",date:r.date||""}; });
+  if(pack.mode==="domestic") return null;
+  const api=window.EvspCdmControls, c=plannerNormaliseCdmPack(pack.cdm);
+  const facts=api&&typeof api.planFacts==="function"?api.planFacts(pack):{};
+  const fv=api&&typeof api.f10Verdict==="function"?api.f10Verdict(c):((c.f10LongAndTwenty==="yes"||c.f10PersonDays==="yes")?{code:"notifiable"}:((c.f10LongAndTwenty==="no"&&c.f10PersonDays==="no")?{code:"not_required"}:{code:"incomplete"}));
+  const docDefs=api?(api.documentDefinitions||api.docDefs||[]):Object.keys(c.docs||{}).map(k=>({k}));
+  const documents={}; docDefs.forEach(d=>{ const r=(c.docs||{})[d.k]||{}; documents[d.k]={status:r.status||"not_started",revision:r.revision||"",owner:r.owner||"",date:r.date||""}; });
   return {
     version:1,
     facts,
+    startDate:c.startDate||"",
+    finishDate:c.finishDate||"",
+    programme:{startDate:c.startDate||"",finishDate:c.finishDate||""},
     route:c.route||"",
-    dutyHolders:{client:c.client||pack.custName||"",contractor:c.contractor||"",principalDesigner:c.pd||"",principalContractor:c.pc||"",siteManager:c.siteManager||"",firstAider:c.firstAider||"",safetyAdviser:c.safetyAdviser||"",appointmentsConfirmed:c.appointmentsConfirmed===true,appointmentDate:c.appointmentDate||"",appointmentEvidence:c.appointmentEvidence||""},
+    dutyHolders:{
+      client:c.client||pack.custName||"",contractor:c.contractor||"",pd:c.pd||"",pc:c.pc||"",
+      principalDesigner:c.pd||"",principalContractor:c.pc||"",siteManager:c.siteManager||"",
+      firstAider:c.firstAider||"",safetyAdviser:c.safetyAdviser||"",
+      appointmentsConfirmed:c.appointmentsConfirmed===true,appointmentDate:c.appointmentDate||"",appointmentEvidence:c.appointmentEvidence||"",
+      pdAppointmentConfirmed:c.pdAppointmentConfirmed===true,pdAppointmentDate:c.pdAppointmentDate||"",pdAppointmentEvidence:c.pdAppointmentEvidence||"",
+      pcAppointmentConfirmed:c.pcAppointmentConfirmed===true,pcAppointmentDate:c.pcAppointmentDate||"",pcAppointmentEvidence:c.pcAppointmentEvidence||"",
+      principalDesignerAppointment:{confirmed:c.pdAppointmentConfirmed===true,date:c.pdAppointmentDate||"",evidence:c.pdAppointmentEvidence||""},
+      principalContractorAppointment:{confirmed:c.pcAppointmentConfirmed===true,date:c.pcAppointmentDate||"",evidence:c.pcAppointmentEvidence||""}
+    },
     f10:{verdict:fv.code,answerLongAndTwenty:c.f10LongAndTwenty,answerPersonDays:c.f10PersonDays,status:c.f10||"",reference:c.f10Ref||"",submitted:c.f10Date||"",date:c.f10Date||""},
-    risks:(c.risks||[]).map(r=>({id:r.id,presetKey:r.presetKey||"",hazard:r.hazard||"",who:r.who||"",hierarchy:r.hierarchy||"",decision:r.decision||"",residual:r.residual||"",owner:r.owner||"",due:r.dueDate||"",status:r.status||"open",controlled:["actioned","closed","transferred"].includes(r.status),source:r.source||"",initialLikelihood:r.initialLikelihood||"",initialSeverity:r.initialSeverity||"",residualLikelihood:r.residualLikelihood||"",residualSeverity:r.residualSeverity||""})),
+    risks:(c.risks||[]).map(r=>({id:r.id,presetKey:r.presetKey||"",hazard:r.hazard||"",who:r.who||"",hierarchy:r.hierarchy||"",decision:r.decision||"",residual:r.residual||"",owner:r.owner||"",due:r.dueDate||"",status:r.status||"open",controlled:cdmRiskIsFullyControlled(r),source:r.source||"",initialLikelihood:r.initialLikelihood||"",initialSeverity:r.initialSeverity||"",residualLikelihood:r.residualLikelihood||"",residualSeverity:r.residualSeverity||""})),
     documents,
     siteSetup:{welfare:c.welfare||"",induction:c.induction||"",publicProtection:c.publicProtection||"",emergency:c.emergency||"",monitoring:c.monitoring||"",welfareItems:facts.siteSetupCount||0,barrierRoutes:facts.herasCount||0,coneRoutes:facts.coneCount||0,exclusionZones:facts.exclusionCount||0,pedestrianRoutes:facts.pedestrianCount||0,safetySignboards:facts.signboardCount||0,firstAidPoints:facts.firstAidCount||0,firePoints:facts.fireCount||0}
   };
 }
-function saveCurrentToProjects(quiet){
+function slimProjectSnapshot(full){
+  const sourcePack=full&&full.pack&&typeof full.pack==="object"?full.pack:{};
+  const sourceAttachments=Array.isArray(sourcePack.attachments)?sourcePack.attachments:[];
+  const attachments=sourceAttachments.map(a=>{ const meta={...a,src:""}; return meta; });
+  return {...full,pack:{...sourcePack,photos:[],brandLogo:"",attachments},slim:true,fullPhotoCount:(Array.isArray(sourcePack.photos)?sourcePack.photos.length:0),attachmentPayloadsOmitted:sourceAttachments.some(a=>a&&a.src)};
+}
+function saveCurrentToProjects(quiet,requireLocalSnapshot){
   normalisePack(pack);
   pack.projId=pack.projId||uid();
   const savedPack=serialisablePack();
@@ -14480,17 +14582,13 @@ function saveCurrentToProjects(quiet){
   let idbTried=false;
   try{ if(window.indexedDB){ idbTried=true; idbSet("proj_"+pack.projId, full).catch(()=>{}); } }catch(_){ }
   let lsOk=false;
-  try{ localStorage.setItem("evsp_proj_"+pack.projId, JSON.stringify(full)); lsOk=true; }
-  catch(e){
-    // photos don't fit in localStorage - keep a slim copy (the Quotes tool only needs the priced lines) and rely on IndexedDB for the full pack
-    try{ localStorage.setItem("evsp_proj_"+pack.projId, JSON.stringify({pack:{...full.pack, photos:[]}, budget:full.budget, slim:true})); lsOk=true; }catch(e2){ }
-  }
+  try{ localStorage.setItem("evsp_proj_"+pack.projId, JSON.stringify(slimProjectSnapshot(full))); lsOk=true; }catch(_){ }
   if(!lsOk && !idbTried){ if(!quiet) toast("Device storage is full. Use Save to keep a file copy"); return false; }
   const ix=projIndex().filter(x=>x.id!==pack.projId);
   const ph=pack.photos[0];
   ix.unshift({id:pack.projId, name:pack.name||document.getElementById("packname").value||"Untitled", mode:pack.mode, date:new Date().toISOString().slice(0,10), thumb:(ph&&ph.thumb)||"", n:pack.photos.length, cust:pack.custName||"", ref:pack.jobRef||"", ...projStatusMeta()});
   saveProjIndex(ix.slice(0,30));
-  return true;
+  return requireLocalSnapshot?lsOk:(lsOk||idbTried);
 }
 /* live status for the jobs list - cheap enough to refresh on every autosave */
 function projStatusMeta(){
@@ -14567,7 +14665,7 @@ function openProjects(){ renderProjList(); document.getElementById("projBackdrop
 function loadProject(id){
   const apply=d=>{
     if(!d||!d.pack){ toast("Couldn't open that project"); return; }
-    if(pack.photos.length||pack.name) saveCurrentToProjects(true);
+    if(hasMeaningfulPackContent(pack)) saveCurrentToProjects(true);
     pack=normalisePack(d.pack); pack.projId=id;
     imgKeys(); history=[]; redoStack=[]; updateUndo(); sel=null; draftRoute=null; draftScale=null;
     pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
@@ -14576,23 +14674,23 @@ function loadProject(id){
     syncBrand(); applyMode(false); buildRail(); sideTab="pack"; setSideTab(); fitView(); draw(); autosave();
     const sdw=document.getElementById("side"); if(sdw){ sdw.classList.remove("hidedesk"); if(window.innerWidth<=959) sdw.classList.add("open"); }
     document.getElementById("projBackdrop").classList.remove("show");
-    toast(d.slim&&!(d.pack.photos||[]).length?"Project opened, but its photos couldn't be stored on this device":"Project opened");
+    toast(d.slim&&d.fullPhotoCount?"Project opened, but its photos couldn't be stored on this device":(d.slim&&d.attachmentPayloadsOmitted?"Project opened with document details only; file contents were not stored":"Project opened"));
   };
   const fromLs=()=>{ try{ apply(JSON.parse(localStorage.getItem("evsp_proj_"+id)||"null")); }catch(e){ toast("Couldn't open that project"); } };
-  try{ idbGet("proj_"+id).then(d=>{ if(d&&d.pack&&(d.pack.photos||[]).length) apply(d); else fromLs(); }).catch(fromLs); }
+  try{ idbGet("proj_"+id).then(d=>{ if(d&&d.pack&&hasMeaningfulPackContent(d.pack)) apply(d); else fromLs(); }).catch(fromLs); }
   catch(_){ fromLs(); }
 }
 function openQuotesTool(){
   const pn=document.getElementById("packname"); if(pn&&pn.value) pack.name=pn.value;
-  const hasWork=!!(pack.photos.length||pack.name);
-  const ok=hasWork?saveCurrentToProjects(true):false;
+  const hasWork=hasMeaningfulPackContent(pack);
+  const ok=hasWork?saveCurrentToProjects(true,true):false;
   try{ autosave(); }catch(_){ }
   location.href="Quotes & Invoices.dc.html"+(ok&&pack.projId?"#from="+encodeURIComponent(pack.projId):"");
 }
 function openSupportTool(){
   const pn=document.getElementById("packname"); if(pn&&pn.value) pack.name=pn.value;
-  const hasWork=!!(pack.photos.length||pack.name);
-  const ok=hasWork?saveCurrentToProjects(true):false;
+  const hasWork=hasMeaningfulPackContent(pack);
+  const ok=hasWork?saveCurrentToProjects(true,true):false;
   try{ autosave(); }catch(_){ }
   location.href="Project Support.dc.html"+(ok&&pack.projId?"#from="+encodeURIComponent(pack.projId):"");
 }
@@ -14600,8 +14698,8 @@ const RAMS_TOOL_LIVE=false; /* flip to true when the RAMS builder ships */
 function openRamsTool(){
   if(!RAMS_TOOL_LIVE){ toast("RAMS builder is coming soon"); return; }
   const pn=document.getElementById("packname"); if(pn&&pn.value) pack.name=pn.value;
-  const hasWork=!!(pack.photos.length||pack.name);
-  const ok=hasWork?saveCurrentToProjects(true):false;
+  const hasWork=hasMeaningfulPackContent(pack);
+  const ok=hasWork?saveCurrentToProjects(true,true):false;
   try{ autosave(); }catch(_){ }
   location.href="RAMS Builder.dc.html"+(ok&&pack.projId?"#from="+encodeURIComponent(pack.projId):"");
 }
@@ -14726,6 +14824,7 @@ function quoteDrift(){
     else if(e.key==="Escape"){ e.preventDefault(); close(); }
   });
   document.addEventListener("keydown",e=>{
+    if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return;
     const tag=((e.target&&e.target.tagName)||"").toLowerCase();
     const typing=tag==="input"||tag==="textarea"||(e.target&&e.target.isContentEditable);
     if(((e.metaKey||e.ctrlKey)&&String(e.key).toLowerCase()==="k")||(e.key==="/"&&!typing)){ e.preventDefault(); if(bd.classList.contains("show")) close(); else open(); }
@@ -15752,42 +15851,42 @@ normalisePack(pack);
 let __restoredTs=0;
 try{
   const __saved=JSON.parse(localStorage.getItem(LS_KEY)||"null");
-  if(__saved && __saved.pack && Array.isArray(__saved.pack.photos) && __saved.pack.photos.length){
+  if(__saved&&__saved.pack&&hasMeaningfulPackContent(__saved.pack)){
     pack=normalisePack(__saved.pack);
     if(__saved.view && typeof __saved.view.zoom==="number") view=__saved.view;
     __restoredTs=__saved.ts||1;
     pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
-    setTimeout(()=>toast("Recovered your last survey"), 500);
+    setTimeout(()=>toast("Recovered your last project"), 500);
   }
 }catch(_){}
 syncSiteChip();
 applyMode(false); syncBrand();
 /* a project with content opens on the overview; a fresh pack starts at the survey stage */
-if(pack.photos.length||(pack.name||"").trim()) packSec="overview";
+if(hasMeaningfulPackContent(pack)) packSec="overview";
 loadUnits(); buildRail(); resize(); buildStageBar(); setSideTab(); updateUndo();
 try{ if(!localStorage.getItem("evsp_welcomed")) openWelcome(); }catch(_){}
 /* first run on tablet/phone: the start cards on the canvas carry onboarding; the pack drawer stays shut so nothing covers them */
 /* IndexedDB recovery - photo-heavy packs live here; localStorage above is just the legacy/fallback copy */
 try{ idbGet("autosave").then(d=>{
-  if(!d||!d.pack||!Array.isArray(d.pack.photos)||!d.pack.photos.length) return;
+  if(!d||!d.pack||!hasMeaningfulPackContent(d.pack)) return;
   if((d.ts||0)<=__restoredTs) return;                 // localStorage copy was newer
   if(history.length||redoStack.length) return;        // user is already editing
-  if(pack.photos.length && !__restoredTs) return;      // user already brought their own photos in
+  if(hasMeaningfulPackContent(pack)&&!__restoredTs) return;
   pack=normalisePack(d.pack);
   if(d.view && typeof d.view.zoom==="number") view=d.view;
   imgKeys(); pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
   syncSiteChip();
-  if(pack.photos.length||(pack.name||"").trim()) packSec="overview";
+  if(hasMeaningfulPackContent(pack)) packSec="overview";
   evalMarkDirty();
   syncBrand(); applyMode(false); buildRail(); setSideTab(); fitView(); draw();
-  if(!__restoredTs) setTimeout(()=>toast("Recovered your last survey"),300);
+  if(!__restoredTs) setTimeout(()=>toast("Recovered your last project"),300);
 }).catch(()=>{}); }catch(_){ }
 /* one-off: move any old full-size project snapshots out of localStorage into IndexedDB (slim copy stays for the Quotes tool) */
 setTimeout(()=>{ try{
   projIndex().forEach(x=>{
     const raw=localStorage.getItem("evsp_proj_"+x.id); if(!raw||raw.length<200000) return;
     const d=JSON.parse(raw); if(!d||!d.pack) return;
-    idbSet("proj_"+x.id, d).then(()=>{ try{ localStorage.setItem("evsp_proj_"+x.id, JSON.stringify({pack:{...d.pack, photos:[]}, budget:d.budget, slim:true})); }catch(_){ } }).catch(()=>{});
+    idbSet("proj_"+x.id, d).then(()=>{ try{ localStorage.setItem("evsp_proj_"+x.id, JSON.stringify(slimProjectSnapshot(d))); }catch(_){ } }).catch(()=>{});
   });
 }catch(_){ } }, 2500);
 </script>
