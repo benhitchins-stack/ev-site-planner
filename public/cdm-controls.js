@@ -867,11 +867,20 @@
   }
   function evspCdmClose(candidate){
     const backdrop=document.getElementById("evspCdmBackdrop");
+    const opener=evspCdmOpener;
+    const openerId=opener&&opener.id?opener.id:"";
+    const openerTarget=opener&&opener.getAttribute?opener.getAttribute("data-evsp-cdm-open")||"":"";
+    evspCdmOpener=null;
     if(backdrop) backdrop.classList.remove("show");
     document.documentElement.classList.remove("evsp-cdm-modal-open");
     evspCdmNotifyChanged(candidate,true);
-    const opener=evspCdmOpener; evspCdmOpener=null;
-    if(opener&&document.contains(opener)) setTimeout(function(){ try{ opener.focus(); }catch(_){ } },0);
+    let focusTarget=opener&&document.contains(opener)?opener:null;
+    if(!focusTarget&&openerId) focusTarget=document.getElementById(openerId);
+    if(!focusTarget&&openerTarget){
+      focusTarget=Array.from(document.querySelectorAll("[data-evsp-cdm-open]")).find(function(button){ return button.getAttribute("data-evsp-cdm-open")===openerTarget; })||null;
+    }
+    if(!focusTarget) focusTarget=document.getElementById("evspCdmOpen");
+    if(focusTarget) setTimeout(function(){ try{ focusTarget.focus(); }catch(_){ } },0);
   }
   function evspCdmAddRisk(record,candidate){
     const p=evspCdmGetPack(candidate), s=evspCdmEnsure(p);
