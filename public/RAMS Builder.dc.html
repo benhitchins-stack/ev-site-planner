@@ -1591,24 +1591,135 @@ class Component extends DCLogic {
   readIndex() { try { return JSON.parse(localStorage.getItem('evsp_projects') || '[]') || []; } catch (e) { return []; } }
   readBlob(id) { try { return JSON.parse(localStorage.getItem('evsp_proj_' + id) || 'null'); } catch (e) { return null; } }
 
+  safetyText(value, max = 1200, multiline = false) {
+    if (value == null || (typeof value !== 'string' && typeof value !== 'number')) return '';
+    let out = String(value)
+      .replace(/[<>]/g, ' ')
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ' ');
+    if (multiline) out = out.split(/\r?\n/).map((line) => line.replace(/[\t ]+/g, ' ').trim()).filter(Boolean).join('\n');
+    else out = out.replace(/\s+/g, ' ').trim();
+    return out.slice(0, max);
+  }
+
+  safetyCount(value) {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? Math.min(n, 100000) : 0;
+  }
+
+  safetySummaryOf(pack) {
+    const raw = pack && pack.safetySummary;
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const text = (v, max) => this.safetyText(v, max);
+    const lines = (v, max) => this.safetyText(v, max, true);
+    const sourceFacts = raw.facts && typeof raw.facts === 'object' && !Array.isArray(raw.facts) ? raw.facts : {};
+    const factKeys = [
+      'unitCount', 'bayCount', 'trenchCount', 'ductCount', 'herasCount', 'coneCount',
+      'exclusionCount', 'pedestrianCount', 'signboardCount', 'inspectionPitCount',
+      'spoilCount', 'electricalCount', 'heavyCount', 'highLevelCount', 'drillCount',
+      'siteSetupCount', 'firstAidCount', 'fireCount', 'trenchMetres', 'ductMetres',
+      'containmentMetres', 'earthRodCount', 'feederCount'
+    ];
+    const facts = {};
+    factKeys.forEach((key) => { facts[key] = this.safetyCount(sourceFacts[key]); });
+
+    const sourceHolders = raw.dutyHolders && typeof raw.dutyHolders === 'object' && !Array.isArray(raw.dutyHolders) ? raw.dutyHolders : {};
+    const dutyHolders = {
+      pd: text(sourceHolders.pd || sourceHolders.principalDesigner, 240),
+      pc: text(sourceHolders.pc || sourceHolders.principalContractor, 240),
+      siteManager: text(sourceHolders.siteManager, 240),
+      firstAider: text(sourceHolders.firstAider, 240),
+      safetyAdviser: text(sourceHolders.safetyAdviser, 240)
+    };
+
+    const sourceF10 = raw.f10 && typeof raw.f10 === 'object' && !Array.isArray(raw.f10) ? raw.f10 : {};
+    const f10 = {
+      code: text(sourceF10.code || sourceF10.verdict, 60),
+      status: text(sourceF10.status, 60),
+      reference: text(sourceF10.reference || sourceF10.ref, 160),
+      date: text(sourceF10.date || sourceF10.submitted, 20)
+    };
+
+    const sourceSetup = raw.siteSetup && typeof raw.siteSetup === 'object' && !Array.isArray(raw.siteSetup) ? raw.siteSetup : {};
+    const siteSetup = {
+      welfare: lines(sourceSetup.welfare, 1600),
+      induction: lines(sourceSetup.induction, 1600),
+      publicProtection: lines(sourceSetup.publicProtection || sourceSetup.security, 1600),
+      emergency: lines(sourceSetup.emergency, 1600),
+      monitoring: lines(sourceSetup.monitoring || sourceSetup.review, 1600)
+    };
+    facts.siteSetupCount = Math.max(facts.siteSetupCount, this.safetyCount(sourceSetup.welfareItems));
+    facts.herasCount = Math.max(facts.herasCount, this.safetyCount(sourceSetup.barrierRoutes));
+    facts.coneCount = Math.max(facts.coneCount, this.safetyCount(sourceSetup.coneRoutes));
+    facts.exclusionCount = Math.max(facts.exclusionCount, this.safetyCount(sourceSetup.exclusionZones));
+    facts.pedestrianCount = Math.max(facts.pedestrianCount, this.safetyCount(sourceSetup.pedestrianRoutes));
+    facts.signboardCount = Math.max(facts.signboardCount, this.safetyCount(sourceSetup.safetySignboards));
+    facts.firstAidCount = Math.max(facts.firstAidCount, this.safetyCount(sourceSetup.firstAidPoints));
+    facts.fireCount = Math.max(facts.fireCount, this.safetyCount(sourceSetup.firePoints));
+
+    const documents = {};
+    const sourceDocuments = raw.documents && typeof raw.documents === 'object' && !Array.isArray(raw.documents) ? raw.documents : {};
+    Object.keys(sourceDocuments).slice(0, 40).forEach((key) => {
+      const safeKey = text(key, 60); if (!safeKey || ['__proto__', 'prototype', 'constructor'].includes(safeKey)) return;
+      const record = sourceDocuments[key];
+      documents[safeKey] = typeof record === 'object' && record
+        ? { status: text(record.status, 60), owner: text(record.owner, 240), revision: text(record.revision, 80), date: text(record.date, 20) }
+        : { status: text(record, 60), owner: '', revision: '', date: '' };
+    });
+
+    const risks = (Array.isArray(raw.risks) ? raw.risks : []).slice(0, 80).map((risk, index) => {
+      if (!risk || typeof risk !== 'object' || Array.isArray(risk)) return null;
+      const status = text(risk.status, 60).toLowerCase();
+      const decision = lines(risk.decision || risk.control || risk.measure, 1800);
+      const residual = lines(risk.residual || risk.residualRisk, 1800);
+      const controlled = risk.controlled === true || ['actioned', 'closed', 'transferred', 'accepted', 'controlled'].includes(status);
+      const hazard = text(risk.hazard || risk.title || risk.risk, 320);
+      if (!controlled || !hazard || !decision) return null;
+      const score = (value, fallback) => {
+        const n = Number(value); return Number.isInteger(n) && n >= 1 && n <= 5 ? n : fallback;
+      };
+      return {
+        id: text(risk.id, 80) || 'risk-' + (index + 1),
+        presetKey: text(risk.presetKey || risk.key, 80).toLowerCase(),
+        hazard, who: text(risk.who || risk.people, 240), decision, residual,
+        owner: text(risk.owner, 240), source: text(risk.source, 360), status,
+        li: score(risk.initialLikelihood || risk.li, 3), si: score(risk.initialSeverity || risk.si, 4),
+        lr: score(risk.residualLikelihood || risk.lr, 1), sr: score(risk.residualSeverity || risk.sr, 3)
+      };
+    }).filter(Boolean);
+
+    return {
+      version: text(raw.version, 30), facts,
+      route: text(raw.route, 80), dutyHolders, f10, risks, documents, siteSetup
+    };
+  }
+
   ctxOf(blob) {
     const q = {};
     (((blob || {}).budget || {}).lines || []).forEach((l) => { if (l && l.k) q[l.k] = l.qty || 0; });
     const pack = (blob || {}).pack || {};
     const bud = (blob || {}).budget || {};
+    const safety = this.safetySummaryOf(pack);
+    const facts = safety ? safety.facts : {};
+    if (!(q.bay > 0) && facts.bayCount > 0) q.bay = facts.bayCount;
+    if (!(q.trench > 0) && facts.trenchMetres > 0) q.trench = facts.trenchMetres;
+    if (!(q.duct > 0) && facts.ductMetres > 0) q.duct = facts.ductMetres;
+    if (!(q.contain > 0) && facts.containmentMetres > 0) q.contain = facts.containmentMetres;
+    if (!(q.earthrod > 0) && facts.earthRodCount > 0) q.earthrod = facts.earthRodCount;
     const mode = (pack.mode === 'domestic' || bud.mode === 'domestic') ? 'domestic' : 'commercial';
     const earthing = String(pack.earthing || '');
-    const chargers = (q.charger7 || 0) + (q.charger11 || 0) + (q.charger22 || 0) + (q.chargerDC || 0);
+    const pricedChargers = (q.charger7 || 0) + (q.charger11 || 0) + (q.charger22 || 0) + (q.chargerDC || 0);
+    const chargers = Math.max(pricedChargers, facts.unitCount || 0);
+    const dig = (q.trench || 0) > 0 || (q.duct || 0) > 0 || (facts.trenchCount || 0) > 0 || (facts.ductCount || 0) > 0;
     return {
       q, mode, com: mode === 'commercial', earthing,
       tt: /\btt\b/i.test(earthing), pme: /pme|tn-?c-?s/i.test(earthing),
       enabling: pack.enablingWorks || [],
-      chargers, fp: (q.fpwired || 0) + (q.fpshell || 0) > 0,
-      dig: (q.trench || 0) > 0 || (q.duct || 0) > 0,
-      digLen: Math.round(Math.max(q.trench || 0, q.duct || 0)),
+      chargers, fp: (q.fpwired || 0) + (q.fpshell || 0) > 0 || (facts.feederCount || 0) > 0,
+      dig, digLen: Math.round(Math.max(q.trench || 0, q.duct || 0, facts.trenchMetres || 0, facts.ductMetres || 0)),
       name: pack.name || bud.name || '', jobRef: pack.jobRef || bud.jobRef || '',
       custName: pack.custName || bud.custName || '',
       cdm: (pack.cdm && typeof pack.cdm === 'object') ? pack.cdm : {},
+      safety, facts,
       supplyRating: pack.supplyRating || '', mainFuse: pack.mainFuse || '', dnoRef: pack.dnoRef || ''
     };
   }
@@ -1645,10 +1756,118 @@ class Component extends DCLogic {
 
   deriveParts(c) {
     const uid = this.uid;
+    const methodRow = (m) => ({ id: uid(), k: m.k, t: m.t, steps: m.steps(c).join('\n'), auto: true, why: m.why(c) });
+    const hazardRow = (h) => ({ id: uid(), k: h.k, t: h.t, task: h.task, hz: h.hz, p: h.p, li: h.li, si: h.si, lr: h.lr, sr: h.sr, ctl: h.ctl.join('\n'), auto: true, why: h.why(c) });
+    const methods = this.METHODS.filter((m) => m.on(c)).map(methodRow);
+    const hazards = this.HZLIB.filter((h) => h.on(c)).map(hazardRow);
+    const methodKeys = new Set(methods.map((m) => m.k));
+    const hazardKeys = new Set(hazards.map((h) => h.k));
+    const addMethod = (key, why) => {
+      if (methodKeys.has(key)) return;
+      const source = this.METHODS.find((m) => m.k === key); if (!source) return;
+      const row = methodRow(source); if (why) row.why = why;
+      methods.push(row); methodKeys.add(key);
+    };
+    const addHazard = (key, why) => {
+      if (hazardKeys.has(key)) return;
+      const source = this.HZLIB.find((h) => h.k === key); if (!source) return;
+      const row = hazardRow(source); if (why) row.why = why;
+      hazards.push(row); hazardKeys.add(key);
+    };
+
+    if (c.safety) {
+      const f = c.facts || {};
+      const buriedWhy = (f.trenchCount + f.ductCount) + ' marked excavation or buried-route item' + ((f.trenchCount + f.ductCount) === 1 ? '' : 's') + ' in the safety summary';
+      if (f.trenchCount > 0 || f.ductCount > 0) { addMethod('scan', buriedWhy); addMethod('civils', buriedWhy); addHazard('buried', buriedWhy); addHazard('excav', buriedWhy); }
+      if (f.highLevelCount > 0) { const why = f.highLevelCount + ' high-level route' + (f.highLevelCount === 1 ? '' : 's') + ' in the safety summary'; addMethod('contain', why); addHazard('wah', why); }
+      if (f.heavyCount > 0) { addHazard('heavy'); addHazard('mh'); }
+      if (f.drillCount > 0) { addHazard('drill'); addHazard('asbestos'); }
+      if (f.unitCount > 0) { addMethod('mount'); addMethod('commission'); addHazard('evcp'); }
+      if (f.bayCount > 0) { addMethod('bays'); addHazard('vehicles'); }
+
+      const cleanKey = (value) => this.safetyText(value, 100).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const distinctLines = (value) => {
+        const seen = new Set();
+        return String(value || '').split(/\r?\n/).map((line) => this.safetyText(line, 700)).filter((line) => {
+          const key = cleanKey(line); if (!key || seen.has(key)) return false; seen.add(key); return true;
+        });
+      };
+      const aliases = {
+        excavation: ['buried', 'excav'], public_interface: ['vehicles', 'occupied'], electrical: ['safeiso', 'liveadj'],
+        manual_handling: ['mh', 'heavy'], work_at_height: ['wah'], building_fabric: ['asbestos', 'drill'],
+        temporary_works: ['occupied', 'vehicles']
+      };
+      const seenRisks = new Set();
+      (c.safety.risks || []).forEach((risk) => {
+        const fingerprint = cleanKey(risk.presetKey || risk.hazard); if (!fingerprint || seenRisks.has(fingerprint)) return;
+        seenRisks.add(fingerprint);
+        let target = null;
+        const candidates = aliases[risk.presetKey] || [];
+        for (let i = 0; i < candidates.length && !target; i += 1) target = hazards.find((h) => h.k === candidates[i]);
+        if (!target) {
+          const hazardName = cleanKey(risk.hazard);
+          target = hazards.find((h) => {
+            const title = cleanKey(h.t), detail = cleanKey(h.hz);
+            return title === hazardName || detail === hazardName || (hazardName.length > 14 && (title.includes(hazardName) || hazardName.includes(title)));
+          });
+        }
+        const controlLines = distinctLines([
+          'Designer control: ' + risk.decision,
+          risk.residual ? 'Residual risk to brief: ' + risk.residual : '',
+          risk.owner ? 'Action / information owner: ' + risk.owner : ''
+        ].filter(Boolean).join('\n'));
+        const sourceNote = risk.source ? 'Controlled design risk: ' + risk.source : 'Controlled design risk from the site planner';
+        if (target) {
+          target.ctl = distinctLines(target.ctl + '\n' + controlLines.join('\n')).join('\n');
+          if (!String(target.why || '').includes(sourceNote)) target.why = [target.why, sourceNote].filter(Boolean).join('; ');
+          return;
+        }
+        const slug = (risk.presetKey || risk.id || risk.hazard).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48) || 'risk';
+        hazards.push({
+          id: uid(), k: 'cdm-' + slug, t: risk.hazard,
+          task: risk.source || 'Work affected by a recorded design risk',
+          hz: risk.residual ? risk.hazard + '. Residual risk: ' + risk.residual : risk.hazard,
+          p: risk.who || 'Operatives, site users and others affected by the works',
+          li: risk.li, si: risk.si, lr: risk.lr, sr: risk.sr,
+          ctl: controlLines.join('\n'), auto: true, why: sourceNote
+        });
+      });
+
+      const setup = c.safety.siteSetup || {};
+      const setupSteps = [];
+      if ((c.safety.risks || []).length) setupSteps.push('Brief the installation team on the recorded designer controls and residual risks before work starts; record the briefing and escalate design changes.');
+      if (setup.induction) setupSteps.push('Induction and consultation: ' + setup.induction);
+      if (setup.publicProtection) setupSteps.push('Public protection and site security: ' + setup.publicProtection);
+      if (setup.welfare) setupSteps.push('Confirm welfare and site set-up: ' + setup.welfare);
+      if (setup.emergency) setupSteps.push('Confirm emergency arrangements: ' + setup.emergency);
+      if (setup.monitoring) setupSteps.push('Monitoring and review: ' + setup.monitoring);
+      if (!setup.publicProtection && (f.herasCount > 0 || f.exclusionCount > 0 || f.pedestrianCount > 0)) setupSteps.push('Set out and maintain the marked barriers, exclusion areas and protected pedestrian routes before starting work.');
+      if (!setup.welfare && f.siteSetupCount > 0) setupSteps.push('Confirm the welfare and site-setup positions marked on the plan are available before work starts.');
+      if (!setup.emergency && (f.firstAidCount > 0 || f.fireCount > 0)) setupSteps.push('Confirm the marked first-aid and fire points remain visible and accessible throughout the works.');
+      if (setupSteps.length) {
+        methods.push({ id: uid(), k: 'cdm-controls', t: 'Design-risk briefing & site controls', steps: distinctLines(setupSteps.join('\n')).join('\n'), auto: true, why: 'CDM safety summary saved with the site plan' });
+      }
+    }
+
+    let scope = this.scopeOf(c);
+    if (c.safety) {
+      const f = c.facts || {}, extra = [];
+      const priced = (c.q.charger7 || 0) + (c.q.charger11 || 0) + (c.q.charger22 || 0) + (c.q.chargerDC || 0);
+      if (!priced && f.unitCount > 0) {
+        const unitLine = 'Install ' + f.unitCount + ' charging unit position' + (f.unitCount === 1 ? '' : 's') + ' shown on the site plan; ratings and final equipment schedule to be confirmed';
+        const generic = c.com ? 'Install EV charge points and associated supply works (add detail here or re-derive from a plan)' : 'Install a domestic EV charge point and associated supply works';
+        if (scope.includes(generic)) scope = scope.replace(generic, unitLine); else extra.push(unitLine);
+      }
+      if (!(c.q.trench > 0) && !(c.q.duct > 0) && (f.trenchCount > 0 || f.ductCount > 0)) extra.push('Complete the marked excavation and buried-route works, subject to service checks and the final construction detail');
+      if (!(c.q.contain > 0) && f.highLevelCount > 0) extra.push('Install the marked high-level containment and cable routes using the specified access method');
+      if (f.herasCount > 0 || f.exclusionCount > 0 || f.pedestrianCount > 0) extra.push('Set out the marked work-zone segregation and protected pedestrian routes');
+      if (f.siteSetupCount > 0 || f.firstAidCount > 0 || f.fireCount > 0) extra.push('Establish the marked welfare, site-setup and emergency points before construction starts');
+      if (extra.length) scope += '\n' + extra.join('\n');
+    }
     return {
-      scope: this.scopeOf(c),
-      method: this.METHODS.filter((m) => m.on(c)).map((m) => ({ id: uid(), k: m.k, t: m.t, steps: m.steps(c).join('\n'), auto: true, why: m.why(c) })),
-      hazards: this.HZLIB.filter((h) => h.on(c)).map((h) => ({ id: uid(), k: h.k, t: h.t, task: h.task, hz: h.hz, p: h.p, li: h.li, si: h.si, lr: h.lr, sr: h.sr, ctl: h.ctl.join('\n'), auto: true, why: h.why(c) })),
+      scope,
+      method: methods,
+      hazards,
       coshh: this.COSHH_LIB.filter((x) => x.on(c)).map((x) => ({ id: uid(), k: x.k, s: x.s, r: x.r, ctl: x.ctl, auto: true, why: x.why(c) })),
       ppe: { keys: this.PPE_DEFS.filter((p) => p.on(c)).map((p) => p.k), note: c.com ? 'Site rules take precedence where they require more. Task-specific PPE per the risk assessments below.' : 'Task-specific PPE per the risk assessments below.' }
     };
@@ -1661,6 +1880,23 @@ class Component extends DCLogic {
     const c = this.ctxOf(blob);
     const parts = this.deriveParts(c);
     const com = c.com;
+    const safety = c.safety, setup = safety ? safety.siteSetup : {}, holders = safety ? safety.dutyHolders : {};
+    const addControl = (base, label, value) => value ? base + '\n' + label + ': ' + value : base;
+    let siteRules = com
+      ? 'Site induction before starting work\nPPE per site rules and this assessment\nSign in / out daily at the agreed point\nWork areas barriered and signed before starting\nWelfare facilities as designated at induction'
+      : 'Working hours agreed with the customer\nCustomer told before any isolation of supply\nTools and leads kept tidy; no unattended exposed conductors\nWork area cleaned and made good before leaving';
+    if (safety) {
+      siteRules = addControl(siteRules, 'Planner induction and consultation record', setup.induction);
+      siteRules = addControl(siteRules, 'Planner public-protection and security record', setup.publicProtection);
+      siteRules = addControl(siteRules, 'Planner monitoring and review record', setup.monitoring);
+    }
+    let welfare = com
+      ? 'Welfare (toilets, washing, rest area, drinking water) is provided by the client / principal contractor in line with CDM 2015 Schedule 2, as confirmed at induction.'
+      : 'Welfare by arrangement with the householder.';
+    if (setup.welfare) welfare += '\nSite planner record: ' + setup.welfare;
+    let emergencyNotes = 'All accidents and near misses are recorded and reported to the office the same day. RIDDOR-reportable events are escalated immediately.';
+    if (setup.emergency) emergencyNotes += '\nSite planner record: ' + setup.emergency;
+    if (setup.monitoring) emergencyNotes += '\nReview arrangement: ' + setup.monitoring;
     return {
       id: this.uid(), planId: planId || '', planName: c.name, planAt: (blob && blob.budget && blob.budget.at) || '', mode: c.mode,
       status: 'draft', rev: 'A',
@@ -1670,25 +1906,21 @@ class Component extends DCLogic {
         title: c.name || 'EV charge point installation',
         siteAddress: '', location: com ? 'Car park / external areas' : 'Dwelling - driveway / garage',
         client: c.custName || '', clientRef: '', projectRef: c.jobRef || '',
-        start: '', end: '', ae: '', supervisor: '', siteContact: '',
-        pd: String((c.cdm && c.cdm.pd) || ''), pc: String((c.cdm && c.cdm.pc) || ''),
+        start: '', end: '', ae: '', supervisor: holders.siteManager || '', siteContact: '',
+        pd: holders.pd || String((c.cdm && c.cdm.pd) || ''), pc: holders.pc || String((c.cdm && c.cdm.pc) || ''),
         supply: c.supplyRating || c.mainFuse || '', earthing: c.earthing || '', dnoRef: c.dnoRef || ''
       },
       scope: parts.scope, method: parts.method, hazards: parts.hazards, coshh: parts.coshh, ppe: parts.ppe,
       permits: com
         ? 'Permit to work for isolations, where the site operates a permit system\nAccess to switch rooms / risers arranged with the site contact\nHot works - not anticipated on this installation\nFurther permits per the site induction'
         : 'No formal permits anticipated - isolation agreed directly with the customer',
-      rules: com
-        ? 'Site induction before starting work\nPPE per site rules and this assessment\nSign in / out daily at the agreed point\nWork areas barriered and signed before starting\nWelfare facilities as designated at induction'
-        : 'Working hours agreed with the customer\nCustomer told before any isolation of supply\nTools and leads kept tidy; no unattended exposed conductors\nWork area cleaned and made good before leaving',
-      welfare: com
-        ? 'Welfare (toilets, washing, rest area, drinking water) is provided by the client / principal contractor in line with CDM 2015 Schedule 2, as confirmed at induction.'
-        : 'Welfare by arrangement with the householder.',
+      rules: siteRules,
+      welfare,
       emg: {
-        ae: '', firstAider: (company && company.firstAider) || '',
+        ae: '', firstAider: holders.firstAider || (company && company.firstAider) || '',
         kit: 'First aid kit in each van; eye-wash and burns dressing included',
         assembly: com ? 'Confirmed at induction / on arrival' : 'Front of the property',
-        notes: 'All accidents and near misses are recorded and reported to the office the same day. RIDDOR-reportable events are escalated immediately.'
+        notes: emergencyNotes
       },
       training: (company && company.training) || this.TRAINING_DEFAULT,
       ops: [], acceptance: null, issue: null
