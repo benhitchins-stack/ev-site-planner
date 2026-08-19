@@ -64,6 +64,20 @@ test('fresh-workspace palette initialises without calling later project helpers'
   assert.ok(planner.indexOf('let palCat="chargers"') < planner.indexOf('const MEANINGFUL_PROJECT_TEXT_FIELDS='));
 });
 
+test('install review is removed from the released planner and active workflow', () => {
+  const planner = source('../public/EV Site Planner.html');
+  const evalStart = planner.indexOf('function evalProject()');
+  const evalEnd = planner.indexOf('function stageHeadHtml(', evalStart);
+  assert.ok(evalStart >= 0 && evalEnd > evalStart, 'project evaluation block is present');
+  const evaluation = planner.slice(evalStart, evalEnd);
+
+  assert.doesNotMatch(planner, /const cardOutcome=/);
+  assert.doesNotMatch(planner, /<h3><span class="dot"><\/span>Install review<\/h3>/i);
+  assert.doesNotMatch(planner, /id="(?:outcome|readyProceed|outcomeNote)"/);
+  assert.doesNotMatch(evaluation, /pack\.(?:outcome|readyToProceed|infoNeeds)/);
+  assert.match(planner, /install:\{label:"Install",tip:"Punch list and snag close-out"\}/);
+});
+
 test('planner preserves photo-free work and provides a payload-free linked-tool snapshot', () => {
   const planner = source('../public/EV Site Planner.html');
   assert.match(planner, /function hasMeaningfulPackContent\(candidate\)/);

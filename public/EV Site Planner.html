@@ -2186,7 +2186,6 @@ function readiness(){
   if(routes.length) checks.push(["Every run has a length", ph.every(p=>p.items.filter(i=>i.type==="route"&&!SITE_ROUTE_KINDS.includes(i.kind)&&i.kind!=="__area").every(i=>routeLen(i,p)!=null))]);
   checks.push([pack.mode==="domestic"?"Main fuse recorded":"Supply rating recorded", !!(pack.mode==="domestic"?pack.mainFuse:(pack.supplyRating||pack.mainFuse))]);
   checks.push(["Earthing recorded", !!pack.earthing]);
-  checks.push(["Review outcome chosen", !!pack.outcome]);
   checks.push(["Compliance checklist started", ((pack.compliance||[]).length+(pack.complianceNA||[]).length)>0]);
   { const sst=snagStats(); if(sst.total) checks.push(["Snags closed out", sst.open===0]); }
   { const cst=commStats(); if(cst.started) checks.push(["Commissioning recorded per charger", cst.complete]); }
@@ -9057,33 +9056,6 @@ function packPanel(){
       <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;line-height:1.4;margin-top:8px">A per-charger commissioning record and handover certificate. It sits alongside the EIC from your certification software; it does not replace it.</div>
     </div>
   </div>`; })()}`;
-  const cardOutcome=`${roleShow('outcome')?`<div class="card">
-    <h3><span class="dot"></span>Install review</h3>
-    <div class="prop">
-      <label>Outcome</label>
-      <select id="outcome">${[["","- select -"],...Object.entries(OUTCOME_DEFS).filter(([v,d])=>!d.mode||d.mode===(pack.mode==="domestic"?"domestic":"commercial")||pack.outcome===v).map(([v,d])=>[v,d.label])].map(([v,t])=>`<option value="${v}" ${pack.outcome===v?'selected':''}>${t}</option>`).join("")}</select>
-      ${pack.outcome==="dno"?`
-      <label>DNO reference${hintBtn('dno')}</label>${hintBox('dno')}<input id="dnoRef" value="${esc(pack.dnoRef||'')}" placeholder="ENA application / DNO reference">`:''}
-      ${pack.outcome==="groundworks"?`
-      <div class="row" style="gap:8px;align-items:center;margin-bottom:6px"><div style="flex:1;font-size:13px;font-weight:500">Trenching <em style="font-style:normal;color:var(--faint);font-size:11px">· 450 mm deep</em></div><input id="extraGround" value="${esc(pack.extraGround||'')}" placeholder="metres" inputmode="decimal" style="width:120px"></div>`:''}
-      ${pack.outcome==="nonstandard"?`
-      <label>Non-standard extras</label>
-      <div class="row" style="gap:8px;align-items:center;margin-bottom:6px"><div style="flex:1;font-size:13px;font-weight:500">Groundworks <em style="font-style:normal;color:var(--faint);font-size:11px">· duct</em></div><input id="extraGround" value="${esc(pack.extraGround||'')}" placeholder="metres" inputmode="decimal" style="width:120px"></div>
-      <div class="row" style="gap:8px;align-items:center;margin-bottom:6px"><div style="flex:1;font-size:13px;font-weight:500">Extra cabling <em style="font-style:normal;color:var(--faint);font-size:11px">· incl. SWA in duct</em></div><input id="extraCable" value="${esc(pack.extraCable||'')}" placeholder="metres" inputmode="decimal" style="width:120px"></div>
-      <div class="row" style="gap:8px;align-items:center;margin-bottom:6px"><div style="flex:1;font-size:13px;font-weight:500">Extra trunking</div><input id="extraTrunk" value="${esc(pack.extraTrunk||'')}" placeholder="metres" inputmode="decimal" style="width:120px"></div>
-      <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;margin-bottom:6px;line-height:1.4">⚡ Auto-filled from your markup, minus the free allowance (${STD_CABLE} m cable, ${STD_TRUNK} m trunking). Ducting always carries SWA, so duct lengths count toward cabling as well as groundworks.</div>
-      <div class="row" style="gap:8px;align-items:center;margin-bottom:6px"><div style="flex:1;font-size:13px;font-weight:500">Fixed fee <em style="font-style:normal;color:var(--faint);font-size:11px">· £200 in most cases</em></div><input id="extraFee" value="${esc(pack.extraFee||'')}" placeholder="£" inputmode="decimal" style="width:120px"></div>
-      <label>Payment link</label><input id="payLink" value="${esc(pack.payLink||'')}" placeholder="Paste the generated pay link">
-      <div style="font-size:11px;color:var(--faint);margin:4px 0 6px;line-height:1.4">The fee and pay link drop straight into the customer email and PDF. Clear the fee if a bespoke quote applies.</div>`:''}
-      ${pack.outcome && pack.outcome!=="standard"?`
-      <label>${pack.outcome==="moreinfo"?"What we need from the client":"Questions for the client"} <em style="font-style:normal;color:var(--faint);font-size:11px">· optional</em></label>
-      <div class="needs">${infoNeedsList().map(n=>`<label class="needrow"><input type="checkbox" data-need="${n.k}" ${(pack.infoNeeds||[]).includes(n.k)?'checked':''}><span><b>${n.t}</b>${n.d?`<em>${n.d}</em>`:''}</span></label>`).join("")}</div>
-      <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;margin-bottom:6px;line-height:1.4">Tick anything you need the client to send, confirm or arrange. These become a checklist in the client PDF and the ready-to-send email.</div>
-      <label>Review notes</label><textarea id="outcomeNote" placeholder="What you've reviewed, what's needed before install, and anything to confirm with the client…">${esc(pack.outcomeNote||'')}</textarea>
-      <label>Ready to proceed</label>
-      <div class="needs"><label class="needrow"><input type="checkbox" id="readyProceed" ${pack.readyToProceed?'checked':''}><span><b>Blocker resolved, ready to install</b><em>Optional flag for your own tracking once the information, DNO approval or permission is in place.</em></span></label></div>`:''}
-    </div>
-  </div>`:''}`;
   const cardBudget=RELEASE_FLAGS.quotes?`
   <div class="card stdpack">
     <h3><span class="dot"></span>Rates &amp; budget${hintBtn('budget')}</h3>${hintBox('budget')}
@@ -9227,7 +9199,7 @@ function packPanel(){
     verify: ((cardLoad||cardCables)?cardLoad+cardCables:emptyCard("Electrical checks","No checks to run yet. Place a charger and draw its supply route on the plan; the load check and cable calculations then run automatically.","stage:design","Open the Design stage"))+cardReadiness,
     price: cardBudget+cardBranding,
     plan: cardCdm+cardCompliance+cardPlanActions+cardDocs+cardBranding,
-    install: cardPunch+cardSnags+((cardPunch||cardSnags)?'':emptyCard("Snagging","No snags recorded yet. Pin snags on the photos with the snag tool; each pin tracks severity, owner and before and after evidence.","fn:snagtool","Pick up the snag tool"))+cardOutcome,
+    install: cardPunch+cardSnags+((cardPunch||cardSnags)?'':emptyCard("Snagging","No snags recorded yet. Pin snags on the photos with the snag tool; each pin tracks severity, owner and before and after evidence.","fn:snagtool","Pick up the snag tool")),
     handover: cardCommissioning||emptyCard("Commissioning &amp; handover","Commissioning records unlock once at least one active charger is placed on a plan. Each charger gets its serial, test results and sign-off, and they feed the handover certificate.","stage:design","Open the Design stage")
   };
   if(!(packSec in STAGE_BODY)) packSec=hasMeaningfulPackContent(pack)?"overview":"survey";
@@ -9246,7 +9218,7 @@ const STAGE_META={
   verify:{label:"Check",tip:"Review load, cable calculations and missing information"},
   price:{label:"Costing",tip:"Unreleased: rates, budget and quoting workflow"},
   plan:{label:"Prepare",tip:"Prepare CDM controls, programme, DNO data and project documents"},
-  install:{label:"Install",tip:"Punch list, snags and install review"},
+  install:{label:"Install",tip:"Punch list and snag close-out"},
   handover:{label:"Handover",tip:"Commissioning results and handover certificate"}
 };
 const STAGE_STATES={none:{label:"Not started",cls:"none"},prog:{label:"In progress",cls:"prog"},ready:{label:"Ready",cls:"ready"},done:{label:"Complete",cls:"done"},block:{label:"Blocked",cls:"block"}};
@@ -9278,18 +9250,14 @@ function evalProject(){
     if(!pack.earthing) miss.push(["Earthing arrangement","stage:survey|focus:earthing","Drives PEN protection, RCD selection and the Zs checks."]);
     if(!(pack.mainFuse||"").trim()) miss.push([dom?"Main fuse rating":"Main fuse / cut-out rating","stage:survey|focus:mainFuse","The load check tests connected charger load against this rating."]);
     if(!dom&&!(pack.supplyRating||"").trim()) miss.push(["Supply rating / headroom","stage:survey|focus:supplyRating","The load check needs the supply rating to test capacity on a commercial job."]);
-    const infoN=(pack.infoNeeds||[]).length;
-    const infoOut=(pack.outcome==="moreinfo"||pack.outcome==="permission")&&infoN>0&&!pack.readyToProceed;
     const started=photosN>0||sp.started||!!((pack.name||"").trim()||(pack.address||"").trim()||(pack.postcode||"").trim()||pack.earthing||(pack.mainFuse||"").trim()||(pack.supplyRating||"").trim()||(pack.custName||"").trim());
     let s="none",why=[];
-    if(infoOut){ s="block"; why=["Waiting on client information · "+infoN+" item"+(infoN===1?"":"s")+" outstanding"]; }
-    else if(!started){ why=["No site information or photos yet"]; }
+    if(!started){ why=["No site information or photos yet"]; }
     else if(miss.length){ s="prog"; why=["Missing: "+miss.map(m=>m[0]).join(", ")]; }
     else if(photosN===0){ s="prog"; why=["Site details recorded · no photos or plans yet"]; }
     else if(sp.total>0&&sp.done>=sp.total){ s="done"; why=["Site details recorded and the guided survey is complete"]; }
     else{ s="ready"; why=["Minimum survey details for a "+(dom?"domestic":"commercial")+" job are recorded"]; if(sp.started&&sp.done<sp.total) why.push("guided survey "+sp.done+" of "+sp.total+" shots"); }
-    S("survey",s,why,(started?miss.length:0)+(infoOut?infoN:0));
-    if(infoOut) I("crit","survey","Waiting on client information",infoN+" item"+(infoN===1?"":"s")+" requested from the client "+(infoN===1?"is":"are")+" still outstanding. Tick Ready to proceed in the install review once it lands.","stage:install|focus:readyProceed");
+    S("survey",s,why,started?miss.length:0);
     if(started) miss.forEach(m=>{ const cr=(m[0]==="Earthing arrangement"&&actU.length>0); I(cr?"crit":"warn","survey",m[0]+" missing",m[2],m[1]); });
     if(started&&photosN===0) I("info","survey","No photos or plans yet","Add site photos, a PDF drawing or a starter layout; everything you mark up feeds the calcs and exports.","stage:survey|fn:addphotos");
     if(photosN>0&&sp.started&&sp.done<sp.total) I("adv","survey","Guided survey incomplete",sp.done+" of "+sp.total+" survey shots filed. The site walk catches what a desk review misses.","stage:survey|fn:walk");
@@ -9344,21 +9312,18 @@ function evalProject(){
     const pr=compProgress();
     const progOn=!!(pack.programme&&pack.programme.start);
     const attN=(pack.attachments||[]).length;
-    const waiting=(pack.outcome==="dno"||pack.outcome==="permission")&&!pack.readyToProceed;
     const ca=(!dom&&typeof evspCdmAssessment==="function")?evspCdmAssessment(pack):null;
     const cdmActive=!!(ca&&ca.status!=="not_started");
     const cdmBlockers=cdmActive?(ca.blockingIssues||[]):[];
     let s="none",why=[];
-    if(waiting){ s="block"; why=[pack.outcome==="dno"?("Waiting on the DNO"+(pack.dnoRef?" · ref "+esc(pack.dnoRef):"")):"Waiting on permission (landlord, freeholder or planning)"]; }
-    else if(cdmBlockers.length){ s="block"; why=["CDM control: "+cdmBlockers[0].text]; }
+    if(cdmBlockers.length){ s="block"; why=["CDM control: "+cdmBlockers[0].text]; }
     else if(!pr.done&&!progOn&&!attN&&!pack.dnoRef){ why=["No compliance items, programme or documents recorded yet"]; }
     else if(pr.applicable>0&&pr.out===0){ s="done"; why=["All "+pr.applicable+" applicable compliance items are closed"]; }
     else{ s="prog"; why=[pr.out?(pr.out+" compliance item"+(pr.out===1?"":"s")+" outstanding"):"Programme and documents in hand"]; }
     const planStarted=pr.done>0||progOn||attN>0||!!pack.dnoRef||cdmActive;
-    S("plan",s,why,(planStarted?pr.out:0)+(waiting?1:0)+cdmBlockers.length);
+    S("plan",s,why,(planStarted?pr.out:0)+cdmBlockers.length);
     if(planStarted&&pr.out>0) I("adv","plan",pr.out+" compliance item"+(pr.out===1?"":"s")+" outstanding","Work the list down or mark items not required; it prints as a status page in the engineer PDF.","stage:plan");
     if(cdmBlockers.length) I("crit","plan","CDM project controls incomplete",cdmBlockers[0].text,"stage:plan|flash:evspCdmOpen");
-    if(waiting) I("info","plan",pack.outcome==="dno"?"Waiting on DNO approval":"Waiting on permission","Recorded from the install review. Tick Ready to proceed once approval lands.","stage:install|focus:readyProceed");
   }catch(_){ S("plan","none",[],0); }
   /* Install */
   try{
@@ -9366,10 +9331,10 @@ function evalProject(){
     const signed=snagSignedOff();
     let s="none",why=[];
     if(sg.safety){ s="block"; why=[sg.safety+" safety snag"+(sg.safety===1?"":"s")+" open"]; }
-    else if(!sg.total&&!tasks.length&&!pack.outcome){ why=["No install tasks, snags or install review yet"]; }
+    else if(!sg.total&&!tasks.length){ why=["No install tasks or snags yet"]; }
     else if(sg.total&&signed&&!openP){ s="done"; why=["All snags closed and signed off"+((pack.snagSign||{}).date?" · "+esc((pack.snagSign||{}).date):"")]; }
     else if(!sg.open&&!openP&&(sg.total||tasks.length)){ s="ready"; why=[sg.total?"All snags fixed · awaiting sign-off":"Punch list complete"]; }
-    else{ s="prog"; why=[[sg.open?(sg.open+" snag"+(sg.open===1?"":"s")+" open"):"",openP?(openP+" install task"+(openP===1?"":"s")+" to do"):""].filter(Boolean).join(" · ")||"Install review recorded"]; }
+    else{ s="prog"; why=[sg.open?(sg.open+" snag"+(sg.open===1?"":"s")+" open"):(openP+" install task"+(openP===1?"":"s")+" to do")]; }
     S("install",s,why,sg.open+openP);
     if(sg.safety) I("crit","install",sg.safety+" safety snag"+(sg.safety===1?"":"s")+" open","Safety snags need putting right before handover. Tap a snag row to jump to its pin on the photo.","stage:install");
     else if(sg.open) I("warn","install",sg.open+" snag"+(sg.open===1?"":"s")+" open","Open snags print as outstanding on the export, with signature lines to close out.","stage:install");
@@ -10326,21 +10291,12 @@ function wireSide(){
   const mbc=document.getElementById("mcbBrandCustom"); if(mbc) mbc.oninput=()=>{ pack.mcbBrand=mbc.value; autosave(); };
   document.querySelectorAll("[data-mcbcurve]").forEach(b=>b.onclick=()=>{ pack.mcbCurve=b.dataset.mcbcurve; renderSide(); autosave(); });
   const mrt=document.getElementById("mcbRating"); if(mrt) mrt.onchange=()=>{ pack.mcbRating=mrt.value; autosave(); };
-  const rp=document.getElementById("readyProceed"); if(rp) rp.onchange=()=>{ pack.readyToProceed=rp.checked; syncPdfGate(); autosave(); };
   { const su=document.getElementById("supplyRating"); if(su) su.oninput=()=>{ pack.supplyRating=su.value; autosave(); }; }
   { const cn=document.getElementById("capacityNote"); if(cn) cn.oninput=()=>{ pack.capacityNote=cn.value; autosave(); }; }
   document.querySelectorAll("[data-enwork]").forEach(cb=>cb.onchange=()=>{ const s=new Set(pack.enablingWorks||[]); cb.checked?s.add(cb.dataset.enwork):s.delete(cb.dataset.enwork); pack.enablingWorks=[...s]; autosave(); });
   { const en2=document.getElementById("enablingNote"); if(en2) en2.oninput=()=>{ pack.enablingNote=en2.value; autosave(); }; }
-  const oc=document.getElementById("outcome"); if(oc) oc.onchange=()=>{ pack.outcome=oc.value; syncPdfGate(); if(oc.value==="nonstandard"){ const actCableBase=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="route"&&(i.kind==="swa"||i.kind==="run")&&i.manualLen)).reduce((s,i)=>s+i.manualLen,0); const actTrunk=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="route"&&i.kind==="mt2"&&i.manualLen)).reduce((s,i)=>s+i.manualLen,0); const actDuct=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="route"&&i.kind==="trench"&&i.manualLen)).reduce((s,i)=>s+i.manualLen,0); const actCable=actCableBase; const overCable=Math.max(0, +(actCable-STD_CABLE).toFixed(2)); const overTrunk=Math.max(0, +(actTrunk-STD_TRUNK).toFixed(2)); if(!pack.extraCable&&overCable>0) pack.extraCable=String(overCable); if(!pack.extraTrunk&&overTrunk>0) pack.extraTrunk=String(overTrunk); if(!pack.extraGround&&actDuct>0) pack.extraGround=String(actDuct); } if(oc.value==="moreinfo"&&!(pack.infoNeeds||[]).length){ pack.infoNeeds=["siteplan","supply","dbschedule","capacity","route","bays"]; } if(oc.value==="permission"&&!(pack.infoNeeds||[]).length){ pack.infoNeeds=["landlord"]; } if(oc.value==="groundworks"&&!pack.extraGround){ const d=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="route"&&i.kind==="trench"&&i.manualLen)).reduce((s,i)=>s+i.manualLen,0); if(d>0) pack.extraGround=String(d); } renderSide(); autosave(); };
-  const ocn=document.getElementById("outcomeNote"); if(ocn) ocn.oninput=()=>{ pack.outcomeNote=ocn.value; autosave(); };
-  const eg=document.getElementById("extraGround"); if(eg) eg.oninput=()=>{ pack.extraGround=eg.value; autosave(); };
-  const ec=document.getElementById("extraCable"); if(ec) ec.oninput=()=>{ pack.extraCable=ec.value; autosave(); };
-  const et=document.getElementById("extraTrunk"); if(et) et.oninput=()=>{ pack.extraTrunk=et.value; autosave(); };
-  const ef=document.getElementById("extraFee"); if(ef) ef.oninput=()=>{ pack.extraFee=ef.value; autosave(); };
-  const pl=document.getElementById("payLink"); if(pl) pl.oninput=()=>{ pack.payLink=pl.value; autosave(); };
   const pn=document.getElementById("packNotes"); if(pn) pn.oninput=()=>{ pack.notes=pn.value; autosave(); };
   const dnr=document.getElementById("dnoRef"); if(dnr) dnr.oninput=()=>{ pack.dnoRef=dnr.value; autosave(); };
-  document.querySelectorAll("[data-need]").forEach(cb=>cb.onchange=()=>{ const s=new Set(pack.infoNeeds||[]); cb.checked?s.add(cb.dataset.need):s.delete(cb.dataset.need); pack.infoNeeds=[...s]; autosave(); });
   // props
   // draft cable run controls (active while a route tool is selected)
   document.querySelectorAll("[data-drk]").forEach(b=>b.onclick=()=>{ if(!draftRoute)return; const k=b.dataset.drk; draftRoute.kind=k; tool="route:"+k; syncRail(); updateHint(); draw(); renderSide(); });
@@ -12038,7 +11994,7 @@ function genLetter(){ const t=loadTpls(); return fillTemplate(t[pack.outcome]||t
 let rxBlobUrl=null, rxBuildToken=0, rxDebounce=null, rxKeyHandler=null, rxMode="office", rxEmailDirty=false, rxTplEditing=false;
 const RX_COPY={
   office:{ title:"Review &amp; export", sub:"Check the engineer pack, tweak what goes in, then download.", sumLabel:"Cover summary", sumOpt:"optional", sumPh:"A short intro line for the cover page, e.g. site context, access notes, who to contact on arrival…", export:"Download PDF" },
-  customer:{ title:"Client copy", sub:"A client-friendly plan plus a ready-to-send email, both written from your review outcome.", sumLabel:"Letter to the client", sumOpt:"page 2 · auto-written, edit freely", sumPh:"The letter that opens the client's plan…", export:"Download client PDF" }
+  customer:{ title:"Client copy", sub:"A client-friendly plan plus a ready-to-send email, both ready to review and share.", sumLabel:"Letter to the client", sumOpt:"page 2 · auto-written, edit freely", sumPh:"The letter that opens the client's plan…", export:"Download client PDF" }
 };
 function rxComputeLengths(){
   const incl = pack.photos.filter(p=>p.includeInPdf!==false);
@@ -12050,23 +12006,10 @@ function rxComputeLengths(){
 }
 function rxRenderReadout(){
   const el=document.getElementById("rxReadout"); if(!el) return;
-  const OL=Object.fromEntries(Object.entries(OUTCOME_DEFS).map(([k,d])=>[k,d.label]));
   const L=rxComputeLengths();
-  const outTxt = pack.outcome ? (OL[pack.outcome]||pack.outcome) : "Not set";
-  let extras="";
-  if(pack.outcome==="nonstandard"){
-    const rows=[];
-    if(pack.extraGround) rows.push(["Groundworks", pack.extraGround+" m"]);
-    if(pack.extraCable) rows.push(["Extra cabling", pack.extraCable+" m"]);
-    if(pack.extraTrunk) rows.push(["Extra trunking", pack.extraTrunk+" m"]);
-    if(pack.outcome==="nonstandard"&&pack.extraFee) rows.push(["Fixed fee", "£"+pack.extraFee]);
-    extras = rows.map(([a,b])=>`<div class="ro-row"><span>${a}</span><b>${b}</b></div>`).join("");
-  }
-  el.innerHTML = `<div class="ro-out">${outTxt}</div>`+
-    `<div class="ro-row"><span>Cabling marked</span><b>${L.cable} m</b></div>`+
+  el.innerHTML = `<div class="ro-row"><span>Cabling marked</span><b>${L.cable} m</b></div>`+
     `<div class="ro-row"><span>Containment marked</span><b>${L.trunk} m</b></div>`+
-    (L.duct>0?`<div class="ro-row"><span>Trenching / groundworks</span><b>${L.duct} m</b></div>`:"")+
-    extras;
+    (L.duct>0?`<div class="ro-row"><span>Trenching / groundworks</span><b>${L.duct} m</b></div>`:"");
 }
 function rxRenderPhotos(){
   const wrap=document.getElementById("rxPhotos"); if(!wrap) return;
@@ -12169,7 +12112,7 @@ function openReview(mode){
     document.getElementById("rxEmailRegen").onclick=()=>{ emailTA.value=genEmail(); rxEmailDirty=false; document.getElementById("rxEmailState").textContent="ready to send"; };
     const tplKey=()=>pack.outcome||"none";
     const exitTpl=()=>{ rxTplEditing=false; document.getElementById("rxTplHint").style.display="none"; document.getElementById("rxTplBtns").style.display="none"; document.getElementById("rxEmailBtns").style.display=""; emailTA.value=genEmail(); rxEmailDirty=false; document.getElementById("rxEmailState").textContent="ready to send"; if(!custLetterSet()) sum.value=genLetter(); rxQueuePreview(); };
-    document.getElementById("rxEmailTplEdit").onclick=()=>{ rxTplEditing=true; emailTA.value=loadTpls()[tplKey()]; document.getElementById("rxEmailState").textContent="editing template · "+((OUTCOME_DEFS[pack.outcome]||{}).label||"no outcome set"); document.getElementById("rxTplHint").style.display=""; document.getElementById("rxTplBtns").style.display=""; document.getElementById("rxEmailBtns").style.display="none"; };
+    document.getElementById("rxEmailTplEdit").onclick=()=>{ rxTplEditing=true; emailTA.value=loadTpls()[tplKey()]; document.getElementById("rxEmailState").textContent="editing client email template"; document.getElementById("rxTplHint").style.display=""; document.getElementById("rxTplBtns").style.display=""; document.getElementById("rxEmailBtns").style.display="none"; };
     document.getElementById("rxTplSave").onclick=()=>{ saveTpl(tplKey(), emailTA.value); toast("Template saved on this device"); exitTpl(); };
     document.getElementById("rxTplCancel").onclick=exitTpl;
     document.getElementById("rxTplReset").onclick=()=>{ saveTpl(tplKey(), null); toast("Template reset to default"); exitTpl(); };
@@ -12177,7 +12120,7 @@ function openReview(mode){
     sum.value = pack.coverSummary||"";
     sum.oninput = ()=>{ pack.coverSummary=sum.value; autosave(); rxQueuePreview(); };
   }
-  // outcome/lengths readout is office-only context; in customer mode show a friendlier note
+  // Marked-length readout is office-only context; the client copy keeps this panel out of the way.
   document.getElementById("rxReadoutSec").style.display = rxMode==="customer" ? "none" : "";
   rxRenderReadout();
   rxRenderPhotos();
@@ -12762,7 +12705,6 @@ async function buildPdf(opts){
     const cps=[]; pack.photos.forEach(p=>p.items.forEach(i=>{ if(i.type==="connpoint") cps.push(i.loc||"Main consumer unit"); }));
     const spd=pack.photos.some(p=>p.items.some(i=>(i.type==="evdb"||i.type==="ipevdb")&&i.spd===true));
     const rows=[];
-    rows.push(["Install type", pack.outcome==="standard" ? "Standard install" : (pack.outcome ? ((OUTCOME_DEFS[pack.outcome]||{}).label||pack.outcome) : "To be confirmed")]);
     rows.push(["Connection", cps.length?[...new Set(cps)].join(", "):"Confirm source switchgear on site"]);
     rows.push(["Protection", "C40 Type A DP RCBO"+(spd?" + SPD":"")+(pack.mcbRequired?" + "+mcbSpec():"")]);
     if(pack.mcbRequired) rows.push(["MCB", mcbSpec().replace(/ MCB$/,"")+": feeds from the existing fuse board, posted to the customer. Confirm no upstream RCD interferes before connecting."]);
@@ -14648,7 +14590,7 @@ function projStatusMeta(){
   let ready=null; try{ ready=readiness().pct; }catch(_){ }
   let snags=0; try{ snags=snagStats().open; }catch(_){ }
   let units=0; try{ units=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="unit"&&i.provision!=="passive")).length; }catch(_){ }
-  return {units, snags, ready, outcome:pack.outcome||"", rev:pack.rev||"A", go:pack.readyToProceed===true};
+  return {units, snags, ready, rev:pack.rev||"A"};
 }
 function refreshProjIndexMeta(){
   if(!pack.projId) return;
@@ -14701,10 +14643,7 @@ function renderProjList(){
   const ix=q?all.filter(x=>[x.name,x.ref,x.cust].some(v=>String(v||"").toLowerCase().includes(q))):all;
   listEl.innerHTML = ix.length ? ix.map(x=>{
     const links=projLinks(x.id);
-    const od=OUTCOME_DEFS[x.outcome];
     const stat=[];
-    if(x.go) stat.push('<span class="pjlink" style="cursor:default;color:var(--ok)"><i style="background:#267A43"></i>Ready to install</span>');
-    else if(od) stat.push('<span class="pjlink" style="cursor:default"><i style="background:rgb('+od.col.join(",")+')"></i>'+esc(od.label)+'</span>');
     if(x.snags>0) stat.push('<span class="pjlink" style="cursor:default;color:#A03A12"><i style="background:#E05A26"></i>'+x.snags+' snag'+(x.snags===1?'':'s')+' open</span>');
     if(typeof x.ready==="number") stat.push('<span class="pjlink" style="cursor:default"><i style="background:'+(x.ready>=100?'#267A43':(x.ready>=60?'#CE9E2E':'#8A98A8'))+'"></i>'+x.ready+'% ready</span>');
     const chips=(stat.length||links.length)?'<div class="pjlinks">'+stat.join("")+links.map(l=>'<a class="pjlink" data-pjlink="1" href="'+l.href.replace(/"/g,"&quot;")+'" title="Open in its tool"><i style="background:'+l.dot+'"></i>'+esc(l.lab)+'</a>').join("")+'</div>':"";
