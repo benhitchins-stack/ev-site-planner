@@ -7659,7 +7659,7 @@ function tool_btn(t,label,inner){
 }
 let areaPreset=null;
 /* palette state: which category banner is open + whether the panel is shown */
-let palCat="chargers", palOpen=hasMeaningfulPackContent(pack)&&!(window.innerWidth<=959||window.matchMedia("(pointer:coarse)").matches);
+let palCat="chargers", palOpen=Array.isArray(pack.photos)&&pack.photos.length>0&&!(window.innerWidth<=959||window.matchMedia("(pointer:coarse)").matches);
 const CAT_OF={};
 function syncPalette(){
   const rl=document.getElementById("rail");
