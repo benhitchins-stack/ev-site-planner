@@ -56,6 +56,14 @@ test('planner loads and persists the CDM module and safety bridge', () => {
   assert.match(planner, /Object\.entries\(AREA_SURFACES\)\.filter\(\(\[,s\]\)=>!s\.safety\)/);
 });
 
+test('fresh-workspace palette initialises without calling later project helpers', () => {
+  const planner = source('../public/EV Site Planner.html');
+  const paletteInit = planner.match(/let palCat="chargers", palOpen=([^;]+);/)?.[1] || '';
+  assert.match(paletteInit, /Array\.isArray\(pack\.photos\)/);
+  assert.doesNotMatch(paletteInit, /hasMeaningfulPackContent/);
+  assert.ok(planner.indexOf('let palCat="chargers"') < planner.indexOf('const MEANINGFUL_PROJECT_TEXT_FIELDS='));
+});
+
 test('planner preserves photo-free work and provides a payload-free linked-tool snapshot', () => {
   const planner = source('../public/EV Site Planner.html');
   assert.match(planner, /function hasMeaningfulPackContent\(candidate\)/);
