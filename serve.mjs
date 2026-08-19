@@ -2,7 +2,7 @@
 // Zero-dependency static server for the EV Site Planner suite.
 // Serves ./public over http with correct MIME types and tolerant URL decoding
 // (the suite ships pages whose filenames contain spaces and "&", e.g.
-// "Quotes & Invoices.dc.html", reached as "Quotes%20%26%20Invoices.dc.html").
+// filenames containing spaces, reached through their percent-encoded URL form).
 //
 //   node serve.mjs            -> http://localhost:8000
 //   PORT=3000 node serve.mjs  -> http://localhost:3000

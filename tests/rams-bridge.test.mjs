@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
 
-const html = readFileSync(new URL('../public/RAMS Builder.dc.html', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../unreleased/public/RAMS Builder.dc.html', import.meta.url), 'utf8');
 const script = html.match(/<script type="text\/x-dc"[^>]*>([\s\S]*?)<\/script>/i)?.[1];
 
 function loadBuilder() {

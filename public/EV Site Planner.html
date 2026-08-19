@@ -667,6 +667,17 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .wlc-modes .wm-check{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;opacity:0;transform:scale(.6);transition:.15s;box-shadow:0 2px 6px rgba(16,24,40,.3);}
 .wlc-modes button.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset,0 6px 18px rgba(30,107,255,.14);background:#fff;}
 .wlc-modes button.on .wm-check{opacity:1;transform:scale(1);}
+.wlc-starts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.wlc-starts button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;padding:11px;border:1px solid var(--line2);border-radius:12px;background:var(--panel);color:var(--ink);text-align:left;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;}
+.wlc-starts button:hover{border-color:var(--accent);background:#fff;}
+.wlc-starts button.on{border-color:var(--accent);background:#fff;box-shadow:0 0 0 2px var(--accent) inset;}
+.wlc-starts svg{width:18px;height:18px;color:var(--accentText);flex:none;}
+.wlc-starts b{font-size:12px;font-weight:700;line-height:1.25;}
+.wlc-starts small{font-size:10.5px;line-height:1.35;color:var(--dim);}
+.wlc-flow{display:flex;align-items:center;gap:7px;padding:10px 12px;margin-top:14px;border-radius:11px;background:var(--panel);border:1px solid var(--line);color:var(--dim);font-size:11px;font-weight:650;}
+.wlc-flow span{display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.wlc-flow i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--line2);color:var(--accentText);font-style:normal;font-size:9px;font-weight:800;}
+.wlc-flow svg{width:11px;height:11px;color:var(--faint);flex:none;}
 .wlc-roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .wlc-roles button{text-align:left;border:1px solid var(--line2);border-radius:13px;padding:12px 13px;background:var(--panel);display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:.12s;}
 .wlc-roles button b{font-size:13.5px;font-weight:650;color:var(--ink);}
@@ -675,6 +686,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .wlc-roles .wlc-ric{width:22px;height:22px;color:var(--accentText);margin-bottom:2px;}
 .wlc-roles .wlc-ric svg{width:22px;height:22px;}
 .wlc-foot{display:flex;align-items:center;gap:8px;margin-top:20px;}
+@media (max-width:700px){ .wlc-starts{grid-template-columns:repeat(2,1fr);} .wlc-flow{overflow-x:auto;justify-content:flex-start;} }
 @media (max-width:560px){ .wlc-roles{grid-template-columns:1fr;} .wlc-modes{grid-template-columns:1fr;} }
 @media (max-width:959px){ #modeSeg button{padding:8px 9px !important;} }
 
@@ -793,30 +805,24 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
       <button class="hbtn" id="btnRedo" disabled style="opacity:.45" title="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 7l5 5-5 5M20 12H9a5 5 0 0 0 0 10h1"/></svg><span class="btn-label">Redo</span></button>
     </div>
     <div style="position:relative" class="htools">
-      <button class="hbtn" id="btnTools" title="The full toolkit: quotes, project support, guides, learning & council review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="btn-label">Features</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width:11px;height:11px"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button class="hbtn" id="btnTools" title="Open the 3D showroom, practical guides and training courses"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="btn-label">More tools</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width:11px;height:11px"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="exportmenu" id="toolsMenu">
-        <div class="emi-sec">Paperwork &amp; pricing</div>
-        <button class="emi" id="tmQuotes" title="Turn this plan into a priced quote and track it to payment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 9h5M9.5 13h5"/></svg><span>Quotes &amp; invoices<small>Price this plan, invoice, pipeline</small></span></button>
-        <button class="emi" id="tmRams" title="RAMS builder is coming soon" style="opacity:.62"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.4-3 8-7 10-4-2-7-5.6-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>RAMS builder<small>Coming soon · risk assessments &amp; method statements</small></span></button>
-        <div class="emi-sec">Help &amp; learning</div>
-        <button class="emi" id="tmSupport" title="Full project management for workplace charging, on a bespoke quote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.6"/><path d="M6 6l3.4 3.4M18 6l-3.4 3.4M6 18l3.4-3.4M18 18l-3.4-3.4"/></svg><span>Project Support<small>Workplace project management · bespoke quotes</small></span></button>
-        <button class="emi" id="tmGuides" title="How-to guides & useful links"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Guide library<small>How-to guides &amp; useful links</small></span></button>
-        <button class="emi" id="tmLearn" title="Learning hub: short training courses"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg><span>Learning hub<small>Short interactive courses</small></span></button>
         <div class="emi-sec">Visualise</div>
-        <button class="emi" id="tm3d" title="Every charger and piece of site kit as a true 3D model: drag to spin and zoom; chargers swap colours and body designs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 4.5v10l-8 4.5-8-4.5V7z"/><path d="M4 7l8 4.5L20 7"/><path d="M12 11.5v10"/></svg><span>3D showroom<small>Chargers &amp; site kit · spin, zoom, recolour</small></span></button>
-        <div class="emi-sec">For local authorities</div>
-        <button class="emi" id="tmCouncil" title="Estate Review: evidence an existing council estate against current regs: guided surveys, sign-off and funder-ready reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V10M19 21V10"/><path d="M3 10l9-6 9 6"/><path d="M9 21v-7M15 21v-7"/></svg><span>Estate Review<small>Compliance evidence &amp; grant readiness</small></span></button>
+        <button class="emi" id="tm3d" title="Spin, zoom and recolour chargers and common site equipment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 4.5v10l-8 4.5-8-4.5V7z"/><path d="M4 7l8 4.5L20 7"/><path d="M12 11.5v10"/></svg><span>3D showroom<small>Chargers &amp; site kit · spin, zoom, recolour</small></span></button>
+        <div class="emi-sec">Guidance &amp; learning</div>
+        <button class="emi" id="tmGuides" title="How-to guides & useful links"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Guide library<small>How-to guides &amp; useful links</small></span></button>
+        <button class="emi" id="tmLearn" title="Short interactive EV training courses"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg><span>Training courses<small>Short interactive learning modules</small></span></button>
       </div>
     </div>
     <div style="position:relative">
       <button class="hbtn primary" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span class="btn-label">Export</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width:11px;height:11px"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="exportmenu" id="exportMenu">
-        <div class="emi-sec">Plans</div>
+        <div class="emi-sec">Most used</div>
         <button class="emi" id="btnPng" title="Save the current marked-up photo as an image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg><span>Save image<small>Current plan as a PNG</small></span></button>
-        <button class="emi" id="btnPngAll" title="Save every plan as a PNG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="7" width="14" height="12" rx="2"/><path d="M7 15l4-4 3 3 2-2 5 5"/><path d="M17 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Save all images<small>Every plan as a PNG</small></span></button>
-        <div class="emi-sec">Packs &amp; documents</div>
         <button class="emi" id="btnPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M9 13h2a2 2 0 0 0 0-4H9v8"/></svg><span>Engineer PDF<small>Full technical install pack</small></span></button>
         <button class="emi" id="btnPdfCust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8M8 13h5"/></svg><span>Client PDF<small>Friendly plan + email</small></span></button>
+        <div class="emi-sec">More plan outputs</div>
+        <button class="emi" id="btnPngAll" title="Save every plan as a PNG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="7" width="14" height="12" rx="2"/><path d="M7 15l4-4 3 3 2-2 5 5"/><path d="M17 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Save all images<small>Every plan as a PNG</small></span></button>
         <button class="emi" id="btnPdfSum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><span>Summary PDF<small>One-page snapshot + plans</small></span></button>
         <button class="emi" id="btnWebPack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.6 3.8 9S14.5 18.5 12 21c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z"/></svg><span>Decision pack<small>Share link · options · tap-to-approve</small></span></button>
         <div class="emi-sec">Technical</div>
@@ -885,7 +891,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 <input type="file" id="fileSnagShot" accept="image/*" style="display:none">
 <div class="wlc-backdrop" id="projBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:480px">
-    <div class="wlc-head"><h2>Projects on this device</h2><p>Every job saved on this device, newest first, with status at a glance: outcome, open snags and how export-ready the pack is. Quotes, RAMS and support requests linked to a job appear beneath it. Files (Save) are still your durable copies.</p></div>
+    <div class="wlc-head"><h2>Projects on this device</h2><p>Every job saved on this device, newest first, with status at a glance: outcome, open snags and how export-ready the pack is. Download a pack file when you need a durable copy or want to move a job to another device.</p></div>
     <div style="display:flex;gap:8px;align-items:center;margin:0 0 10px">
       <input id="pjSearch" placeholder="Search name, case ref or customer…" style="flex:1;min-width:0;border:1px solid var(--line2);border-radius:9px;padding:8px 11px;font-size:13px;background:#fff;color:var(--ink)">
       <span id="pjCount" style="flex:none;font-size:11px;color:var(--faint);font-weight:600"></span>
@@ -1021,10 +1027,18 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
 /* ---- project stage navigation ---- */
 .stagebar{display:flex;align-items:center;gap:2px;flex:none;padding:5px calc(14px + env(safe-area-inset-right,0px)) 5px calc(14px + env(safe-area-inset-left,0px));background:#FFFFFF;border-bottom:1px solid var(--line);overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:38;}
 .stagebar::-webkit-scrollbar{display:none;}
+.stagegroup{flex:none;margin:0 5px 0 8px;font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
 .stgbtn{display:flex;align-items:center;gap:7px;flex:none;padding:5px 11px;min-height:31px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--dim);font-size:12px;font-weight:650;white-space:nowrap;cursor:pointer;transition:background .12s,border-color .12s;}
 .stgbtn:focus-visible{outline:none;box-shadow:var(--focus-ring);}
 .stgbtn.on{background:rgba(30,107,255,.10);border-color:rgba(30,107,255,.32);color:var(--accentText);}
 .stgbtn>svg{width:14px;height:14px;flex:none;}
+.stgstep{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:var(--panel);border:1px solid var(--line2);color:var(--faint);font-size:9px;font-weight:800;}
+.stgbtn.on .stgstep{background:var(--accent);border-color:var(--accent);color:var(--accentInk);}
+.stgstep.done{background:#E7F6EC;border-color:#A8D9B8;color:#287544;}
+.stgstep.block{background:#FBE4E2;border-color:#F0BDB8;color:#A32820;}
+.stgnext{position:sticky;right:0;z-index:3;display:flex;align-items:center;gap:8px;flex:none;max-width:290px;margin-left:auto;padding:6px 11px;min-height:32px;border-radius:9px;border:1px solid rgba(30,107,255,.28);background:#F1F6FF;color:var(--accentText);font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:-10px 0 14px 3px #fff;}
+.stgnext span{min-width:0;overflow:hidden;text-overflow:ellipsis;}
+.stgnext svg{width:13px;height:13px;flex:none;}
 .stgdot{width:9px;height:9px;border-radius:50%;flex:none;background:transparent;border:1.6px solid #B9C2CA;box-sizing:border-box;}
 .stgdot.prog{background:var(--accent);border-color:var(--accent);}
 .stgdot.ready{background:#fff;border-color:#3B8557;border-width:2.6px;}
@@ -1035,7 +1049,8 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
 .stgsep{flex:none;width:12px;height:12px;color:var(--line2);}
 @media (hover:hover){ .stgbtn:not(.on):hover{background:var(--panel);color:var(--ink);} }
 @media (pointer:coarse){ .stgbtn{min-height:40px;padding:6px 12px;} }
-@media (max-width:700px){ .stagebar{padding:4px 8px;} .stgbtn{padding:5px 8px;font-size:11.5px;gap:6px;} .stgsep{display:none;} }
+@media (max-width:900px){ .stgnext{max-width:170px;} }
+@media (max-width:700px){ .stagebar{padding:4px 8px;} .stagegroup{display:none;} .stgbtn{padding:5px 8px;font-size:11.5px;gap:6px;} .stgsep{display:none;} .stgnext{max-width:132px;margin-left:5px;} .stgnext span{max-width:88px;} }
 @media (min-width:960px){ .side.hidedesk{display:none;} }
 /* ---- stage header + overview ---- */
 .stghead{display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;}
@@ -1282,10 +1297,25 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
         <span class="wm-check">✓</span>
       </button>
     </div>
+    <div class="wlc-flow" aria-label="Planner workflow">
+      <span><i>1</i>Start</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      <span><i>2</i>Mark up</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      <span><i>3</i>Check</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      <span><i>4</i>Prepare &amp; export</span>
+    </div>
+    <div id="wlcStartBlock">
+      <div class="wlc-sec">What are you starting from?</div>
+      <div class="wlc-starts">
+        <button type="button" data-wstart="upload" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><b>Photos or drawing</b><small>Images, survey ZIP or PDF</small></button>
+        <button type="button" data-wstart="walk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><b>Guided site walk</b><small>Capture the survey in order</small></button>
+        <button type="button" data-wstart="starter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></svg><b>Starter layout</b><small>Driveway or car park preset</small></button>
+        <button type="button" data-wstart="grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg><b>Blank scaled plan</b><small>Grid paper, ready to draw</small></button>
+      </div>
+    </div>
     <div class="wlc-foot">
-      <button class="hbtn" id="wlcSkip">Skip</button>
+      <button class="hbtn" id="wlcSkip">Open empty workspace</button>
       <div style="flex:1"></div>
-      <button class="hbtn primary" id="wlcGo">Start planning</button>
+      <button class="hbtn primary" id="wlcGo">Continue</button>
     </div>
   </div>
 </div>
@@ -7517,6 +7547,7 @@ function buildRail(){
     power:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M2.5 9.5h19"/><path d="M6.5 12.5v2.5M10.2 12.5v2.5M13.8 12.5v2.5M17.5 12.5v2.5"/></svg>',
     cabling:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3.5 18.5c5.5 0 4.5-13 10-13 3 0 3.8 2.4 7 3.6"/><circle cx="3.5" cy="18.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="20.5" cy="9.2" r="1.4" fill="currentColor" stroke="none"/></svg>',
     site:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="9.5" r="5.5"/><path d="M12 15v5.5M9.5 20.5h5"/></svg>',
+    safety:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 8-7 10-4-2-7-5.6-7-10V6z"/><path d="M8.5 15.5h7M10 15.5l2-7 2 7M9.3 12h5.4"/></svg>',
     notes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 20l1.2-4.2L16.6 4.4a2.05 2.05 0 0 1 2.9 2.9L8.2 18.8z"/></svg>',
   };
   const T=(t,l,i)=>({k:t,h:tool_btn(t,l,i)});
@@ -7533,7 +7564,7 @@ function buildRail(){
   let CATS;
   if(mode==="commercial"){
     CATS=[
-      {id:"chargers",tab:"Chargers",full:"Chargers & bays",icon:cico.chargers,groups:[
+      {id:"chargers",tab:"Chargers & bays",full:"Chargers, bays & vehicles",icon:cico.chargers,groups:[
         G("Charge points",units),
         G("Bays & vehicles",[T("bay","Bay marking",ico.bay),T("park","Parking / vehicle",ico.park)]),
       ]},
@@ -7547,12 +7578,14 @@ function buildRail(){
         G("Containment",[rt("tray"),rt("mt2"),rt("basket"),rt("gully")]),
         G("Groundworks",[rt("trench"),T("mark:chamber","Insp. chamber",pinMini("IC","#8B5E34"))]),
       ]},
-      {id:"site",tab:"Site",full:"Site & surroundings",icon:cico.site,groups:[
+      {id:"site",tab:"Site context",full:"Site context & surroundings",icon:cico.site,groups:[
         G("Buildings",[st("substation"),st("house"),st("commbld"),st("garage")]),
         G("EV hub & car park",[st("bess"),st("cctv"),st("heightbar"),st("paypoint")]),
         G("Boundaries & access",[rt("hedge"),rt("fence"),rt("wallline"),st("gate")]),
         G("Landscape & street",[st("tree"),st("bush"),st("lamp"),st("bollard"),st("wheelstop"),st("cabinet"),st("sign"),st("bench"),st("bin")]),
         G("Surfaces & areas",[T("area:road","Road area",aic.road),T("area:driveway","Driveway area",aic.driveway),T("area:footpath","Footpath area",aic.footpath),T("area:grass","Grass / lawn area",aic.grass)]),
+      ]},
+      {id:"safety",tab:"Safety & CDM",full:"Site safety, CDM & logistics",icon:cico.safety,groups:[
         G("Public protection",[rt("heras"),rt("cones"),T("area:exclusion","Exclusion zone",aic.exclusion),T("area:pedestrian","Pedestrian walkway",aic.footpath),st("signboard")]),
         G("Welfare & logistics",[st("cabin"),st("container"),st("toilet"),st("skip"),T("mark:firstaid","First aid point",pinMini("FA","#1E8A4C")),T("mark:fire","Fire point",pinMini("FP","#C22B22"))]),
         G("Groundworks safety",[st("inspectionpit"),st("spoil")]),
@@ -7601,7 +7634,7 @@ function buildRail(){
   rail.querySelectorAll("[data-tool]").forEach(b=>{ b.onclick=()=>{
     setTool(b.dataset.tool);
     const sec=b.closest(".palsec");
-    if(window.matchMedia("(max-width:680px)").matches){ palOpen=false; syncPalette(); }
+    if(window.matchMedia("(max-width:959px), (pointer:coarse)").matches){ palOpen=false; syncPalette(); }
     else if(sec&&(!palOpen||palCat!==sec.dataset.cat)){ palCat=sec.dataset.cat; palOpen=true; syncPalette(); }
   }; });
   rail.querySelectorAll("[data-palclose]").forEach(b=>{ b.onclick=()=>{ palOpen=false; syncPalette(); }; });
@@ -7626,7 +7659,7 @@ function tool_btn(t,label,inner){
 }
 let areaPreset=null;
 /* palette state: which category banner is open + whether the panel is shown */
-let palCat="chargers", palOpen=(window.innerWidth>680);
+let palCat="chargers", palOpen=hasMeaningfulPackContent(pack)&&!(window.innerWidth<=959||window.matchMedia("(pointer:coarse)").matches);
 const CAT_OF={};
 function syncPalette(){
   const rl=document.getElementById("rail");
@@ -8777,7 +8810,7 @@ document.getElementById("zfit").onclick=()=>{ fitView(); draw(); };
 document.querySelectorAll(".tab button").forEach(b=>b.onclick=()=>{ sideTab=b.dataset.tab; setSideTab(); });
 function setSideTab(){ document.querySelectorAll(".tab button").forEach(b=>b.classList.toggle("on",b.dataset.tab===sideTab)); renderSide(); }
 /* pack panel stage: legacy section keys map onto the project stages introduced by the 2026 restructure */
-let packSec=(function(){ try{ const v=localStorage.getItem("evsp_packsec")||"survey"; const mig={capture:"survey",job:"survey",status:"verify",checks:"install",pricing:"price",output:"design"}; return mig[v]||v; }catch(_){ return "survey"; } })();
+let packSec=(function(){ try{ const v=localStorage.getItem("evsp_packsec")||"survey"; const mig={capture:"survey",job:"survey",status:"verify",checks:"install",price:"overview",pricing:"overview",output:"design"}; return mig[v]||v; }catch(_){ return "survey"; } })();
 function renderSide(){
   const el=document.getElementById("sideScroll");
   if(sideTab==="pack") el.innerHTML=packPanel();
@@ -9048,10 +9081,10 @@ function packPanel(){
       <div style="font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;margin-bottom:6px;line-height:1.4">Tick anything you need the client to send, confirm or arrange. These become a checklist in the client PDF and the ready-to-send email.</div>
       <label>Review notes</label><textarea id="outcomeNote" placeholder="What you've reviewed, what's needed before install, and anything to confirm with the client…">${esc(pack.outcomeNote||'')}</textarea>
       <label>Ready to proceed</label>
-      <div class="needs"><label class="needrow"><input type="checkbox" id="readyProceed" ${pack.readyToProceed?'checked':''}><span><b>Blocker resolved, ready to install</b><em>Optional flag for your own tracking once the quote's paid, info's in, DNO's approved or permission's granted.</em></span></label></div>`:''}
+      <div class="needs"><label class="needrow"><input type="checkbox" id="readyProceed" ${pack.readyToProceed?'checked':''}><span><b>Blocker resolved, ready to install</b><em>Optional flag for your own tracking once the information, DNO approval or permission is in place.</em></span></label></div>`:''}
     </div>
   </div>`:''}`;
-  const cardBudget=`
+  const cardBudget=RELEASE_FLAGS.quotes?`
   <div class="card stdpack">
     <h3><span class="dot"></span>Rates &amp; budget${hintBtn('budget')}</h3>${hintBox('budget')}
     ${(()=>{ const lines=budgetLines(); const priced=lines.filter(l=>l.total!=null); const tot=priced.reduce((s,l)=>s+l.total,0);
@@ -9064,7 +9097,7 @@ function packPanel(){
     ${(()=>{ const qd=quoteDrift(); if(!qd) return ''; return qd.n>0
       ?`<div style="margin-top:8px;font-size:11.5px;line-height:1.45;color:#7A5A10;background:#FBF3DC;border:1px solid #E8D9A8;border-radius:8px;padding:7px 9px"><b>${esc(qd.number)}</b>${qd.status?' ('+esc(qd.status)+')':''}: <b>${qd.n} line${qd.n===1?'':'s'}</b> changed on this plan since the quote was drafted. Open Quotes &amp; invoices → Re-sync to update it.</div>`
       :`<div style="margin-top:8px;font-size:11.5px;color:var(--ok);font-weight:650">\u2713 ${esc(qd.number)} matches this plan.</div>`; })()}
-  </div>`;
+  </div>`:"";
   const cardDocs=`
   <div class="card">
     <h3><span class="dot"></span>Project pack &middot; documents${hintBtn('photos')}</h3>${hintBox('photos')}
@@ -9076,7 +9109,7 @@ function packPanel(){
           <button class="x" data-attdel="${a.id}" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>
         <div class="thumb-actions"><button class="thumb-action" data-attdl="${a.id}" ${a.src?'':'disabled title="File contents are not stored in this device snapshot"'}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</button></div>
-      </div>`).join('')}</div>`:`<div style="color:var(--faint);font-size:12px">Attach EICs, EICRs, board schedules, quotes, RAMS&hellip; They save inside the project file and travel with the pack.</div>`}
+      </div>`).join('')}</div>`:`<div style="color:var(--faint);font-size:12px">Attach EICs, EICRs, board schedules, drawings and permits. They save inside the project file and travel with the pack.</div>`}
     <button class="addbtn" id="addAttach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add documents</button>
   </div>`;
   const cardDisplay=`
@@ -9182,8 +9215,6 @@ function packPanel(){
     <button class="addbtn" data-ovact="fn:programme" style="margin-top:0" title="Phase-by-phase timeline suggested from the marked-up quantities">Job programme &middot; phase timeline</button>
     <button class="addbtn" data-ovact="fn:dno" style="margin-top:6px" title="Compile the connection-application data your DNO asks for">DNO application data</button>
     <button class="addbtn" id="openBom" style="margin-top:6px" title="Copy, CSV or email the materials for this plan">Materials list &middot; wholesaler-ready</button>
-    <button class="addbtn" id="mkRams" style="margin-top:6px" title="Draft a site-specific RAMS from this plan's hazards, quantities and method sequence">RAMS: draft risk assessment &amp; method statement</button>
-    ${pack.mode==="domestic"?'':`<button class="addbtn" id="mkSupport" style="margin-top:6px" title="Send this plan to Project Support: bespoke-quoted project management for workplace charging">Project Support: workplace PM quote</button>`}
     <div class="sub" style="color:var(--faint);font-size:11px;margin-top:8px">The programme, DNO data and materials list are compiled live from this pack's markup.</div>
   </div>`;
   const emptyCard=(t,d,act,lbl)=>`<div class="card"><h3><span class="dot" style="background:#8A98A8"></span>${t}</h3><div style="font-size:12px;color:var(--dim);line-height:1.55;margin-bottom:${act?'10px':'0'}">${d}</div>${act?`<button class="pbtn go" data-ovact="${act}" style="width:100%">${lbl}</button>`:''}</div>`;
@@ -9195,7 +9226,7 @@ function packPanel(){
     design: cardTotals+cardAppearance+cardDisplay+cardLegend,
     verify: ((cardLoad||cardCables)?cardLoad+cardCables:emptyCard("Electrical checks","No checks to run yet. Place a charger and draw its supply route on the plan; the load check and cable calculations then run automatically.","stage:design","Open the Design stage"))+cardReadiness,
     price: cardBudget+cardBranding,
-    plan: cardCdm+cardCompliance+cardPlanActions+cardDocs,
+    plan: cardCdm+cardCompliance+cardPlanActions+cardDocs+cardBranding,
     install: cardPunch+cardSnags+((cardPunch||cardSnags)?'':emptyCard("Snagging","No snags recorded yet. Pin snags on the photos with the snag tool; each pin tracks severity, owner and before and after evidence.","fn:snagtool","Pick up the snag tool"))+cardOutcome,
     handover: cardCommissioning||emptyCard("Commissioning &amp; handover","Commissioning records unlock once at least one active charger is placed on a plan. Each charger gets its serial, test results and sign-off, and they feed the handover certificate.","stage:design","Open the Design stage")
   };
@@ -9204,14 +9235,17 @@ function packPanel(){
 }
 
 /* ============================================================ PROJECT STAGES - status engine, overview & navigation ============================================================ */
-const STAGE_ORDER=["survey","design","verify","price","plan","install","handover"];
+const RELEASE_FLAGS=Object.freeze({quotes:false,projectSupport:false,estateReview:false,rams:false});
+const PLANNING_STAGE_ORDER=["survey","design","verify","plan"];
+const DELIVERY_STAGE_ORDER=["install","handover"];
+const STAGE_ORDER=[...PLANNING_STAGE_ORDER,...DELIVERY_STAGE_ORDER];
 const STAGE_META={
   overview:{label:"Overview",tip:"Project overview: status, next action and open issues"},
-  survey:{label:"Survey",tip:"Photos, guided survey, site, client and supply details"},
-  design:{label:"Design",tip:"Draw the layout: chargers, routes, boards and site kit"},
-  verify:{label:"Verify",tip:"Load check, cable calculations and pack readiness"},
-  price:{label:"Price",tip:"Rates, budget, quote and branding"},
-  plan:{label:"Plan",tip:"Compliance, programme, DNO, RAMS and documents"},
+  survey:{label:"Start",tip:"Add site context, photos, drawings and key project details"},
+  design:{label:"Mark up",tip:"Place chargers, routes, boards, bays and site controls"},
+  verify:{label:"Check",tip:"Review load, cable calculations and missing information"},
+  price:{label:"Costing",tip:"Unreleased: rates, budget and quoting workflow"},
+  plan:{label:"Prepare",tip:"Prepare CDM controls, programme, DNO data and project documents"},
   install:{label:"Install",tip:"Punch list, snags and install review"},
   handover:{label:"Handover",tip:"Commissioning results and handover certificate"}
 };
@@ -9268,7 +9302,7 @@ function evalProject(){
     else if(actU.length>0&&cRoutes.some(r=>r.len>0)){ s="ready"; why=[actU.length+" active charger"+(actU.length===1?"":"s")+" placed with a measured supply route"]; }
     else{ s="prog"; why=[!units.length?"Plan started · no chargers placed yet":(cRoutes.length?"Cable route drawn but it has no length yet":"Chargers placed · no supply route drawn yet")]; }
     S("design",s,why,(units.length&&!cRoutes.length?1:0)+noLen);
-    if(photosN>0&&!units.length) I("info","design","No charger on the plan yet","Place a charge point from the Chargers palette; quantities, calcs and pricing all build from the markup.","stage:design");
+    if(photosN>0&&!units.length) I("info","design","No charger on the plan yet","Place a charge point from the Chargers palette; quantities, checks and exports all build from the markup.","stage:design");
     if(units.length&&!cRoutes.length) I("warn","design","Charger has no cable route","Draw the supply route (SWA, cable run or tails) from the board to the charger so lengths, calcs and materials count up.","stage:design");
     if(noLen) I("warn","design",noLen+" cable route"+(noLen===1?"":"s")+" missing a length","Set the run length on each route, or set the photo scale, so the capacity and volt-drop checks can run.","fn:cablecheck");
   }catch(_){ S("design","none",[],0); }
@@ -9290,8 +9324,8 @@ function evalProject(){
     if(tbc) I("adv","verify",tbc+" cable type"+(tbc===1?"":"s")+" to confirm","Pick the cable family and size on each run so the checks can complete.","fn:cablecheck");
     if(lc.units&&!lc.cap) I("adv","verify","Load check has no supply rating to test against","Set the main fuse"+(dom?"":" and supply rating")+" in the Survey stage to give the load check a capacity.","stage:survey|focus:mainFuse");
   }catch(_){ S("verify","none",[],0); }
-  /* Price */
-  try{
+  /* Dormant commercial workflow: retained in source, excluded from this release. */
+  if(RELEASE_FLAGS.quotes) try{
     const bl=budgetLines(); let qd=null; try{ qd=quoteDrift(); }catch(_){ }
     const qn=qd?esc(qd.number||"Quote"):"";
     let s="none",why=[];
@@ -9304,6 +9338,7 @@ function evalProject(){
     if(bl.length&&!qd) I("adv","price","No quote linked to this plan","Send the marked-up quantities to Quotes and invoices to price the job and track it to payment.","stage:price|flash:mkQuote");
     if(qd&&qd.n>0) I("warn","price","Quote out of step with the plan",qd.n+" line"+(qd.n===1?"":"s")+" changed since "+qn+" was drafted. Open Quotes and invoices and re-sync it.","fn:quotes");
   }catch(_){ S("price","none",[],0); }
+  else S("price","none",[],0);
   /* Plan */
   try{
     const pr=compProgress();
@@ -9371,7 +9406,6 @@ function evalProject(){
     else if(!units.length) next=d("design","Place the first charger","Pick a charge point from the palette and drop it on the plan; everything builds from the markup.","stage:design","Open Design");
     else if(stg("design")!=="ready") next=d("design","Draw and measure the supply route","Route the supply from the board to each charger and set run lengths so calcs and materials count up.","stage:design","Open Design");
     else if(stg("verify")==="prog") next=d("verify","Clear the electrical checks","Confirm cable types and lengths so capacity, volt drop, Zs and CPC all pass.","fn:cablecheck","Open cable calculations");
-    else if(stg("price")==="none"||stg("price")==="prog") next=d("price","Price this plan","Review the estimated budget, then send the quantities to Quotes and invoices.","stage:price","Open Price");
     else if(stg("plan")!=="done"&&stg("plan")!=="block") next=d("plan","Work through the pre-start plan","Compliance items, the job programme and the DNO application data live here.","stage:plan","Open Plan");
     else if(stg("install")==="prog"||stg("install")==="ready") next=d("install","Close out the install","Work the punch list and snags down to zero, then sign off.","stage:install","Open Install");
     else if(stg("handover")!=="done"&&st.handover&&st.handover.count) next=d("handover","Complete commissioning and handover","Record each charger's serial and test results, then issue the handover certificate.","stage:handover","Open Handover");
@@ -9397,7 +9431,6 @@ function overviewBody(ev){
   const actN=units.filter(u=>u.provision!=="passive").length, pasN=units.length-actN;
   const kwMix=(()=>{ const by={}; units.filter(u=>u.provision!=="passive").forEach(u=>{ const k=(u.kw||"7")+" kW"; by[k]=(by[k]||0)+1; }); const ks=Object.keys(by).sort((a,b)=>parseFloat(a)-parseFloat(b)); return ks.map(k=>by[k]+" × "+k).join(" · "); })();
   const saved=(()=>{ try{ if(!pack.projId) return null; return (projIndex().find(x=>x.id===pack.projId)||{}).date||null; }catch(_){ return null; } })();
-  let qd=null; try{ qd=quoteDrift(); }catch(_){ }
   let links=[]; try{ if(pack.projId) links=projLinks(pack.projId); }catch(_){ }
   const blocked=STAGE_ORDER.filter(k=>(s[k]||{}).st==="block");
   const curStage=blocked[0]||STAGE_ORDER.find(k=>{ const x=(s[k]||{}).st; return x==="none"||x==="prog"; })||"handover";
@@ -9426,7 +9459,6 @@ function overviewBody(ev){
       ${kv("Chargers",units.length?(actN+" active"+(pasN?" · "+pasN+" passive":"")+(kwMix?" · "+kwMix:"")):"","stage:design","Add on the plan")}
       ${kv("Plans / photos",pack.photos.length?String(pack.photos.length):"","stage:survey|fn:addphotos")}
       ${kv("Design option",(pack.optionView&&pack.optionView!=="all")?("Option "+esc(pack.optionView)):"All options shown")}
-      ${kv("Quote",qd?esc((qd.number||"Quote")+(qd.status?" · "+qd.status:"")+(qd.n?" · "+qd.n+" line"+(qd.n===1?"":"s")+" out of step":" · in sync")):"","stage:price|flash:mkQuote","Price the plan")}
       ${kv("Documents",attN?(attN+" attached"):"","stage:plan|flash:addAttach")}
     </dl>
     ${linkRows?`<div style="margin-top:9px;border-top:1px dashed var(--line);padding-top:7px"><div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:3px">Linked records</div>${linkRows}</div>`:""}
@@ -9434,11 +9466,26 @@ function overviewBody(ev){
   </div>`;
 }
 /* stage bar (top navigation) */
+function markupNextAction(){
+  const p=activePhoto();
+  if(!p) return {title:"Add a plan",detail:"Start with photos, a PDF or a scaled layout",act:"fn:addphotos"};
+  if(!(p.scale&&p.scale.pxPerM)) return {title:"Set the scale",detail:"Measure routes and size equipment consistently",act:"tool:scale"};
+  let units=[],routes=[];
+  try{
+    units=pack.photos.flatMap(ph=>ph.items.filter(i=>i.type==="unit"));
+    routes=pack.photos.flatMap(ph=>ph.items.filter(i=>i.type==="route"&&["run","swa","hituff","tails","duct","trench"].includes(i.kind)));
+  }catch(_){ }
+  if(!units.length) return {title:"Add the first charger",detail:"Open the Chargers palette and place it on the plan",act:"fn:chargers"};
+  if(!routes.length) return {title:"Draw the supply route",detail:"Open Cabling and map the route to the charger",act:"fn:cabling"};
+  return {title:"Review and export",detail:"Check the plan, resolve gaps and choose an output",act:"stage:overview"};
+}
 function buildStageBar(){
   const bar=document.getElementById("stagebar"); if(!bar) return;
   const chev='<svg class="stgsep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-  bar.innerHTML='<button type="button" class="stgbtn" data-stage="overview" title="'+STAGE_META.overview.tip+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Overview</button><span class="catdiv" style="margin:-5px 7px -5px 5px"></span>'
-    +STAGE_ORDER.map((k,i)=>(i?chev:"")+'<button type="button" class="stgbtn" data-stage="'+k+'" title="'+STAGE_META[k].tip+'"><span class="stgdot"></span>'+STAGE_META[k].label+'<span class="stgn" style="display:none"></span></button>').join("");
+  const stages=(arr,numbered)=>arr.map((k,i)=>(i?chev:"")+'<button type="button" class="stgbtn" data-stage="'+k+'" title="'+STAGE_META[k].tip+'">'+(numbered?'<span class="stgstep">'+(i+1)+'</span>':'<span class="stgdot"></span>')+STAGE_META[k].label+'<span class="stgn" style="display:none"></span></button>').join("");
+  bar.innerHTML='<button type="button" class="stgbtn" data-stage="overview" title="'+STAGE_META.overview.tip+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Overview</button>'
+    +'<span class="catdiv" style="margin:-5px 5px"></span><span class="stagegroup">Workflow</span>'+stages(PLANNING_STAGE_ORDER,true)
+    +'<button type="button" class="stgnext" id="stageNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Next</span></button>';
   bar.querySelectorAll("[data-stage]").forEach(b=>b.onclick=()=>setStage(b.dataset.stage));
   syncStageBar();
 }
@@ -9454,14 +9501,17 @@ function syncStageBar(){
     const d=(e.stages||{})[k]||{st:"none",why:[],count:0};
     const m=STAGE_STATES[d.st]||STAGE_STATES.none;
     const dot=b.querySelector(".stgdot"); if(dot) dot.className="stgdot"+(d.st!=="none"?" "+d.st:"");
+    const step=b.querySelector(".stgstep"); if(step){ step.classList.toggle("done",d.st==="ready"||d.st==="done"); step.classList.toggle("block",d.st==="block"); }
     const nn=b.querySelector(".stgn"); if(nn){ nn.style.display=d.count?"":"none"; nn.textContent=d.count; }
     b.classList.toggle("blk",d.st==="block");
     b.title=STAGE_META[k].tip+" · "+m.label+((d.why||[]).length?" · "+d.why.join(" · ").replace(/<[^>]*>/g,""):"");
   });
+  const nx=document.getElementById("stageNext");
+  if(nx){ const n=markupNextAction(); nx.setAttribute("data-ovact",n.act); nx.title=n.detail; const s=nx.querySelector("span"); if(s) s.textContent="Next · "+n.title; }
 }
 /* stage switching: only the side panel changes; the canvas, tools and selection stay put */
 function setStage(k){
-  if(!STAGE_META[k]) k="overview";
+  if(k!=="overview"&&!STAGE_ORDER.includes(k)) k="overview";
   packSec=k; try{ localStorage.setItem("evsp_packsec",k); }catch(_){ }
   sideTab="pack";
   const sd=document.getElementById("side");
@@ -9477,6 +9527,8 @@ function setStage(k){
     earthwiz:()=>{ try{ openEarthWiz(); }catch(_){ } },
     walk:()=>{ try{ openSiteWalk(); }catch(_){ } },
     addphotos:()=>{ try{ pendingShotKey=null; const f=document.getElementById("filePhoto"); if(f) f.click(); }catch(_){ } },
+    chargers:()=>{ try{ setStage("design"); palCat="chargers"; palOpen=true; syncPalette(); const sd=document.getElementById("side"); if(sd&&window.innerWidth<=959) sd.classList.remove("open"); }catch(_){ } },
+    cabling:()=>{ try{ setStage("design"); palCat="cabling"; palOpen=true; syncPalette(); const sd=document.getElementById("side"); if(sd&&window.innerWidth<=959) sd.classList.remove("open"); }catch(_){ } },
     projects:()=>{ try{ openProjects(); }catch(_){ } },
     quotes:()=>{ try{ openQuotesTool(); }catch(_){ } },
     bom:()=>{ try{ openBom(); }catch(_){ } },
@@ -13085,7 +13137,8 @@ function askInput(opts){
 /* sandbox-safe confirm - native confirm() is silently blocked in some embedded previews */
 function askConfirm(opts){ opts=opts||{}; return askInput({title:opts.title||"Are you sure?", label:opts.label||"", okText:opts.okText||"OK", confirm:true}).then(v=>v!==null); }
 document.getElementById("btnSide").onclick=()=>{ const sd=document.getElementById("side"); if(window.innerWidth>959) sd.classList.toggle("hidedesk"); else sd.classList.toggle("open"); };
-document.getElementById("mask").onclick=()=>document.getElementById("side").classList.remove("open");
+document.getElementById("mask").onclick=()=>{ const sd=document.getElementById("side"); if(sd) sd.classList.remove("open"); };
+document.addEventListener("keydown",e=>{ if(e.key!=="Escape") return; const sd=document.getElementById("side"); if(sd&&sd.classList.contains("open")) sd.classList.remove("open"); });
 document.getElementById("btnUndo").onclick=undo;
 document.getElementById("btnRedo").onclick=redo;
 window.addEventListener("keydown",e=>{ if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return; const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return; if((e.metaKey||e.ctrlKey)&&(e.key==="z"||e.key==="Z")){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); } else if((e.metaKey||e.ctrlKey)&&(e.key==="y"||e.key==="Y")){ e.preventDefault(); redo(); } });
@@ -14607,7 +14660,7 @@ function refreshProjIndexMeta(){
 /* what's linked to a project elsewhere in the suite - quotes/invoices, RAMS, support requests (all device-local reads) */
 function projLinks(id){
   const out=[];
-  try{
+  if(RELEASE_FLAGS.quotes) try{
     const q=JSON.parse(localStorage.getItem("evqi.tool.v2")||"null");
     if(q&&q.docs){
       const qs=[], ivs=[];
@@ -14620,7 +14673,7 @@ function projLinks(id){
       ivs.forEach(d=>out.push({dot:"#C89A14", lab:(d.number||"Invoice")+" \u00b7 "+(d.status||"Draft"), href:"Quotes & Invoices.dc.html#open="+encodeURIComponent(d.id)}));
     }
   }catch(_){ }
-  try{
+  if(RELEASE_FLAGS.rams) try{
     const r=RAMS_TOOL_LIVE?JSON.parse(localStorage.getItem("evsp_rams_v1")||"null"):null;
     if(r&&r.docs) Object.values(r.docs).forEach(d=>{
       if(!d||d.planId!==id) return;
@@ -14628,7 +14681,7 @@ function projLinks(id){
       out.push({dot:"#4BA069", lab:"RAMS Rev "+(d.rev||"A")+" \u00b7 "+st, href:"RAMS Builder.dc.html#from="+encodeURIComponent(id)});
     });
   }catch(_){ }
-  try{
+  if(RELEASE_FLAGS.projectSupport) try{
     /* Project Support writes evsp_ps_v2 (the v1 key was never used by the live tool) */
     const s=JSON.parse(localStorage.getItem("evsp_ps_v2")||localStorage.getItem("evsp_ps_v1")||"null");
     const reqs=(s&&Array.isArray(s.requests))?s.requests:[];
@@ -14834,14 +14887,32 @@ function quoteDrift(){
 /* ---------- welcome (project type) ---------- */
 function openWelcome(){
   const bd=document.getElementById("wlcBackdrop");
+  const fresh=!hasMeaningfulPackContent(pack);
   let selMode=(pack.mode==="domestic")?"domestic":"commercial";
+  let selStart="upload";
   const go=document.getElementById("wlcGo");
-  const syncBtns=()=>{ bd.querySelectorAll("[data-wmode]").forEach(b=>b.classList.toggle("on",b.dataset.wmode===selMode)); if(go) go.textContent="Start planning \u00b7 "+(selMode==="domestic"?"Domestic":"Commercial"); };
+  const startBlock=document.getElementById("wlcStartBlock");
+  const startNames={upload:"Add photos or a drawing",walk:"Start the guided site walk",starter:"Choose a starter layout",grid:"Add a blank scaled plan"};
+  const syncBtns=()=>{
+    bd.querySelectorAll("[data-wmode]").forEach(b=>b.classList.toggle("on",b.dataset.wmode===selMode));
+    bd.querySelectorAll("[data-wstart]").forEach(b=>b.classList.toggle("on",b.dataset.wstart===selStart));
+    if(go) go.textContent=fresh?(startNames[selStart]+" \u00b7 "+(selMode==="domestic"?"Domestic":"Commercial")):"Apply "+(selMode==="domestic"?"Domestic":"Commercial")+" mode";
+  };
   bd.querySelectorAll("[data-wmode]").forEach(b=>b.onclick=()=>{ selMode=b.dataset.wmode; syncBtns(); });
+  bd.querySelectorAll("[data-wstart]").forEach(b=>b.onclick=()=>{ selStart=b.dataset.wstart; syncBtns(); });
+  if(startBlock) startBlock.style.display=fresh?"":"none";
   syncBtns();
   const close=()=>{ bd.classList.remove("show"); try{localStorage.setItem("evsp_welcomed","1");}catch(_){ } };
+  document.getElementById("wlcSkip").textContent=fresh?"Open empty workspace":"Cancel";
   document.getElementById("wlcSkip").onclick=close;
-  document.getElementById("wlcGo").onclick=()=>{ pack.mode=selMode; applyMode(); close(); };
+  document.getElementById("wlcGo").onclick=()=>{
+    pack.mode=selMode; applyMode(); close();
+    if(!fresh) return;
+    if(selStart==="upload"){ const f=document.getElementById("filePhoto"); if(f) f.click(); }
+    else if(selStart==="walk") openSiteWalk();
+    else if(selStart==="starter") addStarter();
+    else if(selStart==="grid") addGridPlan();
+  };
   bd.classList.add("show");
 }
 document.querySelectorAll("#modeSeg [data-mode]").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
@@ -15864,7 +15935,10 @@ applyMode(false); syncBrand();
 /* a project with content opens on the overview; a fresh pack starts at the survey stage */
 if(hasMeaningfulPackContent(pack)) packSec="overview";
 loadUnits(); buildRail(); resize(); buildStageBar(); setSideTab(); updateUndo();
-try{ if(!localStorage.getItem("evsp_welcomed")) openWelcome(); }catch(_){}
+const __showroomDeepLink=/^#(?:showroom|3d-showroom)$/i.test(location.hash);
+try{ if(!__showroomDeepLink&&!localStorage.getItem("evsp_welcomed")) openWelcome(); }catch(_){}
+if(__showroomDeepLink) setTimeout(()=>{ try{ if(window.openCharger3D) window.openCharger3D(); }catch(_){ } },60);
+window.addEventListener("hashchange",()=>{ if(/^#(?:showroom|3d-showroom)$/i.test(location.hash)){ try{ if(window.openCharger3D) window.openCharger3D(); }catch(_){ } } });
 /* first run on tablet/phone: the start cards on the canvas carry onboarding; the pack drawer stays shut so nothing covers them */
 /* IndexedDB recovery - photo-heavy packs live here; localStorage above is just the legacy/fallback copy */
 try{ idbGet("autosave").then(d=>{
@@ -15881,7 +15955,7 @@ try{ idbGet("autosave").then(d=>{
   syncBrand(); applyMode(false); buildRail(); setSideTab(); fitView(); draw();
   if(!__restoredTs) setTimeout(()=>toast("Recovered your last project"),300);
 }).catch(()=>{}); }catch(_){ }
-/* one-off: move any old full-size project snapshots out of localStorage into IndexedDB (slim copy stays for the Quotes tool) */
+/* one-off: move any old full-size project snapshots out of localStorage into IndexedDB (a slim compatibility copy stays in localStorage) */
 setTimeout(()=>{ try{
   projIndex().forEach(x=>{
     const raw=localStorage.getItem("evsp_proj_"+x.id); if(!raw||raw.length<200000) return;
