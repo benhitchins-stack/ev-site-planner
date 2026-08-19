@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EV Site Planner | Plan professional EV installations</title>
-  <meta name="description" content="Plan clear, professional domestic and commercial EV installations. Mark up photos and plans, position charging equipment, map cable routes and export a project pack. Free during beta.">
+  <title>EV Site Planner | EV site markup and planning</title>
+  <meta name="description" content="Build clear domestic and commercial EV installation plans from photos, PDF drawings or scaled layouts. Mark up chargers, routes and site controls, then review and export a project pack.">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#14222c">
   <link rel="canonical" href="https://www.ev-site-planner.co.uk/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="EV Site Planner">
-  <meta property="og:title" content="EV Site Planner | Plan professional EV installations">
-  <meta property="og:description" content="A practical planning and visual communication tool for domestic and commercial EV charging projects. Free during beta.">
+  <meta property="og:title" content="EV Site Planner | EV site markup and planning">
+  <meta property="og:description" content="Mark up real site context, place EV equipment, map routes and export a clear domestic or commercial project pack.">
   <meta property="og:url" content="https://www.ev-site-planner.co.uk/">
   <meta name="twitter:card" content="summary">
   <script type="application/ld+json">
@@ -22,13 +22,8 @@
     "url": "https://www.ev-site-planner.co.uk/",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Any",
-    "description": "A browser-based planning and visual communication tool for domestic and commercial EV charging projects.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "GBP",
-      "description": "Free during beta"
-    }
+    "description": "A browser-based EV site markup and planning tool for domestic and commercial charging projects.",
+    "isAccessibleForFree": true
   }
   </script>
   <script src="./support.js"></script>
@@ -241,7 +236,7 @@
     .section-night .eyebrow { color: #8eb0ff; }
     .section-night .section-head p { color: #a9b7c1; }
 
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
     .step { position: relative; min-height: 235px; padding: 29px; border: 1px solid var(--line); border-radius: 16px; background: white; box-shadow: 0 18px 42px -36px rgba(13,23,31,.55); }
     .step-number { margin-bottom: 28px; color: var(--blue); font-family: "Space Grotesk", monospace; font-size: 12px; font-weight: 800; }
     .step h3 { margin: 0 0 9px; font-size: 22px; letter-spacing: -.02em; }
@@ -335,6 +330,7 @@
       .hero-visual { padding-left: 35px; }
       .floating-note { right: 10px; }
       .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 900px) {
       .container { width: min(100% - 48px, 760px); }
@@ -415,15 +411,15 @@
       <span>EV Site Planner</span>
     </a>
     <div class="nav-links">
-      <a href="#how">How it works</a>
-      <a href="#use-cases">Use cases</a>
-      <a href="#features">Features</a>
-      <a href="#resources">Resources</a>
+      <a href="#how">Workflow</a>
+      <a href="#features">Markup tools</a>
+      <a href="#use-cases">Domestic &amp; commercial</a>
+      <a href="#resources">Supporting tools</a>
       <a href="#faq">FAQ</a>
     </div>
     <span class="nav-spacer"></span>
-    <span class="nav-note">Free during beta</span>
-    <a class="button button-primary nav-cta" href="EV Site Planner.html">Open planner</a>
+    <span class="nav-note">Free to use · no account</span>
+    <a class="button button-primary nav-cta" href="EV Site Planner.html">Open markup tool</a>
   </div>
 </nav>
 
@@ -431,17 +427,17 @@
   <header id="top" class="hero">
     <div class="container hero-grid">
       <div class="hero-copy">
-        <span class="beta-pill"><span class="beta-dot"></span>Free public beta</span>
-        <h1>Plan professional EV installations <em>with clarity.</em></h1>
-        <p class="hero-lead">Bring photos, plans and survey information together in one visual workspace. Position chargers, map cable routes and key equipment, then export a clear project pack for domestic or commercial installations.</p>
+        <span class="beta-pill"><span class="beta-dot"></span>EV charging site markup and planning</span>
+        <h1>Build clear EV installation plans <em>from real site context.</em></h1>
+        <p class="hero-lead">Mark up photos, PDF drawings or scaled layouts in your browser. Place chargers and electrical equipment, map cable and civils routes, record site controls, then export a clear domestic or commercial project pack.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="EV Site Planner.html">Open the free planner <span aria-hidden="true">→</span></a>
+          <a class="button button-primary" href="EV Site Planner.html">Open the markup tool <span aria-hidden="true">→</span></a>
           <a class="button button-secondary" href="#how">See how it works</a>
         </div>
-        <div class="hero-proof" role="group" aria-label="Beta access details">
-          <span class="proof-item"><span class="proof-tick">✓</span>No account required</span>
-          <span class="proof-item"><span class="proof-tick">✓</span>Domestic and commercial modes</span>
-          <span class="proof-item"><span class="proof-tick">✓</span>Built for UK EV workflows</span>
+        <div class="hero-proof" role="group" aria-label="Planner capabilities">
+          <span class="proof-item"><span class="proof-tick">✓</span>Photos, PDFs and scaled layouts</span>
+          <span class="proof-item"><span class="proof-tick">✓</span>Domestic and commercial workflows</span>
+          <span class="proof-item"><span class="proof-tick">✓</span>Built around UK EV delivery</span>
         </div>
       </div>
 
@@ -453,10 +449,10 @@
             <span class="window-project">Riverside House</span>
           </div>
           <div class="window-tabs">
-            <span class="window-tab active">Site plan</span>
-            <span class="window-tab">Electrical</span>
-            <span class="window-tab">Equipment</span>
-            <span class="window-tab">Project notes</span>
+            <span class="window-tab">1 · Start</span>
+            <span class="window-tab active">2 · Mark up</span>
+            <span class="window-tab">3 · Check</span>
+            <span class="window-tab">4 · Prepare</span>
           </div>
           <div class="plan-canvas">
             <div class="parking-bays">
@@ -484,7 +480,7 @@
         </div>
         <div class="floating-note" aria-hidden="true">
           <span class="note-icon">↗</span>
-          <span><strong>Project pack ready</strong><span>Clear enough for review, quotation and delivery</span></span>
+          <span><strong>Project pack ready</strong><span>Clear enough for review, coordination and delivery</span></span>
         </div>
       </div>
     </div>
@@ -492,34 +488,39 @@
 
   <div class="outcome-strip" role="region" aria-label="Key outcomes">
     <div class="container outcome-grid">
-      <div class="outcome"><span class="outcome-number">01</span><div><strong>Make the design visible</strong><p>Show charger positions, equipment and routes in context.</p></div></div>
-      <div class="outcome"><span class="outcome-number">02</span><div><strong>Reduce interpretation</strong><p>Give project teams and customers one clear reference point.</p></div></div>
-      <div class="outcome"><span class="outcome-number">03</span><div><strong>Keep the detail together</strong><p>Build a coherent pack instead of scattered photos and notes.</p></div></div>
+      <div class="outcome"><span class="outcome-number">01</span><div><strong>See the proposal</strong><p>Show chargers, equipment, routes and working areas in context.</p></div></div>
+      <div class="outcome"><span class="outcome-number">02</span><div><strong>Keep the detail connected</strong><p>Measurements, options, notes and site controls stay with the plan.</p></div></div>
+      <div class="outcome"><span class="outcome-number">03</span><div><strong>Issue a clear output</strong><p>Create one consistent record for review, coordination and delivery.</p></div></div>
     </div>
   </div>
 
   <section id="how" class="section">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow">How it works</p>
-        <h2>From project information to a plan people can use.</h2>
-        <p>The planner is flexible enough to support an early concept, a detailed survey or a delivery-ready markup without forcing every project through the same rigid process.</p>
+        <p class="eyebrow">A clearer workflow</p>
+        <h2>From site context to a plan the whole team can use.</h2>
+        <p>Choose the right starting point, build the installation layout, check the key information and prepare the right output without leaving the browser.</p>
       </div>
       <div class="steps">
         <article class="step">
-          <div class="step-number">01 · Add context</div>
-          <h3>Start with the site</h3>
-          <p>Bring in a photograph, drawing or plan, then record the project details and installation constraints that matter.</p>
+          <div class="step-number">01 · Start</div>
+          <h3>Add the site context</h3>
+          <p>Use photos, a survey ZIP, a PDF drawing, the guided site walk or a scaled starter layout.</p>
         </article>
         <article class="step">
-          <div class="step-number">02 · Build the layout</div>
-          <h3>Map the proposal</h3>
-          <p>Place chargers and equipment, draw routes, identify working areas and add notes directly against the design.</p>
+          <div class="step-number">02 · Mark up</div>
+          <h3>Build the installation layout</h3>
+          <p>Place chargers, bays and equipment, then draw cable, containment, civils and site-control routes.</p>
         </article>
         <article class="step">
-          <div class="step-number">03 · Share the outcome</div>
-          <h3>Export a clear pack</h3>
-          <p>Create a consistent visual record that can support customer agreement, technical review, quotation and project delivery.</p>
+          <div class="step-number">03 · Check</div>
+          <h3>Review the recorded detail</h3>
+          <p>Use the layout to check supply information, cable routes, missing evidence and project readiness.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">04 · Prepare</div>
+          <h3>Export the right output</h3>
+          <p>Create marked-up images, engineer packs, client PDFs and supporting technical documents.</p>
         </article>
       </div>
     </div>
@@ -528,9 +529,9 @@
   <section id="use-cases" class="section section-white">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow">One tool, two workflows</p>
-        <h2>Scale the detail to the installation.</h2>
-        <p>Switch between focused domestic planning and more structured commercial layouts while keeping the same clear visual language.</p>
+        <p class="eyebrow">Domestic and commercial</p>
+        <h2>Use the same clear workflow at any project scale.</h2>
+        <p>Switch modes to match the equipment library, site context and level of detail to the installation.</p>
       </div>
       <div class="use-case-grid">
         <article class="use-card">
@@ -562,17 +563,17 @@
   <section id="features" class="section section-night">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow">Practical by design</p>
-        <h2>The useful detail, without heavyweight CAD.</h2>
-        <p>EV Site Planner is intended to close the gap between a rough site sketch and a formal design package, making professional planning more accessible and consistent.</p>
+        <p class="eyebrow">Markup tools</p>
+        <h2>Purpose-built for EV charging sites.</h2>
+        <p>Work with the information an EV installation actually needs, without turning a clear markup into a heavyweight CAD exercise.</p>
       </div>
       <div class="feature-grid">
-        <article class="feature"><span class="feature-icon">01</span><h3>Photo and plan markup</h3><p>Work over real site context so the proposal is immediately understandable.</p></article>
-        <article class="feature"><span class="feature-icon">02</span><h3>EV-specific equipment</h3><p>Place chargers, distribution equipment and infrastructure using a purpose-built symbol library.</p></article>
-        <article class="feature"><span class="feature-icon">03</span><h3>Route and area tools</h3><p>Show cable routes, working zones, bays and other important spatial information.</p></article>
-        <article class="feature"><span class="feature-icon">04</span><h3>Domestic and commercial modes</h3><p>Use a workflow and level of detail suited to the scale of the project.</p></article>
-        <article class="feature"><span class="feature-icon">05</span><h3>Charger visualisation</h3><p>Help customers and project teams understand how equipment will sit within the proposed location.</p></article>
-        <article class="feature"><span class="feature-icon">06</span><h3>Consistent exports</h3><p>Turn the working markup into a more professional record for review and delivery.</p></article>
+        <article class="feature"><span class="feature-icon">01</span><h3>Photo, PDF and layout markup</h3><p>Import site photos, survey ZIPs, PDF drawings or scaled starter layouts and work directly over the real context.</p></article>
+        <article class="feature"><span class="feature-icon">02</span><h3>EV-specific equipment</h3><p>Place chargers, boards, metering, protection, supply equipment, bays, vehicles and common site furniture.</p></article>
+        <article class="feature"><span class="feature-icon">03</span><h3>Measured routes and civils</h3><p>Draw cable, data, containment and trench routes, set scale, measure distances and record route construction.</p></article>
+        <article class="feature"><span class="feature-icon">04</span><h3>CDM and site controls</h3><p>Show exclusion zones, pedestrian routes, welfare, fire points, compounds, logistics and delivery constraints.</p></article>
+        <article class="feature"><span class="feature-icon">05</span><h3>Checks and project outputs</h3><p>Use the layout to support load and cable checks, schedules, diagrams, DNO data, materials and programme information.</p></article>
+        <article class="feature"><span class="feature-icon">06</span><h3>Audience-specific exports</h3><p>Produce marked-up images plus engineer, client and summary PDFs with the right detail for each audience.</p></article>
       </div>
     </div>
   </section>
@@ -581,9 +582,9 @@
     <div class="container credibility">
       <div class="cred-mark" aria-hidden="true"><img src="assets/logo-mark.svg" alt=""></div>
       <div class="cred-copy">
-        <p class="eyebrow">Built from real project delivery</p>
-        <h2>Shaped by electrical and EV experience, not generic software assumptions.</h2>
-        <p>Created by a qualified electrician and commercial EV project manager, EV Site Planner is built around the information installers, surveyors, project managers and customers actually need to understand a proposed installation.</p>
+        <p class="eyebrow">Built from project delivery</p>
+        <h2>Designed around how EV work is surveyed, coordinated and delivered.</h2>
+        <p>Created by a qualified electrician and commercial EV project manager, EV Site Planner focuses on the information installers, surveyors, project managers, estimators and clients need to understand the same proposal.</p>
         <div class="cred-points">
           <div class="cred-point">Installation-led workflows</div>
           <div class="cred-point">Domestic and commercial context</div>
@@ -598,39 +599,29 @@
   <section id="resources" class="section">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow">More than the canvas</p>
-        <h2>Useful supporting tools, kept in their proper place.</h2>
-        <p>The planner is the main product. These secondary tools add reference, learning and commercial support when you need them.</p>
+        <p class="eyebrow">Supporting tools</p>
+        <h2>Visualisation, guidance and training around the core planner.</h2>
+        <p>The markup tool remains the main product. Open these tools when you need a closer equipment view, a practical reference or structured learning.</p>
       </div>
       <div class="tool-grid">
+        <a class="tool-card" href="EV%20Site%20Planner.html#showroom">
+          <span class="tool-kicker">Visualise</span>
+          <h3>3D charger showroom</h3>
+          <p>Inspect charger and site-equipment models from any angle, zoom in and compare designs and finishes.</p>
+          <span class="tool-link">Open the 3D showroom →</span>
+        </a>
         <a class="tool-card" href="Guide%20Library.dc.html">
           <span class="tool-kicker">Reference</span>
           <h3>Guide Library</h3>
-          <p>Practical reference material for common EV installation decisions and awkward project questions.</p>
+          <p>Find concise how-to guidance and practical reference material for common EV installation decisions.</p>
           <span class="tool-link">Browse the guides →</span>
         </a>
         <a class="tool-card" href="Learning%20Hub.dc.html">
           <span class="tool-kicker">Learning</span>
-          <h3>Learning Hub</h3>
-          <p>Structured learning content covering domestic installations and commercial EV infrastructure.</p>
-          <span class="tool-link">Open the Learning Hub →</span>
+          <h3>Training courses</h3>
+          <p>Work through short interactive domestic and commercial EV charging courses, with progress saved on your device.</p>
+          <span class="tool-link">Open the courses →</span>
         </a>
-        <a class="tool-card" href="Quotes%20%26%20Invoices.dc.html">
-          <span class="tool-kicker">Commercial</span>
-          <h3>Quotes and invoices</h3>
-          <p>Build the commercial record alongside the installation proposal rather than starting again elsewhere.</p>
-          <span class="tool-link">Open quoting tools →</span>
-        </a>
-      </div>
-
-      <div class="authority-band">
-        <div class="authority-inner">
-          <div>
-            <h3>Planning or reviewing a local authority charging estate?</h3>
-            <p>Explore the separate estate review workflow for structured site records, accessibility considerations and programme-level oversight.</p>
-          </div>
-          <a class="button button-light" href="Council%20Estate%20Review.dc.html">Explore Estate Review</a>
-        </div>
       </div>
     </div>
   </section>
@@ -640,28 +631,28 @@
       <div class="faq-intro">
         <p class="eyebrow">Common questions</p>
         <h2>What to know before you start.</h2>
-        <p>The current release is an open beta. Use it on real projects, but retain your normal technical checks and project controls.</p>
+        <p>Start in the browser, keep control of your project files and retain the normal technical checks and approvals for the work.</p>
       </div>
       <div class="faqs">
         <details open>
-          <summary>Is EV Site Planner really free?</summary>
-          <p>Yes. The current beta is free to use and does not require an account or payment card. Paid features may be introduced later, but the page will be updated before that changes.</p>
+          <summary>What can I start from?</summary>
+          <p>Add site photos, a survey ZIP or PDF drawing, use the guided site walk, choose a scaled starter layout or begin from a blank grid.</p>
         </details>
         <details>
-          <summary>Who is it designed for?</summary>
-          <p>It is designed for EV installers, electrical contractors, surveyors, estimators, project managers and client teams planning domestic or commercial chargepoint installations.</p>
+          <summary>Can I use it for both domestic and commercial projects?</summary>
+          <p>Yes. Switch modes to change the equipment library, workflow detail and project context to suit the installation.</p>
+        </details>
+        <details>
+          <summary>Where is my project saved?</summary>
+          <p>Projects are saved on the device you are using. Download a pack file when you need a durable copy, a backup or to move the job to another device.</p>
         </details>
         <details>
           <summary>Does it replace electrical design or certification?</summary>
-          <p>No. It supports planning, visual communication and project documentation. The final design, regulatory assessment, installation and certification remain the responsibility of the relevant competent persons.</p>
+          <p>No. It supports planning, visual communication and project documentation. Final design, regulatory assessment, installation and certification remain with the relevant competent persons.</p>
         </details>
         <details>
-          <summary>Can I use it for both homes and commercial sites?</summary>
-          <p>Yes. The planner includes distinct domestic and commercial workflows so the information, symbols and outputs can match the scale of the proposed installation.</p>
-        </details>
-        <details>
-          <summary>How can I report a problem or suggest an improvement?</summary>
-          <p>Use the feedback link in the footer to report a snag or suggest a feature. Clear examples, screenshots and the steps that caused an issue are especially helpful during beta.</p>
+          <summary>How can I report a problem?</summary>
+          <p>Use the feedback link in the footer and include the steps taken and a screenshot where possible.</p>
         </details>
       </div>
     </div>
@@ -671,11 +662,11 @@
     <div class="container final-inner">
       <div>
         <h2>Build a clearer EV installation plan.</h2>
-        <p>Open the planner and start with a domestic or commercial project.</p>
+        <p>Start from a photo, drawing or scaled layout and build the markup in your browser.</p>
       </div>
       <div class="final-actions">
         <a class="button button-light" href="EV Site Planner.html">Open EV Site Planner <span aria-hidden="true">→</span></a>
-        <span class="final-note">Free during beta · no account required</span>
+        <span class="final-note">Free to use · no account required</span>
       </div>
     </div>
   </section>
@@ -691,9 +682,9 @@
     <div class="footer-bottom">
       <span>© 2026 EV Site Planner</span>
       <a href="EV Site Planner.html">Open planner</a>
+      <a href="EV%20Site%20Planner.html#showroom">3D showroom</a>
       <a href="Guide%20Library.dc.html">Guides</a>
-      <a href="Learning%20Hub.dc.html">Learning</a>
-      <a href="Council%20Estate%20Review.dc.html">Estate Review</a>
+      <a href="Learning%20Hub.dc.html">Training</a>
       <a href="https://github.com/benhitchins-stack/ev-site-planner/issues/new?title=EV%20Site%20Planner%20feedback" target="_blank" rel="noopener noreferrer">Send feedback</a>
       <span class="footer-spacer"></span>
       <span class="footer-disclaimer">Planning and communication support only. Responsibility for technical design, compliance, installation and certification remains with the relevant competent persons.</span>

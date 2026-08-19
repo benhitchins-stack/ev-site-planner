@@ -2,7 +2,7 @@
   "name": "ev-site-planner-suite",
   "version": "1.0.0",
   "private": true,
-  "description": "EV Site Planner: browser-based survey, markup, pricing and compliance suite for UK EV charge point installers and local authorities.",
+  "description": "EV Site Planner: browser-based survey, markup and planning tools for UK EV charge point installers.",
   "type": "module",
   "scripts": {
     "start": "node serve.mjs",

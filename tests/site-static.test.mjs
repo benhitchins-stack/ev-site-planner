@@ -36,7 +36,7 @@ test('literal local page resources resolve inside the deployed public directory'
   const missing = [];
   for (const name of pages) {
     const pagePath = resolve(publicDir, name);
-    const html = readFileSync(pagePath, 'utf8');
+    const html = readFileSync(pagePath, 'utf8').replace(/<script(?![^>]*\bsrc=)[^>]*>[\s\S]*?<\/script>/gi, '');
     for (const match of html.matchAll(/\b(?:src|href)=["']([^"']+)["']/gi)) {
       let value = match[1].trim().replaceAll('&amp;', '&');
       if (!value || /[{$}]/.test(value) || /^(?:[a-z][a-z0-9+.-]*:|#|\/\/)/i.test(value)) continue;

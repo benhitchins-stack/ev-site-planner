@@ -1,8 +1,8 @@
 # EV Site Planner
 
-Browser-based survey, markup, pricing and compliance suite for UK EV charge point installers and local authorities. Built as a set of static pages that share one design system, one runtime helper script and device-local storage. No server, no build step, no framework.
+Browser-based survey, markup and planning tools for UK EV charge point installers. The released site centres on the EV Site Planner, with a 3D charger showroom, guide library and training courses. It uses static pages, device-local storage and no application server or build step.
 
-The suite runs entirely in the browser. Projects, quotes and survey data are saved on the device against the address you use, not uploaded anywhere.
+The suite runs entirely in the browser. Project and survey data are saved on the device against the address you use, not uploaded anywhere.
 
 ## Run it locally
 
@@ -46,35 +46,33 @@ Entry point: `public/index.html` redirects to the landing page. From there the p
 
 | Page | What it is |
 |------|------------|
-| `Landing Page Final.dc.html` | Marketing landing page and pricing |
-| `EV Site Planner.html` | The core tool: photo survey, markup, cable sizing, load check, CDM project controls and exports |
-| `Quotes & Invoices.dc.html` | Price a plan, issue quotes and invoices, track the pipeline |
-| `Project Support.dc.html` | Workplace charging project management enquiry (bespoke quote) |
+| `Landing Page Final.dc.html` | Focused product landing page |
+| `EV Site Planner.html` | The core tool: photo and drawing markup, cable sizing, load checks, CDM project controls, 3D charger showroom and exports |
 | `Guide Library.dc.html` | How-to guides and useful links |
 | `Learning Hub.dc.html` | Short interactive training courses |
-| `Council Estate Review.dc.html` | Local-authority estate compliance review |
-| `Estate Check Library.dc.html` | The 56-check library behind the estate review |
-| `Estate Review One-Pager.dc.html` | Council-facing sales sheet |
-| `Business Hub.dc.html` | Back-office suite home (not linked from the customer-facing pages by design) |
-| `RAMS Builder.dc.html` | Risk assessments and method statements (gated as coming soon) |
 
 Shared files, siblings of the pages so relative paths resolve:
 
-- `support.js`, `doc-page.js`, `estate-check-library.js` : shared runtime helpers.
+- `support.js` : runtime helper for the guide library and training courses.
 - `cdm-controls.js`, `cdm-controls.css` : the planner's commercial CDM workspace, controlled-document register, design-risk workflow and pack export.
-- `_ds/` : the EV Infrastructure Tools design system (CSS tokens, `styles.css`, `_ds_bundle.js`). Every `.dc.html` page loads it. Editing a token here changes every satellite page. The core planner (`EV Site Planner.html`) is self-contained and does not depend on the bundle the same way.
 - `assets/` : logo marks.
 
-The main planner page is plain HTML/CSS/JS and embeds jsPDF and its canvas markup engine. Its commercial CDM workspace is loaded from the sibling `cdm-controls.js` and `cdm-controls.css` files. The satellite tools are `.dc.html` pages styled by the design system. This split is deliberate.
+The main planner page is plain HTML/CSS/JS and embeds jsPDF and its canvas markup engine. Its commercial CDM workspace is loaded from the sibling `cdm-controls.js` and `cdm-controls.css` files.
+
+## Held-back features
+
+Quotes and invoices, project support, RAMS and estate review remain versioned under `unreleased/public/`. That directory is deliberately outside the deployed `public/` root, so these pages and their supporting assets cannot be reached on the live site. See `unreleased/README.md` for the release checklist.
 
 ## Repo layout
 
 ```
 public/            The deployable website (single source of truth)
   index.html
-  *.dc.html, EV Site Planner.html
-  support.js, doc-page.js, estate-check-library.js
-  _ds/  assets/
+  Landing Page Final.dc.html, EV Site Planner.html
+  Guide Library.dc.html, Learning Hub.dc.html
+  support.js, cdm-controls.js, cdm-controls.css
+  assets/  vendor/
+unreleased/public/ Source for held-back features, excluded from deployment
 serve.mjs          Zero-dependency static server for local dev
 package.json       npm start / npm run serve
 netlify.toml       Static publish config (publish = public)
@@ -88,14 +86,13 @@ All self-hosted in `public/vendor/` (versions and licences in `vendor/NOTICE.md`
 - Fonts: Bricolage Grotesque, Hanken Grotesk, Space Grotesk, IBM Plex Mono (variable woff2, SIL OFL 1.1).
 - pdf.js: reads PDF drawings dropped onto the canvas.
 - heic2any: converts iPhone HEIC photos to a usable format.
-- qrcode-generator: builds the QR code on shareable decision packs.
 - three.js: the 3D equipment showroom.
 - React, ReactDOM and Babel standalone: the runtime for the design-system pages, loaded by `support.js`.
 
 ## Data and storage
 
-Projects, quotes and survey data live in the browser (localStorage and IndexedDB), keyed to the address the pages are served from. Return with the same browser and address to find the work. There is no backend. Serving the site from a new domain starts fresh.
+Projects and survey data live in the browser (localStorage and IndexedDB), keyed to the address the pages are served from. Return with the same browser and address to find the work. There is no backend. Serving the site from a new domain starts fresh.
 
 ## Compliance note
 
-The tools assist design decisions. They do not certify designs. Responsibility for any installation stays with the qualified installer. The council estate review outputs are evidence aids, not statements of compliance.
+The tools assist design decisions. They do not certify designs. Responsibility for any installation stays with the qualified installer.

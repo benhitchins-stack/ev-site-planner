@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const files = [
   '../public/EV Site Planner.html',
   '../public/Guide Library.dc.html',
-  '../public/RAMS Builder.dc.html'
+  '../unreleased/public/RAMS Builder.dc.html'
 ];
 
 function source(path) {
@@ -123,7 +123,7 @@ test('construction phase plan pre-fills reviewed CDM arrangements and controlled
 });
 
 test('RAMS builder consumes the optional snapshot without removing its release gate', () => {
-  const rams = source('../public/RAMS Builder.dc.html');
+  const rams = source('../unreleased/public/RAMS Builder.dc.html');
   assert.match(rams, /safetySummaryOf\(pack\)/);
   assert.match(rams, /sourceF10\.date \|\| sourceF10\.submitted/);
   assert.match(rams, /Controls recorded on the linked site plan/);
