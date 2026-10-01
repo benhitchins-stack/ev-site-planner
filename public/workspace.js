@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id), h=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const paths={grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',home:'m3 11 9-8 9 8M5 9v12h14V9M9 21v-7h6v7',plan:'M4 3h16v18H4zM8 7h8M8 11h4M8 15h8',pen:'m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5',calendar:'M3 5h18v16H3zM7 2v6M17 2v6M3 10h18M7 14h4M13 18h4',flag:'M5 22V3M5 3h14l-3 5 3 5H5',send:'m3 3 18 9-18 9 3-9ZM6 12h15',file:'M5 3h10l4 4v14H5zM15 3v5h4M9 12h6M9 16h6',plus:'M12 5v14M5 12h14',arrow:'M4 12h16m-6-6 6 6-6 6',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',book:'M4 4h6l2 2 2-2h6v16h-6l-2 2-2-2H4zM12 6v16',learn:'m2 9 10-5 10 5-10 5ZM6 11v7c4 3 8 3 12 0v-7',cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',check:'m5 12 4 4L19 6',close:'m6 6 12 12M6 18 18 6',menu:'M4 6h16M4 12h16M4 18h16',folder:'M3 6h6l2 2h10v12H3z',tools:'m14 7 3 3 4-4a6 6 0 0 1-8 8l-7 7-3-3 7-7a6 6 0 0 1 8-8Z',photo:'M3 5h18v14H3zM3 16l6-5 5 4 3-3 4 4M8 8h1',backup:'M4 7h16v14H4zM7 3h10v4M9 12h6',alert:'m12 3 10 18H2ZM12 9v5M12 17v1'};
+const paths={user:'M4 22v-3a8 8 0 0 1 16 0v3M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',home:'m3 11 9-8 9 8M5 9v12h14V9M9 21v-7h6v7',plan:'M4 3h16v18H4zM8 7h8M8 11h4M8 15h8',pen:'m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5',calendar:'M3 5h18v16H3zM7 2v6M17 2v6M3 10h18M7 14h4M13 18h4',flag:'M5 22V3M5 3h14l-3 5 3 5H5',send:'m3 3 18 9-18 9 3-9ZM6 12h15',file:'M5 3h10l4 4v14H5zM15 3v5h4M9 12h6M9 16h6',plus:'M12 5v14M5 12h14',arrow:'M4 12h16m-6-6 6 6-6 6',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',book:'M4 4h6l2 2 2-2h6v16h-6l-2 2-2-2H4zM12 6v16',learn:'m2 9 10-5 10 5-10 5ZM6 11v7c4 3 8 3 12 0v-7',cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',check:'m5 12 4 4L19 6',close:'m6 6 12 12M6 18 18 6',menu:'M4 6h16M4 12h16M4 18h16',folder:'M3 6h6l2 2h10v12H3z',tools:'m14 7 3 3 4-4a6 6 0 0 1-8 8l-7 7-3-3 7-7a6 6 0 0 1 8-8Z',photo:'M3 5h18v14H3zM3 16l6-5 5 4 3-3 4 4M8 8h1',backup:'M4 7h16v14H4zM7 3h10v4M9 12h6',alert:'m12 3 10 18H2ZM12 9v5M12 17v1'};
 const icon=(k,cls='')=>'<svg class="'+cls+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[k]||paths.file)+'"/></svg>';
 const btn=(t,a,style='',ic='')=>'<button type="button" class="ev-btn '+style+'" data-ev-action="'+a+'">'+(ic?icon(ic):'')+t+'</button>';
 const empty=(title,desc,actions='')=>'<div class="ev-empty">'+icon('plan')+'<b>'+title+'</b>'+desc+(actions?'<div class="ev-actions">'+actions+'</div>':'')+'</div>';
@@ -63,7 +63,7 @@ loadProject=function(id){return changeProject(async()=>{
 });};
 
 const app=document.createElement('div');app.id='evApp';
-app.innerHTML='<aside class="ev-sidebar" id="evSidebar"><a class="ev-brand" href="index.html" data-ev-route="home"><img src="assets/logo-mark.svg" alt=""><span>EV Site Planner<small>PROJECT WORKSPACE</small></span></a><button data-ev-route="home">'+icon('home','ev-nav-icon')+'Home</button><button data-ev-route="projects">'+icon('grid','ev-nav-icon')+'All projects</button><div class="ev-side-divider"></div><nav aria-label="Project sections"><div class="ev-nav-caption">This project</div>'+routes.map(([key,label,ic])=>'<button data-ev-route="'+key+'">'+icon(ic,'ev-nav-icon')+label+'</button>').join('')+'</nav><div class="ev-sidebar-bottom"><div class="ev-nav-caption">Resources</div><button data-ev-action="showroom">'+icon('cube','ev-nav-icon')+'3D showroom</button><a class="ev-nav" href="Guide Library.dc.html">'+icon('book','ev-nav-icon')+'Guide library</a><a class="ev-nav" href="Learning Hub.dc.html">'+icon('learn','ev-nav-icon')+'Training courses</a><div class="ev-build">EV SITE PLANNER · R2.1</div></div></aside><div class="ev-main"><div class="ev-top"><button id="evMobileNav" class="ev-icon-btn ev-mobile-toggle" aria-label="Open navigation" aria-expanded="false">'+icon('menu')+'</button><div class="ev-top-title"><small id="evBreadcrumb">Workspace / Projects</small><b id="evProjectTitle">Your projects</b></div><span class="ev-pill" id="evModePill">Commercial</span><span class="ev-save" id="evSaveState" data-state="saved">Stored in this browser</span><button class="ev-btn" data-ev-action="backup" id="evBackupTop">'+icon('download')+'Backup</button><button class="ev-btn" data-ev-action="details" id="evEditTop">Project details</button></div><div id="evContent"><div id="evScreen"></div><section id="evCanvasHost" aria-label="Site markup" hidden></section></div></div>';
+app.innerHTML='<aside class="ev-sidebar" id="evSidebar"><a class="ev-brand" href="index.html" data-ev-route="home"><img src="assets/logo-mark.svg" alt=""><span>EV Site Planner<small>PROJECT WORKSPACE</small></span></a><button data-ev-route="home">'+icon('home','ev-nav-icon')+'Home</button><button data-ev-route="projects">'+icon('grid','ev-nav-icon')+'All projects</button><div class="ev-side-divider"></div><nav aria-label="Project sections"><div class="ev-nav-caption">This project</div>'+routes.map(([key,label,ic])=>'<button data-ev-route="'+key+'">'+icon(ic,'ev-nav-icon')+label+'</button>').join('')+'</nav><div class="ev-sidebar-bottom"><button data-ev-route="profile">'+icon('user','ev-nav-icon')+'My profile</button><div class="ev-nav-caption">Resources</div><button data-ev-action="showroom">'+icon('cube','ev-nav-icon')+'3D showroom</button><a class="ev-nav" href="Guide Library.dc.html">'+icon('book','ev-nav-icon')+'Guide library</a><a class="ev-nav" href="Learning Hub.dc.html">'+icon('learn','ev-nav-icon')+'Training courses</a><div class="ev-build">EV SITE PLANNER · R2.2</div></div></aside><div class="ev-main"><div class="ev-top"><button id="evMobileNav" class="ev-icon-btn ev-mobile-toggle" aria-label="Open navigation" aria-expanded="false">'+icon('menu')+'</button><div class="ev-top-title"><small id="evBreadcrumb">Workspace / Projects</small><b id="evProjectTitle">Your projects</b></div><span class="ev-pill" id="evModePill">Commercial</span><span class="ev-save" id="evSaveState" data-state="saved">Stored in this browser</span><button class="ev-btn" data-ev-action="backup" id="evBackupTop">'+icon('download')+'Backup</button><button class="ev-btn" data-ev-action="details" id="evEditTop">Project details</button></div><div id="evContent"><div id="evScreen"></div><section id="evCanvasHost" aria-label="Site markup" hidden></section></div></div>';
 document.body.prepend(app);
 const workbench=document.querySelector('body>header');workbench.id='evWorkbench';$('evCanvasHost').append(workbench,$('root'));
 workbench.querySelector('.hgrp').after($('catbar'));
@@ -84,10 +84,10 @@ openWelcome=()=>openDetails(0);
 
 function updateChrome(){
  if(!$('evApp'))return;
- $('evProjectTitle').textContent=route==='projects'?'Your projects':(pack.name||'Untitled project');
- $('evBreadcrumb').textContent=route==='projects'?'EV Site Planner / Workspace':'Project / '+(routes.find(r=>r[0]===route)?.[1]||route);
- $('evModePill').textContent=modeName();$('evModePill').hidden=route==='projects';
- $('evEditTop').hidden=route==='projects';$('evBackupTop').hidden=route==='projects'&&!hasWork();
+ $('evProjectTitle').textContent=route==='profile'?'My profile':route==='projects'?'Your projects':(pack.name||'Untitled project');
+ $('evBreadcrumb').textContent=route==='profile'?'EV Site Planner / Profile':route==='projects'?'EV Site Planner / Workspace':'Project / '+(routes.find(r=>r[0]===route)?.[1]||route);
+ $('evModePill').textContent=modeName();$('evModePill').hidden=['projects','profile'].includes(route);$('evSaveState').hidden=route==='profile';
+ $('evEditTop').hidden=['projects','profile'].includes(route);$('evBackupTop').hidden=route==='profile'||(route==='projects'&&!hasWork());
  app.querySelectorAll('[data-ev-route]').forEach(b=>{if(b.dataset.evRoute===route)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const p=activePhoto();
  strip.innerHTML=icon('plan')+'<select aria-label="Active plan" id="evActivePlan">'+(pack.photos.length?pack.photos.map(p=>'<option value="'+h(p.id)+'" '+(p.id===pack.active?'selected':'')+'>'+h(p.name)+'</option>').join(''):'<option>No plans yet</option>')+'</select>'+btn('Add files','add-files','','plus')+'<span class="ev-plan-meta">'+(p?(p.items.length+' items · '+(p.scale?.pxPerM?'Scale set':'Scale not set')):'Photos · PDF · ZIP')+'</span>';
@@ -96,12 +96,12 @@ function updateChrome(){
 const baseRenderSide=renderSide;
 renderSide=function(){baseRenderSide();updateChrome();};
 function go(next){
- if(!['home','projects',...routes.map(r=>r[0])].includes(next))next='overview';
+ if(!['home','projects','profile',...routes.map(r=>r[0])].includes(next))next='overview';
  if(programmeNode.parentElement!==originalProgrammeParent){originalProgrammeParent.append(programmeNode);programmeNode.classList.remove('ev-programme');programmeNode.setAttribute('role','dialog');programmeNode.setAttribute('aria-modal','true');}
- route=next;app.classList.toggle('ev-is-home',next==='home');document.title=next==='home'?'EV Site Planner · Every site. A clearer plan.':'EV Site Planner · '+(next==='projects'?'Your projects':(pack.name||'Project workspace'));$('evCanvasHost').hidden=next!=='markup';$('evScreen').hidden=next==='markup';$('evSidebar').classList.remove('open');$('evMobileNav').setAttribute('aria-expanded','false');
+ route=next;app.classList.toggle('ev-is-home',next==='home');document.title=next==='home'?'EV Site Planner · Every site. A clearer plan.':'EV Site Planner · '+(next==='profile'?'My profile':next==='projects'?'Your projects':(pack.name||'Project workspace'));$('evCanvasHost').hidden=next!=='markup';$('evScreen').hidden=next==='markup';$('evSidebar').classList.remove('open');$('evMobileNav').setAttribute('aria-expanded','false');
  $('evTechMenu').hidden=true;updateChrome();
  if(next==='markup'){requestAnimationFrame(()=>{resize();fitView();draw();});return;}
- const page={home:()=>EVHome.render(),projects:projectsPage,overview:overviewPage,programme:programmePage,snags:snagsPage,issue:issuePage}[next];
+ const page={profile:()=>EVProfile.render(),home:()=>EVHome.render(),projects:projectsPage,overview:overviewPage,programme:programmePage,snags:snagsPage,issue:issuePage}[next];
  $('evScreen').innerHTML='<div class="ev-page">'+page()+'</div>';$('evScreen').scrollTop=0;
  if(next==='projects'){
   $('evSearch').value=search;$('evFilter').value=filter;
@@ -161,7 +161,7 @@ function issuePage(){const w=ensure(),plans=pack.photos.length;return heading('R
 
 async function newProject(example=false){return changeProject(async()=>{
  if(hasWork()&&!await persist()){toast('Download a backup before starting a new project.');return;}
- clearTimeout(saveT);saveT=null;pack=newPack();pack.projId=uid();ensure();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;imgKeys();updateUndo();syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();draw();
+ await window.EVProfile?.ready;clearTimeout(saveT);saveT=null;pack=newPack();if(!example)window.EVProfile?.apply(pack);pack.projId=uid();ensure();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;imgKeys();updateUndo();syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();draw();
  if(example){pack.name='Riverside Business Park · example';pack.jobRef='EXAMPLE-001';pack.custName='Example client';pack.address='Fictional site for exploring the planner';pack.notes='Example layout: four EV bays, two twin chargers, a feeder pillar and a proposed cable route. Replace all assumptions with the site survey before use.';syncSiteChip();buildStarter('compact');allItems().filter(i=>i.type==='route').forEach((i,n)=>{if(n)i.labelT=.12;});draw();await persist();go('overview');}
  else{await idbDel('autosave').catch(()=>{});try{localStorage.removeItem(LS_KEY);}catch(_){}go('overview');openDetails(0);}
 });}
@@ -201,7 +201,7 @@ async function exportPlans(){
  const selected=chosenPlans();if(!selected.length)return;
  const b=$('evDownloadPlans');reviewBusy=true;b.disabled=true;b.textContent='Preparing PDF…';review.querySelectorAll('[data-ev-close-review]').forEach(e=>e.disabled=true);
  try{const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true});window.EVDelivery?.installFonts(doc);
-  for(let i=0;i<selected.length;i++){const p=selected[i];if(i)doc.addPage();await window.EVDelivery?.preparePlan(p);const canvas=await renderPhotoToCanvas(p,2000);doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');doc.setTextColor(23,43,59);doc.setFont(window.EVDelivery?'EVSans':'helvetica','bold');doc.setFontSize(14);doc.text(doc.splitTextToSize(pack.name||'EV Site Planner',240)[0],12,14);doc.setFontSize(9);doc.setFont(window.EVDelivery?'EVSans':'helvetica','normal');doc.text(doc.splitTextToSize(p.name||'Site plan',245)[0],12,22);const ratio=Math.min(273/canvas.width,163/canvas.height);const w=canvas.width*ratio,ht=canvas.height*ratio;doc.addImage(canvas,'PNG',(297-w)/2,29+(163-ht)/2,w,ht,undefined,'FAST');doc.setDrawColor(222,230,237);doc.line(12,196,285,196);doc.setTextColor(106,120,132);doc.setFontSize(8);doc.text('EV Site Planner · Rev '+(pack.rev||'A')+' · '+new Date().toLocaleDateString('en-GB'),12,202);doc.text((i+1)+' / '+selected.length,285,202,{align:'right'});}
+  for(let i=0;i<selected.length;i++){const p=selected[i];if(i)doc.addPage();await window.EVDelivery?.preparePlan(p);const canvas=await renderPhotoToCanvas(p,2000);doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');doc.setTextColor(23,43,59);doc.setFont(window.EVDelivery?'EVSans':'helvetica','bold');doc.setFontSize(14);doc.text(doc.splitTextToSize(pack.name||'EV Site Planner',194)[0],12,14);doc.setFontSize(9);doc.setFont(window.EVDelivery?'EVSans':'helvetica','normal');doc.text(doc.splitTextToSize(p.name||'Site plan',194)[0],12,22);if(pack.brandName){doc.setFontSize(8);doc.text(doc.splitTextToSize(pack.brandName,pack.brandLogo?37:73).slice(0,2),212,12);}window.EVProfile?.drawLogo(doc,pack.brandLogo,254,8,31,16);const ratio=Math.min(273/canvas.width,163/canvas.height);const w=canvas.width*ratio,ht=canvas.height*ratio;doc.addImage(canvas,'PNG',(297-w)/2,29+(163-ht)/2,w,ht,undefined,'FAST');doc.setDrawColor(222,230,237);doc.line(12,196,285,196);doc.setTextColor(106,120,132);doc.setFontSize(8);doc.text(doc.splitTextToSize([pack.brandName||'EV Site Planner',pack.surveyedBy,'Rev '+(pack.rev||'A'),new Date().toLocaleDateString('en-GB')].filter(Boolean).join(' · '),247)[0],12,202);doc.text((i+1)+' / '+selected.length,285,202,{align:'right'});}
   activeIssue='Marked-up plans';await doc.save(slug(pack.name)+'_plans_rev-'+slug(pack.rev||'A')+'.pdf',{returnPromise:true});toast('Marked-up plans PDF downloaded');
  }catch(err){activeIssue=null;console.error(err);toast('The PDF could not be created. Check the selected plans and try again.');}
  finally{reviewBusy=false;b.innerHTML=icon('download')+'Download PDF';review.querySelectorAll('[data-ev-close-review]').forEach(e=>e.disabled=false);reviewCounts();}
@@ -232,7 +232,7 @@ app.addEventListener('click',async e=>{
  window.__evUserAction=true;if(projectBusy)return;
  const section=e.target.closest('[data-psec]');if(section){packSec=section.dataset.psec;try{localStorage.setItem('evsp_packsec',packSec);}catch(_){}renderSide();return;}
  const action=e.target.closest('[data-ev-action]');if(action){e.preventDefault();$('evTechMenu').hidden=true;$('evTechnical').setAttribute('aria-expanded','false');const f=actions[action.dataset.evAction];if(f)await f();return;}
- const n=e.target.closest('[data-ev-route]');if(n){e.preventDefault();if(['home','projects'].includes(n.dataset.evRoute))await persist();go(n.dataset.evRoute);return;}
+ const n=e.target.closest('[data-ev-route]');if(n){e.preventDefault();if(['home','projects','profile'].includes(n.dataset.evRoute))await persist();go(n.dataset.evRoute);return;}
  const p=e.target.closest('[data-ev-project]');if(p){await loadProject(p.dataset.evProject);return;}
  const plan=e.target.closest('[data-ev-plan]');if(plan){openPlan(plan.dataset.evPlan);return;}
  const snag=e.target.closest('[data-ev-snag]');if(snag){if(window.EVDelivery){EVDelivery.openSnag(snag.dataset.evSnag,snag.dataset.photoId);return;}pack.active=snag.dataset.photoId;go('markup');sel=snag.dataset.evSnag;sideTab='props';setSideTab();$('side').classList.add('open');draw();}
@@ -252,7 +252,7 @@ async function importBackup(file){return changeProject(async()=>{
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();fitView();draw();await persist();go('overview');toast('Project backup opened as a separate copy');return true;
 });}
-window.EVWorkspace={go,persist,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.1'};
+window.EVWorkspace={go,persist,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
 // Review windows inherit the larger working area from Build 129.
 const maxButton=document.createElement('button');maxButton.type='button';maxButton.className='pe-close ev-maximise';maxButton.title='Expand review window';maxButton.setAttribute('aria-label',maxButton.title);maxButton.innerHTML=icon('grid');maxButton.onclick=()=>{$('rxBackdrop').querySelector('.rx').classList.toggle('rz-max');};$('rxClose').before(maxButton);
 go('home');
@@ -260,7 +260,7 @@ go('home');
 Promise.resolve(window.__evRestorePromise).then(async()=>{
  if(window.__evUserAction)return;
  const requested=location.hash.slice(1);
- if(requested==='projects')go('projects');
+ if(['projects','profile'].includes(requested))go(requested);
  else if(requested==='workspace')actions.workspace();
  else if(['new','example','showroom','3d-showroom'].includes(requested)){
   window.history.replaceState(null,'',location.pathname+location.search);

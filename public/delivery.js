@@ -146,7 +146,7 @@ function pdfKit(title,landscape=false){
  const lines=(text,w,size=9,bold=false)=>{font(size,bold);return doc.splitTextToSize(clean(text),w);};
  const write=(t,x,yy,size=9,bold=false,col=C.navy)=>{font(size,bold);doc.setTextColor(...col);doc.text(clean(t),x,yy);};
  const fit=(t,w,size=9,bold=false)=>{font(size,bold);let s=clean(t);if(doc.getTextWidth(s)<=w)return s;while(s.length&&doc.getTextWidth(s+'…')>w)s=s.slice(0,-1);return s+'…';};
- function newPage(section=title){sectionTitle=section.replace(/ · continued$/,'');if(page++)doc.addPage();doc.setFillColor(...C.navy);doc.rect(0,0,W,33,'F');write('EV SITE PLANNER',M,8.5,7,true,[207,231,170]);write(section,M,18,16,true,[255,255,255]);write(fit(pack.name||'Untitled project',width-3,9),M,26,9,false,[215,227,239]);y=43;}
+ function newPage(section=title){sectionTitle=section.replace(/ · continued$/,'');if(page++)doc.addPage();doc.setFillColor(...C.navy);doc.rect(0,0,W,33,'F');const headerWidth=width-(pack.brandLogo?44:0);write(fit(pack.brandName||'EV SITE PLANNER',headerWidth,7,true),M,8.5,7,true,[207,231,170]);write(fit(section,headerWidth,16,true),M,18,16,true,[255,255,255]);write(fit(pack.name||'Untitled project',headerWidth,9),M,26,9,false,[215,227,239]);if(pack.brandLogo){doc.setFillColor(255,255,255);doc.roundedRect(W-M-35,6,35,21,2,2,'F');window.EVProfile?.drawLogo(doc,pack.brandLogo,W-M-33,8,31,17);}y=43;}
  const ensure=h=>{if(y+h>B)newPage(sectionTitle+' · continued');};
  function paragraph(text,size=9,bold=false,col=C.navy){const ll=lines(text,width,size,bold),lineH=size*.47;for(const l of ll){ensure(lineH+2);write(l,M,y,size,bold,col);y+=lineH;}y+=3;}
  function section(text){ensure(13);y+=2;write(text,M,y,11,true);y+=8;}
@@ -161,7 +161,7 @@ function pdfKit(title,landscape=false){
    }
   }y+=5;
  }
- function details(extra=[]){table(['Project details','Recorded information'],[['Reference',pack.jobRef],['Client',pack.custName],['Site address',[pack.address,pack.postcode].filter(Boolean).join(', ')],['Project lead',pack.surveyedBy],['Site contact',[pack.workspace?.contactName,pack.workspace?.contactPhone,pack.workspace?.contactEmail].filter(Boolean).join(' · ')],['Revision / prepared',String(pack.rev||'A')+' / '+date(today())],...extra],[43,width-43]);}
+ function details(extra=[]){table(['Project details','Recorded information'],[['Reference',pack.jobRef],['Client',pack.custName],['Site address',[pack.address,pack.postcode].filter(Boolean).join(', ')],['Project lead',pack.surveyedBy],['Site contact',[pack.workspace?.contactName,pack.workspace?.contactPhone,pack.workspace?.contactEmail].filter(Boolean).join(' · ')],['Revision / prepared',String(pack.rev||'A')+' / '+date(today())],...(window.EVProfile?.reportRows(pack)||[]),...extra],[43,width-43]);}
  function footer(){const total=doc.getNumberOfPages();for(let i=1;i<=total;i++){doc.setPage(i);doc.setDrawColor(...C.line);doc.line(M,H-12,W-M,H-12);write(fit((pack.jobRef||'EV Site Planner')+' · Rev '+(pack.rev||'A')+' · '+date(today()),width-30,7),M,H-7,7,false,C.dim);font(7);doc.text(i+' / '+total,W-M,H-7,{align:'right'});}return doc;}
  newPage();return{doc,W,H,M,B,C,width,lines,write,fit,newPage,ensure,paragraph,section,table,details,footer,get y(){return y;},set y(v){y=v;}};
 }
