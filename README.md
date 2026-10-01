@@ -1,98 +1,115 @@
 # EV Site Planner
 
-Browser-based survey, markup and planning tools for UK EV charge point installers. The released site centres on the EV Site Planner, with a 3D charger showroom, guide library and training courses. It uses static pages, device-local storage and no application server or build step.
+Browser-based survey, markup and planning tools for UK EV charge point installers.
+The site opens on an integrated home page with recent projects, backup import and
+a worked example. The project workspace brings together Overview, Markup,
+Programme, Snags and Issue, alongside the 3D showroom, guides and training.
 
-The suite runs entirely in the browser. Project and survey data are saved on the device against the address you use, not uploaded anywhere.
+Projects stay in browser storage on the device and site address being used. There
+is no application server or project upload. Download a JSON backup to keep a
+separate copy or move work to another device.
 
-## Run it locally
+## Run and edit
 
-The pages link to each other and to shared files by relative path, so they must be served over http. Opening a `.dc.html` file directly with `file://` will not work: browsers block local file access.
+Node 18 or later, with no runtime dependencies to install:
 
-Zero dependencies (Node 18+):
-
-```
+```sh
 npm start
 ```
 
-Then open http://localhost:8000. Set a different port with `PORT=3000 npm start`.
+Open http://localhost:8000. Alternatively serve `public/` with any static server.
 
-Run the static integration and CDM lifecycle tests with:
+`public/EV Site Planner.html` is the canonical HTML entry. After editing it or the
+workspace assets, run the small Python 3 packaging step:
 
-```
+```sh
+npm run build
 npm test
 ```
 
-No Node? Any static server works, pointed at the `public/` folder:
+The packaging step updates asset content hashes and synchronises `index.html`,
+`home.html` and `Landing Page Final.dc.html`. All four addresses open the same
+home page and workspace. The generated pages are committed, so hosting requires
+no build step. Avoid editing the generated copies independently.
 
-```
-python3 -m http.server 8000 --directory public
-```
+## R2.1 release
 
-Every font and library is served from the site itself (`public/vendor/`), so it runs with no external requests at all, including fully offline hosting.
+- Integrated home page, project details wizard and recent-project dashboard.
+- Focused markup toolbar, technical tools menu and selected-plan PDF review.
+- EV car-and-cable bay markings, colour options and custom bay text.
+- Editable programme activities with owners, progress, overlapping dates and
+  user-entered non-working dates.
+- Snag register linked to the original canvas markers, with before/after photos,
+  target dates, actions and close-out records.
+- Programme and snag PDF previews with page navigation and zoom.
+- Complete project snapshots, including work containing only site details or CDM
+  records. Queued saves capture independent data and project changes are serialised.
+- Backup imports create a separate record. Invalid files leave the current project
+  intact, and a newer recovery copy takes precedence over an older stored record.
 
-## Deploy it
+The existing CDM workspace, controlled-document register, risk records, safety
+markings, commissioning data and legacy backup fields are retained. CDM controls
+are available from the Technical menu and the Markup panel's Checks tab.
 
-Everything under `public/` is the complete website, ready to host. It is pure static output, so any static host serves it.
+## Checks
 
-- GitHub Pages: automatic. `.github/workflows/deploy-pages.yml` publishes `public/` on every push to `main` and enables the Pages site on its first run.
-- Netlify: `netlify.toml` sets `publish = "public"` with no build command. Drag the `public/` folder onto Netlify Drop, or connect the repo.
-- Cloudflare Pages / Vercel: set the build output (publish) directory to `public` and leave the build command empty.
+`npm test` runs the static integration, release, CDM lifecycle and RAMS bridge
+checks. GitHub Pages runs these checks before publishing.
 
-Point the host's default document at `index.html`; it redirects to the landing page.
+For the optional browser regression suite, install Playwright in a development
+environment, install its Chromium browser, then run:
 
-## What is in the suite
-
-Entry point: `public/index.html` redirects to the landing page. From there the pages cross-link.
-
-| Page | What it is |
-|------|------------|
-| `Landing Page Final.dc.html` | Focused product landing page |
-| `EV Site Planner.html` | The core tool: photo and drawing markup, cable sizing, load checks, CDM project controls, 3D charger showroom and exports |
-| `Guide Library.dc.html` | How-to guides and useful links |
-| `Learning Hub.dc.html` | Short interactive training courses |
-
-Shared files, siblings of the pages so relative paths resolve:
-
-- `support.js` : runtime helper for the guide library and training courses.
-- `cdm-controls.js`, `cdm-controls.css` : the planner's commercial CDM workspace, controlled-document register, design-risk workflow and pack export.
-- `assets/` : logo marks.
-
-The main planner page is plain HTML/CSS/JS and embeds jsPDF and its canvas markup engine. Its commercial CDM workspace is loaded from the sibling `cdm-controls.js` and `cdm-controls.css` files.
-
-## Held-back features
-
-Quotes and invoices, project support, RAMS and estate review remain versioned under `unreleased/public/`. That directory is deliberately outside the deployed `public/` root, so these pages and their supporting assets cannot be reached on the live site. See `unreleased/README.md` for the release checklist.
-
-## Repo layout
-
-```
-public/            The deployable website (single source of truth)
-  index.html
-  Landing Page Final.dc.html, EV Site Planner.html
-  Guide Library.dc.html, Learning Hub.dc.html
-  support.js, cdm-controls.js, cdm-controls.css
-  assets/  vendor/
-unreleased/public/ Source for held-back features, excluded from deployment
-serve.mjs          Zero-dependency static server for local dev
-package.json       npm start / npm run serve
-netlify.toml       Static publish config (publish = public)
-.github/workflows/ GitHub Pages deploy
+```sh
+npm install --no-save --package-lock=false playwright
+npx playwright install chromium
+npm run test:browser
 ```
 
-## Runtime dependencies
+An existing compatible Chromium can be supplied with
+`CHROMIUM_EXECUTABLE_PATH=/path/to/chromium`. Set `EVSP_TEST_OUTPUT` to choose the
+location for screenshots, the sample PDF and JSON results. The default is
+`/tmp/evsp-browser-checks`.
 
-All self-hosted in `public/vendor/` (versions and licences in `vendor/NOTICE.md`); the site makes no CDN or font-service requests:
+The browser suite checks home-page assets, address-only recovery, duplicate-click
+protection, save snapshot isolation, fallback recovery, safe backup import, CDM
+access, plan PDF export, mobile layout, showroom, guides and training. Programme
+and snag workflows were additionally exercised with legacy migration, overlapping
+dates, photo evidence, filtered reports, long notes, pagination and reload.
 
-- Fonts: Bricolage Grotesque, Hanken Grotesk, Space Grotesk, IBM Plex Mono (variable woff2, SIL OFL 1.1).
-- pdf.js: reads PDF drawings dropped onto the canvas.
-- heic2any: converts iPhone HEIC photos to a usable format.
-- three.js: the 3D equipment showroom.
-- React, ReactDOM and Babel standalone: the runtime for the design-system pages, loaded by `support.js`.
+## Deploy
 
-## Data and storage
+`.github/workflows/deploy-pages.yml` publishes only `public/` on pushes to `main`.
+The existing custom domain is managed by the repository's Pages settings.
+`netlify.toml` also points to `public/` for compatible static hosting.
 
-Projects and survey data live in the browser (localStorage and IndexedDB), keyed to the address the pages are served from. Return with the same browser and address to find the work. There is no backend. Serving the site from a new domain starts fresh.
+The first-party scripts and styles use content-versioned URLs. All fonts and
+runtime libraries are served locally from `public/vendor/`, including PDF import,
+HEIC conversion, 3D rendering and the resource-page runtime. This is a static site,
+not an installable offline PWA; the separately distributed portable build is a
+different deliverable.
 
-## Compliance note
+## Source layout
 
-The tools assist design decisions. They do not certify designs. Responsibility for any installation stays with the qualified installer.
+| Location | Purpose |
+|---|---|
+| `public/EV Site Planner.html` | Drawing engine, compatibility and HTML entry |
+| `public/workspace.js`, `workspace.css` | Project navigation, persistence and plan exports |
+| `public/home.js`, `home.css` | Home page and recent projects |
+| `public/delivery.js` | Programme, snag records and PDF review |
+| `public/bay-markings.js` | Bay symbols and lettering |
+| `public/report-fonts.js` | Embedded DejaVu fonts for new reports |
+| `public/cdm-controls.js`, `cdm-controls.css` | Existing commercial CDM tools |
+| `public/Guide Library.dc.html`, `Learning Hub.dc.html` | Guidance and courses |
+| `public/assets/`, `vendor/` | Local images, fonts and dependencies |
+| `scripts/build-site.py` | Asset versioning and entry-page synchronisation |
+| `tests/` | Static, lifecycle and optional browser checks |
+| `unreleased/public/` | Held-back source, excluded from deployment |
+
+Quotes/invoices, project support, RAMS and estate review remain outside the
+published directory. Install Review remains removed. See `unreleased/README.md`.
+
+The programme uses Monday to Friday plus the user's excluded dates; it does not
+calculate a critical path or automatically supply bank holidays. Download history
+records file downloads, not sending or approval. The tools assist qualified design
+decisions and do not certify installations. This interface release does not claim
+a new engineering or regulatory audit of inherited calculations or learning content.

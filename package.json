@@ -5,9 +5,11 @@
   "description": "EV Site Planner: browser-based survey, markup and planning tools for UK EV charge point installers.",
   "type": "module",
   "scripts": {
+    "build": "python3 scripts/build-site.py",
     "start": "node serve.mjs",
     "serve": "node serve.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node tests/workspace.browser.cjs"
   },
   "engines": {
     "node": ">=18"

@@ -31,7 +31,8 @@ test('held-back feature source is versioned outside the deployment root', () => 
 });
 
 test('the released navigation exposes only the focused supporting tools', () => {
-  const releasedNavigation = `${landing}\n${guide}\n${learning}`;
+  const home = readFileSync(new URL('../public/home.js', import.meta.url), 'utf8');
+  const releasedNavigation = `${home}\n${guide}\n${learning}`;
   for (const page of heldBackPages) {
     assert.doesNotMatch(releasedNavigation, new RegExp(page.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
   }
