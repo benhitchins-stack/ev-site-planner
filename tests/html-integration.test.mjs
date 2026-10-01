@@ -121,7 +121,15 @@ test('meaningful-content and controlled-risk helpers reject defaults but keep CD
 
 test('planner isolates CDM keyboard input and hardens manual document actions', () => {
   const planner = source('../public/EV Site Planner.html');
-  assert.ok((planner.match(/classList\.contains\("evsp-cdm-modal-open"\)/g) || []).length >= 3);
+  const start=planner.indexOf('function drawingShortcutsBlocked(e)'),end=planner.indexOf('window.addEventListener("keydown"',start);
+  let cdmOpen=false,inert=false,dialog=false;
+  const context={document:{documentElement:{classList:{contains:()=>cdmOpen}},getElementById:()=>({inert}),querySelector:()=>dialog}};
+  vm.createContext(context);vm.runInContext(planner.slice(start,end),context);
+  const event={target:{isContentEditable:false},defaultPrevented:false};
+  assert.equal(context.drawingShortcutsBlocked(event),false);
+  cdmOpen=true;assert.equal(context.drawingShortcutsBlocked(event),true);
+  cdmOpen=false;inert=true;assert.equal(context.drawingShortcutsBlocked(event),true);
+  inert=false;dialog=true;assert.equal(context.drawingShortcutsBlocked(event),true);
   assert.match(planner, /if\(k==="rams"&&pack\.cdm&&typeof pack\.cdm==="object"\)\{ pack\.cdm\.ramsComplianceManaged=false; pack\.cdm\.ramsComplianceManual=true; \}/);
   assert.match(planner, /disabled title="File contents are not stored in this device snapshot"/);
   assert.match(planner, /if\(a&&a\.src\)/);

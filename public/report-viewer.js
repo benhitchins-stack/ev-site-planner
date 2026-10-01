@@ -8,11 +8,11 @@ function mount(root,{canvasId=''}={}){
  root.innerHTML='<aside class="ev-document-pages" aria-label="PDF pages"><b>Pages</b><div class="ev-document-thumbnails"></div></aside><section class="ev-document-stage"><div class="ev-document-nav"><button type="button" class="ev-btn" data-pdf-prev aria-label="Previous page">Previous</button><span data-pdf-counter role="status">Preparing PDF…</span><button type="button" class="ev-btn" data-pdf-next aria-label="Next page">Next</button><label>Zoom<select data-pdf-zoom aria-label="PDF zoom"><option value="100">Fit width</option><option value="150">150%</option><option value="200">200%</option></select></label></div><div class="ev-document-canvas"'+(canvasId?' id="'+esc(canvasId)+'"':'')+'></div></section>';
  const canvasBox=root.querySelector('.ev-document-canvas'),thumbs=root.querySelector('.ev-document-thumbnails'),counter=root.querySelector('[data-pdf-counter]');
  function buttons(){root.querySelector('[data-pdf-prev]').disabled=!pdf||page<=1;root.querySelector('[data-pdf-next]').disabled=!pdf||page>=pdf.numPages;root.querySelectorAll('[data-pdf-page]').forEach(b=>{b.setAttribute('aria-current',b.dataset.pdfPage===String(page)?'page':'false');});}
- async function show(n){
+ async function show(n,failOnError=false){
   if(!pdf||disposed)return;page=Math.max(1,Math.min(pdf.numPages,n));const token=++renderVersion,doc=pdf;
   if(task){task.cancel();task=null;}buttons();counter.textContent='Page '+page+' of '+doc.numPages;
   try{const pg=await doc.getPage(page);if(token!==renderVersion||disposed)return;const raw=pg.getViewport({scale:1}),vp=pg.getViewport({scale:Math.min(2,1500/raw.width)}),cn=document.createElement('canvas');cn.width=Math.ceil(vp.width);cn.height=Math.ceil(vp.height);cn.setAttribute('role','img');cn.setAttribute('aria-label','PDF preview page '+page+' of '+doc.numPages);const render=pg.render({canvasContext:cn.getContext('2d'),viewport:vp});task=render;await render.promise;if(token!==renderVersion||disposed)return;task=null;canvasBox.replaceChildren(cn);canvasBox.scrollTop=0;}
-  catch(err){if(token===renderVersion&&!disposed&&err.name!=='RenderingCancelledException')canvasBox.textContent='This page could not be displayed. Refresh the preview to try again.';}
+  catch(err){if(token===renderVersion&&!disposed&&err.name!=='RenderingCancelledException'){canvasBox.textContent='This page could not be displayed. Refresh the preview to try again.';counter.textContent='Preview unavailable';if(failOnError)throw err;}}
  }
  async function thumbnails(doc,token){
   for(let n=1;n<=doc.numPages;n++){
@@ -22,16 +22,20 @@ function mount(root,{canvasId=''}={}){
   }
  }
  async function set(doc){
+  if(disposed)return;
   const token=++version;++renderVersion;const old=pdf;pdf=null;if(task){task.cancel();task=null;}if(old)await old.destroy();
+  if(token!==version||disposed)return;
   canvasBox.textContent='Preparing PDF…';thumbs.replaceChildren();buttons();
-  const lib=await ensurePdfJs(),loaded=await lib.getDocument({data:doc.output('arraybuffer')}).promise;
+  const lib=await ensurePdfJs();if(token!==version||disposed)return;
+  const loaded=await lib.getDocument({data:doc.output('arraybuffer')}).promise;
   if(token!==version||disposed){await loaded.destroy();return;}
   pdf=loaded;page=Math.min(page,pdf.numPages);thumbs.innerHTML=Array.from({length:pdf.numPages},(_,i)=>'<button type="button" data-pdf-page="'+(i+1)+'" aria-label="Page '+(i+1)+'"><span>'+(i+1)+'</span></button>').join('');
-  await show(page);void thumbnails(loaded,token);
+  await show(page,true);void thumbnails(loaded,token);
  }
- root.addEventListener('click',e=>{const b=e.target.closest('[data-pdf-page]');if(b)void show(+b.dataset.pdfPage);else if(e.target.closest('[data-pdf-prev]'))void show(page-1);else if(e.target.closest('[data-pdf-next]'))void show(page+1);});
+ const onClick=e=>{const b=e.target.closest('[data-pdf-page]');if(b)void show(+b.dataset.pdfPage);else if(e.target.closest('[data-pdf-prev]'))void show(page-1);else if(e.target.closest('[data-pdf-next]'))void show(page+1);};
+ root.addEventListener('click',onClick);
  root.querySelector('[data-pdf-zoom]').onchange=e=>canvasBox.style.setProperty('--pdf-zoom',e.target.value+'%');
- function destroy(){disposed=true;version++;renderVersion++;if(task)task.cancel();if(pdf)pdf.destroy().catch(()=>{});pdf=null;}
+ function destroy(){disposed=true;version++;renderVersion++;root.removeEventListener('click',onClick);if(task)task.cancel();if(pdf)pdf.destroy().catch(()=>{});pdf=null;}
  buttons();return{set,show,destroy,sync:buttons,error(message){canvasBox.textContent=message;counter.textContent='Preview unavailable';}};
 }
 const font=doc=>doc.getFontList().EVSans?'EVSans':'helvetica';

@@ -4,7 +4,7 @@
 const h=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const paths={user:'M4 22v-3a8 8 0 0 1 16 0v3M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0',arrow:'M4 12h16m-6-6 6 6-6 6',upload:'M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5',plan:'M4 3h16v18H4zM8 7h8M8 11h5M8 15h8',draw:'m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5',check:'m5 12 4 4L19 6',cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',book:'M4 4h6l2 2 2-2h6v16h-6l-2 2-2-2H4zM12 6v16',learn:'m2 9 10-5 10 5-10 5ZM6 11v7c4 3 8 3 12 0v-7',plus:'M12 5v14M5 12h14',folder:'M3 6h6l2 2h10v12H3z'};
 const icon=k=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+paths[k]+'"/></svg>';
-function projects(){try{const rows=JSON.parse(localStorage.getItem('evsp_projects')||'[]');return Array.isArray(rows)?rows.filter(x=>x&&typeof x.id==='string'):[];}catch{return [];}}
+function projects(){try{if(typeof projIndex==='function')return projIndex();const rows=JSON.parse(localStorage.getItem('evsp_projects')||'[]');return Array.isArray(rows)?rows.filter(x=>x&&typeof x.id==='string'):[];}catch{return [];}}
 function render({embedded=true}={}){
  const list=projects().slice(0,3);
  const target=(action,route=false)=>embedded?'data-ev-'+(route?'route':'action')+'="'+action+'"':'href="EV Site Planner.html#'+action+'"';

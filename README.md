@@ -46,6 +46,12 @@ local to this browser; no account or shared equipment catalogue is required.
 Run `npm run test:design` with the Playwright setup below for selection, placement,
 editing, navigation, backup and PDF regression checks for this layout.
 
+Run `npm run test:debug` for malformed backups, browser storage failures, project
+and plan switching, PDF refresh races, cancelled imports and delayed image decoding.
+The [debug audit](docs/debug-audit.md) records the fixes, coverage and limits.
+The calculation checks in `npm test` verify recorded current caps, future positions
+and arithmetic consistency across the configured cable families.
+
 Browser-based survey, markup and planning tools for UK EV charge point installers.
 The site opens on an integrated home page with recent projects, backup import and
 a worked example. The project workspace brings together Overview, Markup,

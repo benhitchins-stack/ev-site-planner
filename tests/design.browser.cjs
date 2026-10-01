@@ -67,7 +67,7 @@ const {chromium} = require('playwright');
     assert(Math.abs(undone.x-drag.x)<1);assert(Math.abs(undone.y-drag.y)<1);
     pass('Dragging a selected charger and Undo preserve the expected position with contextual panels');
 
-    await page.locator('#evInspectorClose').click();
+    assert(await page.locator('#evInspectorClose').isHidden());
     await page.locator('#catbar [data-cat="chargers"]').click();await page.screenshot({path:path.join(artifacts,'equipment-palette.png'),animations:'disabled'});
     const count=await page.evaluate(()=>activePhoto().items.length);
     await page.locator('#rail .palsec.show [data-tool^="unit:"]').first().click();

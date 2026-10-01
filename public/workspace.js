@@ -17,10 +17,11 @@ const allItems=()=>pack.photos.flatMap(p=>p.items||[]);
 const stats=()=>{const items=allItems();return{plans:pack.photos.length,units:items.filter(i=>i.type==='unit').length,routes:items.filter(i=>i.type==='route'&&i.kind!=='__area').length,snags:snagStats().open};};
 const hasWork=()=>hasMeaningfulPackContent(pack)||['contactName','contactRole','contactEmail','contactPhone','scope','notes'].some(k=>String(pack.workspace?.[k]||'').trim());
 let projectBusy=false;
+function finishDrawing(){finishDrawingContext();}
 async function changeProject(operation){
  if(projectBusy)return false;
  projectBusy=true;app.inert=true;app.setAttribute('aria-busy','true');
- try{return await operation();}
+ try{await Promise.all([...pendingFileImports]);return await operation();}
  catch(err){console.error(err);toast('The project could not be opened. Your current work is still available.');return false;}
  finally{projectBusy=false;app.removeAttribute('aria-busy');app.inert=!$('evDetails').hidden||!review.hidden;}
 }
@@ -36,13 +37,15 @@ async function persist(){
  const summary={id,name:pack.name||'Untitled project',mode:pack.mode,date:new Date(now).toISOString().slice(0,10),updatedAt:now,thumb:pack.photos[0]?.thumb||'',n:pack.photos.length,cust:pack.custName||'',ref:pack.jobRef||'',...projStatusMeta()};
  savedState('pending','Saving…');
  saveQueue=saveQueue.catch(()=>false).then(async()=>{
+  await window.__evProjectIndexReady;
   let ok=false;
   try{await idbSet('proj_'+id,full);await idbSet('autosave',recovery);ok=true;try{localStorage.removeItem(LS_KEY);localStorage.removeItem('evsp_proj_'+id);}catch(_){} }
   catch(_){try{localStorage.setItem('evsp_proj_'+id,JSON.stringify(full));localStorage.setItem(LS_KEY,JSON.stringify(recovery));ok=true;}catch(_){} }
   if(ok){
-   const index=projIndex().filter(x=>x.id!==id);index.unshift(summary);saveProjIndex(index.slice(0,100));
-   if(serial===saveSequence)savedState('saved','Saved in this browser');
-  }else{savedState('error','Save failed · download backup');toast('Browser storage is unavailable or full. Download a project backup to keep your work.');}
+   const index=projIndex().filter(x=>x.id!==id);index.unshift(summary);ok=await saveProjIndex(index.slice(0,100));
+   if(ok&&serial===saveSequence)savedState('saved','Saved in this browser');
+  }
+  if(!ok){savedState('error','Save failed · download backup');toast('Browser storage is unavailable or full. Download a project backup to keep your work.');}
   return ok;
  });
  return saveQueue;
@@ -53,11 +56,12 @@ autosave=function(){savedState('pending','Saving…');baseAutosave();};
 saveCurrentToProjects=function(){return persist();};
 loadProject=function(id){return changeProject(async()=>{
  if(pack.projId===id){go('overview');return true;}
+ finishDrawing();
  if(hasWork()&&!await persist()){toast('Download a backup before switching projects.');return false;}
  let data;try{data=await idbGet('proj_'+id);}catch(_){}
  try{const fallback=JSON.parse(localStorage.getItem('evsp_proj_'+id)||'null');if(fallback?.pack&&!fallback.slim&&(!data?.pack||(fallback.ts||0)>(data.ts||0)))data=fallback;}catch(_){}
  if(!data?.pack||data.slim){toast('A full saved copy could not be found. Open your downloaded project backup.');return false;}
- pack=normalisePack(data.pack);pack.projId=id;ensure();imgKeys();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;updateUndo();
+ validateProjectBackup(data.pack);pack=normalisePack(data.pack);pack.projId=id;ensure();imgKeys();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;updateUndo();
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';setSideTab();fitView();draw();await persist();go('overview');return true;
 });};
@@ -228,19 +232,20 @@ function issuePage(){const w=ensure(),plans=pack.photos.length;return heading('R
 }
 
 async function newProject(example=false){return changeProject(async()=>{
+ finishDrawing();
  if(hasWork()&&!await persist()){toast('Download a backup before starting a new project.');return;}
  await window.EVProfile?.ready;clearTimeout(saveT);saveT=null;pack=newPack();if(!example)window.EVProfile?.apply(pack);pack.projId=uid();ensure();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;imgKeys();updateUndo();syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();draw();
  if(example){pack.name='Riverside Business Park · example';pack.jobRef='EXAMPLE-001';pack.custName='Example client';pack.address='Example site, for trying the drawing tools';pack.notes='Example layout: four EV bays, two twin chargers, a feeder pillar and a proposed cable route. Replace all assumptions with the site survey before use.';syncSiteChip();buildStarter('compact');allItems().filter(i=>i.type==='route').forEach((i,n)=>{if(n)i.labelT=.12;});draw();await persist();go('overview');}
  else{await idbDel('autosave').catch(()=>{});try{localStorage.removeItem(LS_KEY);}catch(_){}go('overview');openDetails(0);}
 });}
-function openPlan(id){pack.active=id;sel=null;sideTab='pack';packSec='capture';setSideTab();go('markup');fitView();draw();autosave();}
+function openPlan(id){if(!photoById(id))return;finishDrawing();pack.active=id;sideTab='pack';packSec='capture';setSideTab();go('markup');fitView();draw();autosave();}
 function panel(section){go('markup');packSec=section;openInspector();}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 function slug(v){return String(v||'EV-project').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,100);}
 function backup(){normalisePack(pack);ensure().backupAt=new Date().toISOString();downloadBlob(new Blob([JSON.stringify(serialisablePack())],{type:'application/json'}),slug(pack.name)+'.evplan.json');autosave();toast('Project backup downloaded');if(route==='overview')go('overview');}
 $('btnSave').onclick=backup;
 function setInert(on){app.inert=on;}
-function focusTrap(e,root,close){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close();return;}if(e.key==='Tab'){const a=[...root.querySelectorAll('button:not(:disabled),input:not(:disabled),textarea,select,a[href]')].filter(x=>x.getClientRects().length);if(!a.length)return;const first=a[0],last=a.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}
+function focusTrap(e,root,close){e.stopPropagation();if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close();return;}if(e.key==='Tab'){const a=[...root.querySelectorAll('button:not(:disabled),input:not(:disabled),textarea,select,a[href]')].filter(x=>x.getClientRects().length);if(!a.length)return;const first=a[0],last=a.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}
 function field(label,key,type='text',wide=false,help=''){const value=key.startsWith('workspace.')?ensure()[key.split('.')[1]]:pack[key];return '<label class="ev-field '+(wide?'wide':'')+'">'+label+(type==='textarea'?'<textarea data-ev-field="'+key+'">'+h(value)+'</textarea>':'<input type="'+type+'" data-ev-field="'+key+'" value="'+h(value)+'">')+(help?'<small>'+help+'</small>':'')+'</label>';}
 function renderDetails(){
  const body=drawerStep===0?'<div class="ev-form">'+field('Project / site name','name','text',true)+field('Project reference','jobRef')+field('Postcode','postcode')+field('Site address','address','textarea',true)+'</div>':drawerStep===1?'<div class="ev-form"><div class="ev-mode-options">'+['domestic','commercial'].map(m=>'<button type="button" class="'+(pack.mode===m?'on':'')+'" data-ev-mode="'+m+'">'+(m==='domestic'?'Domestic':'Commercial')+'<small>'+(m==='domestic'?'Home charging, driveways and garages.':'Workplace, fleet and destination charging.')+'</small></button>').join('')+'</div>'+field('Scope & site notes','notes','textarea',true,'These notes appear in the project record and engineer pack.')+field('Drawing revision','rev')+field('Survey date','surveyDate','date')+'</div>':'<div class="ev-form">'+field('Client / organisation','custName','text',true)+field('Project lead / surveyor','surveyedBy','text',true)+field('Site contact','workspace.contactName')+field('Contact phone','workspace.contactPhone','tel')+field('Contact email','workspace.contactEmail','email',true)+'</div>';
@@ -326,19 +331,20 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('evTechMenu').hid
 const importObserver=new MutationObserver(()=>{updateChrome();});importObserver.observe($('scName'),{childList:true,subtree:true});
 async function importBackup(file){return changeProject(async()=>{
  let incoming;
- try{incoming=JSON.parse(await file.text());if(!incoming||!Array.isArray(incoming.photos))throw Error('Invalid backup');incoming=normalisePack(incoming);}
+ try{incoming=JSON.parse(await file.text());validateProjectBackup(incoming);incoming=normalisePack(incoming);}
  catch(_){toast("That doesn't look like an EV Site Planner backup. Your current project has been kept.");return false;}
+ finishDrawing();
  if(hasWork()&&!await persist()){toast('Download a backup before opening another project.');return false;}
  // Imports get a separate project record so an older backup cannot overwrite current work.
  clearTimeout(saveT);saveT=null;incoming.projId=uid();pack=incoming;ensure();imgKeys();history=[];redoStack=[];sel=null;selSet.clear();draftRoute=null;draftScale=null;updateUndo();
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();fitView();draw();await persist();go('overview');toast('Project backup opened as a separate copy');return true;
 });}
-window.EVWorkspace={go,persist,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
+window.EVWorkspace={go,persist,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
 EVReportViewer.enhanceLegacy();
 go('home');
 // Wait for saved-project recovery before following links from the website home page.
-Promise.resolve(window.__evRestorePromise).then(async()=>{
+Promise.all([window.__evRestorePromise,window.__evProjectIndexReady]).then(async()=>{
  if(window.__evUserAction)return;
  const requested=location.hash.slice(1);
  if(['projects','profile'].includes(requested))go(requested);

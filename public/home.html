@@ -2769,6 +2769,27 @@ function num(v, fallback){ v=Number(v); return Number.isFinite(v)?v:fallback; }
 function clampNum(v,min,max,fallback){ v=num(v,fallback); return Math.max(min,Math.min(max,v)); }
 /* parse an amp rating out of free supply text - prefers "NNN A", else the largest number, so "3ph 250 A" reads 250 (not 3) */
 function ampsFromSupply(s){ s=String(s==null?"":s); const a=s.match(/(\d+(?:\.\d+)?)\s*A\b/i); if(a) return +a[1]; const all=s.match(/\d+(?:\.\d+)?/g); if(!all||!all.length) return null; return Math.max(...all.map(Number)); }
+// Reject damaged backup structures before replacing an open project. Older optional fields may be absent.
+function validateProjectBackup(pk){
+  const record=v=>!!v&&typeof v==="object"&&!Array.isArray(v);
+  const need=ok=>{if(!ok)throw new Error("Invalid project backup");};
+  const texts=(o,keys)=>keys.forEach(k=>need(o[k]==null||typeof o[k]==="string"));
+  const objects=(o,keys)=>keys.forEach(k=>need(o[k]==null||record(o[k])));
+  const rows=(o,k)=>{if(o[k]!=null){need(Array.isArray(o[k]));o[k].forEach(v=>need(record(v)));}};
+  need(record(pk)&&Array.isArray(pk.photos));
+  texts(pk,["name","address","postcode","jobRef","notes","custName","engineerNote","brandName","brandLogo","surveyedBy","surveyDate","rev","custLetter","payLink","replyEmail","replyPhone"]);
+  objects(pk,["workspace","programme","rates","cdm","survey","punch","commissioning","sim","earthWiz","cloudGroups"]);
+  rows(pk,"attachments");rows(pk,"revHistory");
+  if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","scope","notes","backupAt"]);}
+  if(pk.programme){const p=pk.programme;objects(p,["days","skip"]);texts(p,["start","notes"]);rows(p,"activities");if(p.activities)p.activities.forEach(a=>{texts(a,["id","name","owner","start","status","note"]);need(a.days==null||Number.isFinite(Number(a.days)));});if(p.nonWorkingDates!=null)need(Array.isArray(p.nonWorkingDates)&&p.nonWorkingDates.every(v=>typeof v==="string"));}
+  const photoIds=new Set(),itemIds=new Set();
+  pk.photos.forEach(p=>{
+    need(record(p));texts(p,["id","name","src","srcOrig","thumb","caption"]);rows(p,"items");objects(p,["scale","crop","overlay"]);
+    if(p.id){need(!photoIds.has(p.id));photoIds.add(p.id);}
+    ["imgW","imgH"].forEach(k=>need(p[k]==null||Number.isFinite(Number(p[k]))&&Number(p[k])>0));
+    (p.items||[]).forEach(i=>{texts(i,["id","type","kind","label","note"]);if(i.id){need(!itemIds.has(i.id));itemIds.add(i.id);}if(i.pts!=null){need(Array.isArray(i.pts));i.pts.forEach(pt=>need(record(pt)&&Number.isFinite(Number(pt.x))&&Number.isFinite(Number(pt.y))));}});
+  });
+}
 function normalisePack(pk){
   if(!pk || typeof pk!=="object") pk=newPack();
   pk.v = pk.v || 1;
@@ -7671,6 +7692,7 @@ function syncRail(){
   const hold=CAT_OF[key];
   document.querySelectorAll("#catbar .cattab").forEach(b=>{ b.classList.toggle("holds", !!hold&&b.dataset.cat===hold&&!(palOpen&&palCat===hold)); });
 }
+function finishDrawingContext(){setTool("select");sel=null;selSet.clear();dragItem=null;}
 function setTool(t){
   if(draftRoute && draftRoute.pts.length>=2) commitRoute();
   draftRoute=null; draftScale=null; hoverPt=null;
@@ -8027,8 +8049,13 @@ cv.addEventListener("dblclick", e=>{
 document.addEventListener("wheel", e=>{ if(e.ctrlKey) e.preventDefault(); }, {passive:false});
 // long-press / right-click context menu over the drawing surface interferes with markup
 cv.addEventListener("contextmenu", e=>e.preventDefault());
+function drawingShortcutsBlocked(e){
+  return e.defaultPrevented||e.target.isContentEditable||document.getElementById("evApp")?.inert||
+    document.documentElement.classList.contains("evsp-cdm-modal-open")||
+    !!document.querySelector(".wlc-backdrop.show,.rx-backdrop.show,.sheet-backdrop.show,.pe-backdrop.show,.findbd.show");
+}
 window.addEventListener("keydown", e=>{
-  if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return;
+  if(drawingShortcutsBlocked(e)) return;
   const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return;
   if(e.key==="Shift") shiftDown=true;
   if(e.code==="Space"){ if(!e.repeat && !dragItem){ spacePan=true; cv.style.cursor="grab"; } e.preventDefault(); return; }
@@ -8326,8 +8353,8 @@ function undo(){
   if(draftRoute && Array.isArray(draftRoute.pts) && draftRoute.pts.length){
     draftRoute.pts.pop(); updateHint(); draw(); renderSide(); return;
   }
-  if(!history.length) return; const cur=snapshot(); if(cur!=null){ redoStack.push(cur); capHistory(); } pack=normalisePack(JSON.parse(history.pop())); sel=null; draftRoute=null; draftScale=null; if(tool.startsWith("route:")||tool==="scale") setTool("select"); ensureImages(); updateUndo(); draw(); renderSide(); }
-function redo(){ if(draftRoute && Array.isArray(draftRoute.pts) && draftRoute.pts.length) return; if(!redoStack.length) return; const cur=snapshot(); if(cur!=null){ history.push(cur); capHistory(); } pack=normalisePack(JSON.parse(redoStack.pop())); sel=null; draftRoute=null; draftScale=null; if(tool.startsWith("route:")||tool==="scale") setTool("select"); ensureImages(); updateUndo(); draw(); renderSide(); }
+  if(!history.length) return; const cur=snapshot(); if(cur!=null){ redoStack.push(cur); capHistory(); } pack=normalisePack(JSON.parse(history.pop())); sel=null; selSet.clear(); draftRoute=null; draftScale=null; if(tool.startsWith("route:")||tool==="scale") setTool("select"); ensureImages(); updateUndo(); draw(); renderSide(); }
+function redo(){ if(draftRoute && Array.isArray(draftRoute.pts) && draftRoute.pts.length) return; if(!redoStack.length) return; const cur=snapshot(); if(cur!=null){ history.push(cur); capHistory(); } pack=normalisePack(JSON.parse(redoStack.pop())); sel=null; selSet.clear(); draftRoute=null; draftScale=null; if(tool.startsWith("route:")||tool==="scale") setTool("select"); ensureImages(); updateUndo(); draw(); renderSide(); }
 
 /* ---------- autosave (recovery only; file Save is the durable copy) ---------- */
 const LS_KEY="evSitePlanner_v1";
@@ -10241,13 +10268,11 @@ function wireSide(){
   document.querySelectorAll("[data-photo]").forEach(t=>t.onclick=e=>{
     if(e.target.closest("[data-del]")||e.target.closest("[data-rename]")||e.target.closest("[data-edit]"))return;
     if(pack.active===t.dataset.photo) return; // already active - no-op
-    pack.active=t.dataset.photo;
-    // clear ALL per-photo interaction state so nothing bleeds across photos
-    sel=null; draftRoute=null; dragItem=null; setTool("select");
+    finishDrawingContext();pack.active=t.dataset.photo;
     fitView(); draw(); });
   document.querySelectorAll("[data-dupplan]").forEach(b=>b.onclick=e=>{
     e.stopPropagation(); const p=photoById(b.dataset.dupplan); if(!p) return;
-    pushHist();
+    finishDrawingContext();pushHist();
     const copy=JSON.parse(JSON.stringify(serialisablePack().photos.find(x=>x.id===p.id)||p));
     copy.id=uid();
     const idMap={};
@@ -10259,7 +10284,7 @@ function wireSide(){
     pack.active=copy.id; normalisePack(pack); fitView(); renderSide(); draw(); autosave();
     toast("Duplicated as Option B. Switch views in the Display card");
   });
-  document.querySelectorAll("[data-setscale]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); const pid=b.dataset.setscale; if(pack.active!==pid){ pack.active=pid; fitView(); } setTool("scale"); draw(); renderSide(); const sd=document.getElementById("side"); if(sd&&window.innerWidth<=959) sd.classList.remove("open"); });
+  document.querySelectorAll("[data-setscale]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); const pid=b.dataset.setscale; if(pack.active!==pid){ finishDrawingContext();pack.active=pid; fitView(); } setTool("scale"); draw(); renderSide(); const sd=document.getElementById("side"); if(sd&&window.innerWidth<=959) sd.classList.remove("open"); });
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); delPhoto(b.dataset.del); });
   document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); openPhotoEditor(b.dataset.edit); });
   document.querySelectorAll("[data-rename]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); const p=photoById(b.dataset.rename); if(!p)return; askInput({title:"Rename photo",label:"Tap a common name, or type your own",value:p.name,okText:"Rename",chips:curMode().photoPresets}).then(v=>{ if(v!=null){ pushHist(); p.name=(v.trim()||p.name).slice(0,40); draw(); renderSide(); } }); });
@@ -10553,16 +10578,22 @@ document.getElementById("btnGrid1").onclick=()=>addGridPlan();
   st.addEventListener("drop",e=>{ if(hasFiles(e)){ e.preventDefault(); st.classList.remove("dragover"); addPhotos(e.dataTransfer.files); } });
   window.addEventListener("paste",e=>{ const items=e.clipboardData && e.clipboardData.items; if(!items) return; const fs=[]; for(const it of items){ if(it.kind==="file" && it.type.indexOf("image/")===0){ const f=it.getAsFile(); if(f) fs.push(f); } } if(fs.length){ e.preventDefault(); addPhotos(fs); toast(fs.length+" photo"+(fs.length>1?"s":"")+" pasted"); } });
 })();
+const pendingFileImports=new Set();
+function trackFileImport(task){
+  pendingFileImports.add(task);
+  task.then(()=>pendingFileImports.delete(task),err=>{pendingFileImports.delete(task);console.warn("file import failed",err);toast("The files could not be imported. Try again.");});
+  return task;
+}
 function addPhotos(files){
-  const arr=[...files];
+  const arr=[...files],jobs=[];
   const isZip=f=> f && (/\.zip$/i.test(f.name||"") || /zip/i.test(f.type||""));
   const isPdf=f=> f && (/\.pdf$/i.test(f.name||"") || /pdf/i.test(f.type||""));
   const zips=arr.filter(isZip);
   const pdfs=arr.filter(f=>!isZip(f)&&isPdf(f));
-  if(pdfs.length) importPdfFiles(pdfs);
+  if(pdfs.length) jobs.push(importPdfFiles(pdfs));
   const imgs=arr.filter(f=> f && !isPdf(f) && ((f.type && f.type.indexOf("image/")===0) || HEIC_RE.test(f.name||""))).map(f=>({name:f.name, blob:f}));
-  if(!zips.length && !imgs.length) return;
-  (async()=>{
+  if(!zips.length && !imgs.length) return trackFileImport(Promise.all(jobs));
+  jobs.push((async()=>{
     let extracted=[];
     if(zips.length){ toast("Unzipping\u2026");
       for(const z of zips){
@@ -10577,8 +10608,9 @@ function addPhotos(files){
     combined=await normaliseSources(combined);
     const preFails=normaliseSources.lastFails||0;
     if(!combined.length){ toast(preFails?preFails+" photo"+(preFails>1?"s":"")+" couldn\u2019t be read. Try exporting as JPEG first":"Couldn\u2019t read those photos"); return; }
-    addImageSources(combined, preFails);
-  })();
+    await addImageSources(combined, preFails);
+  })());
+  return trackFileImport(Promise.all(jobs));
 }
 const HEIC_RE=/\.(heic|heif)$/i;
 function isHeicSrc(item){ return HEIC_RE.test(item.name||"") || /hei[cf]/i.test((item.blob&&item.blob.type)||""); }
@@ -10647,7 +10679,7 @@ function addImageSources(list, preFails){
     fr.onerror=()=>{ p._failed=true; failures++; res(); };
     fr.readAsDataURL(item.blob);
   });
-  (async()=>{
+  return trackFileImport((async()=>{
     const CONC=4; let idx=0;
     const worker=async()=>{ while(idx<list.length){ const i=idx++; await processOne(list[i],slots[i]); processed++; if(bigBatch && processed%4===0) toast("Loading photos "+processed+"/"+total+"\u2026"); } };
     const pool=[]; for(let k=0;k<Math.min(CONC,list.length);k++) pool.push(worker());
@@ -10658,7 +10690,7 @@ function addImageSources(list, preFails){
     sideTab="pack"; setSideTab(); fitView(); draw();
     if(failures) toast(failures+" photo"+(failures>1?"s":"")+" couldn\u2019t be read"+(pack.photos.length?" · "+pack.photos.length+" added":""));
     else if(bigBatch) toast(total+" photos added");
-  })();
+  })());
 }
 function downscale(dataUrl, cb){
   const im=new Image();
@@ -10765,7 +10797,7 @@ function delPhoto(id){
   const ph=photoById(id); if(!ph) return;
   askConfirm({title:"Remove photo?", label:'"'+(ph.name||"This photo")+'" and its annotations will be removed from the pack.', okText:"Remove"}).then(ok=>{
     if(!ok) return;
-    pushHist();
+    finishDrawingContext();pushHist();
     pack.photos=pack.photos.filter(p=>p.id!==id); delete imgCache[id];
     if(pack.active===id){ pack.active=pack.photos[0]?pack.photos[0].id:null; fitView(); }
     sel=null; draw(); renderSide();
@@ -13038,7 +13070,7 @@ document.getElementById("mask").onclick=()=>{ const sd=document.getElementById("
 document.addEventListener("keydown",e=>{ if(e.key!=="Escape") return; const sd=document.getElementById("side"); if(sd&&sd.classList.contains("open")) sd.classList.remove("open"); });
 document.getElementById("btnUndo").onclick=undo;
 document.getElementById("btnRedo").onclick=redo;
-window.addEventListener("keydown",e=>{ if(document.documentElement.classList.contains("evsp-cdm-modal-open")) return; const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return; if((e.metaKey||e.ctrlKey)&&(e.key==="z"||e.key==="Z")){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); } else if((e.metaKey||e.ctrlKey)&&(e.key==="y"||e.key==="Y")){ e.preventDefault(); redo(); } });
+window.addEventListener("keydown",e=>{ if(drawingShortcutsBlocked(e)) return; const t=e.target.tagName; if(t==="INPUT"||t==="TEXTAREA"||t==="SELECT") return; if((e.metaKey||e.ctrlKey)&&(e.key==="z"||e.key==="Z")){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); } else if((e.metaKey||e.ctrlKey)&&(e.key==="y"||e.key==="Y")){ e.preventDefault(); redo(); } });
 
 /* ============================================================ CABLE CALCULATIONS (single-circuit check to the BS 7671 method) ============================================================ */
 /* Ratings data DRAFT v0.9: typical manufacturer-published figures for the common EV cable families.
@@ -13151,7 +13183,7 @@ function ccUpstream(target){
   });
   return {r,legs,incomplete,found:true};
 }
-/* sum the chargers this run feeds (the side away from the supply), at full load, no diversity */
+/* Sum installed chargers this run feeds, respecting recorded current caps; no diversity. */
 function ccDetectLoad(target){
   const G=ccGraph();
   const ends=[target.pts&&target.pts[0]&&target.pts[0].anchorId, target.pts&&target.pts[target.pts.length-1]&&target.pts[target.pts.length-1].anchorId];
@@ -13160,7 +13192,7 @@ function ccDetectLoad(target){
     const seen=new Set([start]); const q=[start]; const units=[]; let supply=false;
     while(q.length){
       const id=q.shift(); const rec=G.items[id];
-      if(rec){ if(ccIsSupplyItem(rec.it)) supply=true; if(rec.it.type==="unit") units.push(rec.it); }
+      if(rec){ if(ccIsSupplyItem(rec.it)) supply=true; if(rec.it.type==="unit"&&rec.it.provision!=="passive"&&optVisible(rec.it)) units.push(rec.it); }
       (G.nodes[id]||[]).forEach(ei=>{ const e=G.edges[ei]; if(e.it===target) return; const nxt=e.a===id?e.b:e.a; if(!seen.has(nxt)){ seen.add(nxt); q.push(nxt); } });
     }
     return {units,supply};
@@ -13175,9 +13207,9 @@ function ccDetectLoad(target){
     const socks=(u.variant==="twin_ped"||u.variant==="solo_dfsm")?2:1;
     const kw=String(u.kw||"7");
     n+=socks;
-    if(kw==="22"){ amps+=32*socks; ph=3; }
-    else if(kw==="11"){ amps+=16*socks; ph=3; }
-    else amps+=32*socks;
+    const full=u.variant==="lamp_fsm"?25:(kw==="11"?16:32);
+    amps+=Math.min(full,u.maxA||full)*socks;
+    if(kw==="22"||kw==="11")ph=3;
   });
   if(!n) return null;
   return {amps,ph,n,dc};
@@ -13297,7 +13329,7 @@ function ccRow(r){
     const auto=ccDetectLoad(it);
     const famRow=(it.kind==="run")?`<div class="ccdrow"><span class="ccdl">Family</span>${ccSeg("ccfam",id,[["swa","SWA"],["evu","EV Ultra"],["te","T&amp;E"],["sgl","Singles"]],fc.fam)}</div>`:"";
     det=`<div class="ccdet">
-      <div class="ccdrow"><span class="ccdl">Design load Ib</span>${ccSeg("cca2",id,[16,20,25,32,40,50,63,80],fc.ib)}${auto?(auto.amps!==fc.ib||auto.ph!==fc.ph?`<button class="ccbtn" data-ccauto="${id}" title="Sum of the chargers this run feeds on the plan, at full load">From plan: ${auto.amps} A \u00b7 ${auto.ph}\u03c6 \u00b7 ${auto.n} socket${auto.n===1?"":"s"}${auto.dc?" (+DC rapid, size separately)":""}</button>`:`<span style="font-size:10.5px;color:var(--ok);font-weight:650">matches the ${auto.n} socket${auto.n===1?"":"s"} it feeds on the plan</span>`):""}</div>
+      <div class="ccdrow"><span class="ccdl">Design load Ib</span>${ccSeg("cca2",id,[16,20,25,32,40,50,63,80],fc.ib)}${auto?(auto.amps!==fc.ib||auto.ph!==fc.ph?`<button class="ccbtn" data-ccauto="${id}" title="Installed charger currents from the plan, including recorded caps; no diversity">From plan: ${auto.amps} A \u00b7 ${auto.ph}\u03c6 \u00b7 ${auto.n} socket${auto.n===1?"":"s"}${auto.dc?" (+DC rapid, size separately)":""}</button>`:`<span style="font-size:10.5px;color:var(--ok);font-weight:650">matches the ${auto.n} socket${auto.n===1?"":"s"} it feeds on the plan</span>`):""}</div>
       ${F.ph1?"":`<div class="ccdrow"><span class="ccdl">Phases</span>${ccSeg("ccph2",id,[[1,"1\u03c6 \u00b7 230 V"],[3,"3\u03c6 \u00b7 400 V"]],fc.ph)}</div>`}
       ${famRow}
       <div class="ccdrow"><span class="ccdl">Device</span>${ccSeg("ccdev",id,[["B","B"],["C","C"],["D","D"]],fc.dev)}${ccSeg("ccin",id,[16,20,25,32,40,50,63,80],fc.inA)}<span style="font-size:10.5px;color:var(--faint);font-weight:600">Type A RCBO \u00b7 max Zs ${fc.zs.max} \u03a9</span></div>
@@ -13361,7 +13393,7 @@ function openCableCheck(focusId){
     if(b=e.target.closest("[data-ccauto]")){ const r=findRun(b.dataset.ccauto); if(r){ const det=ccDetectLoad(r.it); if(det){ pushHist(); r.it.vdAmps=det.amps; r.it.vdPh=det.ph; toast("Load set from the plan: "+det.amps+" A \u00b7 "+det.ph+"\u03c6"); refresh(); } } return; }
     if(b=e.target.closest("[data-ccfix]")){ const r=findRun(b.dataset.ccfix); if(r){ const row=cableCheckData().find(x=>x.it.id===r.it.id); if(row&&row.fc&&row.fc.suggest){ pushHist(); r.it.vdCsa=row.fc.suggest; toast("Run set to "+row.fc.suggest+" mm\u00b2"); refresh(); } } return; }
     if(b=e.target.closest("[data-ccfixin]")){ const r=findRun(b.dataset.ccfixin); if(r){ const row=cableCheckData().find(x=>x.it.id===r.it.id); if(row&&row.fc&&row.fc.sugIn){ pushHist(); r.it.ccIn=row.fc.sugIn; toast("Device set to "+row.fc.dev+row.fc.sugIn); refresh(); } } return; }
-    if(b=e.target.closest("[data-ccgo]")){ const r=findRun(b.dataset.ccgo); if(r){ bd.classList.remove("show"); pack.active=r.p.id; sel=r.it.id; selSet=new Set([r.it.id]); setTool("select"); fitView(); draw(); renderSide(); } return; }
+    if(b=e.target.closest("[data-ccgo]")){ const r=findRun(b.dataset.ccgo); if(r){ bd.classList.remove("show"); finishDrawingContext();pack.active=r.p.id; sel=r.it.id; selSet=new Set([r.it.id]); setTool("select"); fitView(); draw(); renderSide(); } return; }
     const segs=[["cca2",(r,v)=>{ r.it.vdAmps=+v; }],["ccph2",(r,v)=>{ r.it.vdPh=+v; }],["ccdev",(r,v)=>{ r.it.ccDev=v; }],["ccin",(r,v)=>{ r.it.ccIn=+v; }],["ccmeth",(r,v)=>{ r.it.ccMeth=v; }],["ccamb",(r,v)=>{ r.it.ccAmb=+v; }],["ccgrp",(r,v)=>{ r.it.ccGrp=+v; }],["ccfam",(r,v)=>{ r.it.ccFam=v; ccOpen.add(r.it.id); }],["cccpc",(r,v)=>{ r.it.ccCpc=+v; }]];
     for(const [attr,fn] of segs){ const el=e.target.closest("[data-"+attr+"]"); if(el){ const [id,v]=pv(el.dataset[attr]); const r=findRun(id); if(r){ fn(r,v); refresh(); } return; } }
   });
@@ -13698,22 +13730,22 @@ async function importPdfFiles(files){
   let lib;
   toast("Opening PDF…");
   try{ lib=await ensurePdfJs(); }
-  catch(_){ toast("PDF import needs an internet connection the first time"); return; }
+  catch(_){ toast("The PDF reader could not load. Reload the page and try again."); return; }
   for(const f of files){
+    let pdoc;
     try{
       const buf=await f.arrayBuffer();
-      const pdoc=await lib.getDocument({data:buf}).promise;
+      pdoc=await lib.getDocument({data:buf}).promise;
       const base=String(f.name||"Plan").replace(/^.*[\/\\]/,"").replace(/\.[^.]+$/,"").slice(0,34)||"Plan";
       if(pdoc.numPages===1){
         const cn=await renderPdfPage(pdoc,1);
         const blob=await new Promise(r=>cn.toBlob(r,"image/jpeg",0.92));
-        if(blob) addImageSources([{name:base, blob}]);
-        pdoc.destroy();
+        if(blob) await addImageSources([{name:base, blob}]);
       } else {
         await openPdfPicker(pdoc, base);   /* resolves when the picker closes */
-        pdoc.destroy();
       }
     }catch(e){ console.warn("pdf import failed",e); toast("Couldn’t read "+(f.name||"that PDF")); }
+    finally{if(pdoc)await pdoc.destroy().catch(()=>{});}
   }
 }
 function openPdfPicker(pdoc, base){
@@ -13722,37 +13754,44 @@ function openPdfPicker(pdoc, base){
           add=document.getElementById("pdfAdd"), all=document.getElementById("pdfAll"), cancel=document.getElementById("pdfCancel");
     const selPages=new Set([1]);
     document.getElementById("pdfTitle").textContent="Import pages · "+base;
-    grid.innerHTML="";
+    grid.innerHTML="";cancel.disabled=false;
     bd.classList.add("show");
-    let closed=false;
-    const syncBtn=()=>{ add.disabled=!selPages.size; add.style.opacity=selPages.size?"":"0.5"; add.textContent=selPages.size?("Add "+selPages.size+" page"+(selPages.size===1?"":"s")):"Add pages"; };
-    const close=()=>{ if(closed) return; closed=true; bd.classList.remove("show"); add.onclick=all.onclick=cancel.onclick=null; bd.onclick=null; resolve(); };
+    let closed=false,adding=false;
+    const syncBtn=()=>{ add.disabled=adding||!selPages.size; all.disabled=adding;grid.querySelectorAll(".pdfpg").forEach(el=>el.disabled=adding); add.style.opacity=selPages.size?"":"0.5"; add.textContent=adding?"Preparing…":selPages.size?("Add "+selPages.size+" page"+(selPages.size===1?"":"s")):"Add pages"; };
+    const onKey=e=>{e.stopPropagation();if(e.key==="Escape"){e.preventDefault();close();}};
+    const close=()=>{ if(closed) return; closed=true; bd.classList.remove("show"); bd.removeEventListener("keydown",onKey);add.onclick=all.onclick=cancel.onclick=null; bd.onclick=null; resolve(); };
+    bd.addEventListener("keydown",onKey);cancel.focus();
     cancel.onclick=close;
     bd.onclick=e=>{ if(e.target===bd) close(); };
-    all.onclick=()=>{ for(let i=1;i<=pdoc.numPages;i++) selPages.add(i); grid.querySelectorAll(".pdfpg").forEach(el=>el.classList.add("on")); syncBtn(); };
+    all.onclick=()=>{ if(closed||adding)return;for(let i=1;i<=pdoc.numPages;i++) selPages.add(i); grid.querySelectorAll(".pdfpg").forEach(el=>{el.classList.add("on");el.setAttribute("aria-pressed","true");}); syncBtn(); };
     add.onclick=async()=>{
+      if(closed||adding)return;
       const pages=[...selPages].sort((a,b)=>a-b);
       if(!pages.length) return;
-      add.disabled=true; add.textContent="Preparing…";
+      adding=true;syncBtn();
       const list=[];
       for(const n of pages){
         try{
           const cn=await renderPdfPage(pdoc,n);
+          if(closed)return;
           const blob=await new Promise(r=>cn.toBlob(r,"image/jpeg",0.92));
+          if(closed)return;
           if(blob) list.push({name:(pages.length>1?base+" · p"+n:base), blob});
-        }catch(e){ console.warn("page render failed",n,e); }
+        }catch(e){ if(closed)return;console.warn("page render failed",n,e); }
       }
-      if(list.length){ addImageSources(list); toast(list.length+" plan"+(list.length===1?"":"s")+" added from PDF"); }
+      if(closed)return;
+      if(list.length){cancel.disabled=true;await addImageSources(list); toast(list.length+" plan"+(list.length===1?"":"s")+" added from PDF"); }
+      else toast("Those pages could not be imported. Try another PDF.");
       close();
     };
     syncBtn();
     (async()=>{
       for(let n=1;n<=pdoc.numPages;n++){
         if(closed) return;
-        const cell=document.createElement("div");
+        const cell=document.createElement("button");cell.type="button";cell.disabled=adding;cell.setAttribute("aria-pressed",String(selPages.has(n)));
         cell.className="pdfpg"+(selPages.has(n)?" on":"");
         cell.innerHTML='<span>Page '+n+'</span>';
-        cell.onclick=()=>{ if(selPages.has(n)){ selPages.delete(n); cell.classList.remove("on"); } else { selPages.add(n); cell.classList.add("on"); } syncBtn(); };
+        cell.onclick=()=>{if(closed||adding)return; if(selPages.has(n)){ selPages.delete(n); cell.classList.remove("on"); } else { selPages.add(n); cell.classList.add("on"); } cell.setAttribute("aria-pressed",String(selPages.has(n)));syncBtn(); };
         grid.appendChild(cell);
         try{
           const cn=await renderPdfPage(pdoc,n,300);
@@ -14108,7 +14147,7 @@ window.openPhotoEditor=openPhotoEditor;
     const svt=e.target.closest("[data-survtoggle]"); if(svt){ surveyOpen=!surveyOpen; renderSide(); return; }
     const lgt=e.target.closest("[data-legtoggle]"); if(lgt){ legendOpen=!legendOpen; renderSide(); return; }
     const sf=e.target.closest("[data-snagfix]"); if(sf){ const sit=pack.photos.flatMap(p=>p.items).find(i=>i.id===sf.dataset.snagfix); if(sit){ pushHist(); const fx=sit.st!=="fixed"; sit.st=fx?"fixed":"open"; sit.fixedOn=fx?new Date().toLocaleDateString("en-GB"):""; syncSnagSign(); renderSide(); draw(); autosave(); } return; }
-    const sj=e.target.closest("[data-snagjump]"); if(sj){ const sid=sj.dataset.snagjump; const ph=pack.photos.find(p=>p.items.some(i=>i.id===sid)); if(ph){ const switched=pack.active!==ph.id; pack.active=ph.id; sel=sid; selSet=new Set([sid]); sideTab="props"; setSideTab(); if(switched) fitView(); draw(); } return; }
+    const sj=e.target.closest("[data-snagjump]"); if(sj){ const sid=sj.dataset.snagjump; const ph=pack.photos.find(p=>p.items.some(i=>i.id===sid)); if(ph){ const switched=pack.active!==ph.id; finishDrawingContext();pack.active=ph.id; sel=sid; selSet=new Set([sid]); sideTab="props"; setSideTab(); if(switched) fitView(); draw(); } return; }
     const f10b=e.target.closest("[data-f10st]"); if(f10b){ const cdc=cdmInfo(); const v=f10b.dataset.f10st; cdc.f10=(cdc.f10===v)?"":v; pack.compliance=(pack.compliance||[]).filter(x=>x!=="f10"); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!=="f10"); if(cdc.f10==="filed") pack.compliance.push("f10"); else if(cdc.f10==="notreq") pack.complianceNA.push("f10"); renderSide(); autosave(); return; }
     if(e.target.closest("#cppBtn")){ exportCppTemplate(); return; }
     const cpb=e.target.closest("button[data-comp]"); if(cpb){ const k=cpb.dataset.comp, cst=cpb.dataset.cst; if(k==="rams"&&pack.cdm&&typeof pack.cdm==="object"){ pack.cdm.ramsComplianceManaged=false; pack.cdm.ramsComplianceManual=true; } pack.compliance=(pack.compliance||[]).filter(x=>x!==k); pack.complianceNA=(pack.complianceNA||[]).filter(x=>x!==k); if(cpb.dataset.on!=="1"){ if(cst==="done") pack.compliance.push(k); else pack.complianceNA.push(k); } renderSide(); autosave(); return; }
@@ -14149,7 +14188,7 @@ function syncBrand(){
     const sn2=e.target.closest("[data-shotna]"); if(sn2){ pushHist(); const k=sn2.dataset.shotna; pack.survey=pack.survey||{}; if(pack.survey[k]&&pack.survey[k].na) delete pack.survey[k]; else pack.survey[k]={na:1}; renderSide(); autosave(); return; }
     const sa2=e.target.closest("[data-shotadd]"); if(sa2){ pendingShotKey=sa2.dataset.shotadd; pendingShotAt=Date.now(); const f=document.getElementById("filePhoto"); f.value=""; f.click(); return; }
     const sc2=e.target.closest("[data-shotcur]"); if(sc2){ const p=activePhoto(); if(p){ pushHist(); (pack.survey=pack.survey||{})[sc2.dataset.shotcur]={photoId:p.id}; renderSide(); autosave(); toast('Filed "'+p.name+'" as that shot'); } return; }
-    const sv2=e.target.closest("[data-shotview]"); if(sv2){ const st=surveyState(sv2.dataset.shotview); if(st.photo){ pack.active=st.photo.id; sel=null; draftRoute=null; setTool("select"); fitView(); draw(); renderSide(); const sd=document.getElementById("side"); if(sd&&window.innerWidth<=959) sd.classList.remove("open"); } return; }
+    const sv2=e.target.closest("[data-shotview]"); if(sv2){ const st=surveyState(sv2.dataset.shotview); if(st.photo){ finishDrawingContext();pack.active=st.photo.id; fitView(); draw(); renderSide(); const sd=document.getElementById("side"); if(sd&&window.innerWidth<=959) sd.classList.remove("open"); } return; }
     if(e.target.closest("#fixArray")){ pushHist(); let n=0; pack.photos.forEach(p=>p.items.forEach(i=>{ if(i.type==="unit"&&i.variant!=="dc_rapid"&&!i.array){ i.array="A"; n++; } })); toast(n+" charger"+(n===1?"":"s")+" tagged to DLM group A. Place a load management board, or switch the group to cloud in a charger's panel"); renderSide(); draw(); autosave(); return; }
     const lg=e.target.closest("[data-legpos]"); if(lg){ pack.legendPos=lg.dataset.legpos; renderSide(); draw(); autosave(); return; }
     const ov=e.target.closest("[data-optview]"); if(ov){ pack.optionView=ov.dataset.optview; renderSide(); draw(); autosave(); return; }
@@ -14258,7 +14297,7 @@ function drawScaleChip(g,H2,cell){
 }
 /* ---------- blank grid plan ---------- */
 function addGridPlan(){
-  pushHist();
+  finishDrawingContext();pushHist();
   const W2=2000,H2=1400,cell=50;
   const cn=document.createElement("canvas"); cn.width=W2; cn.height=H2; const g=cn.getContext("2d");
   g.fillStyle="#F6F8FA"; g.fillRect(0,0,W2,H2);
@@ -14405,7 +14444,7 @@ function starterPicker(){
   });
 }
 function buildStarter(preset){
-  pushHist();
+  finishDrawingContext();pushHist();
   const M=50, dom=preset==="domestic";
   const cn=starterBaseCanvas(preset);
   const src2=cn.toDataURL("image/jpeg",0.85);
@@ -14486,8 +14525,29 @@ function buildStarter(preset){
   toast(toasts[preset]||"Starter layout added");
 }
 /* ---------- project dashboard (device-local snapshots) ---------- */
-function projIndex(){ try{ return JSON.parse(localStorage.getItem("evsp_projects")||"[]")||[]; }catch(_){ return []; } }
-function saveProjIndex(ix){ try{ localStorage.setItem("evsp_projects", JSON.stringify(ix)); }catch(_){ } }
+let projectIndexMemory=[],projectIndexLocalFailed=false,projectIndexWrites=Promise.resolve();
+function cleanProjectIndex(ix){return Array.isArray(ix)?ix.filter(x=>x&&typeof x==="object"&&typeof x.id==="string"&&x.id):[];}
+function projIndex(){
+  if(!projectIndexLocalFailed)try{const raw=localStorage.getItem("evsp_projects");if(raw){const rows=JSON.parse(raw);if(Array.isArray(rows))projectIndexMemory=cleanProjectIndex(rows);}}catch(_){}
+  return projectIndexMemory.slice();
+}
+window.__evProjectIndexReady=(async()=>{
+  projIndex();
+  try{
+    const saved=await idbGet("projects_index");let localTime=0;
+    try{localTime=Number(localStorage.getItem("evsp_projects_ts"))||0;}catch(_){}
+    if(saved&&Array.isArray(saved.rows)&&(saved.ts>localTime||!projectIndexMemory.length)){
+      projectIndexMemory=cleanProjectIndex(saved.rows);
+      try{localStorage.setItem("evsp_projects",JSON.stringify(projectIndexMemory));localStorage.setItem("evsp_projects_ts",String(saved.ts));}catch(_){projectIndexLocalFailed=true;}
+    }
+  }catch(_){}
+})();
+function saveProjIndex(ix){
+  const rows=cleanProjectIndex(ix),ts=Date.now();projectIndexMemory=rows;let localOK=false;
+  try{localStorage.setItem("evsp_projects",JSON.stringify(rows));localStorage.setItem("evsp_projects_ts",String(ts));localOK=true;projectIndexLocalFailed=false;}catch(_){projectIndexLocalFailed=true;}
+  projectIndexWrites=projectIndexWrites.catch(()=>false).then(async()=>{try{await idbSet("projects_index",{rows,ts});return true;}catch(_){return localOK;}});
+  return projectIndexWrites;
+}
 function projectSafetySummary(){
   if(pack.mode==="domestic") return null;
   const api=window.EvspCdmControls, c=plannerNormaliseCdmPack(pack.cdm);
@@ -15818,7 +15878,7 @@ let __restoredTs=0;
 try{
   const __saved=JSON.parse(localStorage.getItem(LS_KEY)||"null");
   if(__saved&&__saved.pack&&(hasMeaningfulPackContent(__saved.pack)||__saved.pack.projId)){
-    pack=normalisePack(__saved.pack);
+    validateProjectBackup(__saved.pack);pack=normalisePack(__saved.pack);
     if(__saved.view && typeof __saved.view.zoom==="number") view=__saved.view;
     __restoredTs=__saved.ts||1;
     pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
@@ -15841,7 +15901,7 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
   if((d.ts||0)<=__restoredTs) return;                 // localStorage copy was newer
   if(history.length||redoStack.length) return;        // user is already editing
   if(hasMeaningfulPackContent(pack)&&!__restoredTs) return;
-  pack=normalisePack(d.pack);
+  validateProjectBackup(d.pack);pack=normalisePack(d.pack);
   if(d.view && typeof d.view.zoom==="number") view=d.view;
   imgKeys(); pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
   syncSiteChip();
@@ -15864,10 +15924,10 @@ setTimeout(()=>{ try{
 </script>
 <script src="profile.js?v=89deddb259ec"></script>
 <script src="report-fonts.js?v=db719569bbc1"></script>
-<script src="home.js?v=b7888803610a"></script>
-<script src="report-viewer.js?v=c81a5343ad5e"></script>
-<script src="workspace.js?v=6e9d024948b3"></script>
-<script src="delivery.js?v=3933a966bdb3"></script>
-<script src="workbench.js?v=9db9dbe9b07f"></script>
+<script src="home.js?v=afd2b005b7e7"></script>
+<script src="report-viewer.js?v=0c9bb9a0742b"></script>
+<script src="workspace.js?v=59e83d9de05a"></script>
+<script src="delivery.js?v=3c60ff9bb372"></script>
+<script src="workbench.js?v=4ca8665acc90"></script>
 </body>
 </html>

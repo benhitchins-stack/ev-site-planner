@@ -65,7 +65,9 @@ function mountProgramme(){
  '<section class="ev-card"><div class="ev-card-head"><h2>Working calendar & programme notes</h2></div><div class="ev-card-body ev-form"><label class="ev-field">Additional non-working dates<textarea id="edNonWorking" rows="3" placeholder="2026-12-25&#10;2026-12-28">'+esc(p.nonWorkingDates.join('\n'))+'</textarea><small>One date per line, YYYY-MM-DD. Weekends are excluded automatically.</small><span id="edCalendarError" role="alert"></span></label><label class="ev-field">Programme notes<textarea id="edProgrammeNotes" rows="3" placeholder="Access arrangements, agreed working hours or dates to confirm">'+esc(p.notes||'')+'</textarea><small>Included in the programme PDF.</small></label></div></section>'+note('Dates use Monday to Friday and the additional non-working dates above. Give an activity its own start date to plan overlapping work. Durations suggested from the markup remain editable.');
  $('edProgrammeStart').onchange=e=>{pushHist();p.start=e.target.value;changed();mountProgramme();};
  $('edNonWorking').onchange=e=>{const raw=e.target.value.split(/[\s,;]+/).filter(Boolean);if(raw.some(v=>!parse(v))){$('edCalendarError').textContent='Use valid dates in YYYY-MM-DD format.';e.target.setAttribute('aria-invalid','true');return;}pushHist();p.nonWorkingDates=[...new Set(raw)].sort();changed();mountProgramme();};
- $('edProgrammeNotes').oninput=e=>{p.notes=e.target.value;changed();};
+ let notesEdited=false;
+ $('edProgrammeNotes').onblur=()=>{notesEdited=false;};
+ $('edProgrammeNotes').oninput=e=>{if(!notesEdited){pushHist();notesEdited=true;}p.notes=e.target.value;changed();};
 }
 function openDialog(type,title,sub,body,foot='',wide=false){
  if(busy)return;
@@ -109,7 +111,7 @@ function mountSnags(){
  $('edSnagSearch').oninput=e=>{snagSearch=e.target.value;$('edSnagRows').innerHTML=snagRows();};
  $('edSnagStatus').onchange=e=>{snagFilter=e.target.value;$('edSnagRows').innerHTML=snagRows();};
  $('edSnagSeverity').onchange=e=>{snagSeverity=e.target.value;$('edSnagRows').innerHTML=snagRows();};
- for(const [id,key] of [['edInspectionDate','date'],['edPreparedBy','preparedBy'],['edSnagNotes','notes']])$(id).oninput=e=>{r[key]=e.target.value;changed();};
+ for(const [id,key] of [['edInspectionDate','date'],['edPreparedBy','preparedBy'],['edSnagNotes','notes']]){let edited=false;$(id).onblur=()=>{edited=false;};$(id).oninput=e=>{if(!edited){pushHist();edited=true;}r[key]=e.target.value;changed();};}
 }
 function snagPair(id,photoId){return snagList().find(x=>x.it.id===id&&(!photoId||x.photo.id===photoId));}
 function evidence(it){return '<div class="ed-evidence">'+[['ph1','Before','As found'],['ph2','After','Completed work']].map(([k,t,sub])=>'<div><div class="ed-evidence-head"><b>'+t+'</b><span>'+sub+'</span></div>'+(it[k]?'<img src="'+esc(it[k])+'" alt="'+t+' evidence for snag '+esc(it.n)+'">':'<div class="ed-photo-empty">No '+t.toLowerCase()+' photo attached</div>')+'<div class="ev-actions"><label class="ev-btn">'+(it[k]?'Replace photo':'Add photo')+'<input class="ed-sr-only" data-ed-photo="'+k+'" type="file" accept="image/jpeg,image/png,image/webp"></label>'+(it[k]?'<button class="ev-btn quiet" data-ed-remove-photo="'+k+'">Remove</button>':'')+'</div></div>').join('')+'</div>';}
@@ -255,7 +257,7 @@ document.addEventListener('click',async e=>{
  if(a==='suggest'){addSuggestions();return;}
  if(a==='programme-report'||a==='snag-report'){await openReport(a==='programme-report'?'programme':'snags');return;}
  if(a==='activity-up'||a==='activity-down'){const p=programme(),idx=p.activities.findIndex(r=>r.id===session.id),to=idx+(a==='activity-up'?-1:1);if(p.activities[to]){saveOnce();[p.activities[idx],p.activities[to]]=[p.activities[to],p.activities[idx]];changed();modal.querySelector('[data-ed-action="activity-up"]').disabled=to===0;modal.querySelector('[data-ed-action="activity-down"]').disabled=to===p.activities.length-1;$('edMessage').textContent='Activity moved to position '+(to+1)+'.';}return;}
- if(a==='show-snag'){const {id,photoId}=session;closeDialog();pack.active=photoId;EVWorkspace.go('markup');sel=id;sideTab='props';setSideTab();$('side').classList.add('open');draw();return;}
+ if(a==='show-snag'){const {id,photoId}=session;closeDialog();EVWorkspace.openPlan(photoId);sel=id;sideTab='props';setSideTab();$('side').classList.add('open');draw();return;}
  if(a==='download-report'&&session.doc){busy=true;reportButtons();$('edMessage').textContent='Downloading PDF…';try{await session.doc.save(session.filename,{returnPromise:true});$('edMessage').textContent='PDF downloaded. The download is listed in the document history.';}catch(err){$('edMessage').textContent='Download failed: '+err.message;}finally{busy=false;reportButtons();}return;}
 });
 // A full record is also reachable from a selected canvas pin.

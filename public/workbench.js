@@ -214,14 +214,15 @@ function updateKey(p){
  keyPanel.innerHTML='<div class="wb-key-heading"><b>Plan key</b><button type="button" class="ev-icon-btn" data-wb-close-key aria-label="Close plan key">×</button></div><div class="wb-key-rows">'+rows.map(it=>'<div><b>'+esc(it.planRef||(ROUTE_DEFS[it.kind]?.short||'Route'))+'</b><span>'+esc(it.planRef?[it.label,itemSummary(it)].filter(Boolean).join(' · '):ROUTE_DEFS[it.kind].name)+'</span></div>').join('')+'</div>';
 }
 function addDrawingControls(){
- const strip=$('evPlanStrip');if(!strip||$('wbDrawingTools'))return;
+ const strip=$('evPlanStrip');if(!strip)return;
+ if($('wbDrawingTools')){$('wbLabelMode').value=compact()?'compact':'full';return;}
  const controls=document.createElement('div');controls.id='wbDrawingTools';controls.innerHTML='<label class="wb-label-mode"><span>Labels</span><select id="wbLabelMode" aria-label="On-screen equipment labels"><option value="compact">References</option><option value="full">Full details</option></select></label><button type="button" class="ev-btn" id="wbKeyToggle" aria-expanded="'+!keyPanel.hidden+'" aria-controls="wbPlanKey">Key</button>';
  strip.insertBefore(controls,$('evInspectorToggle'));$('wbLabelMode').value=compact()?'compact':'full';$('wbLabelMode').title='On-screen labels. Exports keep full equipment descriptions.';
  $('wbLabelMode').onchange=e=>{drawing().labels=e.target.value;drawCanvas();};$('wbKeyToggle').onclick=()=>{keyPanel.hidden=!keyPanel.hidden;keySignature='';$('wbKeyToggle').setAttribute('aria-expanded',String(!keyPanel.hidden));if(!keyPanel.hidden&&activePhoto())updateKey(activePhoto());};
 }
 keyPanel.addEventListener('click',e=>{if(e.target.closest('[data-wb-close-key]')){keyPanel.hidden=true;$('wbKeyToggle')?.setAttribute('aria-expanded','false');$('wbKeyToggle')?.focus();}});
 const originalDrawScene=drawScene;
-drawScene=function(c,vw,k,forExport){originalDrawScene(c,vw,k,forExport);if(!forExport&&pack.showLegend===false)drawReferences(c);};
+drawScene=function(c,vw,k,forExport){originalDrawScene(c,vw,k,forExport);if(!forExport&&pack.showLegend===false){drawReferences(c);const p=activePhoto();if(p)updateKey(p);}};
 // Keep the legend and title beneath exported artwork, clear of survey evidence.
 const originalExportCanvas=renderPhotoToCanvas;
 renderPhotoToCanvas=function(p,maxW){

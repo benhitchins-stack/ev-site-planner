@@ -120,6 +120,7 @@ const {chromium} = require('playwright');
     assert.equal(await page.evaluate(()=>EVProfile.reportRows(pack).filter(r=>r[0]==='Qualification').length),0);
     await page.locator('[data-ep-check="useForNew"]').uncheck();
     await page.locator('.ev-brand').click();await page.locator('.eh-hero [data-ev-action="new"]').click();
+    await page.locator('[data-ev-close-details]').first().waitFor();
     assert.equal(await page.evaluate(()=>pack.surveyedBy),'');assert.equal(await page.evaluate(()=>!!pack.workspace.authorProfile),false);
     await page.locator('[data-ev-close-details]').first().click();
     pass('Qualification privacy and automatic profile use honour the selected preferences');
