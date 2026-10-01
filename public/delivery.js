@@ -15,6 +15,7 @@ const duration=v=>Math.min(3660,Math.max(1,Math.round(Number(v)||1)));
 const statusNames={planned:'Planned',inprogress:'In progress',complete:'Complete'};
 const severityNames={minor:'Minor',major:'Major',safety:'Safety'};
 let snagFilter='all',snagSeverity='all',snagSearch='',busy=false,session=null,pdfDocument=null,renderTask=null;
+let reportViewer=null;
 const modal=document.createElement('div');modal.id='edModal';modal.className='ev-backdrop';modal.hidden=true;document.body.append(modal);
 const button=(t,action,style='')=>'<button type="button" class="ev-btn '+style+'" data-ed-action="'+action+'">'+t+'</button>';
 const select=(label,key,value,options)=>'<label class="ev-field">'+label+'<select data-ed-field="'+key+'">'+options.map(([v,t])=>'<option value="'+esc(v)+'" '+(v===value?'selected':'')+'>'+t+'</option>').join('')+'</select></label>';
@@ -76,7 +77,7 @@ function openDialog(type,title,sub,body,foot='',wide=false){
 function closeDialog(){
  if(busy)return;
  const prev=session?.focus,kind=session?.type;
- modal.hidden=true;session=null;modal.innerHTML='';$('evApp').inert=false;
+ reportViewer?.destroy();reportViewer=null;modal.hidden=true;session=null;modal.innerHTML='';$('evApp').inert=false;
  if(renderTask){renderTask.cancel();renderTask=null;}
  if(pdfDocument){pdfDocument.destroy().catch(()=>{});pdfDocument=null;}
  if(kind==='activity')mountProgramme();
@@ -146,7 +147,7 @@ function pdfKit(title,landscape=false){
  const lines=(text,w,size=9,bold=false)=>{font(size,bold);return doc.splitTextToSize(clean(text),w);};
  const write=(t,x,yy,size=9,bold=false,col=C.navy)=>{font(size,bold);doc.setTextColor(...col);doc.text(clean(t),x,yy);};
  const fit=(t,w,size=9,bold=false)=>{font(size,bold);let s=clean(t);if(doc.getTextWidth(s)<=w)return s;while(s.length&&doc.getTextWidth(s+'…')>w)s=s.slice(0,-1);return s+'…';};
- function newPage(section=title){sectionTitle=section.replace(/ · continued$/,'');if(page++)doc.addPage();doc.setFillColor(...C.navy);doc.rect(0,0,W,33,'F');const headerWidth=width-(pack.brandLogo?44:0);write(fit(pack.brandName||'EV SITE PLANNER',headerWidth,7,true),M,8.5,7,true,[207,231,170]);write(fit(section,headerWidth,16,true),M,18,16,true,[255,255,255]);write(fit(pack.name||'Untitled project',headerWidth,9),M,26,9,false,[215,227,239]);if(pack.brandLogo){doc.setFillColor(255,255,255);doc.roundedRect(W-M-35,6,35,21,2,2,'F');window.EVProfile?.drawLogo(doc,pack.brandLogo,W-M-33,8,31,17);}y=43;}
+ function newPage(section=title){sectionTitle=section.replace(/ · continued$/,'');if(page++)doc.addPage();EVReportBranding.header(doc,{title:section,W,M});y=43;}
  const ensure=h=>{if(y+h>B)newPage(sectionTitle+' · continued');};
  function paragraph(text,size=9,bold=false,col=C.navy){const ll=lines(text,width,size,bold),lineH=size*.47;for(const l of ll){ensure(lineH+2);write(l,M,y,size,bold,col);y+=lineH;}y+=3;}
  function section(text){ensure(13);y+=2;write(text,M,y,11,true);y+=8;}
@@ -162,7 +163,7 @@ function pdfKit(title,landscape=false){
   }y+=5;
  }
  function details(extra=[]){table(['Project details','Recorded information'],[['Reference',pack.jobRef],['Client',pack.custName],['Site address',[pack.address,pack.postcode].filter(Boolean).join(', ')],['Project lead',pack.surveyedBy],['Site contact',[pack.workspace?.contactName,pack.workspace?.contactPhone,pack.workspace?.contactEmail].filter(Boolean).join(' · ')],['Revision / prepared',String(pack.rev||'A')+' / '+date(today())],...(window.EVProfile?.reportRows(pack)||[]),...extra],[43,width-43]);}
- function footer(){const total=doc.getNumberOfPages();for(let i=1;i<=total;i++){doc.setPage(i);doc.setDrawColor(...C.line);doc.line(M,H-12,W-M,H-12);write(fit((pack.jobRef||'EV Site Planner')+' · Rev '+(pack.rev||'A')+' · '+date(today()),width-30,7),M,H-7,7,false,C.dim);font(7);doc.text(i+' / '+total,W-M,H-7,{align:'right'});}return doc;}
+ function footer(){return EVReportBranding.footer(doc,{M});}
  newPage();return{doc,W,H,M,B,C,width,lines,write,fit,newPage,ensure,paragraph,section,table,details,footer,get y(){return y;},set y(v){y=v;}};
 }
 async function buildProgramme(){
@@ -210,29 +211,27 @@ async function openReport(type){
  if(type==='snags'&&!snagList().length){EVWorkspace.go('snags');toast('Add a snag before creating its report.');return;}
  if(type==='programme'&&!programmeSummary().active.length){EVWorkspace.go('programme');toast('Add an activity before creating the programme.');return;}
  openDialog('report',type==='programme'?'Review programme':'Review snag report',(pack.name||'Untitled project')+' · Rev '+(pack.rev||'A'),
-  '<div class="ed-review-layout"><aside class="ed-report-controls">'+(type==='snags'?'<label class="ev-field">Report contents<select id="edReportScope"><option value="all">All findings</option><option value="open">Open findings only</option><option value="fixed">Fixed findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include before / after photos</label><label class="ed-check"><input id="edReportPlans" type="checkbox"> Include location plans</label>':'<p class="ed-help">Includes activities, responsibilities, dates, progress and the programme timeline.</p>')+'<div id="edReportChecks"></div><p class="ed-help">Missing information appears as unrecorded in the PDF. Close this review to edit the project.</p></aside><div class="ed-pdf-panel"><div class="ed-pdf-nav">'+button('Previous','pdf-prev')+'<span id="edPdfCounter" aria-live="polite"></span>'+button('Next','pdf-next')+'<select id="edPdfZoom" aria-label="PDF zoom"><option value="100%">Fit width</option><option value="150%">150%</option><option value="200%">200%</option><option value="300%">300%</option></select></div><div id="edPdfCanvas" aria-live="polite">Preparing PDF…</div></div></div>',button('Download PDF','download-report','primary'),true);
- session.reportType=type;session.page=1;session.doc=null;$('edPdfZoom').onchange=e=>$('edPdfCanvas').style.setProperty('--ed-pdf-zoom',e.target.value);$('edMessage').textContent='The preview is the PDF that will be downloaded.';modal.querySelector('[data-ed-action="close"]').focus();
+  '<div class="ev-document-layout"><div id="edReportViewer"></div><aside class="ev-document-options ed-report-controls"><h3>Report contents</h3>'+(type==='snags'?'<label class="ev-field">Findings<select id="edReportScope"><option value="all">All findings</option><option value="open">Open findings only</option><option value="fixed">Fixed findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include before / after photos</label><label class="ed-check"><input id="edReportPlans" type="checkbox"> Include location plans</label>':'<p>Activities, responsibilities, dates, progress and the programme timeline.</p>')+'<h3>Document details</h3><dl class="ev-document-meta"><dt>Prepared by</dt><dd>'+esc(pack.surveyedBy||'Not recorded')+'</dd><dt>Company</dt><dd>'+esc(pack.brandName||'Not recorded')+'</dd><dt>Revision</dt><dd>'+esc(pack.rev||'A')+'</dd></dl><div id="edReportChecks"></div><p>Close this review to edit project details or report records.</p></aside></div>',button('Download PDF','download-report','primary'),true);
+ session.reportType=type;session.page=1;session.doc=null;reportViewer=EVReportViewer.mount($('edReportViewer'),{canvasId:'edPdfCanvas'});$('edMessage').textContent='The preview matches the PDF download.';
+ modal.querySelector('.ev-dialog-foot [data-ed-action="close"]').classList.remove('primary');
  for(const id of ['edReportScope','edReportPhotos','edReportPlans'])if($(id))$(id).onchange=()=>prepareReport();
  await prepareReport();
 }
+
 async function prepareReport(){
- if(!session||session.type!=='report'||busy)return;busy=true;session.doc=null;modal.setAttribute('aria-busy','true');modal.querySelectorAll('button,input,select').forEach(x=>x.disabled=true);$('edPdfCanvas').textContent='Preparing PDF…';$('edPdfCounter').textContent='';
+ if(!session||session.type!=='report'||busy)return;busy=true;session.doc=null;modal.setAttribute('aria-busy','true');modal.querySelectorAll('button,input,select').forEach(x=>x.disabled=true);$('edPdfCanvas').textContent='Preparing PDF…';
  const options={scope:$('edReportScope')?.value||'all',photos:$('edReportPhotos')?.checked!==false,plans:$('edReportPlans')?.checked===true};
  const gaps=reportChecks(session.reportType,options);$('edReportChecks').innerHTML='<h3>Before downloading</h3>'+(gaps.length?'<ul>'+gaps.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'<p class="ed-help">Project details and responsibilities are recorded.</p>');
  try{
   const doc=session.reportType==='programme'?await buildProgramme():await buildSnags(options);doc.__evIssueLabel=session.reportType==='programme'?'Programme':'Snag report';
-  if(pdfDocument)await pdfDocument.destroy();const lib=await ensurePdfJs();pdfDocument=await lib.getDocument({data:doc.output('arraybuffer')}).promise;
+  await reportViewer.set(doc);
   session.doc=doc;session.page=1;session.filename=(pack.name||'EV-project').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,90)+'_'+(session.reportType==='programme'?'programme':'snag-report')+'_rev-'+String(pack.rev||'A').replace(/[^a-zA-Z0-9_-]/g,'_')+'.pdf';
-  await renderReportPage();
+
  }catch(err){session.doc=null;$('edPdfCanvas').innerHTML='<div class="ev-empty"><b>PDF could not be prepared</b>'+esc(err.message)+'</div>';}
  finally{busy=false;modal.removeAttribute('aria-busy');modal.querySelectorAll('button,input,select').forEach(x=>x.disabled=false);reportButtons();}
 }
-function reportButtons(){if(session?.type!=='report')return;const count=pdfDocument?.numPages||0;modal.querySelector('[data-ed-action="pdf-prev"]').disabled=busy||!session.doc||session.page<=1;modal.querySelector('[data-ed-action="pdf-next"]').disabled=busy||!session.doc||session.page>=count;modal.querySelector('[data-ed-action="download-report"]').disabled=busy||!session.doc;}
-async function renderReportPage(){
- if(!pdfDocument||!session?.doc)return;
- const page=await pdfDocument.getPage(session.page),v=page.getViewport({scale:1}),cn=document.createElement('canvas'),vp=page.getViewport({scale:Math.min(2,1300/v.width)});cn.width=Math.ceil(vp.width);cn.height=Math.ceil(vp.height);cn.setAttribute('role','img');cn.setAttribute('aria-label','PDF preview page '+session.page+' of '+pdfDocument.numPages);
- renderTask=page.render({canvasContext:cn.getContext('2d'),viewport:vp});await renderTask.promise;renderTask=null;$('edPdfCanvas').replaceChildren(cn);$('edPdfCanvas').scrollTop=0;$('edPdfCounter').textContent='Page '+session.page+' of '+pdfDocument.numPages;reportButtons();
-}
+function reportButtons(){if(session?.type!=='report')return;modal.querySelector('[data-ed-action="download-report"]').disabled=busy||!session.doc;reportViewer?.sync();}
+
 
 modal.addEventListener('input',e=>{
  const key=e.target.dataset.edField;if(!key||!session||busy)return;
@@ -257,7 +256,6 @@ document.addEventListener('click',async e=>{
  if(a==='programme-report'||a==='snag-report'){await openReport(a==='programme-report'?'programme':'snags');return;}
  if(a==='activity-up'||a==='activity-down'){const p=programme(),idx=p.activities.findIndex(r=>r.id===session.id),to=idx+(a==='activity-up'?-1:1);if(p.activities[to]){saveOnce();[p.activities[idx],p.activities[to]]=[p.activities[to],p.activities[idx]];changed();modal.querySelector('[data-ed-action="activity-up"]').disabled=to===0;modal.querySelector('[data-ed-action="activity-down"]').disabled=to===p.activities.length-1;$('edMessage').textContent='Activity moved to position '+(to+1)+'.';}return;}
  if(a==='show-snag'){const {id,photoId}=session;closeDialog();pack.active=photoId;EVWorkspace.go('markup');sel=id;sideTab='props';setSideTab();$('side').classList.add('open');draw();return;}
- if(a==='pdf-prev'||a==='pdf-next'){busy=true;session.page+=a==='pdf-prev'?-1:1;reportButtons();try{await renderReportPage();}catch(err){$('edMessage').textContent=err.message;}finally{busy=false;reportButtons();}return;}
  if(a==='download-report'&&session.doc){busy=true;reportButtons();$('edMessage').textContent='Downloading PDF…';try{await session.doc.save(session.filename,{returnPromise:true});$('edMessage').textContent='PDF downloaded. The download is listed in the document history.';}catch(err){$('edMessage').textContent='Download failed: '+err.message;}finally{busy=false;reportButtons();}return;}
 });
 // A full record is also reachable from a selected canvas pin.

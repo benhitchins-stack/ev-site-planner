@@ -6,7 +6,7 @@ import re
 public = Path(__file__).resolve().parent.parent / 'public'
 planner = public / 'EV Site Planner.html'
 source = planner.read_text()
-assets = ['design-preview.css', 'profile.css', 'profile.js', 'workspace.css', 'home.css', 'workspace.js', 'home.js',
+assets = ['design-preview.css', 'workbench.css', 'workbench.js', 'report-viewer.js', 'profile.css', 'profile.js', 'workspace.css', 'home.css', 'workspace.js', 'home.js',
           'delivery.js', 'cdm-controls.js', 'report-fonts.js', 'bay-markings.js']
 for name in assets:
     digest = sha256((public / name).read_bytes()).hexdigest()[:12]

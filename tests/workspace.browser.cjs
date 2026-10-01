@@ -98,7 +98,7 @@ const {chromium} = require('playwright');
     await page.locator('.eh-hero [data-ev-action="example"]').click();await page.waitForFunction(()=>pack.photos.length===1&&EVWorkspace.route()==='overview');
     await page.locator('[data-ev-route="markup"]').click();
     await page.screenshot({path:path.join(artifacts,'markup-desktop.png')});
-    await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview img');
+    await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview canvas');
     const download=page.waitForEvent('download');await page.locator('#evDownloadPlans').click();
     const pdf=await download;await pdf.saveAs(path.join(artifacts,'marked-up-plans.pdf'));
     assert(fs.statSync(path.join(artifacts,'marked-up-plans.pdf')).size>10000);

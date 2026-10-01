@@ -752,6 +752,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 <link rel="stylesheet" href="home.css?v=16beb7847de3">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
 <link rel="stylesheet" href="design-preview.css?v=813a64af3286">
+<link rel="stylesheet" href="workbench.css?v=5eabd2b03781">
 </head>
 <body>
 <template id="__bundler_thumbnail">
@@ -7121,13 +7122,13 @@ function drawTitleBlock(c, p){
   c.restore();
 }
 /* on-plan legend + title overlay - drawn on screen and into PNG/PDF exports */
-function drawLegend(c, vw, p, labelK, forExport){
+function drawLegend(c, vw, p, labelK, forExport, rowsOnly=false){
   const W = forExport ? c.canvas.width  : cvwrap.clientWidth;
   const H = forExport ? c.canvas.height : cvwrap.clientHeight;
   const k = (forExport?1:0.78)*Math.max(0.85, W/1100);
   const FONT="-apple-system,system-ui,sans-serif";
   // title pill (export only - on screen it lives in the side panel)
-  if(forExport && pack.name){
+  if(forExport && !rowsOnly && pack.name){
     c.font=`700 ${15*k}px ${FONT}`;
     const tw=c.measureText(pack.name).width, ph=26*k, pw=tw+24*k;
     c.save(); c.globalAlpha=.9; c.fillStyle="#04222E"; rrect(c,14*k,14*k,pw,ph,7*k); c.fill(); c.restore();
@@ -7202,6 +7203,7 @@ function drawLegend(c, vw, p, labelK, forExport){
   usedM.forEach(kk=>{ if(kk==="north") return; const d=MARK_DEFS[kk]; if(d) rows.push({color:d.color,letter:d.letter,name:d.name}); });
   [...new Set(p.items.filter(i=>i.type==="site").map(i=>i.kind))].forEach(kk=>{ const d=SITE_DEFS[kk]; if(d) rows.push({color:d.col,letter:d.leg,name:d.name+" \u00b7 site context"}); });
   if(p.items.some(i=>i.type==="stamp")) rows.push({color:"#E8A13C",letter:"!",name:"Callout \u00b7 site prep action"});
+  if(rowsOnly) return rows;
   if(!rows.length) return;
   const fs=12.5*k, pad=12*k, row=22*k, indent=50*k;
   c.font=`600 ${fs}px ${FONT}`;
@@ -11748,6 +11750,7 @@ async function buildSummaryPdf(opts){
     doc.text((pack.brandName||"EV Site Planner")+" \u00b7 Project summary"+(pack.name?" \u00b7 "+pack.name:""), M, PH-5.4);
     doc.text(pn+" / "+pages, PW-M, PH-5.4, {align:"right"});
   }
+  if(opts.output==="doc"){ return doc; }
   if(opts.output==="bloburl"){ return doc.output("bloburl"); }
   doc.save((pack.name||"project").replace(/[^\w\-]+/g,"_")+"_summary.pdf");
   toast("Summary PDF exported");
@@ -12415,16 +12418,9 @@ async function buildCustomerPdf(opts){
     });
   }
 
-  /* ---------------- FOOTERS ---------------- */
-  const pages=doc.getNumberOfPages();
-  for(let pn=1; pn<=pages; pn++){
-    doc.setPage(pn);
-    doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.line(M, PH-10, PW-M, PH-10);
-    doc.setTextColor(...FAINT); doc.setFont("helvetica","normal"); doc.setFontSize(8);
-    doc.text((pack.brandName||"EV Site Planner")+(pack.mode==="domestic"?" · Home charge plan":" · Charging plan"), M, PH-6);
-    doc.text(pn+" / "+pages, PW-M, PH-6, {align:"right"});
-  }
+  window.EVReportBranding?.footer(doc,{M});
 
+  if(opts.output==="doc"){ return doc; }
   if(opts.output==="bloburl"){ return doc.output("bloburl"); }
   doc.save((pack.name||(pack.mode==="domestic"?"home-charge-plan":"ev-charge-plan")).replace(/[^\w\-]+/g,"_")+"_customer.pdf");
   toast("Customer PDF exported");
@@ -12961,17 +12957,8 @@ async function buildPdf(opts){
       }catch(_){ }
     }
   }
-  // footers on every page
-  {
-    const pages=doc.getNumberOfPages();
-    for(let pn=1; pn<=pages; pn++){
-      doc.setPage(pn);
-      doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.line(M, PH-9, PW-M, PH-9);
-      doc.setTextColor(...FAINT); doc.setFont("helvetica","normal"); doc.setFontSize(8);
-      doc.text((pack.brandName||"EV Site Planner")+" \u00b7 "+(pack.mode==="domestic"?"Home charge survey":"Site survey")+(pack.name?" \u00b7 "+pack.name:""), M, PH-5.4);
-      doc.text(pn+" / "+pages, PW-M, PH-5.4, {align:"right"});
-    }
-  }
+  window.EVReportBranding?.footer(doc,{M});
+  if(opts.output==="doc"){ return doc; }
   if(opts.output==="bloburl"){ return doc.output("bloburl"); }
   doc.save((pack.name||(pack.mode==="domestic"?"home-survey":"site-survey")).replace(/[^\w\-]+/g,"_")+".pdf");
   toast("PDF exported");
@@ -15875,10 +15862,12 @@ setTimeout(()=>{ try{
   });
 }catch(_){ } }, 2500);
 </script>
-<script src="profile.js?v=079c6d2a4515"></script>
+<script src="profile.js?v=89deddb259ec"></script>
 <script src="report-fonts.js?v=db719569bbc1"></script>
-<script src="home.js?v=a00e4ba5bd38"></script>
-<script src="workspace.js?v=58d86247ac3d"></script>
-<script src="delivery.js?v=1827433f0c51"></script>
+<script src="home.js?v=b7888803610a"></script>
+<script src="report-viewer.js?v=c81a5343ad5e"></script>
+<script src="workspace.js?v=6e9d024948b3"></script>
+<script src="delivery.js?v=3933a966bdb3"></script>
+<script src="workbench.js?v=9db9dbe9b07f"></script>
 </body>
 </html>

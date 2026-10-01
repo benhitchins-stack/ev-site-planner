@@ -38,10 +38,12 @@ const {chromium} = require('playwright');
     for(const [key,value] of Object.entries({role:'Project engineer',company:'Example Electrical Ltd',email:'alex@example.test',phone:'01234 000000',website:'example.test',registration:'EXAMPLE-001',address:'Fictional business address\nExample town'})) {
       await page.locator(`[data-ep-field="${key}"]`).fill(value);
     }
+    await page.locator('[data-ep-tab="qualifications"]').click();
     await page.locator('[data-ep-action="add-qualification"]').first().click();
     for(const [key,value] of Object.entries({name:'Example installation qualification',issuer:'Example awarding body',reference:'TEST-123',expiry:'2028-10-01'})) {
       await page.locator(`[data-ep-q="${key}"]`).fill(value);
     }
+    await page.locator('[data-ep-tab="qualifications"]').click();
     await page.locator('[data-ep-action="add-qualification"]').first().click();
     await page.locator('[data-ep-qualification]').last().locator('[data-ep-q="name"]').fill('Temporary test qualification');
     await page.locator('[data-ep-remove]').last().click();
@@ -53,6 +55,7 @@ const {chromium} = require('playwright');
     pass('Profile fields and qualification add/remove survive reload and direct profile links');
 
     const svg='<svg xmlns="http://www.w3.org/2000/svg" width="360" height="140" viewBox="0 0 360 140"><rect width="360" height="140" rx="12" fill="#173047"/><path d="M52 23 24 78h29l-8 40 44-61H61l12-34Z" fill="#d0e694"/><text x="109" y="72" font-family="sans-serif" font-size="29" fill="white">EXAMPLE</text><text x="110" y="99" font-family="sans-serif" font-size="17" fill="#d0e694">ELECTRICAL</text></svg>';
+    await page.locator('[data-ep-tab="branding"]').click();
     let chooser=page.waitForEvent('filechooser');await page.locator('[data-ep-action="logo"]').click();
     await (await chooser).setFiles({name:'example-logo.svg',mimeType:'image/svg+xml',buffer:Buffer.from(svg)});
     await page.waitForFunction(()=>EVProfile.get().logo.startsWith('data:image/png'));
@@ -70,6 +73,7 @@ const {chromium} = require('playwright');
     await page.locator('#epImportInput').setInputFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from('{broken')});
     await page.waitForFunction(()=>document.querySelector('#toast').textContent.includes('not a valid profile'));
     assert.equal(await page.evaluate(()=>EVProfile.get().name),'Alex Example');
+    await page.locator('[data-ep-tab="details"]').click();
     await page.locator('[data-ep-field="name"]').fill('Temporary name');
     await page.locator('#epImportInput').setInputFiles(profileFile);await page.locator('#sheetCancel').click();
     assert.equal(await page.evaluate(()=>EVProfile.get().name),'Temporary name');
@@ -85,6 +89,7 @@ const {chromium} = require('playwright');
     await page.locator('[data-ev-close-details]').first().click();
     await page.locator('[data-ev-route="profile"]').click();
     await page.locator('[data-ep-field="name"]').fill('Alex Updated');
+    await page.locator('[data-ep-tab="qualifications"]').click();
     await page.locator('[data-ep-q="name"]').fill('Updated example qualification');
     assert.equal(await page.evaluate(()=>pack.surveyedBy),'Alex Example');
     assert.equal(await page.evaluate(()=>pack.workspace.authorProfile.qualifications[0].name),'Example installation qualification');
@@ -95,7 +100,7 @@ const {chromium} = require('playwright');
     pass('New projects inherit profile details; existing project snapshots change only when explicitly applied');
 
     await page.evaluate(()=>{buildStarter('compact');pack.photos[0].items.push({id:uid(),type:'mark',kind:'snag',n:1,x:200,y:200,label:'Fictional snag for report validation',sev:'minor',st:'open',who:'Example contractor'});});
-    await page.locator('[data-ev-route="markup"]').click();await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview img');
+    await page.locator('[data-ev-route="markup"]').click();await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview canvas');
     download=page.waitForEvent('download');await page.locator('#evDownloadPlans').click();await (await download).saveAs(path.join(artifacts,'profile-plans.pdf'));
     await page.locator('[data-ev-close-review]').last().click();
     for(const type of ['programme','snags']){
@@ -121,6 +126,7 @@ const {chromium} = require('playwright');
 
     await page.locator('[data-ev-route="profile"]').click();
     await page.evaluate(()=>{window.savedLocalSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='evsp_profile_v1')throw Error('Simulated quota');return window.savedLocalSet.call(this,k,v);};});
+    await page.locator('[data-ep-tab="details"]').click();
     await page.locator('[data-ep-field="role"]').fill('Recovered from IndexedDB');await page.evaluate(()=>EVProfile.flush());
     await page.reload({waitUntil:'networkidle'});await page.waitForSelector('[data-ep-field="role"]');
     assert.equal(await page.locator('[data-ep-field="role"]').inputValue(),'Recovered from IndexedDB');

@@ -21,6 +21,28 @@ a template loads the revised default. Knowledge checks are described as revision
 and practice, with no claim to award a qualification. This copy review does not
 replace a technical review of the reference material or electrical calculations.
 
+The latest design pass groups selected-item settings into electrical, mounting,
+appearance and design-option sections. A selected charger's label, model and
+rating remain at the top. Model search, favourites and recently placed equipment
+are available in the floating picker; Place another like this retains the chosen
+configuration. Equipment references remain stable in project backups. Compact
+on-screen labels have leader lines and avoid nearby equipment where space allows;
+full labels remain available. The plan key is separate from the drawing, and
+exported legends and title details sit below the artwork.
+
+The overview uses compact counts and a single Continue markup action. Home shows
+recent projects first when work is saved in the browser. Profile has Details,
+Qualifications and Branding tabs, with a real sample PDF to check names and logos.
+Plans, engineer/client packs, programmes and snag reports share page thumbnails,
+zoom controls and a consistent review layout. Downloads use the previewed PDF.
+Document footers share author, company, revision and preparation-date information.
+Phone item controls open as a bottom panel with part of the drawing still visible.
+
+Run `npm run test:refinement` for equipment search, favourites, configuration copies,
+label preservation, report refresh/download behaviour, profile tabs and phone
+reviews. Use the Playwright setup below. These preferences and projects remain
+local to this browser; no account or shared equipment catalogue is required.
+
 Run `npm run test:design` with the Playwright setup below for selection, placement,
 editing, navigation, backup and PDF regression checks for this layout.
 
@@ -138,6 +160,8 @@ different deliverable.
 |---|---|
 | `public/EV Site Planner.html` | Drawing engine, compatibility and HTML entry |
 | `public/workspace.js`, `workspace.css` | Project navigation, persistence and plan exports |
+| `public/workbench.js`, `workbench.css` | Grouped item settings, equipment library, labels and responsive design |
+| `public/report-viewer.js` | Shared PDF previews and document branding |
 | `public/home.js`, `home.css` | Home page and recent projects |
 | `public/profile.js`, `profile.css` | Personal and company profile, qualifications and report branding |
 | `public/delivery.js` | Programme, snag records and PDF review |

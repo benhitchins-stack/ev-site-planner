@@ -87,7 +87,7 @@ const {chromium} = require('playwright');
     await page.screenshot({path:path.join(artifacts,'markup.png'),animations:'disabled'});
     pass('Equipment palette places a charger, plan settings stay accessible, and Focus restores the previous panels');
 
-    await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview img');
+    await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview canvas');
     let download=page.waitForEvent('download');await page.locator('#evDownloadPlans').click();await (await download).saveAs(path.join(artifacts,'preview-plans.pdf'));
     await page.locator('[data-ev-close-review]').last().click();
     const backupPath=path.join(artifacts,'preview-project.evplan.json');download=page.waitForEvent('download');await page.locator('#evBackupTop').click();await (await download).saveAs(backupPath);
@@ -118,7 +118,7 @@ const {chromium} = require('playwright');
         await page.locator('[data-ev-route="markup"]').click();assert.equal(await page.locator('#evNavBackdrop').isVisible(),false);
         await page.getByRole('combobox',{name:'Add markup',exact:true}).selectOption('site');
         assert.equal(await page.locator('#rail .palsec.show').getAttribute('data-cat'),'site');
-        await page.locator('#rail .palsec.show [data-palclose]').click();
+        await page.locator('[data-wb-close-library]').click();
         assert(await page.getByRole('button',{name:'Plan settings',exact:true}).isVisible());
         await page.getByRole('button',{name:'Plan settings',exact:true}).click();assert(await page.locator('#evInspectorClose').isVisible());
         await page.locator('#evInspectorClose').click();

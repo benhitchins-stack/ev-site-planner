@@ -11,7 +11,8 @@
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node tests/workspace.browser.cjs",
     "test:profile": "node tests/profile.browser.cjs",
-    "test:design": "node tests/design.browser.cjs"
+    "test:design": "node tests/design.browser.cjs",
+    "test:refinement": "node tests/refinement.browser.cjs"
   },
   "engines": {
     "node": ">=18"
