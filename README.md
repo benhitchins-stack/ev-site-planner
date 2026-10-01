@@ -10,8 +10,16 @@ main site will not appear here automatically.
 The preview adds a dashboard with an annotated plan preview and recorded next
 actions, a searchable project list, collapsible navigation, a floating equipment
 palette, a contextual settings panel and a drawing focus view. Shared typography,
-forms and buttons also carry through to Profile and the delivery pages. The guide
-library and learning hub have not yet been redesigned.
+forms and buttons also carry through to Profile and the delivery pages. Home,
+the guide library and training courses use direct descriptions, consistent type
+and responsive layouts. Guide search matches displayed titles and keywords.
+
+Default customer reports and emails describe proposed work and recorded project
+details. They no longer assume bookings, deliveries, fees, refunds or submitted
+DNO applications. Previously saved email templates remain unchanged; resetting
+a template loads the revised default. Knowledge checks are described as revision
+and practice, with no claim to award a qualification. This copy review does not
+replace a technical review of the reference material or electrical calculations.
 
 Run `npm run test:design` with the Playwright setup below for selection, placement,
 editing, navigation, backup and PDF regression checks for this layout.

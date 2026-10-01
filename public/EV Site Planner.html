@@ -749,7 +749,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 </style>
 <link rel="stylesheet" href="cdm-controls.css">
 <link rel="stylesheet" href="workspace.css?v=e29080d0f652">
-<link rel="stylesheet" href="home.css?v=796f57b98fa3">
+<link rel="stylesheet" href="home.css?v=16beb7847de3">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
 <link rel="stylesheet" href="design-preview.css?v=813a64af3286">
 </head>
@@ -821,14 +821,14 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
     <div style="position:relative">
       <button class="hbtn primary" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span class="btn-label">Export</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width:11px;height:11px"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="exportmenu" id="exportMenu">
-        <div class="emi-sec">Most used</div>
+        <div class="emi-sec">Plans and reports</div>
         <button class="emi" id="btnPng" title="Save the current marked-up photo as an image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg><span>Save image<small>Current plan as a PNG</small></span></button>
         <button class="emi" id="btnPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M9 13h2a2 2 0 0 0 0-4H9v8"/></svg><span>Engineer PDF<small>Full technical install pack</small></span></button>
-        <button class="emi" id="btnPdfCust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8M8 13h5"/></svg><span>Client PDF<small>Friendly plan + email</small></span></button>
+        <button class="emi" id="btnPdfCust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8M8 13h5"/></svg><span>Client PDF<small>Client plan and draft email</small></span></button>
         <div class="emi-sec">More plan outputs</div>
         <button class="emi" id="btnPngAll" title="Save every plan as a PNG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="7" width="14" height="12" rx="2"/><path d="M7 15l4-4 3 3 2-2 5 5"/><path d="M17 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Save all images<small>Every plan as a PNG</small></span></button>
         <button class="emi" id="btnPdfSum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><span>Summary PDF<small>One-page snapshot + plans</small></span></button>
-        <button class="emi" id="btnWebPack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.6 3.8 9S14.5 18.5 12 21c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z"/></svg><span>Decision pack<small>Share link · options · tap-to-approve</small></span></button>
+        <button class="emi" id="btnWebPack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.6 3.8 9S14.5 18.5 12 21c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z"/></svg><span>Decision pack<small>Download a review page with options and reply buttons</small></span></button>
         <div class="emi-sec">Technical</div>
         <button class="emi" id="btnCsv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 10h16M4 15h16M10 4v16"/></svg><span>Cable schedule (CSV)<small>Runs table with the calc results</small></span></button>
         <button class="emi" id="btnCalcPdf" title="Per-circuit sizing check: capacity with derating, volt drop, Zs and CPC, with the workings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8.5 6.5h7M8.5 11h2M8.5 14.5h2M8.5 18h2M13.5 11h2M13.5 14.5h2M13.5 18h2"/></svg><span>Cable calc sheet (PDF)<small>Per-circuit BS 7671-style workings</small></span></button>
@@ -856,10 +856,10 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
     <div class="empty" id="empty">
       <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5"/></svg></div>
       <h2>Start a project pack</h2>
-      <p>Pick a starting point. Everything you mark up feeds the plans, calcs and exports.</p>
+      <p>Add site photos or drawings to start marking equipment and routes.</p>
       <div class="starts">
       <button class="startcard primary" id="btnAdd1"><span class="sc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span><b>Add photos, zip or PDF</b><small>Site photos, a survey .zip or PDF drawings</small></button>
-      <button class="startcard" id="btnWalk1"><span class="sc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span><b>Guided site walk</b><small>The camera walks you round every shot a survey needs</small></button>
+      <button class="startcard" id="btnWalk1"><span class="sc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span><b>Guided site walk</b><small>Use the photo checklist to record the site</small></button>
       <button class="startcard" id="btnStarter1"><span class="sc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></svg></span><b>Starter layout</b><small>Car park or driveway presets, drawn to scale</small></button>
       <button class="startcard" id="btnGrid1"><span class="sc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></span><b>Blank plan</b><small>Grid paper &middot; 1 square = 1 m, scale preset</small></button>
       </div>
@@ -895,7 +895,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 <input type="file" id="fileSnagShot" accept="image/*" style="display:none">
 <div class="wlc-backdrop" id="projBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:480px">
-    <div class="wlc-head"><h2>Projects on this device</h2><p>Every job saved on this device, newest first, with status at a glance: outcome, open snags and how export-ready the pack is. Download a pack file when you need a durable copy or want to move a job to another device.</p></div>
+    <div class="wlc-head"><h2>Projects on this device</h2><p>Projects saved in this browser, with their recorded outcome, open snags and document checks. Download a project backup to keep a separate copy or transfer it to another device.</p></div>
     <div style="display:flex;gap:8px;align-items:center;margin:0 0 10px">
       <input id="pjSearch" placeholder="Search name, case ref or customer…" style="flex:1;min-width:0;border:1px solid var(--line2);border-radius:9px;padding:8px 11px;font-size:13px;background:#fff;color:var(--ink)">
       <span id="pjCount" style="flex:none;font-size:11px;color:var(--faint);font-weight:600"></span>
@@ -1131,7 +1131,7 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
     <div class="c3d-top">
       <div>
         <h2>3D showroom</h2>
-        <p>Every charger and piece of site kit as a true 3D model · chargers follow the pack's colour &amp; design settings</p>
+        <p>View and rotate charger and site equipment models. Colours follow the project settings.</p>
       </div>
       <button class="c3d-x" id="c3dClose" title="Close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
@@ -1206,7 +1206,7 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
     <div class="wlc-head">
       <div class="wlc-logo"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EV Site Planner"><defs><radialGradient id="evlgBgW" gradientUnits="userSpaceOnUse" cx="24" cy="16" r="78"><stop offset="0" stop-color="#1E3346"/><stop offset="1" stop-color="#0A141F"/></radialGradient><linearGradient id="evlgBoltW" gradientUnits="userSpaceOnUse" x1="40" y1="11" x2="40" y2="69"><stop offset="0" stop-color="#5D9BFF"/><stop offset="1" stop-color="#1E6BFF"/></linearGradient><clipPath id="evlgClipW"><rect x="2" y="2" width="76" height="76" rx="19"/></clipPath></defs><rect x="2" y="2" width="76" height="76" rx="19" fill="url(#evlgBgW)"/><g clip-path="url(#evlgClipW)"><path d="M27.5 2V78M52.5 2V78M2 27.5H78M2 52.5H78" fill="none" stroke="#EFE7D7" stroke-opacity=".16" stroke-width="1.5"/></g><rect x="3" y="3" width="74" height="74" rx="18" fill="none" stroke="#FFFFFF" stroke-opacity=".08" stroke-width="1.6"/><path d="M43 11 14 45.8H40L37 69 66 34.2H40Z" fill="url(#evlgBoltW)"/></svg></div>
       <h2>EV Site Planner</h2>
-      <p>Mark chargers, cable routes and supply equipment on photos &amp; site plans, then export clean, install-ready packs.</p>
+      <p>Mark chargers, cable routes and supply equipment on photos and drawings, then export plans and project reports.</p>
     </div>
     <div class="wlc-sec">What kind of site is this? <em>· you can switch anytime from the top bar</em></div>
     <div class="wlc-modes">
@@ -1377,7 +1377,7 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
       <div class="rx-edit" id="rxEdit">
         <div class="rx-sec">
           <div class="rx-label" id="rxSumLabel">Cover summary <em>optional</em></div>
-          <textarea id="rxSummary" placeholder="A short intro line for the cover page, e.g. site context, access notes, who to contact on arrival…"></textarea>
+          <textarea id="rxSummary" placeholder="Site context, access notes or a contact for arrival (optional)"></textarea>
           <button class="pbtn" id="rxLetterReset" style="display:none;margin-top:6px;flex:none;padding:7px 12px;width:auto">Re-write letter from template</button>
         </div>
         <div class="rx-sec" id="rxWhoSec" style="display:none">
@@ -1387,7 +1387,7 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
           <div class="rx-edithint">Your name is remembered on this device and appears on the cover and sign-off.</div>
         </div>
         <div class="rx-sec" id="rxEmailSec" style="display:none">
-          <div class="rx-label">Email to the customer <em id="rxEmailState">ready to send</em></div>
+          <div class="rx-label">Email to the customer <em id="rxEmailState">draft for review</em></div>
           <textarea id="rxEmail" style="min-height:150px"></textarea>
           <div class="rx-btnrow" id="rxEmailBtns">
             <button class="pbtn" id="rxEmailCopy" style="flex:none;padding:8px 12px">Copy email</button>
@@ -1836,7 +1836,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
 <script src="vendor/heic2any.min.js"></script>
-<script src="cdm-controls.js?v=725971ed"></script>
+<script src="cdm-controls.js?v=9da9e61316b2"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
 <script>
 "use strict";
@@ -2481,9 +2481,9 @@ const COMPLIANCE_DEFS={
   {k:"lighting", t:"Lighting adequate at chargers", s:"Safe and usable after dark.", d:"Charging positions safe and usable after dark."},
   {k:"rcd", t:"Earth fault / PEN protection per unit", s:"Each charger on its own properly protected circuit.", d:"Dedicated radial per charger, Type A RCD/RCBO 30 mA: no shared protection, no Type AC devices. 6 mA DC detection from the unit's RDC-DD (IEC 62955) or a Type B device. Where open-PEN protection is built into the unit (verify the declaration), no separate O-PEN device is needed on TN supplies."},
   {k:"cable", t:"Cable spec & spare confirmed", s:"Right cable, labelled, with spare coiled at each charger.", d:"SWA / EV-grade cable, labelled at both ends, ≥2 m coiled at each charger position. Armour may serve as the CPC per BS 7671, but check the scheme/manufacturer's own rules: some (e.g. Pod Point) require a separate dedicated CPC regardless."},
-  {k:"civils", t:"Bases & ducting to spec", s:"Concrete bases and buried ducts built right, and photographed.", d:"600×600×400 mm C20 base, cured and photographed before any surfacing; twin-wall duct ≥450 mm deep (600 mm under roads) with warning tape above."},
+  {k:"civils", t:"Bases & ducting to spec", s:"Base and duct specifications checked, with a photo record.", d:"600×600×400 mm C20 base, cured and photographed before any surfacing; twin-wall duct ≥450 mm deep (600 mm under roads) with warning tape above."},
   {k:"comms", t:"Connectivity confirmed per unit", s:"Every charger can get online from its position.", d:"Whichever of 4G, 2.4 GHz Wi-Fi or Ethernet the unit supports (interfaces vary by model), live at each position, with no captive portals. Units that can't connect can't be commissioned."},
-  {k:"evidence", t:"Photo record complete", s:"Everything photographed before it gets covered up.", d:"Supply head, protection, cable runs, spares and bare bases photographed and filed with the job before surfacing or backfill covers them."},
+  {k:"evidence", t:"Photo record complete", s:"Hidden work photographed before backfill or surfacing.", d:"Supply head, protection, cable runs, spares and bare bases photographed and filed with the job before surfacing or backfill covers them."},
   {k:"afdd", t:"AFDD provision reviewed", s:"Arc-fault protection decision made and written down.", d:"BS 7671:2018+A4:2026 extends AFDD requirements to more premises, including EV charging circuits. Confirm whether these final circuits need arc fault protection and record the decision.", opt:true},
   {k:"pcpr", t:"Public charging consumer rules", s:"Payment, pricing and helpline rules covered for public units.", d:"Publicly accessible chargers only (Public Charge Point Regs 2023): contactless payment on ≥8 kW units, price in p/kWh displayed, free 24/7 helpline, OCPI open data. Rapid networks also carry the 99% annual reliability duty and roaming via at least one provider.", opt:true},
   {k:"cdm", t:"CDM duties, appointments & phase plan", s:"Dutyholders recorded and a proportionate plan ready.", d:"A construction phase plan must be prepared before construction begins on every construction project. Where more than one contractor is involved, the commercial client must appoint a principal designer and principal contractor in writing. Mark N/A only where CDM 2015 genuinely does not apply."},
@@ -2492,7 +2492,7 @@ const COMPLIANCE_DEFS={
   {k:"public", t:"Public & pedestrians segregated", s:"Barriers and a safe walkway keep the public clear of the works.", d:"Work areas and open trenches fenced off (Heras or equivalent), excavations covered or fenced whenever unattended, a signed and lit pedestrian diversion, and plant movements controlled. Draw the barriers, cone line, exclusion zone, pedestrian route and safety signboard on the plan. Mark N/A for sites closed to the public.", opt:true},
   {k:"f10", t:"F10 assessment & HSE notification", s:"Notification threshold assessed and any submission evidenced.", d:"Notifiable where work is scheduled to last longer than 30 working days and have more than 20 workers working simultaneously at any point, or exceed 500 person-days. For a commercial client, the client must notify HSE. Record the assessment, then the submission date and HSE reference where notifiable.", opt:true},
   {k:"asbestos", t:"Asbestos checked before drilling", s:"Register / survey checked before disturbing pre-2000 fabric.", d:"For buildings built or refurbished before 2000: check the asbestos register or management survey before drilling, chasing or lifting fabric, and stop if suspect material appears. Mark no-drill zones with the asbestos callout stamp. Mark N/A for new builds and outdoor-only works.", opt:true},
-  {k:"emergency", t:"First aid & emergency arrangements", s:"First aider, kit, fire point and muster point sorted.", d:"Appointed first aider and kit on site, extinguishers at the work area, muster point agreed and the nearest A&E in the induction. Pin the first aid and fire points on the plan. Mark N/A where the client's arrangements cover the works.", opt:true},
+  {k:"emergency", t:"First aid & emergency arrangements", s:"First aider, equipment and muster point recorded.", d:"Appointed first aider and kit on site, extinguishers at the work area, muster point agreed and the nearest A&E in the induction. Pin the first aid and fire points on the plan. Mark N/A where the client's arrangements cover the works.", opt:true},
   {k:"rams", t:"RAMS issued and accepted", s:"Safety paperwork written for this site and accepted.", d:"Site-specific risk assessments and method statements accepted before work starts. Mark N/A where they aren't required.", opt:true}
  ],
  domestic:[
@@ -2502,7 +2502,7 @@ const COMPLIANCE_DEFS={
   {k:"pen", t:"PEN fault protection confirmed", s:"Earth-fault safety covered for this supply type.", d:"Open-PEN device in the charger or earth electrode for PME supplies."},
   {k:"rcd", t:"RCD protection confirmed", s:"The right type of safety trip on the EV circuit.", d:"Type A RCD with 6 mA DC detection on the EV circuit."},
   {k:"eic", t:"EIC to be issued on completion", s:"Electrical certificate handed over at the end.", d:"Electrical Installation Certificate covering the new circuit. State the BS 7671 edition used (A4:2026 for new work certified from 15 Oct 2026)."},
-  {k:"asbestos", t:"Asbestos considered before drilling", s:"Artex & pre-2000 fabric thought about before making holes.", d:"Pre-2000 homes can hide asbestos in textured coatings, soffits, garage roofs and flue boards: check before drilling or chasing, and stop if suspect material appears. Mark N/A for newer builds.", opt:true},
+  {k:"asbestos", t:"Asbestos considered before drilling", s:"Asbestos risks reviewed before drilling or disturbing materials.", d:"Pre-2000 homes can hide asbestos in textured coatings, soffits, garage roofs and flue boards: check before drilling or chasing, and stop if suspect material appears. Mark N/A for newer builds.", opt:true},
   {k:"parts", t:"Part S provision (new build / major works)", s:"New-build chargepoint rules checked.", d:"New homes and buildings with parking need chargepoints from the outset: at least Mode 3, ≥7 kW, universal socket, on a dedicated circuit to BS 7671 and the IET Code of Practice.", opt:true}
  ]};
 function complianceList(){ return COMPLIANCE_DEFS[pack.mode==="domestic"?"domestic":"commercial"]; }
@@ -2544,11 +2544,11 @@ function compExtraLines(k){ const c=cdmInfo(); if(k==="cdm"){ if(!c.pd&&!c.pc) r
 const openHints=new Set();
 const HINTS={
   load:{t:"Headroom is the supply capacity minus the existing demand. Chargers count at full rating (32 A per socket, no diversity); DLM groups count at their group limit instead.", g:"md", gl:"Assess maximum demand"},
-  ready:{t:"A pre-issue checklist: scale set, run lengths in, supply & earthing recorded, compliance started. 100% means the pack is ready to export without gaps.", g:null},
+  ready:{t:"Checks whether key project fields are filled in: scale, route lengths, supply, earthing and compliance records. Review their accuracy before issuing the pack.", g:null},
   snags:{t:"Pin anything that must be put right: a loose gland, an unreinstated surface, a missing label. Set severity, tap Fixed as items are closed out, then sign the list off; it prints as a numbered rectification list, with the pins visible on the photos.", g:null},
-  comp:{t:"Track the job's compliance items as you go. Tap Done as they complete, or N/A for anything that doesn't apply to this job (it drops out of the total). Prints as a status page.", g:"regs", gl:"The 2026 rulebook"},
+  comp:{t:"Track the job's compliance items as you go. Tap Done as they complete, or N/A for anything that doesn't apply to this job (it drops out of the total). Prints as a status page.", g:"regs", gl:"Installation regulations"},
   earth:{t:"PME (TN-C-S) is the common case; most modern units handle PEN faults internally (verify on the data sheet). TT brings extra rules: Type B source RCD, electrode under 200 \u03a9, and 2.5 m clearance from other earthed street equipment.", g:"earthsys", gl:"Earthing systems on site"},
-  budget:{t:"Everything you place is priced from your rates: routes per metre, equipment per item, bases and reinstatement per unit or m\u00b2. Set them once in Edit rates and the budget tracks the drawing live.", g:"routes", gl:"Routes that price themselves"},
+  budget:{t:"Everything you place is priced from your rates: routes per metre, equipment per item, bases and reinstatement per unit or m\u00b2. Set them once in Edit rates and the budget tracks the drawing live.", g:"routes", gl:"Route quantities"},
   route:{t:"On a scaled photo the length measures itself as you draw; otherwise set it manually here. Pick the kind that matches the real containment; each carries its own spec note and legend entry.", g:"routes", gl:"Routes that measure & price"},
   eqview:{t:"Auto follows the pack-wide default set under Display. Side-on suits photos of walls and elevations. Overhead swaps in a to-scale plan symbol for site plans and aerial photos. The 3D views draw the kit as a solid isometric box in realistic colours: 3D side for elevations and street-level photos, 3D top for aerial shots. 3D tilt leans any view back so it sits naturally on an angled photo; 0° is flat off."},
   pad:{t:"Pouring the base: 600 × 600 × 400 mm C20 concrete (450 × 450 is often accepted for a single post), level and flush with the finished surface. Sweep the duct up through the centre and cut it flush, let the concrete cure fully, and photograph the bare base before any surfacing covers it.", g:"base", gl:"Bases & ducting guide"},
@@ -2563,40 +2563,40 @@ const HINTS={
   bay:{t:"Standard bay 2.4 × 4.8 m. Accessible bays (PAS 1899) add a hatched access zone alongside. Keep the charger reachable from it, and use wheel stops where a car could strike the unit.", g:"bays", gl:"Bay marking guide"},
   datacable:{t:"Screened, external-grade data cable for wired load management and CT limiters. Segregate it from power (its own duct or trunking compartment) but follow the same route between the controller / board, meter CT and chargers. Cloud DLM needs none of this - just reliable internet at every unit. Cable spec and topology are brand-specific - pull them from the manufacturer's installation guide.", g:"data", gl:"Data cabling guide"},
   array:{t:"Dynamic load management (DLM) balances a group of chargers inside one supply limit - typically any mix of 7, 11 and 22 kW AC units from one brand's range. Wired: a load management board + screened data cable to each unit. Cloud: balanced over the internet, no board or data cabling. Typical behaviour: ~6 A floor per charger, queueing below it - exact features vary by brand and model. Tag each charger with its group letter so ways and the load check count correctly.", g:"array", gl:"DLM sizing guide"},
-  limiter:{t:"Clamp the CT around the incoming line conductor, usually at the meter tails. It watches whole-property load and throttles charging before the main fuse is stressed, typically never below a ~6 A minimum. Availability and behaviour vary by charger brand and model - confirm the unit supports one.", g:"limiter", gl:"Load limiter guide"},
+  limiter:{t:"Clamp the CT around the incoming line conductor, usually at the meter tails. It measures property demand so compatible equipment can reduce or pause charging at the configured limit. Behaviour depends on the charger, vehicle and settings; confirm the manufacturer's requirements.", g:"limiter", gl:"Load limiter guide"},
   earthrod:{t:"TT electrode: reading under 200 Ω (lower is better), rod within ~5 m, a proper rod clamp in an inspection pit (no tape clamps). Keep chargers 2.5 m clear of street furniture on a different earthing system.", g:"openpen", gl:"Open-PEN & earth rods"},
   fuse:{t:"The cut-out fuse caps everything: charger load (32 A per socket, no diversity) plus existing demand must fit inside it. Confirm maximum demand from half-hourly data or a logger before committing to charger numbers.", g:"md", gl:"Assess maximum demand"},
   dno:{t:"Every chargepoint is notified to the DNO. With headroom you can connect then notify within 28 days; without it, apply first via ENA Connect Direct and allow 10+ working days, longer if reinforcement is needed.", g:"dno", gl:"DNO notification guide"},
   photos:{t:"Photograph everything before it's covered: supply head with ratings legible, board protection, cable runs and glands, coiled spares, and every bare base before surfacing. Attach the record here so it travels with the pack.", g:"cert", gl:"Certification & photo record"},
-  scale:{t:"Set the scale on each photo (Set scale tool: mark a known distance, like a 4.8 m bay) and everything measures itself: run lengths, areas, true-size units and bases.", g:"scale", gl:"Set the scale guide"},
+  scale:{t:"Use Set scale to mark a measured distance on each photo or drawing. Route lengths, areas and equipment sizes use this scale, so check it before taking quantities from the plan.", g:"scale", gl:"Set the scale guide"},
   overlay:{t:"Lay an existing services / utilities drawing (PNG or JPG) semi-transparently over this plan to line up ducts, mains and drainage before you commit routes. For a PDF drawing, import the page as a plan first or save it as an image.", g:null},
-  walk:{t:"The photo set a complete survey pack needs: work through it on site so nothing waits on a second visit. <b>Start site walk</b> captures the shots in order, camera-first. Or file them one at a time: <b>Add</b> opens the camera and names the photo for you, <b>Use current</b> files the photo open on the canvas. Filed rows tap through to their photo.", g:null},
+  walk:{t:"Use this checklist to record survey photos on site. <b>Start site walk</b> captures the shots in order, camera-first. Or file them one at a time: <b>Add</b> opens the camera and names the photo for you, <b>Use current</b> files the photo open on the canvas. Filed rows tap through to their photo.", g:null},
   /* compliance & progress items */
   c_dno:{t:"Submit via ENA Connect Direct (one portal covers every DNO) and keep the reference with the job. Looped supplies get referred, and export-capable / V2G units need a G99 application approved before energising.", g:"dno", gl:"DNO notification guide"},
   c_md:{t:"Ask the supplier for half-hourly data or clamp a logger on for a week; the busiest half-hour sets the real headroom. The Supply load check card does the charger arithmetic once placements are in.", g:"md", gl:"Assess maximum demand"},
-  c_access:{t:"Check bay and hatched transfer-zone sizes, level ground, a clear approach route and controls reachable from a wheelchair (roughly 0.75-1.2 m). Retrofitting a bay layout is expensive, so plan it now.", g:"bays", gl:"Bay marking & PAS 1899"},
-  c_signage:{t:"An EV-only sign per bay (plus operator / tariff info where the public charges) and an agreed enforcement route. Signage without enforcement means blocked bays within weeks.", g:"signage", gl:"Signage & lighting guide"},
+  c_access:{t:"Check bay and hatched transfer-zone sizes, level ground, a clear approach route and controls reachable from a wheelchair (roughly 0.75-1.2 m). Record the proposed bay layout before construction.", g:"bays", gl:"Bay marking & PAS 1899"},
+  c_signage:{t:"An EV-only sign per bay (plus operator / tariff info where the public charges) and an agreed enforcement route. Agree who will manage bay access and enforcement.", g:"signage", gl:"Signage & lighting guide"},
   c_lighting:{t:"Walk the site after dark: even light at each charger and along the approach, no deep shadow between car and socket, no glare. Accessible bays are expected to be well lit.", g:"signage", gl:"Signage & lighting guide"},
   c_rcd:{t:"One Type A 30 mA RCBO per charger radial. Most units' built-in RDC-DD covers the 6 mA DC rule (verify on the data sheet); Type B is needed where the charger lacks it. Type AC is never acceptable on EV circuits.", g:"rcd", gl:"Type A vs Type B RCDs"},
   c_cable:{t:"Confirm the spec against load and volt drop, label both ends, coil \u22652 m spare at each position, and check the charge scheme's rules before relying on the armour as the CPC.", g:"cable", gl:"Cable selection & sizing"},
-  c_civils:{t:"Walk the civils before install day: bases cured, flat and flush, duct swept up through the centre, draw cords and warning tape in. Photograph everything before surfacing; it's your only proof.", g:"base", gl:"Bases & ducting guide"},
+  c_civils:{t:"Walk the civils before install day: bases cured, flat and flush, duct swept up through the centre, draw cords and warning tape in. Photograph the work before surfacing and retain the inspection record.", g:"base", gl:"Bases & ducting guide"},
   c_comms:{t:"Test at each charger position, not the site office: 4G bars, Wi-Fi reach or a tested data outlet - against the interfaces the chosen unit actually has (not every model offers all three). A unit that can't get online can't be commissioned or updated.", g:"comms", gl:"Connectivity guide"},
   c_evidence:{t:"Shoot as you go: supply head with ratings legible, board protection, runs and glands, coiled spares and bare bases. File everything against the job before backfill or surfacing hides it.", g:"cert", gl:"Photo record & certification"},
   c_afdd:{t:"Decide whether these EV final circuits need arc fault protection for this premises type and write it down (EIC / design record). 'Assessed, not required' is a valid outcome if justified.", g:"afdd", gl:"AFDD decisions guide"},
   c_pcpr:{t:"Applies from the day a public charger goes live: contactless on \u22658 kW units, p/kWh price displayed, free 24/7 helpline and OCPI open data. Rapids also carry the 99% reliability duty.", g:"pcpr", gl:"Public charging rules"},
   c_cdm:{t:"A proportionate construction phase plan is required before construction starts on every project. Where more than one contractor is involved, the commercial client must appoint the principal designer and principal contractor in writing. Use CDM project controls to record appointments, design risks and the controlled document set.", g:"cdm", gl:"CDM & RAMS guide"},
-  c_welfare:{t:"Sort welfare before day one, not on it: a welfare unit / site cabin for anything beyond a day or two, or written agreement to use the client's toilets, washing and rest facilities. Place the site cabin, storage container, WC and skip with the Site & surroundings tools so their positions (and any bays or access they take out) are agreed up front.", g:"cdm", gl:"CDM & RAMS guide"},
+  c_welfare:{t:"Arrange welfare before work starts: a welfare unit / site cabin for anything beyond a day or two, or written agreement to use the client's toilets, washing and rest facilities. Place the site cabin, storage container, WC and skip with the Site & surroundings tools so their positions (and any bays or access they take out) are agreed up front.", g:"cdm", gl:"CDM & RAMS guide"},
   c_services:{t:"Free plant enquiries via LSBUD cover most utilities; the DNO and water company may need asking directly. Scan with CAT & Genny before and during the dig, mark the ground, and hand-dig trial holes within 500 mm of anything marked. Keep the permits with the RAMS.", g:"cdm", gl:"CDM & RAMS guide"},
-  c_public:{t:"Fence the work area before breaking ground and never leave an open trench unfenced, even for a tea break. Use the Public protection tools to draw Heras, cone lines, exclusion zones, protected walkways and the safety signboard so they are agreed on the drawing.", g:"cdm", gl:"CDM & RAMS guide"},
+  c_public:{t:"Fence the work area before breaking ground and never leave an open trench unfenced, while unattended. Use the Public protection tools to draw Heras, cone lines, exclusion zones, protected walkways and the safety signboard so they are agreed on the drawing.", g:"cdm", gl:"CDM & RAMS guide"},
   c_f10:{t:"Assess both statutory tests: longer than 30 working days with more than 20 workers working simultaneously at any point, or more than 500 person-days. For a commercial client, the client must notify HSE. A notifiable assessment is not a completed submission until its date and HSE reference are recorded.", g:"cdm", gl:"CDM & RAMS guide"},
   c_asbestos:{t:"Anything built before 2000 can contain it: Artex coatings, soffits, garage roofs, flue boards, old switchrooms. Ask for the asbestos register before drilling and mark no-drill zones with the 'Asbestos risk' callout stamp. If suspect material turns up, stop and get it tested.", g:"cdm", gl:"CDM & RAMS guide"},
   c_emergency:{t:"Name the first aider in the induction, keep the kit and an extinguisher at the work area (not locked in the van), and agree the muster point. Pin the First aid and Fire point markers from Site & surroundings so everyone can find them on the plan.", g:"cdm", gl:"CDM & RAMS guide"},
-  c_rams:{t:"Write the RAMS for this site rather than reusing a generic template: name the address, the tasks and the real hazards. Have them accepted before work starts, and attach a copy to the project pack.", g:"cdm", gl:"CDM & RAMS guide"},
-  c_partp:{t:"Domestic EV circuits are notifiable: self-certify through your competent person scheme or notify building control before starting. The certificate goes to the homeowner automatically.", g:"cert", gl:"Certification guide"},
-  c_smart:{t:"Home and workplace units must ship smart: default off-peak charging schedule, randomised delay and tamper protection. Keep the unit's compliance statement with the job and leave the schedule sensible for the customer.", g:"regs", gl:"The 2026 rulebook"},
+  c_rams:{t:"Record the site address, tasks, hazards and controls in the RAMS. Have them accepted before work starts, and attach a copy to the project pack.", g:"cdm", gl:"CDM & RAMS guide"},
+  c_partp:{t:"Domestic EV circuits are notifiable: self-certify through your competent person scheme or notify building control before starting. Confirm that the homeowner receives the certificate.", g:"cert", gl:"Certification guide"},
+  c_smart:{t:"Home and workplace units must ship smart: default off-peak charging schedule, randomised delay and tamper protection. Keep the unit's compliance statement with the job and leave the schedule sensible for the customer.", g:"regs", gl:"Installation regulations"},
   c_pen:{t:"On PME, either the charger's built-in open-PEN device covers it (most modern units; check the declaration) or you fit a TT island with an earth electrode. Record which route this job takes.", g:"openpen", gl:"Open-PEN options"},
   c_eic:{t:"Issue the EIC with schedules of inspection and test results, stating the BS 7671 edition used. Draft it as you test rather than chasing results after handover.", g:"cert", gl:"Certification guide"},
-  c_parts:{t:"New homes and buildings with parking (and some major renovations) need chargepoints from the outset: Mode 3, \u22657 kW, universal socket, dedicated circuit. Check whether this job triggers it.", g:"regs", gl:"The 2026 rulebook"}
+  c_parts:{t:"New homes and buildings with parking (and some major renovations) need chargepoints from the outset: Mode 3, \u22657 kW, universal socket, dedicated circuit. Check whether this job triggers it.", g:"regs", gl:"Installation regulations"}
 };
 function hintBtn(k){ return HINTS[k]?`<button type="button" class="hintq${openHints.has(k)?' on':''}" data-hint="${k}" title="More info">?</button>`:""; }
 function hintBox(k){ const h=HINTS[k]; if(!h||!openHints.has(k)) return ""; return `<div class="hintbox">${h.t}${h.g?` <a href="Guide Library.dc.html#g=${h.g}" target="_blank" rel="noopener">${h.gl||'Open the guide'} \u2197</a>`:''}</div>`; }
@@ -2713,7 +2713,7 @@ function syncPdfGate(){ const b=document.getElementById("btnPdf"); if(!b) return
 /* what we can ask the customer for - drives the sidebar checklist, customer PDF page + email copy */
 const INFO_NEEDS_DOMESTIC = [
   {k:"video",     t:"A walk-through video of the cable route", d:"From the electricity meter to the proposed charger spot, ending where the car parks."},
-  {k:"metercab",  t:"A photo of the meter cabinet / meter position", d:"Closed is fine; we just need to see where it lives."},
+  {k:"metercab",  t:"A photo of the meter cabinet / meter position", d:"A closed cover is sufficient to show its location."},
   {k:"meteropen", t:"A photo with the meter cabinet open", d:"Showing the meter and the main incoming supply."},
   {k:"fuseboard", t:"A photo of the fuse board / consumer unit"},
   {k:"routewide", t:"A wider photo of the route", d:"From the meter to the proposed charger location."},
@@ -5307,7 +5307,7 @@ function fpeRenderPal(){
       <div class="pc">Earthing</div>
       <button data-fperod="1">Earth rod position<span class="sz">TT</span></button>
       <div class="pc">Shown on plan</div>
-      <div style="font-size:11px;color:var(--dim);line-height:1.5;padding:2px 3px">Shell walls, door swing, ply backboard, gland zone and the concrete plinth are drawn automatically from the pillar settings. The earth rod can sit outside the plinth.</div>`;
+      <div style="font-size:11px;color:var(--dim);line-height:1.5;padding:2px 3px">The pillar settings control the shell, door swing, backboard, gland zone and concrete plinth. The earth rod can sit outside the plinth.</div>`;
     pal.querySelectorAll("[data-fpeduct]").forEach(b=>b.onclick=()=>{
       const it=fpeItem(); if(!it) return; const dia=parseInt(b.dataset.fpeduct,10);
       const n=it.fpDucts.length;
@@ -7633,7 +7633,7 @@ function buildRail(){
     if(cs && !cs.querySelector("#pal3dBtn")){
       const b=document.createElement("button"); b.type="button"; b.id="pal3dBtn"; b.className="pal3d";
       b.title="Open the 3D showroom: every charger and piece of site kit as an interactive 3D model";
-      b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 4.5v10l-8 4.5-8-4.5V7z"/><path d="M4 7l8 4.5L20 7"/><path d="M12 11.5v10"/></svg><span><b>Charger showroom</b><em>True 3D · spin every unit</em></span>';
+      b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 4.5v10l-8 4.5-8-4.5V7z"/><path d="M4 7l8 4.5L20 7"/><path d="M12 11.5v10"/></svg><span><b>Charger showroom</b><em>Rotate equipment models</em></span>';
       b.onclick=()=>{ if(window.openCharger3D) window.openCharger3D(); };
       cs.appendChild(b);
     } }
@@ -8958,13 +8958,13 @@ function packPanel(){
   </div>`; })()}`;
   const cardCables=`${(()=>{ const rows=cableCheckData(); if(!rows.length) return ''; const n=s=>rows.filter(r=>r.st===s).length; const fail=n("fail"), warn=n("warn"), nolen=n("nolen"), tbc=n("tbc"), ok=n("ok"); const col=fail?"var(--warn)":(warn||nolen||tbc)?"#CE9E2E":"#4BA069"; const bits=[]; if(ok)bits.push(ok+" pass"); if(warn)bits.push(warn+" near limit"); if(fail)bits.push(fail+" failing"); if(nolen)bits.push(nolen+" incomplete"); if(tbc)bits.push(tbc+" type TBC"); return `<div class="card tally">
     <h3><span class="dot" style="background:${col}"></span>Cable calculations · ${rows.length} run${rows.length===1?'':'s'}${hintBtn('vd')}</h3>${hintBox('vd')}
-    <div class="sub" style="color:${fail?'var(--warn)':'var(--dim)'};font-size:11.5px;line-height:1.5;font-weight:${fail?'700':'500'}">${bits.join(' · ')}${fail?'. Open the calculator and clear the failing checks before ordering cable.':(warn?'. Worth a look at the near-limit runs.':(ok&&!nolen&&!tbc?'. Every sized run passes capacity, volt drop, Zs and CPC checks.':''))}</div>
+    <div class="sub" style="color:${fail?'var(--warn)':'var(--dim)'};font-size:11.5px;line-height:1.5;font-weight:${fail?'700':'500'}">${bits.join(' · ')}${fail?'. Open the calculator and clear the failing checks before ordering cable.':(warn?'. Review the runs close to their calculated limits.':(ok&&!nolen&&!tbc?'. Sized runs pass the recorded capacity, voltage drop, Zs and CPC calculations.':''))}</div>
     <button class="pbtn" id="openCableCheck" style="margin-top:8px;width:100%">Open cable calculations</button>
   </div>`; })()}`;
   const cardReadiness=`${pack.photos.length?(()=>{ const r=readiness(); const col=r.pct>=100?"#4BA069":(r.pct>=60?"#CE9E2E":"#8A98A8"); return `<div class="card tally">
     <h3><span class="dot" style="background:${col}"></span>Site readiness · ${r.pct}%${hintBtn('ready')}</h3>${hintBox('ready')}
     <div class="bar"><div class="fill" style="width:${Math.max(4,r.pct)}%;background:${col}"></div></div>
-    ${r.pct<100?`<div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">${r.checks.filter(cc=>!cc[1]).slice(0,5).map(cc=>`<div style="font-size:11.5px;color:var(--dim)">○ ${cc[0]}</div>`).join("")}</div>`:`<div class="sub" style="color:var(--ok);font-size:11.5px;font-weight:650;margin-top:6px">Pack complete and ready to export.</div>`}
+    ${r.pct<100?`<div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">${r.checks.filter(cc=>!cc[1]).slice(0,5).map(cc=>`<div style="font-size:11.5px;color:var(--dim)">○ ${cc[0]}</div>`).join("")}</div>`:`<div class="sub" style="color:var(--ok);font-size:11.5px;font-weight:650;margin-top:6px">All listed fields are complete. Review the details before issue.</div>`}
   </div>`; })():''}`;
   const cardCompliance=`
   <div class="card">
@@ -9178,7 +9178,7 @@ function packPanel(){
     <h3><span class="dot"></span>Programme &amp; applications</h3>
     <button class="addbtn" data-ovact="fn:programme" style="margin-top:0" title="Phase-by-phase timeline suggested from the marked-up quantities">Job programme &middot; phase timeline</button>
     <button class="addbtn" data-ovact="fn:dno" style="margin-top:6px" title="Compile the connection-application data your DNO asks for">DNO application data</button>
-    <button class="addbtn" id="openBom" style="margin-top:6px" title="Copy, CSV or email the materials for this plan">Materials list &middot; wholesaler-ready</button>
+    <button class="addbtn" id="openBom" style="margin-top:6px" title="Copy, CSV or email the materials for this plan">Materials list</button>
     <div class="sub" style="color:var(--faint);font-size:11px;margin-top:8px">The programme, DNO data and materials list are compiled live from this pack's markup.</div>
   </div>`;
   const emptyCard=(t,d,act,lbl)=>`<div class="card"><h3><span class="dot" style="background:#8A98A8"></span>${t}</h3><div style="font-size:12px;color:var(--dim);line-height:1.55;margin-bottom:${act?'10px':'0'}">${d}</div>${act?`<button class="pbtn go" data-ovact="${act}" style="width:100%">${lbl}</button>`:''}</div>`;
@@ -9364,7 +9364,7 @@ function evalProject(){
     else if(stg("plan")!=="done"&&stg("plan")!=="block") next=d("plan","Work through the pre-start plan","Compliance items, the job programme and the DNO application data live here.","stage:plan","Open Plan");
     else if(stg("install")==="prog"||stg("install")==="ready") next=d("install","Close out the install","Work the punch list and snags down to zero, then sign off.","stage:install","Open Install");
     else if(stg("handover")!=="done"&&st.handover&&st.handover.count) next=d("handover","Complete commissioning and handover","Record each charger's serial and test results, then issue the handover certificate.","stage:handover","Open Handover");
-    else next=d("handover","Export the project pack","The stages are in good shape. Produce the engineer pack, client pack or summary from Export.","fn:exportpack","Engineer PDF");
+    else next=d("handover","Export the project pack","Review the recorded details, then choose an engineer pack, client plan or project summary from Export.","fn:exportpack","Engineer PDF");
   }
   __evCache={stages:st,issues,next}; __evDirty=false;
   return __evCache;
@@ -9595,7 +9595,7 @@ function propsPanel(){
       ${(()=>{ const m=chargerModel(it); return m?`<div class="sub" style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--dim);line-height:1.45">${m.mm[0]} × ${m.mm[1]} × ${m.mm[2]} mm (W×H×D) · ${m.teth?'tethered':'untethered'} · ${m.pen?'built-in open-PEN <b style="color:var(--ok)">✓</b>':'<b style="color:#9A7A1A">check PEN protection</b>'}<br>${m.note} · <em>typical spec; verify the current datasheet</em></div>`:'';})()}`:''}
       ${pack.mode!=="domestic"?`<label>Provision</label>
       <div class="seg"><button data-uprov="" class="${it.provision!=='passive'?'on':''}">Install now</button><button data-uprov="passive" class="${it.provision==='passive'?'on':''}">Passive · future</button></div>
-      ${it.provision==='passive'?`<div class="sub" style="color:#9A7A1A;font-size:11px;font-weight:600">Duct, containment &amp; bay laid now; charger fitted later. Excluded from the load check, charger counts and materials; counted as passive provision instead.</div>`:`<div class="sub" style="color:var(--faint);font-size:11px">Passive = lay the duct and position now, fit the charger in a later phase (the Part S-friendly way to future-proof).</div>`}`:''}
+      ${it.provision==='passive'?`<div class="sub" style="color:#9A7A1A;font-size:11px;font-weight:600">Future charger position. Excluded from the current load check, charger count and materials list; counted as passive provision.</div>`:`<div class="sub" style="color:var(--faint);font-size:11px">Passive marks a future charger position. Confirm which ducts, cables and bay works are included in the current phase.</div>`}`:''}
       ${true?`<label>Colour</label>
       <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
         <button type="button" data-uscheme="" title="Pack default" style="height:24px;padding:0 10px;border-radius:12px;font-size:10.5px;font-weight:650;background:${!it.scheme?'var(--accent)':'var(--panel)'};color:${!it.scheme?'var(--accentInk)':'var(--dim)'};border:1px solid var(--line2);cursor:pointer">Auto</button>
@@ -9845,7 +9845,7 @@ function propsPanel(){
       <div class="seg"><button data-imcbcurve="B" class="${it.curve==='B'?'on':''}">B curve</button><button data-imcbcurve="C" class="${(it.curve||'C')==='C'?'on':''}">C curve</button></div>
       <label>Rating</label><input id="imcbrating" type="number" min="6" max="63" step="1" value="${it.rating??40}" placeholder="40">
       <div class="seg"><button data-imcbr="20" class="${it.rating===20?'on':''}">20A</button><button data-imcbr="32" class="${it.rating===32?'on':''}">32A</button><button data-imcbr="40" class="${(it.rating??40)===40?'on':''}">40A</button><button data-imcbr="50" class="${it.rating===50?'on':''}">50A</button></div>
-      <div class="sub" style="color:var(--faint);font-size:11px">Drop where the new circuit leaves the existing fuse board. Brand is picked in Job details; the MCB is posted directly to the customer. Check no upstream RCD interferes.</div>
+      <div class="sub" style="color:var(--faint);font-size:11px">Place at the connection to the existing fuse board. Set the device brand in Project details and check compatibility with the board and upstream protection.</div>
       <label>Brand (optional)</label><input id="mbbrand" list="devBrandList" value="${esc(it.brand||'')}" placeholder="e.g. Hager">
       <datalist id="devBrandList">${DEVICE_BRANDS.map(b=>`<option value="${b}"></option>`).join("")}</datalist>
       <label>Label</label><input id="mblabel" value="${esc(it.label||'MCB')}" placeholder="MCB">
@@ -9934,7 +9934,7 @@ function propsPanel(){
       <input type="range" id="uYaw3d" min="-180" max="180" step="5" value="${it.yaw3d||0}" style="width:100%">
       <label>3D tilt <em id="uPitchVal" style="font-style:normal;color:var(--faint)">${(it.pitch3d||0)+"\u00b0"}</em></label>
       <input type="range" id="uPitch3d" min="-180" max="180" step="5" value="${it.pitch3d||0}" style="width:100%">
-      <div class="sub" style="color:var(--faint);font-size:11px">True-3D shell from the same engine as the chargers · drag the ↻ handle under the pillar or set angles here. Open · inside switches back to the flat cutaway.</div>`:''}
+      <div class="sub" style="color:var(--faint);font-size:11px">Drag the ↻ handle under the pillar or enter angles here. Choose Open · inside to show the internal layout.</div>`:''}
       <label>Concrete plinth${hintBtn('fpplinth')}</label>${hintBox('fpplinth')}
       <div class="seg"><button data-fppad="1" class="${it.pad!==false?'on':''}">${fpad.w} × ${fpad.d} pad</button><button data-fppad="0" class="${it.pad===false?'on':''}">No pad</button></div>
       <div class="sub" style="color:var(--faint);font-size:11px">Shell footprint + 150 mm margin each side. Hide when standing on an existing slab.</div>
@@ -10022,7 +10022,7 @@ function propsPanel(){
       <input type="range" id="uYaw3d" min="-180" max="180" step="5" value="${it.yaw3d||0}" style="width:100%">
       <label>3D tilt <em id="uPitchVal" style="font-style:normal;color:var(--faint)">${(it.pitch3d||0)+"\u00b0"}</em></label>
       <input type="range" id="uPitch3d" min="-180" max="180" step="5" value="${it.pitch3d||0}" style="width:100%">
-      <div class="sub" style="color:var(--faint);font-size:11px">True-3D artwork from the same engine as the chargers. Drag the \u21bb handle under the item, or set exact angles here.</div>`:''}
+      <div class="sub" style="color:var(--faint);font-size:11px">Drag the \u21bb handle under the item or enter angles here.</div>`:''}
       <button type="button" data-skit3d="${it.kind}" style="display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line2);background:#fff;font-weight:600;font-size:12px;color:var(--ink)"><svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 4.5v10l-8 4.5-8-4.5V7z"/><path d="M4 7l8 4.5L20 7"/><path d="M12 11.5v10"/></svg>View in 3D showroom</button>`:''}
       ${it.kind==="substation"?`<label>Shell colour</label>
       <div class="seg"><button data-subcol="grey" class="${it.subCol!=='green'?'on':''}">GRP grey</button><button data-subcol="green" class="${it.subCol==='green'?'on':''}">GRP green</button></div>
@@ -11462,44 +11462,41 @@ async function buildHandoverPdf(){
 }
 /* ---------- plain-English design narrative (customer PDF) ---------- */
 function designNarrative(){
-  const dom=pack.mode==="domestic";
   const ph=pack.photos.filter(p=>p.includeInPdf!==false);
   const units=ph.flatMap(p=>p.items.filter(i=>i.type==="unit"));
   const act=units.filter(u=>u.provision!=="passive"), pas=units.length-act.length;
   const out=[];
   if(act.length){
     const names=[...new Set(act.map(u=>unitDisplayName(u)))];
-    out.push([dom?"Your charger":"Charge points",
-      dom?("We're fitting "+(act.length===1?"a ":act.length+" \u00d7 ")+names.join(" and ")+(act.length===1?"":" chargers")+", exactly where it's marked on your photos. The position balances a tidy cable route, where the car sits, and the lead reaching the charge port comfortably.")
-         :(act.length+" charge point"+(act.length>1?"s":"")+" ("+names.join(", ")+"), positioned as marked on the site plans and set out for bay access, lead reach and containment routes.")]);
+    out.push(["Proposed charge points", act.length+" charge point"+(act.length>1?"s":"")+" ("+names.join(", ")+"). Positions are shown on the plans. Confirm access, cable reach and the final equipment specification before installation."]);
   }
   const L={swa:0,hituff:0,run:0,duct:0,trench:0,contain:0};
   ph.forEach(p=>p.items.forEach(i=>{ if(i.type!=="route") return; const v=routeLen(i,p)||0; if(L[i.kind]!=null) L[i.kind]+=v; if(["tray","mt2","basket"].includes(i.kind)) L.contain+=v; }));
   const cab=Math.round(L.swa+L.hituff+L.run);
-  if(cab||L.duct||L.trench){
+  if(cab||L.duct||L.trench||L.contain){
     const bits=[];
-    if(cab) bits.push("about "+cab+" m of cable");
-    if(L.contain) bits.push(Math.round(L.contain)+" m in neat containment");
-    if(L.duct) bits.push(Math.round(L.duct)+" m underground in protective ducting");
-    out.push([dom?"The cable route":"Cabling & containment",
-      dom?("Power runs from your fuse board along the route drawn on the photos: "+bits.join(", ")+". We keep the run clipped and tidy or hidden where we can, and make good anywhere we drill.")
-         :("Distribution follows the marked routes: "+bits.join(", ")+". Buried sections run in duct at 450 mm (600 mm under vehicle areas) with warning tape, then full reinstatement.")]);
+    if(cab) bits.push(cab+" m of cable");
+    if(L.contain) bits.push(Math.round(L.contain)+" m of containment");
+    if(L.duct) bits.push(Math.round(L.duct)+" m of ducting");
+    if(L.trench) bits.push(Math.round(L.trench)+" m of trenching");
+    out.push(["Marked routes", "Approximate lengths from the plans: "+bits.join(", ")+". Check dimensions on site and agree routing, burial depths and surface reinstatement as part of the design."]);
   }
   const lc=loadCheck();
   if(lc.units){
-    const okish=lc.cap&&lc.tot<=lc.cap;
-    out.push([dom?"Your electricity supply":"Supply & load",
-      dom?("Your home's supply"+(pack.mainFuse?" ("+pack.mainFuse+" main fuse)":"")+(okish?" has the headroom for the charger.":" is tight, so the design actively manages the load.")+" "+((hasDlm()||limiterCount())?"A smart load control watches what the house is drawing and briefly trims the car's charging at peak moments; you won't notice, and the main fuse is never overloaded.":"The charger runs at full rate: roughly 25\u201330 miles of range per hour plugged in."))
-         :("Connected charger demand is "+(lc.a3?lc.a3+" A per phase":lc.a1+" A")+(lc.cap?" against a "+lc.cap+" A supply":"")+". "+(hasDlm()?"Load management keeps the group inside its set limit, sharing capacity between cars automatically as they come and go.":"Each unit runs on its own dedicated, protected circuit."))]);
+    const parts=["Calculated charger demand: "+(lc.a3?lc.a3+" A per phase":lc.a1+" A")+"."];
+    if(pack.mainFuse) parts.push("Recorded main fuse: "+pack.mainFuse+".");
+    parts.push(lc.cap?"Recorded supply capacity: "+lc.cap+" A. Confirm the existing demand and connection requirements before adding this load.":"Supply capacity has not been recorded. Confirm it before assessing available capacity.");
+    if(hasDlm()||limiterCount()) parts.push("Load management is shown on the plan. Confirm the equipment, settings and operation during design and commissioning.");
+    out.push(["Supply record",parts.join(" ")]);
   }
   if(pack.earthing||allUnitsPenDeclared()){
-    out.push([dom?"Built-in safety":"Earthing & protection",
-      dom?("The charger gets its own dedicated circuit with the right safety devices"+(allUnitsPenDeclared()?", and the unit itself carries built-in protection against rare supply faults, with no unsightly earth rod needed":"")+". Everything is tested and certified before we leave.")
-         :("Each charge point is on a dedicated radial with Type A 30 mA protection and 6 mA DC detection"+(pack.earthing?", on a "+pack.earthing+" arrangement":"")+". The full decision record sits in the engineer pack.")]);
+    const parts=[];
+    if(pack.earthing) parts.push("Recorded earthing arrangement: "+pack.earthing+".");
+    if(allUnitsPenDeclared()) parts.push("Built-in PEN-fault protection is recorded for the selected chargers. Confirm this against the model's installation instructions.");
+    parts.push("See the engineer pack for the recorded protection decisions and checks.");
+    out.push(["Earthing and protection",parts.join(" ")]);
   }
-  if(pas) out.push([dom?"Ready for the future":"Passive provision",
-    dom?("We're also laying ducting to "+pas+" future position"+(pas>1?"s":"")+", so adding another charger later is quick and tidy: no digging twice.")
-       :(pas+" position"+(pas>1?"s":"")+" receive duct, containment and bay provision now with chargers to follow; future demand (and Part S provision) covered without re-excavating.")]);
+  if(pas) out.push(["Future charger positions",pas+" position"+(pas>1?"s are":" is")+" marked for future use. Chargers at these positions are not included in this phase. Confirm any ducting, cable and bay provision in the agreed scope."]);
   return out;
 }
 /* ---------- customer decision pack - self-contained shareable HTML with options & tap-to-approve ---------- */
@@ -11535,7 +11532,7 @@ function buildDecisionPack(){
   const sharedHtml=shared.length?((opts.length&&shared.length?'<div style="font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:#8C97A0;font-weight:800;margin:4px 2px 10px">Survey photos \u00b7 all options</div>':'')+shared.map(fig).join("")):'';
   const budgetHtml=opts.length?opts.map((o,i)=>'<div data-og="'+o+'"'+(i?' style="display:none"':'')+'>'+budRows(o)+'</div>').join(""):budRows("all");
   const canWa=!!wa, canEm=!!replyTo;
-  const decideHtml='<div class="decide" id="decide"><h2>Your decision</h2><p>'+(pack.mode==="domestic"?"Happy with it? Approve below and we'll get you booked in. Want something moved? Want something moved? Send comments; nothing is final until you say so.":"Approve to release the design for programme and quotation, or return comments below.")+'</p>'
+  const decideHtml='<div class="decide" id="decide"><h2>Your decision</h2><p>'+(pack.mode==="domestic"?"Review the proposed layout and send your approval or comments. The buttons open a message for you to check and send.":"Review the proposed layout and send your approval or comments. The buttons open a message for you to check and send.")+'</p>'
    +(opts.length?'<label>Which option?</label><div class="optpick" id="optPick">'+opts.map((o,i)=>'<button data-pick="'+o+'"'+(i?'':' class="on"')+'>'+optName(o)+'</button>').join("")+'</div>':'')
    +'<label>Your name</label><input id="dName" placeholder="So we know who approved it" autocomplete="name">'
    +'<label>Comments \u00b7 optional</label><textarea id="dCmt" rows="3" placeholder="Positions, access, timing\u2026"></textarea>'
@@ -11798,131 +11795,110 @@ const PM_KEY="cmPmName.v1", TPL_KEY="cmEmailTpl.v1";
 function pmName(){ try{ return (localStorage.getItem(PM_KEY)||"").trim(); }catch(_){ return ""; } }
 function setPmName(v){ try{ localStorage.setItem(PM_KEY, v); }catch(_){ } }
 const DEFAULT_TPLS={
-standard:`Subject: Your EV charging project is ready to schedule
+standard:`Subject: EV installation plan for review
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager. Thank you for the site information and photos. They've really helped.
+Attached is the proposed EV installation plan. The project is recorded as a standard installation. Please review the charger positions, cable routes and access arrangements with your installer before agreeing the work and date.
 
-I've completed the review and the scope is confirmed. We'll connect at {connection} and run the cabling along the containment routes marked on the site plans to the charging positions.
+{note}
 
 {steps}
 
-If anything comes up in the meantime, just let me know.
-
-Kind regards,
+Regards,
 {pmName}`,
-moreinfo:`Subject: Your EV charging project needs a little more information
+moreinfo:`Subject: Information needed for your EV installation plan
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager. Thank you for the site information so far.
-
-Before we can finalise the design and programme, there are a few things we need:
+The installation plan needs further information before the design can be confirmed. Please send the items listed below.
 
 {checklist}
 
 {note}
 
-Once received, I'll complete the review and confirm the install programme.
+{steps}
 
-Kind regards,
+Regards,
 {pmName}`,
-enabling:`Subject: Works needed before your EV charging install
+enabling:`Subject: Preparation work for your EV installation
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager. Thank you for the site survey information.
-
-I've reviewed the survey. We'll fix, wire and commission the charge points, with some works to complete on your side / by your principal contractor beforehand. Routes and positions are marked on the attached plans.
+The attached plan records work needed before the charge points can be installed. Please confirm who will complete each item and the expected completion dates.
 
 {checklist}
 
 {note}
 
-Once the works are programmed, let me know the completion date and we'll book the installation visit to follow.
+{steps}
 
-Kind regards,
+Regards,
 {pmName}`,
-groundworks:`Subject: Your groundworks quote is on its way
+groundworks:`Subject: Groundworks for your EV installation
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager. Thank you for the site information. It's allowed us to review the cable routes in detail.
-
-Based on the proposed charger positions, groundworks are required before installation. The scope is approximately:
-• Trench roughly {ground} m
-• Install ducting with draw rope and warning tape
-• Concrete bases for pedestal units / feeder pillar
-• Reinstate surfaces once complete
+The attached plan identifies groundworks for the proposed cable routes and equipment positions. The contractor will need to confirm the dimensions, buried services, ducting, bases and surface reinstatement before providing a quotation.
 
 {note}
 
-I've submitted this to our groundworks partner for quotation covering materials, labour and travel. I'll send the costs over for review as soon as they arrive. Once approved, we'll programme the groundworks and book the installation to follow.
+{steps}
 
-Kind regards,
+Regards,
 {pmName}`,
-dno:`Subject: DNO application in progress for your EV charging project
+dno:`Subject: DNO review needed for your EV installation
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager for your EV charging project.
-
-From the supply information, the site needs the Distribution Network Operator (DNO) involved before we can energise the new charging load. They will either approve the additional demand or provide a new / upgraded connection.
-
-I've submitted the application via the ENA portal. The reference number is {dnoRef}.
+The project record identifies a need for Distribution Network Operator (DNO) review. Please confirm the application status and any connection conditions with the person responsible for the application.
 
 {note}
 
-As soon as the DNO responds, I'll confirm the impact on programme and we'll book the installation accordingly.
+{steps}
 
-Kind regards,
+Regards,
 {pmName}`,
-permission:`Subject: Consents needed before we book your EV install
+permission:`Subject: Permission needed for your EV installation
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager. Thank you for the information so far.
-
-Part of the installation (charger positions, containment routes or bay marking) sits on land or fabric that needs landlord / freeholder or third-party consent. Written permission needs to be in place before installation can proceed.
+The project record identifies a need for written permission. Please confirm the required consent with the relevant landowner, landlord or authority and provide the documents for review.
 
 {checklist}
 
 {note}
 
-Once the consents are in place, we'll confirm the design and book the installation.
+{steps}
 
-Kind regards,
+Regards,
 {pmName}`,
-nonstandard:`Subject: Your quote for extra installation works
+nonstandard:`Subject: Additional works for your EV installation
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager. Thank you for the survey information.
-
-Your installation needs a few extra items beyond a standard install:
+The plan records additional works for review:
 {extras}
 
 {note}
 
-We'll email your quote with a payment link shortly. There's no obligation to proceed, and once it's accepted we'll book your installation date.
+Please agree the scope, costs and terms with the contractor before booking the work.
 
-What happens next:
 {steps}
 
-Kind regards,
+Regards,
 {pmName}`,
-none:`Subject: Your EV site survey
+none:`Subject: EV site survey and proposed layout
 
 Hi {firstName},
 
-My name is {pmName}, and I'll be your Project Manager. Please find attached a summary of the proposed charging layout for your site.
+Attached is the proposed charging layout for your site. Please review the equipment positions, routes and access arrangements and send any comments to the person who issued this plan.
+
+{note}
 
 {steps}
 
-If you have any questions at all, please let me know.
-
-Kind regards,
+Regards,
 {pmName}`
 };
 function loadTpls(){ let t={}; try{ t=JSON.parse(localStorage.getItem(TPL_KEY)||"{}")||{}; }catch(_){ t={}; } return Object.assign({}, DEFAULT_TPLS, t); }
@@ -11931,24 +11907,21 @@ function selectedNeeds(){ return infoNeedsList().filter(n=>(pack.infoNeeds||[]).
 function connPointName(){ const cps=[]; pack.photos.forEach(p=>p.items.forEach(i=>{ if(i.type==="connpoint") cps.push(i.loc); })); return cps[0]||""; }
 /* per-outcome "what happens next" step lists - used by the customer PDF AND the email copy */
 function nextStepsList(){
-  const cp=connPointName()||"electricity meter";
-  const schedule=["We'll schedule your install","You'll be booked onto the next available installation date."];
-  const accept=["Accept or decline the date","Look out for our booking email. You can accept the date or decline it. If it doesn't suit, we'll offer another date for you to confirm."];
-  const bookOne=["We'll book you in","You'll be scheduled onto the next available installation date, and our booking email lets you accept or decline it. If it doesn't suit, we'll offer another date for you to confirm."];
-  const ready=["Get ready for the day","Please make sure the cable route and connection points are clear and accessible. If the route runs through a garage, clear the areas we need to reach, and keep access to your "+cp.toLowerCase()+" clear."];
-  const day=extra=>["Install day","Your approved installer fixes the chargers, runs the cabling and tests everything. A standard install takes around 2 hours"+(extra?", though extra works can add a little time":"")+"."];
-  const charging=["You're charging","We'll show you how it all works and get you set up on the charging app."];
-  const mcbPost = pack.mcbRequired ? " We'll also post you a small protective device (an MCB). Please keep it boxed with the charger for your engineer." : "";
-  const delivery=["Your charger arrives","We'll send your charger directly to you, usually arriving the day before your install. Keep it boxed and safe for the engineer."+mcbPost];
-  const gwDelivery=["Your deliveries arrive","We'll send the SWA cable directly to you for the groundworks, and your charger will follow separately, usually arriving the day before your install."+mcbPost];
+  const cp=connPointName();
+  const schedule=["Agree the installation date","Confirm the scope, access arrangements and date with the installer once any outstanding work or permissions are resolved."];
+  const ready=["Prepare the work area","Keep the marked routes and equipment positions accessible."+(cp?" Provide access to the "+cp.toLowerCase()+".":" Agree access to the supply connection with the installer.")];
+  const delivery=["Confirm equipment delivery","Agree delivery dates and storage arrangements with the supplier or installer."];
+  const handover=["Installation and handover","Agree the testing and commissioning scope. Request the certificates, equipment instructions and operating details at handover."];
+  const common=[schedule,delivery,ready,handover];
   switch(pack.outcome){
-    case "standard": return [schedule, accept, delivery, ready, day(false), charging];
-    case "moreinfo": return [["Send us what we need","Reply to our email with the photos, video or documents listed in this plan."],["We review","We'll check everything over and confirm your install can go ahead, and flag anything extra if it's needed."], bookOne, delivery, ready, day(false), charging];
-    case "nonstandard": return [["Your quote","We'll email your quote for the extra works, with a payment link. In most cases our fixed fee of £200 applies; there's no obligation to proceed, and you'll receive a full refund if you decide not to go ahead."],["Once you're happy","Make the payment using the link and we'll get you booked in."], bookOne, delivery, ready, day(true), charging];
-    case "groundworks": return [["We get your quote","We've asked our groundworks partner to price the works: materials, labour and travel."],["You review the costs","We'll send them over as soon as they arrive. There's no obligation at this stage."],["Approve and pay","If you're happy to proceed, we'll send you a payment link."],["We book it all in","After payment, we'll book the groundworks directly with our partner, and book your installation to follow."], gwDelivery, ready, day(true), charging];
-    case "dno": return [["We've contacted your network operator","We've submitted this via our ENA portal to your DNO, who will review and advise. They'll either approve the connection or give your home its own dedicated supply."+(pack.dnoRef?" Your reference is "+pack.dnoRef+".":"")],["The DNO responds","This part is in their hands, but we'll chase it and keep you posted."], bookOne, delivery, ready, day(false), charging];
-    case "permission": return [["Get written permission","Collect the written permission described in this plan from the landowner, authority or neighbour."],["Send it to us","Reply to our email with the documents and we'll check everything over."], bookOne, delivery, ready, day(false), charging];
-    default: return [["We review your survey","Our team checks your photos and confirms how your install will run."], bookOne, delivery, ready, day(false), charging];
+    case "standard": return [["Review the proposed scope","Check the charger positions and cable routes against the agreed quotation."],...common];
+    case "moreinfo": return [["Provide the missing information","Send the photos, documents or measurements listed in this plan to the person reviewing the design."],["Confirm the design","Have the additional information reviewed and any changes recorded."],...common];
+    case "enabling": return [["Agree the preparation work","Confirm the contractor responsible for each required item and the completion dates."],["Check the work is complete","Arrange a review of the preparation work before the installation visit."],...common];
+    case "nonstandard": return [["Agree the additional works","Review the recorded extras with the contractor and agree the scope, costs and terms before booking."],...common];
+    case "groundworks": return [["Confirm the groundworks scope","Ask the contractor to check the marked routes, buried services, duct and base specifications, and reinstatement."],["Agree costs and dates","Obtain a quotation and agree the sequence of groundworks and electrical installation."],...common];
+    case "dno": return [["Confirm the DNO application status","Check who is responsible for the application and whether it has been submitted."+(pack.dnoRef?" Recorded reference: "+pack.dnoRef+".":" No application reference is recorded.")],["Review the DNO response","Record any approval conditions or supply works and agree how they affect the design and programme."],...common];
+    case "permission": return [["Obtain written permission","Confirm the consent required from the landowner, landlord or authority for the proposed work."],["Review the permission","Check that it covers the equipment positions and routes, and record any conditions."],...common];
+    default: return [["Review the survey","Confirm the scope, supply information and outstanding design decisions with the installer."],...common];
   }
 }
 function checklistText(){
@@ -11961,7 +11934,7 @@ function fillTemplate(tpl, mode){
   if(pack.extraCable) extras.push(pack.extraCable+" m of extra cabling");
   if(pack.extraTrunk) extras.push(pack.extraTrunk+" m of extra trunking");
   if(pack.extraGround) extras.push(pack.extraGround+" m of groundworks");
-  const steps = mode==="email" ? "Here's what happens next:\n"+nextStepsList().map((s,i)=>(i+1)+". "+s[0]+": "+s[1]).join("\n") : "";
+  const steps = mode==="email" ? "Next steps:\n"+nextStepsList().map((s,i)=>(i+1)+". "+s[0]+": "+s[1]).join("\n") : "";
   const checklist = mode==="email" ? checklistText() : (selectedNeeds().length?"Everything we need is listed under “What we need from you” in this plan.":"");
   const map={
     "{firstName}":first,
@@ -11989,8 +11962,8 @@ function genLetter(){ const t=loadTpls(); return fillTemplate(t[pack.outcome]||t
 /* ---------- review & export modal ---------- */
 let rxBlobUrl=null, rxBuildToken=0, rxDebounce=null, rxKeyHandler=null, rxMode="office", rxEmailDirty=false, rxTplEditing=false;
 const RX_COPY={
-  office:{ title:"Review &amp; export", sub:"Check the engineer pack, tweak what goes in, then download.", sumLabel:"Cover summary", sumOpt:"optional", sumPh:"A short intro line for the cover page, e.g. site context, access notes, who to contact on arrival…", export:"Download PDF" },
-  customer:{ title:"Client copy", sub:"A client-friendly plan plus a ready-to-send email, both ready to review and share.", sumLabel:"Letter to the client", sumOpt:"page 2 · auto-written, edit freely", sumPh:"The letter that opens the client's plan…", export:"Download client PDF" }
+  office:{ title:"Review &amp; export", sub:"Review the contents of the engineer pack before downloading.", sumLabel:"Cover summary", sumOpt:"optional", sumPh:"Site context, access notes or a contact for arrival (optional)", export:"Download PDF" },
+  customer:{ title:"Client copy", sub:"Review the client plan and draft email before downloading or copying.", sumLabel:"Letter to the client", sumOpt:"Draft from project details; edit before issue", sumPh:"Review the letter included in the client plan", export:"Download client PDF" }
 };
 function rxComputeLengths(){
   const incl = pack.photos.filter(p=>p.includeInPdf!==false);
@@ -12085,7 +12058,7 @@ function openReview(mode){
   document.getElementById("rxTplHint").style.display="none";
   document.getElementById("rxTplBtns").style.display="none";
   document.getElementById("rxEmailBtns").style.display="";
-  document.getElementById("rxEmailState").textContent="ready to send";
+  document.getElementById("rxEmailState").textContent="draft for review";
   if(isCust){
     const emailTA=document.getElementById("rxEmail");
     const custLetterSet=()=>!!(pack.custLetter&&pack.custLetter.trim());
@@ -12105,9 +12078,9 @@ function openReview(mode){
       if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(()=>{ emailTA.focus(); emailTA.select(); document.execCommand("copy"); ok(); }); }
       else { emailTA.focus(); emailTA.select(); document.execCommand("copy"); ok(); }
     };
-    document.getElementById("rxEmailRegen").onclick=()=>{ emailTA.value=genEmail(); rxEmailDirty=false; document.getElementById("rxEmailState").textContent="ready to send"; };
+    document.getElementById("rxEmailRegen").onclick=()=>{ emailTA.value=genEmail(); rxEmailDirty=false; document.getElementById("rxEmailState").textContent="draft for review"; };
     const tplKey=()=>pack.outcome||"none";
-    const exitTpl=()=>{ rxTplEditing=false; document.getElementById("rxTplHint").style.display="none"; document.getElementById("rxTplBtns").style.display="none"; document.getElementById("rxEmailBtns").style.display=""; emailTA.value=genEmail(); rxEmailDirty=false; document.getElementById("rxEmailState").textContent="ready to send"; if(!custLetterSet()) sum.value=genLetter(); rxQueuePreview(); };
+    const exitTpl=()=>{ rxTplEditing=false; document.getElementById("rxTplHint").style.display="none"; document.getElementById("rxTplBtns").style.display="none"; document.getElementById("rxEmailBtns").style.display=""; emailTA.value=genEmail(); rxEmailDirty=false; document.getElementById("rxEmailState").textContent="draft for review"; if(!custLetterSet()) sum.value=genLetter(); rxQueuePreview(); };
     document.getElementById("rxEmailTplEdit").onclick=()=>{ rxTplEditing=true; emailTA.value=loadTpls()[tplKey()]; document.getElementById("rxEmailState").textContent="editing client email template"; document.getElementById("rxTplHint").style.display=""; document.getElementById("rxTplBtns").style.display=""; document.getElementById("rxEmailBtns").style.display="none"; };
     document.getElementById("rxTplSave").onclick=()=>{ saveTpl(tplKey(), emailTA.value); toast("Template saved on this device"); exitTpl(); };
     document.getElementById("rxTplCancel").onclick=exitTpl;
@@ -12127,7 +12100,7 @@ function openReview(mode){
   document.getElementById("rxRefresh").onclick = rxUpdatePreview;
   expBtn.onclick = async()=>{ const m=rxMode;
     if(m==="customer"){ const ph=rxLetterText().match(RX_PH_RE)||[]; if(ph.length){ const ok=await askConfirm({title:"Placeholders left in", label:"The customer letter still contains "+ph.slice(0,2).join(", ")+(ph.length>2?", \u2026":"")+". Download anyway?", okText:"Download anyway"}); if(!ok) return; } }
-    closeReview(); toast("Building PDF…"); setTimeout(()=>{ (m==="customer"?buildCustomerPdf:buildPdf)(); }, 60); };
+    closeReview(); toast("Preparing PDF…"); setTimeout(()=>{ (m==="customer"?buildCustomerPdf:buildPdf)(); }, 60); };
   bd.onclick = e=>{ if(e.target===bd) closeReview(); };
   rxKeyHandler = e=>{ if(e.key==="Escape"){ e.preventDefault(); closeReview(); } };
   document.addEventListener("keydown", rxKeyHandler, true);
@@ -12175,13 +12148,14 @@ async function buildCustomerPdf(opts){
 
   const OUT=pack.outcome;
   const status = {
-    standard:   {col:GREEN, t:"You're good to go", b:"Your install is approved as standard. We'll be in touch with your installation date."},
-    nonstandard:{col:SUN,   t:"Almost there", b:"Your install needs a few extra bits. Your quote is on its way."},
-    moreinfo:   {col:SKY,   t:"One more step", b:"We need a little more information before we can book your install."},
-    groundworks:{col:EARTH, t:"Almost there", b:"Some groundworks are needed first. We're getting you a quote."},
-    dno:        {col:NAVY,  t:"Waiting on your network operator", b:"Your electricity supply needs a quick check by the network operator before we can book your install."},
-    permission: {col:PLUM,  t:"Permission needed first", b:"We need written permission in place before your install can go ahead."}
-  }[OUT] || {col:NAVY, t:"Your plan", b:pack.mode==="domestic"?"Here's a friendly summary of your home charge install.":"Here's a friendly summary of your EV charging install."};
+    standard:   {col:GREEN, t:"Standard scope recorded", b:"Review the proposed layout and agree the scope and date with your installer."},
+    nonstandard:{col:SUN,   t:"Additional works recorded", b:"Agree the additional scope and costs with the contractor before booking."},
+    moreinfo:   {col:SKY,   t:"Information needed", b:"Provide the outstanding information so the proposed design can be reviewed."},
+    groundworks:{col:EARTH, t:"Groundworks recorded", b:"Confirm the groundworks specification, cost and sequence with the contractor."},
+    dno:        {col:NAVY,  t:"DNO review needed", b:"Confirm the application status and any connection conditions with the applicant."},
+    enabling:   {col:SUN,   t:"Preparation work recorded", b:"Agree responsibilities and completion dates before arranging installation."},
+    permission: {col:PLUM,  t:"Permission needed", b:"Confirm the required written consent before arranging the work."}
+  }[OUT] || {col:NAVY, t:"Proposed installation", b:"Review the recorded scope, marked plans and outstanding decisions."};
 
   /* ---------------- COVER ---------------- */
   bg();
@@ -12204,13 +12178,13 @@ async function buildCustomerPdf(opts){
   if(pack.jobRef){ doc.text("Case number: "+pack.jobRef, M, cy); cy+=6; }
   doc.text("Prepared: "+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}), M, cy); cy+=6;
   doc.splitTextToSize("Chargers: "+(unitSummaryText()||"as marked on the plans"), PW-2*M).forEach(l=>{ doc.text(l, M, cy); cy+=6; });
-  doc.text(pack.mode==="domestic"?"Installation: approved domestic install team":"Installation: approved commercial install team", M, cy); cy+=6;
-  if(pmName()){ doc.text("Your Project Manager: "+pmName(), M, cy); cy+=6; }
+  doc.text(pack.mode==="domestic"?"Project type: Domestic":"Project type: Commercial", M, cy); cy+=6;
+  if(pmName()){ doc.text("Prepared by: "+pmName(), M, cy); cy+=6; }
   // status banner
   const by=PH-M-40, bw=PW-2*M, bh=30;
   doc.setFillColor(...WHITE); doc.roundedRect(M,by,bw,bh,4,4,"F");
   doc.setFillColor(...status.col); doc.circle(M+12,by+bh/2,4.2,"F");
-  doc.setDrawColor(...WHITE); doc.setLineWidth(1); doc.line(M+10,by+bh/2+0.3,M+11.4,by+bh/2+1.9); doc.line(M+11.4,by+bh/2+1.9,M+14.2,by+bh/2-1.6); doc.setLineWidth(0.2);
+  // A coloured dot identifies the recorded outcome; it does not imply approval.
   doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text(status.t, M+20, by+12);
   doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(...DIM);
   doc.splitTextToSize(status.b, bw-26).forEach((line,i)=>doc.text(line, M+20, by+18.5+i*5));
@@ -12220,7 +12194,7 @@ async function buildCustomerPdf(opts){
   {
     const letter=(pack.custLetter&&pack.custLetter.trim())||genLetter();
     if(letter){
-      heading(pmName()?("A note from "+pmName()):"A note from your Project Manager");
+      heading(pmName()?("A note from "+pmName()):"Project note");
       doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
       letter.split("\n").forEach(line=>{
         if(!line.trim()){ y+=2.8; return; }
@@ -12230,18 +12204,15 @@ async function buildCustomerPdf(opts){
     }
   }
 
-  heading("What we're installing");
+  heading("Proposed installation");
   doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
-  para("We'll install your charging points, positioned as marked on the survey plans. Here's what's included:", M, PW-2*M);
+  para("The plans show the proposed charging equipment and routes. Confirm the installation scope with the contractor before work starts:", M, PW-2*M);
   y+=3;
-  const conn=connectorChoice();
   const spdFitted=pack.photos.some(p=>p.includeInPdf!==false&&p.items.some(i=>(i.type==="evdb"||i.type==="ipevdb")&&i.spd===true));
   const incl=[
     [unitSummaryText()||"Your charging points"],
-    ["Containment and cabling along the marked routes"],
-    ["All the electrical protection your chargers need, fitted and tested"],
-    [pack.mode==="domestic"?"Installation by an approved, certified engineer":"Installation by approved commercial engineers"],
-    ["Commissioning, testing and certification"]
+    ["Proposed containment and cabling along the marked routes"],
+    ["Protection, testing and commissioning scope to be agreed with the installer"]
   ];
   doc.setFont("helvetica","normal"); doc.setFontSize(11);
   const inclRows=incl.map(([t])=>doc.splitTextToSize(String(t), PW-2*M-25));
@@ -12249,13 +12220,13 @@ async function buildCustomerPdf(opts){
   ensureSpace(cardH);
   doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,cardH,4,4,"F");
   let ly=y+11;
-  inclRows.forEach(lines=>{ drawTick(M+9,ly-1.4,3,GREEN); doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11); let tly=ly; lines.forEach(l=>{ doc.text(l, M+16, tly); tly+=5.4; }); ly+=Math.max(9,lines.length*5.4+3.6); });
+  inclRows.forEach(lines=>{ doc.setFillColor(...SKY); doc.circle(M+9,ly-1.4,1.5,"F"); doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11); let tly=ly; lines.forEach(l=>{ doc.text(l, M+16, tly); tly+=5.4; }); ly+=Math.max(9,lines.length*5.4+3.6); });
   y+=cardH+12;
 
   /* ---------------- YOUR DESIGN, EXPLAINED ---------------- */
   { const nar=designNarrative(); if(nar.length){
       ensureSpace(44);
-      heading(pack.mode==="domestic"?"Your design, explained":"Design summary");
+      heading("Design summary");
       nar.forEach(([h,b])=>{ ensureSpace(22); doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11.5); doc.text(h, M, y); y+=5.6; doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(10.6); para(b, M, PW-2*M, 5.2); y+=3.5; });
       y+=5;
   } }
@@ -12266,7 +12237,7 @@ async function buildCustomerPdf(opts){
     ensureSpace(44);
     heading("What we need from you");
     doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
-    para(intro||"Reply to our email with the following and we'll take it from there:", M, PW-2*M); y+=2;
+    para(intro||"Send the following to the person reviewing this plan:", M, PW-2*M); y+=2;
     sel.forEach(n=>{
       doc.setFontSize(11);
       const tl=doc.splitTextToSize(n.t, PW-2*M-24);
@@ -12291,9 +12262,9 @@ async function buildCustomerPdf(opts){
   }
   if(OUT==="nonstandard"){
     ensureSpace(40); // keep extras heading with its intro + card
-    heading("A few extras for your install");
+    heading("Additional works");
     doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
-    para("Every home's a little different. Around 90% of installs are fully covered by our standard package; based on what we found, yours needs a few extra bits beyond it. Our team will be in touch with a quote. There's nothing for you to do right now.", M, PW-2*M);
+    para("The project records additional works. Review the items below and agree the scope, cost and terms with the contractor before booking.", M, PW-2*M);
     if(pack.outcomeNote && pack.outcomeNote.trim()){ y+=1; doc.setTextColor(...DIM); doc.setFont("helvetica","italic"); doc.setFontSize(10.5); para(pack.outcomeNote.trim(), M, PW-2*M); doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.setTextColor(...INK); }
     y+=3;
     const extras=[];
@@ -12307,45 +12278,44 @@ async function buildCustomerPdf(opts){
       extras.forEach(([t,v])=>{ doc.setFillColor(...SUN); doc.circle(M+11,ey-1.4,1.6,"F"); doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.text(t, M+16, ey); doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); doc.text(v, PW-M-7, ey, {align:"right"}); ey+=9; });
       y+=eh+10;
     }
-    if(pack.extraFee){ ensureSpace(8); doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); doc.setFontSize(11.5); doc.text("Fixed fee for the extra works: £"+pack.extraFee, M, y); y+=6.5; doc.setFont("helvetica","normal"); doc.setFontSize(11); }
+    if(pack.extraFee){ ensureSpace(8); doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); doc.setFontSize(11.5); doc.text("Recorded additional cost: £"+pack.extraFee, M, y); y+=6.5; doc.setFont("helvetica","normal"); doc.setFontSize(11); }
     doc.setFontSize(10.5); doc.setTextColor(...DIM);
-    para("There's no obligation to proceed, and if you decide not to go ahead, you'll receive a full refund.", M, PW-2*M);
+    para("Refer to the agreed quotation for payment and cancellation terms.", M, PW-2*M);
     doc.setFontSize(11); doc.setTextColor(...INK); y+=4;
   } else if(OUT==="moreinfo"){
-    heading("One more step");
+    heading("Information needed");
     doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
-    para("Before we can book your install, we need a little more information from you. Around 90% of installs go ahead as standard at no extra cost; we just need a closer look at yours. Everything's listed below.", M, PW-2*M);
+    para("Further information is needed to review the proposed installation. Check the notes and requested items below.", M, PW-2*M);
     outcomeNotePara();
     y+=6;
     needsSection();
   } else if(OUT==="permission"){
     heading("Permission before we can proceed");
     doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
-    para("Part of your install relies on land that isn't part of your property (for example a public footpath, a shared driveway or a neighbour's land), or we couldn't clearly confirm your dedicated off-street parking from the photos. Written permission needs to be in place before installation can go ahead.", M, PW-2*M);
+    para("Written permission is recorded as required for this project. Confirm which landowner, landlord or authority must provide consent and which equipment positions or routes it covers.", M, PW-2*M);
     y+=2;
-    para("Where a cable crosses a neighbour's property, we recommend having the agreement formally recorded in your property deeds. It helps prevent any issues if the neighbouring property is ever sold.", M, PW-2*M);
-    y+=2;
-    para("No dedicated off-street parking? There may still be an option: our partner Kerbo Charge fits a discreet channel in the pavement, letting a charging cable safely cross it. Ask us if you'd like to explore this.", M, PW-2*M);
+    para("Keep the written consent and any conditions with the project documents.", M, PW-2*M);
     outcomeNotePara();
     y+=6;
-    needsSection("Send these over by replying to our email:");
+    needsSection("Provide these documents for review:");
   } else if(OUT==="dno"){
     heading("About your electricity supply");
     doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
-    para("Your main incoming supply looks like a looped supply, where one cable also feeds a neighbouring property, rather than each home having its own dedicated supply. Before we can install, your Distribution Network Operator (DNO) needs to either approve the connection or give your home its own supply.", M, PW-2*M);
+    para("DNO review is recorded as required for this project. Confirm the application status, the proposed demand and any required supply works with the person responsible for the application.", M, PW-2*M);
     y+=2;
-    para("We've already submitted this request on your behalf via our ENA portal"+(pack.dnoRef?". Your reference is "+pack.dnoRef+".":".")+" There's nothing you need to do; we'll chase the DNO and keep you posted. Once it's sorted, we can book in your install.", M, PW-2*M);
+    para(pack.dnoRef?"Recorded application reference: "+pack.dnoRef+". Check the current status and retain the DNO response.":"No application reference is recorded. Confirm whether an application has been submitted.", M, PW-2*M);
     outcomeNotePara();
     y+=8;
   } else if(OUT==="groundworks"){
-    heading("Groundworks first");
+    ensureSpace(82);
+    heading("Groundworks scope");
     doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
-    para("To reach your charger location, the cable needs to run underground. We've asked our trusted groundworks partner to price the works (materials, labour and travel) and there's no obligation at this stage. Once you approve the costs, we'll send you a payment link, book the groundworks directly with our partner, and book your installation to follow. The scope is approximately:", M, PW-2*M);
+    para("Groundworks are recorded for this project. Ask the contractor to confirm the marked route, buried services and construction details before agreeing costs and dates. Review the following scope:", M, PW-2*M);
     y+=3;
     const scope=[
-      "Trench "+(pack.extraGround?("roughly "+pack.extraGround+" m"):"along the marked route")+" at 450 mm deep",
-      "63 mm twin-wall ducting, with warning tape and a pull cord",
-      "Full reinstatement of the area once complete"
+      "Trench "+(pack.extraGround?("approximately "+pack.extraGround+" m"):"along the marked route"),
+      "Confirm duct size, depth and service clearances",
+      "Agree surface reinstatement and completion checks"
     ];
     const gh=scope.length*9+10; ensureSpace(gh);
     doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,gh,4,4,"F");
@@ -12358,9 +12328,9 @@ async function buildCustomerPdf(opts){
     ensureSpace(26);
     doc.setFillColor(244,250,246); doc.roundedRect(M,y,PW-2*M,22,4,4,"F");
     drawTick(M+11,y+11,3.4,GREEN);
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text("No extras needed", M+18, y+9);
+    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text("Standard scope recorded", M+18, y+9);
     doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(...DIM);
-    doc.text("Your install is fully covered by our standard package.", M+18, y+15.5);
+    doc.text("Check the recorded scope against the agreed quotation.", M+18, y+15.5);
     y+=30;
   }
 
@@ -12369,8 +12339,8 @@ async function buildCustomerPdf(opts){
     const L=rxComputeLengths();
     const tech=[];
     tech.push(["Chargers", unitSummaryText()||"To be confirmed"]);
-    tech.push(["Protection","C40 Type A double pole RCBO per charge point"+(spdFitted?" + SPD":"")]);
-    if(pack.mcbRequired) tech.push(["MCB", mcbSpec()+", posted to you before your install"]);
+    if(spdFitted) tech.push(["Surge protection","SPD marked on the plan"]);
+    if(pack.mcbRequired) tech.push(["MCB", mcbSpec()]);
     if(connectorChoice()) tech.push(["Connector",connectorChoice()]);
     if(pack.earthing) tech.push(["Earthing arrangement",pack.earthing]);
     if(pack.mainFuse) tech.push(["Main fuse",pack.mainFuse]);
@@ -12383,9 +12353,9 @@ async function buildCustomerPdf(opts){
       const rows=tech.map(([k,v])=>{ const lines=doc.splitTextToSize(String(v), PW-2*M-64); return {k:k, lines:lines, h:Math.max(8.4, lines.length*5+3.4)}; });
       const th=rows.reduce((s,r)=>s+r.h,0)+8;
       ensureSpace(th+30); // keep heading + intro with the table
-      heading("The technical bits");
+      heading("Recorded technical details");
       doc.setTextColor(...DIM); doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
-      para("For the curious, here's the detail our installer will work to.", M, PW-2*M); y+=2;
+      para("Check these details against the agreed design before installation.", M, PW-2*M); y+=2;
       ensureSpace(th);
       doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,th,4,4,"F");
       let ty=y+9;
@@ -12396,22 +12366,24 @@ async function buildCustomerPdf(opts){
 
   /* ---------------- WHAT HAPPENS NEXT ---------------- */
   ensureSpace(48); // keep heading with first couple of steps
-  heading("What happens next");
+  heading("Next steps");
   const steps=nextStepsList();
   steps.forEach((s,i)=>{
-    // keep the final step together with the "questions" banner so the banner is never orphaned on its own page
-    ensureSpace(i===steps.length-1 ? 46 : 20);
+    doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
+    const stepLines=doc.splitTextToSize(s[1], PW-2*M-14);
+    // Keep each step together, including the contact panel after the final step.
+    ensureSpace(11+stepLines.length*5+(i===steps.length-1?24:0));
     doc.setFillColor(...LIME); doc.circle(M+5,y+1,5,"F");
     doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text(String(i+1), M+5, y+2.4, {align:"center"});
     doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text(s[0], M+14, y);
     doc.setTextColor(...DIM); doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
-    let sy=y+6; doc.splitTextToSize(s[1], PW-2*M-14).forEach(line=>{ doc.text(line, M+14, sy); sy+=5; });
+    let sy=y+6; stepLines.forEach(line=>{ doc.text(line, M+14, sy); sy+=5; });
     y=sy+5;
   });
   y+=2; ensureSpace(16);
   doc.setFillColor(...NAVY); doc.roundedRect(M,y,PW-2*M,16,4,4,"F");
-  doc.setTextColor(...WHITE); doc.setFont("helvetica","bold"); doc.setFontSize(11.5); doc.text("Questions? We're here to help.", M+9, y+7);
-  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(235,238,222); doc.text("Just reply to our email or get in touch any time.", M+9, y+12.4);
+  doc.setTextColor(...WHITE); doc.setFont("helvetica","bold"); doc.setFontSize(11.5); doc.text("Comments or changes", M+9, y+7);
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(235,238,222); doc.text("Contact the person who issued this plan.", M+9, y+12.4);
   y+=22;
 
   /* ---------------- PHOTOS ---------------- */
@@ -12421,7 +12393,7 @@ async function buildCustomerPdf(opts){
       if(i===0){
         heading("Your survey photos");
         doc.setTextColor(...DIM); doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
-        para("Here's what we captured during your review, with the install marked up.", M, PW-2*M); y+=2;
+        para("Site photos and drawings with the proposed installation marked up.", M, PW-2*M); y+=2;
       } else {
         doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Your survey photos", M, y); y+=8;
       }
@@ -12603,7 +12575,7 @@ async function buildPdf(opts){
   // distribution / infrastructure items and are intentionally not listed here.
   const hasSpd = expPhotos.some(p=>p.items.some(i=>(i.type==="evdb"||i.type==="ipevdb")&&i.spd===true));
   if(hasSpd) eqLines.push(`SPD (surge protection device)`);
-  if(pack.mcbRequired) eqLines.push(`1 x ${mcbSpec()} (posted directly to the customer)`);
+  if(pack.mcbRequired) eqLines.push(`1 x ${mcbSpec()} (confirm supply and delivery arrangements)`);
   if(!eqLines.length) eqLines.push("None placed yet");
   eqLines.forEach(line=>{ ensureSpace(6); doc.setTextColor(...DIM); doc.text("-  "+line, M, y); y+=5.6; });
   // Supply connection point(s) - key survey decision
@@ -12703,13 +12675,13 @@ async function buildPdf(opts){
     const rows=[];
     rows.push(["Connection", cps.length?[...new Set(cps)].join(", "):"Confirm source switchgear on site"]);
     rows.push(["Protection", "C40 Type A DP RCBO"+(spd?" + SPD":"")+(pack.mcbRequired?" + "+mcbSpec():"")]);
-    if(pack.mcbRequired) rows.push(["MCB", mcbSpec().replace(/ MCB$/,"")+": feeds from the existing fuse board, posted to the customer. Confirm no upstream RCD interferes before connecting."]);
+    if(pack.mcbRequired) rows.push(["MCB", mcbSpec().replace(/ MCB$/,"")+": connection from the existing fuse board. Confirm compatibility with the board and upstream protection before connecting."]);
     { const rcds=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="rcd"));
       if(rcds.length) rows.push(["Upstream RCD", [...new Set(rcds.map(r=>"Type "+(r.rcdType||"AC")+" "+(r.trip??30)+" mA "+(r.rating??63)+" A"))].join("; ")+". Marked on the plan; verify it cannot interfere with the EV circuit."]); }
     rows.push(["Product", (unitSummaryText()||"To be confirmed")+(spd?" · with SPD":"")]);
     if(Le.cable>0) rows.push(["Cable run", Le.cable+" m total"]);
     if(Le.trunk>0) rows.push(["Containment", Le.trunk+" m marked (tray / trunking / basket)"]);
-    if(Le.duct>0||pack.outcome==="groundworks"||pack.extraGround) rows.push(["Groundworks", "Trench "+(pack.extraGround||Le.duct||"[X]")+" m · ducting · warning tape · draw rope · reinstate. SWA ordered by PM to site."]);
+    if(Le.duct>0||pack.outcome==="groundworks"||pack.extraGround) rows.push(["Groundworks", "Trench "+(pack.extraGround||Le.duct||"[X]")+" m · ducting · warning tape · draw rope · reinstate. Confirm cable supply and delivery arrangements."]);
     ensureSpace(34); // keep the heading with its first few rows
     heading("Note to engineer");
     rows.forEach(([k,v])=>{
@@ -14750,7 +14722,7 @@ function quoteDrift(){
   const MANUAL=[
     {t:"Charging-day simulator",s:"A day on this supply in 15-minute steps",g:"Checks",k:"load demand curve dlm peak",run:()=>openSim()},
     {t:"Earthing & protection wizard",s:"PEN, TT island and device pathway",g:"Checks",k:"earth rod pme tt open-pen rcd",run:()=>openEarthWiz()},
-    {t:"3D showroom",s:"Spin every charger and piece of site kit as a true 3D model",g:"Visualise",k:"3d model spin rotate zoom viewer showroom charger kit feeder pillar substation bollard sign lamp preview",run:()=>{ if(window.openCharger3D) window.openCharger3D(); }},
+    {t:"3D showroom",s:"View and rotate charger and site equipment models",g:"Visualise",k:"3d model spin rotate zoom viewer showroom charger kit feeder pillar substation bollard sign lamp preview",run:()=>{ if(window.openCharger3D) window.openCharger3D(); }},
     {t:"Job programme",s:"Editable phase timeline from the markup",g:"Documents",k:"gantt schedule timeline phases days",run:()=>openProgramme()},
     {t:"Projects on this device",s:"Every saved job with live status",g:"Jobs",k:"dashboard jobs list status switch recent",run:()=>openProjects()},
     {t:"Switch mode · domestic / commercial",s:"Change what this pack plans for",g:"Setup",k:"mode home workplace fleet destination",run:()=>openWelcome()},
@@ -15903,10 +15875,10 @@ setTimeout(()=>{ try{
   });
 }catch(_){ } }, 2500);
 </script>
-<script src="profile.js?v=291809973f71"></script>
+<script src="profile.js?v=079c6d2a4515"></script>
 <script src="report-fonts.js?v=db719569bbc1"></script>
-<script src="home.js?v=6396aa4cb55e"></script>
-<script src="workspace.js?v=57381b94e16b"></script>
-<script src="delivery.js?v=14ff212c5c70"></script>
+<script src="home.js?v=5d622dedec55"></script>
+<script src="workspace.js?v=bea044c10684"></script>
+<script src="delivery.js?v=1827433f0c51"></script>
 </body>
 </html>

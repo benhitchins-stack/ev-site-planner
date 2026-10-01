@@ -1,0 +1,59 @@
+/* Shared guide and course typography, navigation and small-screen layouts. */
+.ev-resource-page { color: #183043; background: #f5f7fa; }
+.ev-resource-page *, .ev-resource-page *::before, .ev-resource-page *::after { box-sizing: border-box; }
+.ev-resource-page button, .ev-resource-page input, .ev-resource-page select { font-family: inherit; }
+.ev-resource-page a:focus-visible, .ev-resource-page button:focus-visible,
+.ev-resource-page summary:focus-visible, .ev-resource-page input:focus-visible {
+  outline: 3px solid #2563eb; outline-offset: 3px;
+}
+.er-header { padding: 14px 24px !important; }
+.er-header > a, .er-header summary { min-height: 42px; }
+.er-guide-layout, .er-lesson-layout { gap: 36px !important; padding-top: 36px !important; }
+.er-guide-nav, .er-lesson-nav { top: 90px !important; }
+.er-guide-nav button, .er-lesson-nav button { min-height: 38px; }
+.er-guide-nav > div:nth-child(n+4) { font-size: 12px !important; line-height: 1.65 !important; }
+.er-intro { padding: 4px 0 14px; order: -1; }
+.er-intro h1 { margin: 0 0 12px; font-size: clamp(28px, 3vw, 38px); line-height: 1.1; letter-spacing: -.035em; }
+.er-intro p { margin: 0; max-width: 56ch; color: #536879; font-size: 16px; line-height: 1.65; }
+.er-guide-intro { max-width: 1180px; margin: 0 auto; padding: 36px 18px 0; }
+.er-guide-layout { padding-top: 24px !important; }
+.er-guide-main article, .er-lesson-main article { padding: 26px !important; border-radius: 14px !important; }
+.er-guide-main article > p, .er-guide-main article > ul,
+.er-lesson-main article > p, .er-lesson-main article > ul { font-size: 15px !important; line-height: 1.7 !important; }
+.er-guide-main article h3 { font-size: 22px !important; letter-spacing: -.02em !important; }
+.er-guide-main article li + li, .er-lesson-main article li + li { margin-top: 8px; }
+.er-guide-main article > div:last-child { line-height: 1.65 !important; }
+.er-course-home { padding-top: 48px !important; }
+.er-course-intro h1 { font-size: clamp(32px, 4vw, 46px) !important; line-height: 1.1 !important; letter-spacing: -.035em !important; }
+.er-course-intro p { font-size: 16px !important; line-height: 1.65 !important; }
+.er-course-grid p { font-size: 15px !important; line-height: 1.65 !important; }
+.er-course-grid button { min-height: 44px; font-size: 14px !important; }
+.er-course-stats { max-width: 100%; }
+.er-course-stats > div { min-width: 0; }
+.er-lesson-main input, .er-lesson-main select { min-height: 42px; max-width: 100%; }
+.er-lesson-main table { width: 100%; }
+@media (max-width: 900px) {
+  .er-guide-layout, .er-lesson-layout { flex-direction: column !important; gap: 24px !important; }
+  .er-guide-nav, .er-lesson-nav { position: static !important; width: 100% !important; }
+  .er-guide-nav > div:nth-child(3) { display: grid !important; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px !important; }
+  .er-guide-main, .er-lesson-main { width: 100%; max-width: none !important; }
+  .er-guide-nav > div:nth-child(4) { display: none; }
+}
+@media (max-width: 600px) {
+  .er-header { position: static !important; padding: 12px 16px !important; gap: 10px !important; }
+  .er-header > div:nth-child(3) { display: none; }
+  .er-header > div:nth-child(2) { flex: 1; }
+  .er-header details { margin-left: auto; }
+  .er-header > a { justify-content: center; }
+  .er-guide-layout, .er-lesson-layout, .er-course-home { padding: 24px 16px 48px !important; }
+  .er-guide-intro { padding: 28px 16px 0; }
+  .er-guide-nav > div:nth-child(3) { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .er-guide-nav button { min-width: 0; }
+  .er-guide-main article, .er-lesson-main article { padding: 20px !important; }
+  .er-course-intro { min-width: 0 !important; }
+  .er-course-grid, .er-guide-links { grid-template-columns: minmax(0,1fr) !important; }
+  .er-lesson-main article > div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: minmax(0,1fr) !important; }
+  .er-course-home > div:first-child { gap: 20px !important; }
+  .er-course-stats { width: 100%; justify-content: space-between; gap: 8px !important; padding: 14px !important; }
+  .er-guide-main a, .er-lesson-main a { overflow-wrap: anywhere; }
+}

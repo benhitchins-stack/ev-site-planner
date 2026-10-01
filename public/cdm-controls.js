@@ -686,7 +686,7 @@
       +'<div class="evsp-cdm-verdict '+verdictClass+'"><b>'+evspCdmEsc(f10.label)+'</b><br>'+evspCdmEsc(f10.detail)
       +(f10.code==="notifiable"?'<div class="evsp-cdm-actions"><label class="evsp-cdm-check"><input type="checkbox" data-evsp-cdm-f10-filed '+(s.f10==="filed"?'checked':'')+'><span>F10 filed with HSE</span></label></div><div class="evsp-cdm-fields" style="margin-top:9px">'+evspCdmField("HSE reference","f10Ref",s.f10Ref,{placeholder:"Notification reference"})+evspCdmField("Date filed","f10Date",s.f10Date,{type:"date"})+'</div>':'')
       +'</div><div class="evsp-cdm-note" style="margin-top:10px"><strong>Threshold basis:</strong> longer than 30 working days with more than 20 workers working simultaneously at any point, or more than 500 person-days. For a commercial project, the client must notify HSE before the construction phase begins. <a href="https://www.hse.gov.uk/forms/notification/f10.htm" target="_blank" rel="noopener">Open HSE F10 guidance</a>.</div></section>'
-      +'<section class="evsp-cdm-section"><h3>Construction arrangements</h3><p class="evsp-cdm-lead">Capture the site-specific arrangements that feed the construction phase plan and CDM pack.</p><div class="evsp-cdm-fields">'
+      +'<section class="evsp-cdm-section"><h3>Construction arrangements</h3><p class="evsp-cdm-lead">Record the site arrangements to include in the construction phase plan and CDM pack.</p><div class="evsp-cdm-fields">'
       +evspCdmField("Welfare","welfare",s.welfare,{type:"textarea",full:true,placeholder:"Toilets, washing, drinking water, rest and changing facilities from day one"})
       +evspCdmField("Induction and consultation","induction",s.induction,{type:"textarea",full:true,placeholder:"Who inducts, how toolbox talks and workforce feedback are recorded"})
       +evspCdmField("Public protection and site security","publicProtection",s.publicProtection,{type:"textarea",full:true,placeholder:"Barriers, pedestrian routes, vehicle control, signage and out-of-hours security"})
@@ -779,7 +779,7 @@
     backdrop.id="evspCdmBackdrop";
     backdrop.className="wlc-backdrop evsp-cdm-backdrop";
     backdrop.innerHTML='<div class="wlc evsp-cdm-dialog" role="dialog" aria-modal="true" aria-labelledby="evspCdmTitle" aria-describedby="evspCdmDescription" tabindex="-1">'
-      +'<div class="evsp-cdm-head"><div class="evsp-cdm-head-copy"><h2 id="evspCdmTitle">CDM 2015 project controls</h2><p id="evspCdmDescription">Duty holders, F10 decision, design risks, controlled documents and supporting evidence in one project record.</p></div><button type="button" class="evsp-cdm-close" data-evsp-cdm-close aria-label="Close CDM project controls">&times;</button></div>'
+      +'<div class="evsp-cdm-head"><div class="evsp-cdm-head-copy"><h2 id="evspCdmTitle">CDM 2015 project controls</h2><p id="evspCdmDescription">Record duty holders, the F10 assessment, design risks and project documents.</p></div><button type="button" class="evsp-cdm-close" data-evsp-cdm-close aria-label="Close CDM project controls">&times;</button></div>'
       +'<nav class="evsp-cdm-tabs" role="tablist" aria-label="CDM project control sections">'
       +'<button type="button" id="evspCdmTab-overview" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="overview">Overview and duty holders</button>'
       +'<button type="button" id="evspCdmTab-risks" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="risks">Design risks</button>'
@@ -1239,7 +1239,7 @@
     const p=evspCdmGetPack(candidate);
     if(!p) return false;
     if(p.mode==="domestic"){ try{ if(typeof toast==="function") toast("This control workspace is currently available in Commercial mode. CDM duties may still apply to domestic work."); }catch(_){ } return false; }
-    if(!window.jspdf||!window.jspdf.jsPDF){ try{ if(typeof toast==="function") toast("PDF engine unavailable. Reload and try again."); }catch(_){ } return false; }
+    if(!window.jspdf||!window.jspdf.jsPDF){ try{ if(typeof toast==="function") toast("The PDF could not be loaded. Reload the page and try again."); }catch(_){ } return false; }
     evspCdmSyncCompliance(p);
     const missing=evspCdmPreflight(p);
     if(missing.length){
