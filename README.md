@@ -1,5 +1,57 @@
 # EV Site Planner
 
+## Design preview branch
+
+This branch contains a working preview of the project dashboard and Markup
+redesign. Open a worked example from Home to explore it, or import a project
+backup. The preview address has its own browser storage, so projects saved on the
+main site will not appear here automatically.
+
+The preview adds a dashboard with an annotated plan preview and recorded next
+actions, a searchable project list, collapsible navigation, a floating equipment
+palette, a contextual settings panel and a drawing focus view. Shared typography,
+forms and buttons also carry through to Profile and the delivery pages. Home,
+the guide library and training courses use direct descriptions, consistent type
+and responsive layouts. Guide search matches displayed titles and keywords.
+
+Default customer reports and emails describe proposed work and recorded project
+details. They no longer assume bookings, deliveries, fees, refunds or submitted
+DNO applications. Previously saved email templates remain unchanged; resetting
+a template loads the revised default. Knowledge checks are described as revision
+and practice, with no claim to award a qualification. This copy review does not
+replace a technical review of the reference material or electrical calculations.
+
+The latest design pass groups selected-item settings into electrical, mounting,
+appearance and design-option sections. A selected charger's label, model and
+rating remain at the top. Model search, favourites and recently placed equipment
+are available in the floating picker; Place another like this retains the chosen
+configuration. Equipment references remain stable in project backups. Compact
+on-screen labels have leader lines and avoid nearby equipment where space allows;
+full labels remain available. The plan key is separate from the drawing, and
+exported legends and title details sit below the artwork.
+
+The overview uses compact counts and a single Continue markup action. Home shows
+recent projects first when work is saved in the browser. Profile has Details,
+Qualifications and Branding tabs, with a real sample PDF to check names and logos.
+Plans, engineer/client packs, programmes and snag reports share page thumbnails,
+zoom controls and a consistent review layout. Downloads use the previewed PDF.
+Document footers share author, company, revision and preparation-date information.
+Phone item controls open as a bottom panel with part of the drawing still visible.
+
+Run `npm run test:refinement` for equipment search, favourites, configuration copies,
+label preservation, report refresh/download behaviour, profile tabs and phone
+reviews. Use the Playwright setup below. These preferences and projects remain
+local to this browser; no account or shared equipment catalogue is required.
+
+Run `npm run test:design` with the Playwright setup below for selection, placement,
+editing, navigation, backup and PDF regression checks for this layout.
+
+Run `npm run test:debug` for malformed backups, browser storage failures, project
+and plan switching, PDF refresh races, cancelled imports and delayed image decoding.
+The [debug audit](docs/debug-audit.md) records the fixes, coverage and limits.
+The calculation checks in `npm test` verify recorded current caps, future positions
+and arithmetic consistency across the configured cable families.
+
 Browser-based survey, markup and planning tools for UK EV charge point installers.
 The site opens on an integrated home page with recent projects, backup import and
 a worked example. The project workspace brings together Overview, Markup,
@@ -114,6 +166,8 @@ different deliverable.
 |---|---|
 | `public/EV Site Planner.html` | Drawing engine, compatibility and HTML entry |
 | `public/workspace.js`, `workspace.css` | Project navigation, persistence and plan exports |
+| `public/workbench.js`, `workbench.css` | Grouped item settings, equipment library, labels and responsive design |
+| `public/report-viewer.js` | Shared PDF previews and document branding |
 | `public/home.js`, `home.css` | Home page and recent projects |
 | `public/profile.js`, `profile.css` | Personal and company profile, qualifications and report branding |
 | `public/delivery.js` | Programme, snag records and PDF review |

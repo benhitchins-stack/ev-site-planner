@@ -9,3 +9,52 @@
 /* Headings receive focus for navigation without looking like editable fields. */
 .eh-home [tabindex="-1"]:focus{outline:none}.eh-preview img{aspect-ratio:auto}
 .eh-resource-link.eh-btn svg{order:1}
+/* Product information and readable captions, without promotional overlays. */
+.eh-home{font-family:var(--font,'Hanken Grotesk'),-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.eh-hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);padding:60px 0;gap:40px}
+.eh-hero h1{font-size:clamp(40px,4.3vw,62px);letter-spacing:-2.3px;line-height:1.12}
+.eh-hero-copy>p{font-size:16px;line-height:1.7;max-width:430px}
+.eh-hero-copy>.eh-local-note{font-size:12px;line-height:1.65;color:#526a7c;max-width:395px}
+.eh-home .eh-text-link{font-size:13px}
+.eh-visual{margin:0;padding:0;background:none}
+.eh-visual::before{display:none}
+.eh-preview{border-radius:12px;box-shadow:0 8px 30px #17304412}
+.eh-preview-top{height:36px;font-size:11px;color:#536d80}
+.eh-preview-top>span{text-align:left}
+.eh-nav-links>a,.eh-nav-links>button{font-size:13px}
+.eh-visual-caption{display:flex;flex-direction:column;gap:3px;padding:14px 3px 0;font-size:12px;line-height:1.55;color:#536d80}
+.eh-visual-caption b{color:#183043;font-size:13px;font-weight:650}
+.eh-capabilities{gap:14px;flex-wrap:wrap}
+.eh-capabilities span{font-size:12px;color:#476175}
+.eh-section-head>div>p{font-size:13px;color:#586e80;margin:8px 0 0}
+.eh-section-head h2{font-size:28px;letter-spacing:-.7px}
+.eh-step p,.eh-resource p{font-size:14px;line-height:1.7}
+.eh-step h3{font-size:18px;letter-spacing:-.2px}
+.eh-home .eh-resource-link{font-size:13px;min-height:38px}
+.eh-resource-icon{margin-bottom:18px}
+.eh-bottom-cta h2{font-size:23px;margin:0 0 6px;letter-spacing:-.4px}
+.eh-bottom-cta p{font-size:14px;color:#586e80;line-height:1.6;margin:0;max-width:550px}
+.eh-footer{font-size:12px;color:#586e80}
+.eh-project-copy>span,.eh-project small{font-size:11px;color:#536d80}
+.eh-project p{font-size:12px}
+@media(max-width:780px){
+ .eh-hero{grid-template-columns:1fr;gap:28px;padding:40px 0}
+ .eh-hero h1{font-size:48px}
+ .eh-hero-copy>p{max-width:550px}
+ .eh-resource-icon{margin:0;grid-row:1/4}
+ .eh-resource h3,.eh-resource p,.eh-resource-link{grid-column:2}
+}
+@media(max-width:520px){
+ .eh-hero{padding:32px 0;gap:24px}
+ .eh-hero h1{font-size:42px;letter-spacing:-1.7px}
+ .eh-hero-copy>p{font-size:15px}
+ .eh-hero-copy>.eh-local-note{font-size:12px}
+ .eh-capabilities span{font-size:11px}
+ .eh-section-head h2{font-size:25px}
+ .eh-bottom-cta{align-items:flex-start;flex-direction:column}
+ .eh-bottom-cta>.eh-btn{font-size:13px}
+ .eh-resource p,.eh-step p{font-size:14px}
+ .eh-resource{grid-template-columns:35px minmax(0,1fr);padding:19px;gap:0 12px}
+ .eh-resource h3{font-size:18px}
+ .eh-footer{font-size:11px}
+}

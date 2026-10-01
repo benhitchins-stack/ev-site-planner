@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const read = name => readFileSync(new URL('../public/'+name,import.meta.url),'utf8');
 const source = read('EV Site Planner.html');
-const assets = ['profile.css', 'profile.js', 'workspace.css','home.css','workspace.js','home.js','delivery.js','report-fonts.js','bay-markings.js'];
+const assets = ['design-preview.css','workbench.css','workbench.js','report-viewer.js', 'profile.css', 'profile.js', 'workspace.css','home.css','workspace.js','home.js','delivery.js','cdm-controls.js','report-fonts.js','bay-markings.js'];
 
 test('all home and workspace addresses ship the same current application',()=>{
   for(const name of ['index.html','home.html','Landing Page Final.dc.html'])
