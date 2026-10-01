@@ -5,6 +5,18 @@ The site opens on an integrated home page with recent projects, backup import an
 a worked example. The project workspace brings together Overview, Markup,
 Programme, Snags and Issue, alongside the 3D showroom, guides and training.
 
+Open **My profile** from the home page or workspace sidebar to save your name,
+role, contact details, company details, logo and qualifications. Qualification
+records support an awarding body, certificate reference and expiry or renewal
+date. Logos can be PNG, JPG, WebP or SVG and are converted to a portable image.
+
+Profiles save in this browser and can be exported or imported as a separate
+`.evprofile.json` backup. They pre-fill new projects when enabled. Each project
+retains its own author snapshot; use **Use profile on this project** to update an
+existing project. Name and branding appear on plan exports, with optional
+qualifications on programme and snag reports. This is a local professional
+profile, with no account registration or cross-device sync.
+
 Projects stay in browser storage on the device and site address being used. There
 is no application server or project upload. Download a JSON backup to keep a
 separate copy or move work to another device.
@@ -32,7 +44,11 @@ The packaging step updates asset content hashes and synchronises `index.html`,
 home page and workspace. The generated pages are committed, so hosting requires
 no build step. Avoid editing the generated copies independently.
 
-## R2.1 release
+## R2.2 release
+
+- Reusable professional profiles, qualification records and company logo upload.
+- Browser-local autosave with recovery, profile backup import and export.
+- Project-specific author snapshots and branding on plan, programme and snag PDFs.
 
 - Integrated home page, project details wizard and recent-project dashboard.
 - Focused markup toolbar, technical tools menu and selected-plan PDF review.
@@ -63,6 +79,7 @@ environment, install its Chromium browser, then run:
 npm install --no-save --package-lock=false playwright
 npx playwright install chromium
 npm run test:browser
+npm run test:profile
 ```
 
 An existing compatible Chromium can be supplied with
@@ -75,6 +92,9 @@ protection, save snapshot isolation, fallback recovery, safe backup import, CDM
 access, plan PDF export, mobile layout, showroom, guides and training. Programme
 and snag workflows were additionally exercised with legacy migration, overlapping
 dates, photo evidence, filtered reports, long notes, pagination and reload.
+The profile suite checks real editing, logo conversion and invalid-file recovery,
+profile backup round trips, project snapshot isolation, preferences, branded PDF
+downloads, storage failure recovery and narrow phone layouts.
 
 ## Deploy
 
@@ -95,6 +115,7 @@ different deliverable.
 | `public/EV Site Planner.html` | Drawing engine, compatibility and HTML entry |
 | `public/workspace.js`, `workspace.css` | Project navigation, persistence and plan exports |
 | `public/home.js`, `home.css` | Home page and recent projects |
+| `public/profile.js`, `profile.css` | Personal and company profile, qualifications and report branding |
 | `public/delivery.js` | Programme, snag records and PDF review |
 | `public/bay-markings.js` | Bay symbols and lettering |
 | `public/report-fonts.js` | Embedded DejaVu fonts for new reports |
