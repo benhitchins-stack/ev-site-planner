@@ -17,6 +17,7 @@ official npm packages.
 | `fonts/hanken-grotesk-*` (Fontsource build) | 5.2.8 | SIL OFL 1.1 |
 | `fonts/space-grotesk-*` (Fontsource build) | 5.2.10 | SIL OFL 1.1 |
 | `fonts/ibm-plex-mono-*` (Fontsource build) | 5.2.7 | SIL OFL 1.1 |
+| DejaVu Sans regular and bold (embedded in `../report-fonts.js`) | 2.37 | Bitstream Vera / DejaVu, see `DejaVu-LICENCE.txt` |
 
 The fonts are the SIL Open Font Licence releases of Bricolage Grotesque,
 Hanken Grotesk, Space Grotesk and IBM Plex Mono; self-hosting is permitted and the fonts

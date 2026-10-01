@@ -3,8 +3,7 @@
   publish = "public"
   command = ""
 
-# Pretty-path fallback: a bare "/" serves the redirect stub, which forwards to
-# the landing page. Everything else is a real file on disk.
+# The root opens the integrated home page and project workspace.
 [[redirects]]
   from = "/"
   to = "/index.html"

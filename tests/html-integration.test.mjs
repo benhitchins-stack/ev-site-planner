@@ -85,8 +85,8 @@ test('planner preserves photo-free work and provides a payload-free linked-tool 
   assert.match(planner, /return cdmHasMeaningfulContent\(p\.cdm\)/);
   assert.match(planner, /if\(hasMeaningfulPackContent\(pack\)\)\{ const ok=await askConfirm\(\{title:"Start a new survey\?"/);
   assert.match(planner, /title:"Open another survey\?"/);
-  assert.match(planner, /__saved&&__saved\.pack&&hasMeaningfulPackContent\(__saved\.pack\)/);
-  assert.match(planner, /!d\|\|!d\.pack\|\|!hasMeaningfulPackContent\(d\.pack\)/);
+  assert.match(planner, /hasMeaningfulPackContent\(__saved\.pack\)\|\|__saved\.pack\.projId/);
+  assert.match(planner, /!hasMeaningfulPackContent\(d\.pack\)&&!d\.pack\.projId/);
   assert.match(planner, /if\(!pack\.projId && hasMeaningfulPackContent\(pack\)\) saveCurrentToProjects\(true\)/);
   assert.match(planner, /if\(hasMeaningfulPackContent\(pack\)\) saveCurrentToProjects\(true\)/);
   assert.match(planner, /function slimProjectSnapshot\(full\)/);
