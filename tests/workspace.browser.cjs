@@ -89,6 +89,7 @@ const {chromium} = require('playwright');
     await page.locator('#evTechnical').click();await page.locator('[data-ev-action="cdm"]').click();
     await page.locator('#evspCdmBackdrop.show').waitFor();
     await page.locator('.evsp-cdm-close').click();
+    await page.locator('#evInspectorToggle').click();
     await page.locator('[data-psec="checks"]').click();assert.equal(await page.evaluate(()=>packSec),'checks');
     await page.locator('[data-psec="output"]').click();assert.equal(await page.evaluate(()=>packSec),'output');
     pass('CDM controls and the new markup settings tabs remain accessible');

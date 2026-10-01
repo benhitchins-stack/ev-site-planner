@@ -1,5 +1,21 @@
 # EV Site Planner
 
+## Design preview branch
+
+This branch contains a working preview of the project dashboard and Markup
+redesign. Open a worked example from Home to explore it, or import a project
+backup. The preview address has its own browser storage, so projects saved on the
+main site will not appear here automatically.
+
+The preview adds a dashboard with an annotated plan preview and recorded next
+actions, a searchable project list, collapsible navigation, a floating equipment
+palette, a contextual settings panel and a drawing focus view. Shared typography,
+forms and buttons also carry through to Profile and the delivery pages. The guide
+library and learning hub have not yet been redesigned.
+
+Run `npm run test:design` with the Playwright setup below for selection, placement,
+editing, navigation, backup and PDF regression checks for this layout.
+
 Browser-based survey, markup and planning tools for UK EV charge point installers.
 The site opens on an integrated home page with recent projects, backup import and
 a worked example. The project workspace brings together Overview, Markup,
