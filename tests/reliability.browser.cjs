@@ -51,6 +51,11 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    // Retain the existing recovery when focus actually leaves the form.
    await p.evaluate(()=>document.activeElement.blur());await p.waitForTimeout(150);
    assert.equal(await p.evaluate(()=>scrollY),0);
+   await p.locator('[data-ev-field="jobRef"]').tap();
+   await p.evaluate(()=>window.scrollTo(0,160));
+   await p.locator('[data-ev-close-details]').first().tap();await p.waitForTimeout(150);
+   assert.equal(await p.locator('#evDetails').isVisible(),false);
+   assert.equal(await p.evaluate(()=>scrollY),0,'Closing the wizard clears a leftover keyboard pan even when focus returns to the workspace');
    assert.equal(await p.evaluate(()=>pack.jobRef),'IPAD-REF-001');
   },null,{viewport:{width:820,height:1180},hasTouch:true});
 

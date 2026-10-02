@@ -7833,16 +7833,16 @@ function commitRoute(){
 let ptrs=new Map(), startView=null, pinchStart=null, dragItem=null, dragOff=null, moved=false, downPt=null;
 let coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 try{ const cmq=window.matchMedia('(pointer: coarse)'); if(cmq.addEventListener) cmq.addEventListener('change',e=>{ coarse=e.matches; }); }catch(_){}
-/* Recover a keyboard's leftover document pan only after focus leaves the controls.
+/* Recover a keyboard's leftover document pan only after focus leaves editable controls.
    Switching fields must retain Safari's current pan and must cancel old recovery. */
 let keyboardScrollReset=null;
-document.addEventListener("focusin",()=>{ clearTimeout(keyboardScrollReset);keyboardScrollReset=null; });
+const keyboardFieldFocused=()=>{const el=document.activeElement;return !!el&&(el.matches('input,textarea,select')||el.isContentEditable);};
+document.addEventListener("focusin",()=>{ if(keyboardFieldFocused()){clearTimeout(keyboardScrollReset);keyboardScrollReset=null;} });
 document.addEventListener("focusout",()=>{
   clearTimeout(keyboardScrollReset);
   keyboardScrollReset=setTimeout(()=>{
     keyboardScrollReset=null;
-    const focused=document.activeElement;
-    if(focused&&focused!==document.body&&focused!==document.documentElement)return;
+    if(keyboardFieldFocused())return;
     try{ if(window.scrollY||document.documentElement.scrollTop){ window.scrollTo(0,0); document.documentElement.scrollTop=0; } }catch(_){}
   },80);
 });
