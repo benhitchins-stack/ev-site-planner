@@ -58,3 +58,7 @@ Added 2 October 2026. Design lab, Programme, Snags and Review & issue open with 
 ## Guide and course headers
 
 Added 2 October 2026. The Guide Library and Learning Hub pages open with the planner's navy bar: white page name and subtitle, a quiet More tools button and a lime Back to planner action, so the pages reached from Home's guide cards share the look of the planner. The page content below the bar is unchanged. The colours sit in each page's header markup; `resources.css` adds the bar's shadow, the hover states and a lime focus ring.
+
+## Drawing page tool strip
+
+Added 2 October 2026. The Markup tool strip (undo and redo, the four canvas tools, the equipment categories, Technical and Focus) takes the planner's navy, with the active tool and the open category marked in lime, so the drawing page matches the page headers. The plan strip below stays light to frame the canvas, with a lime tint on the Scale recorded chip, and the zoom control gets the soft card shadow. Styles only: the controls, their order and their behaviour are unchanged, and the Technical menu keeps its dark text. The rules are at the end of `design-preview.css`.
