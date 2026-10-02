@@ -56,7 +56,7 @@ async function save(full,recovery,summary){
      const indexRequest=kv.get('projects_index');
      indexRequest.onsuccess=()=>{
       rows=mergeRows(indexRequest.result?.rows,projIndex(),[{...summary,updatedAt:now}]);
-      kv.put(committed,'proj_'+id);kv.put(recover,'autosave');kv.put(recover,'recovery_'+tabId);kv.put({rows,ts:now},'projects_index');
+      kv.put(committed,'proj_'+id);kv.put(recover,'autosave');kv.put({rows,ts:now},'projects_index');
       result={record:committed,rows};
      };
     };
@@ -94,7 +94,7 @@ async function scan(){
  const add=(key,record)=>{
   if(!key.startsWith('proj_')||!record?.pack||record.slim)return;
   const id=key.slice(5);
-  try{validateProjectBackup(record.pack);if(!/^[a-zA-Z0-9_.-]{1,128}$/.test(id))throw Error();const prev=records.get(id);if(!prev||Number(record.ts||0)>Number(prev.updatedAt||0))records.set(id,summaryOf(id,record));}catch{rejected++;}
+  try{validateProjectBackup(record.pack);if(!/^[a-zA-Z0-9_.-]{1,128}$/.test(id)||['__proto__','prototype','constructor'].includes(id)||Object.hasOwn(Object.prototype,id))throw Error();const prev=records.get(id);if(!prev||Number(record.ts||0)>Number(prev.updatedAt||0))records.set(id,summaryOf(id,record));}catch{rejected++;}
  };
  try{const db=await idb();await new Promise((resolve,reject)=>{const tx=db.transaction(IDB_KV,'readonly'),request=tx.objectStore(IDB_KV).openCursor();request.onsuccess=()=>{const cursor=request.result;if(!cursor)return;add(String(cursor.key),cursor.value);cursor.continue();};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}catch{unavailable=true;}
  try{for(let n=0;n<localStorage.length;n++){const key=localStorage.key(n);if(key?.startsWith('evsp_proj_'))try{add(key.slice(5),JSON.parse(localStorage.getItem(key)));}catch{rejected++;}}}catch{unavailable=true;}
@@ -110,5 +110,6 @@ async function repair(rows){
  return navigator.locks?navigator.locks.request('evsp-project-writes',operation):operation();
 }
 window.addEventListener('pageshow',renderConflict);
+window.addEventListener('beforeunload',event=>{if(blocked.has(pack.projId)){event.preventDefault();event.returnValue='';}});
 window.EVProjectStore={save,adopt,scan,repair,renderConflict,isBlocked:id=>blocked.has(id),token};
 })();

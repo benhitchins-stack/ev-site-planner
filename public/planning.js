@@ -182,5 +182,5 @@ document.addEventListener('click',async e=>{
  }catch(err){error(err.message);}finally{busy=false;}
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopReplay();});
-window.EVPlanning={render,afterRender,recoverProjects,recordDocument,documentSnapshot:()=>C.design(pack),stopReplay,toggleOverlay(){overlay=!overlay;drawCanvas();return overlay;},version:'planning-1'};
+window.EVPlanning={render,afterRender,recoverProjects,recordDocument,documentSnapshot:()=>C.design(serialisablePack()),stopReplay,overlayActive:()=>overlay,toggleOverlay(){overlay=!overlay;drawCanvas();return overlay;},version:'planning-1'};
 })();

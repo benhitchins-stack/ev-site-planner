@@ -105,7 +105,7 @@ jobs:
       - run: npx playwright install --with-deps ${{ matrix.engine }}
       - name: Prepare a genuine HEIC conversion fixture
         run: |
-          sudo apt-get install -y libheif-examples
+          sudo apt-get install -y libheif-examples libheif-plugin-x265
           python3 tests/make-heic-fixture.py
       - run: npm run test:planning
       - name: Keep results, examples and screenshots
