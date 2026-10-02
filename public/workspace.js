@@ -18,11 +18,11 @@ const stats=()=>{const items=allItems();return{plans:pack.photos.length,units:it
 const hasWork=()=>hasMeaningfulPackContent(pack)||['contactName','contactRole','contactEmail','contactPhone','scope','notes'].some(k=>String(pack.workspace?.[k]||'').trim());
 let projectBusy=false;
 function finishDrawing(){finishDrawingContext();}
-async function changeProject(operation){
+async function changeProject(operation,failureMessage='The project could not be opened. Your current work is still available.') {
  if(projectBusy)return false;
  projectBusy=true;app.inert=true;app.setAttribute('aria-busy','true');
  try{await Promise.all([...pendingFileImports]);return await operation();}
- catch(err){console.error(err);toast('The project could not be opened. Your current work is still available.');return false;}
+ catch(err){console.error(err);toast(failureMessage);return false;}
  finally{projectBusy=false;app.removeAttribute('aria-busy');app.inert=!$('evDetails').hidden||!review.hidden;}
 }
 
@@ -42,7 +42,7 @@ async function persist(){
   try{await idbSet('proj_'+id,full);await idbSet('autosave',recovery);ok=true;try{localStorage.removeItem(LS_KEY);localStorage.removeItem('evsp_proj_'+id);}catch(_){} }
   catch(_){try{localStorage.setItem('evsp_proj_'+id,JSON.stringify(full));localStorage.setItem(LS_KEY,JSON.stringify(recovery));ok=true;}catch(_){} }
   if(ok){
-   const index=projIndex().filter(x=>x.id!==id);index.unshift(summary);ok=await saveProjIndex(index.slice(0,100));
+   const index=projIndex().filter(x=>x.id!==id);index.unshift(summary);ok=await saveProjIndex(index);
    if(ok&&serial===saveSequence)savedState('saved','Saved in this browser');
   }
   if(!ok){savedState('error','Save failed · download backup');toast('Browser storage is unavailable or full. Download a project backup to keep your work.');}
@@ -244,7 +244,15 @@ function openPlan(id){if(!photoById(id))return;finishDrawing();pack.active=id;si
 function panel(section){go('markup');packSec=section;openInspector();}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 function slug(v){return String(v||'EV-project').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,100);}
-function backup(){normalisePack(pack);ensure().backupAt=new Date().toISOString();downloadBlob(new Blob([JSON.stringify(serialisablePack())],{type:'application/json'}),slug(pack.name)+'.evplan.json');autosave();toast('Project backup downloaded');if(route==='overview')go('overview');}
+async function backup(){return changeProject(async()=>{
+ // Wait for file decoding through changeProject, then commit any route to its source plan.
+ finishDrawing();normalisePack(pack);
+ const previous=ensure().backupAt;
+ ensure().backupAt=new Date().toISOString();
+ try{downloadBlob(new Blob([JSON.stringify(serialisablePack())],{type:'application/json'}),slug(pack.name)+'.evplan.json');}
+ catch(err){if(previous==null)delete ensure().backupAt;else ensure().backupAt=previous;throw err;}
+ autosave();toast('Project backup downloaded');if(route==='overview')go('overview');return true;
+},'The backup could not be downloaded. Your current work is still available.');}
 $('btnSave').onclick=backup;
 function setInert(on){app.inert=on;}
 function focusTrap(e,root,close){e.stopPropagation();if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close();return;}if(e.key==='Tab'){const a=[...root.querySelectorAll('button:not(:disabled),input:not(:disabled),textarea,select,a[href]')].filter(x=>x.getClientRects().length);if(!a.length)return;const first=a[0],last=a.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}

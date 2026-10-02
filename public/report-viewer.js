@@ -105,7 +105,7 @@ function enhanceLegacy(){
  };
  closeReview=function(){if(saving)return;clearTimeout(rxDebounce);rxBuildToken++;currentDoc=null;viewer?.destroy();viewer=null;originalClose();document.getElementById('evApp').inert=false;if(window.EVWorkspace?.route()==='issue')EVWorkspace.refresh();if(focus?.isConnected)focus.focus();};
  bd.addEventListener('keydown',e=>{
-  e.stopPropagation();if(e.key!=='Tab')return;const nodes=[...bd.querySelectorAll('button:not(:disabled),input:not(:disabled),textarea,select,a[href]')].filter(x=>x.getClientRects().length&&!x.closest('[hidden]'));if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  e.stopPropagation();if(e.key==='Escape'){e.preventDefault();closeReview();return;}if(e.key!=='Tab')return;const nodes=[...bd.querySelectorAll('button:not(:disabled),input:not(:disabled),textarea,select,a[href]')].filter(x=>x.getClientRects().length&&!x.closest('[hidden]'));if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
  });
 }
 window.EVReportViewer={mount,enhanceLegacy};window.EVReportBranding={header,footer,profileSample};

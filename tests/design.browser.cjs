@@ -49,7 +49,7 @@ const {chromium} = require('playwright');
     await page.mouse.click(before.sx,before.sy);
     await page.waitForFunction(()=>document.getElementById('evApp').classList.contains('ev-inspector-open'));
     const selected=await page.evaluate(id=>{const u=activePhoto().items.find(i=>i.id===id);return{sel,x:u.x,y:u.y,zoom:view.zoom,ox:view.ox,oy:view.oy,width:cvwrap.clientWidth};},before.id);
-    assert.equal(selected.sel,before.id);assert.equal(selected.x,before.x);assert.equal(selected.y,before.y);
+    assert.equal(selected.sel,before.id,JSON.stringify({before,selected,hit:await page.evaluate(()=>({type:findItem(sel)?.type,kind:findItem(sel)?.kind,label:findItem(sel)?.label}))}));assert.equal(selected.x,before.x);assert.equal(selected.y,before.y);
     assert.equal(selected.zoom,before.zoom);assert.equal(selected.ox,before.ox);assert.equal(selected.oy,before.oy);
     assert.equal(fullWidth-selected.width,320);
     await page.locator('#ulabel').fill('Charger A - preview edit');await page.locator('#ulabel').dispatchEvent('change');
