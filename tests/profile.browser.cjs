@@ -81,7 +81,7 @@ const {chromium} = require('playwright');
     await page.waitForFunction(()=>EVProfile.get().name==='Alex Example');
     pass('Profile backup round trip includes logo and qualifications; invalid and cancelled imports preserve work');
 
-    await page.locator('.ev-brand').click();await page.locator('.eh-hero [data-ev-action="new"]').click();
+    await page.locator('.ev-brand').click();await page.locator('.eh-home [data-ev-action="new"]').click();
     assert.equal(await page.evaluate(()=>pack.surveyedBy),'Alex Example');
     assert.equal(await page.evaluate(()=>pack.brandName),'Example Electrical Ltd');
     assert.equal(await page.evaluate(()=>pack.brandLogo),logo);
@@ -119,7 +119,7 @@ const {chromium} = require('playwright');
     await page.locator('[data-ep-action="apply"]').click();await page.waitForFunction(()=>pack.workspace.authorProfile.includeQualifications===false);
     assert.equal(await page.evaluate(()=>EVProfile.reportRows(pack).filter(r=>r[0]==='Qualification').length),0);
     await page.locator('[data-ep-check="useForNew"]').uncheck();
-    await page.locator('.ev-brand').click();await page.locator('.eh-hero [data-ev-action="new"]').click();
+    await page.locator('.ev-brand').click();await page.locator('.eh-home [data-ev-action="new"]').click();
     await page.locator('[data-ev-close-details]').first().waitFor();
     assert.equal(await page.evaluate(()=>pack.surveyedBy),'');assert.equal(await page.evaluate(()=>!!pack.workspace.authorProfile),false);
     await page.locator('[data-ev-close-details]').first().click();

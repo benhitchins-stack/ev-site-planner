@@ -13,7 +13,8 @@
     "test:profile": "node tests/profile.browser.cjs",
     "test:design": "node tests/design.browser.cjs",
     "test:refinement": "node tests/refinement.browser.cjs",
-    "test:debug": "node tests/deep-debug.browser.cjs"
+    "test:debug": "node tests/deep-debug.browser.cjs",
+    "test:presentation": "node tests/presentation.browser.cjs"
   },
   "engines": {
     "node": ">=18"

@@ -47,7 +47,7 @@ const {chromium}=require('playwright');
   assert(await page.locator('[data-wb-pick="model:ohme_pro"]').count());
   await page.locator('[data-wb-library="favourites"]').click();assert.equal(await page.locator('[data-wb-pick="model:ohme_pro"]').count(),1);
   await page.screenshot({path:path.join(output,'equipment-favourites.png')});await page.locator('[data-wb-close-library]').click();
-  await page.locator('#wbKeyToggle').click();assert(await page.locator('#wbPlanKey').isVisible());
+  await page.locator('#wbDrawingTools > summary').click();await page.locator('#wbKeyToggle').click();assert(await page.locator('#wbPlanKey').isVisible());
   const keyGeometry=await page.evaluate(()=>({key:document.getElementById('wbPlanKey').getBoundingClientRect().top,canvas:cvwrap.getBoundingClientRect().bottom}));assert(keyGeometry.key>=keyGeometry.canvas-1);
   const labelsBefore=await page.evaluate(()=>activePhoto().items.map(i=>i.label));await page.locator('#wbLabelMode').selectOption('full');await page.locator('#wbLabelMode').selectOption('compact');assert.deepEqual(await page.evaluate(()=>activePhoto().items.map(i=>i.label)),labelsBefore);
   await page.screenshot({path:path.join(output,'drawing-key.png')});await page.locator('[data-wb-close-key]').click();

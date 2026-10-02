@@ -58,3 +58,42 @@
  .eh-resource h3{font-size:18px}
  .eh-footer{font-size:11px}
 }
+
+/* A practical home screen when this browser already has projects. */
+.eh-home{font-family:var(--font,'Hanken Grotesk',sans-serif);--eh-muted:#50697b}
+.eh-home .eh-nav-link,.eh-home .eh-text-link,.eh-home .eh-resource-link{font-size:13px}
+.eh-brand small{font-size:10px;letter-spacing:.8px;color:#50697b}
+.eh-hero-copy>.eh-local-note{font-size:12px;color:#50697b}
+.eh-capabilities span{font-size:12px}.eh-step p,.eh-resource p{font-size:14px;line-height:1.7}
+.eh-eyebrow{font-size:11px;letter-spacing:1px}.eh-footer{font-size:12px;color:#50697b}
+.eh-home .eh-returning-title{font-size:30px}
+.eh-returning .eh-recent{padding:40px 0 32px}
+.eh-returning .eh-section-head{align-items:center;margin-bottom:24px;gap:24px}
+.eh-returning h1{font-size:32px;line-height:1.2;letter-spacing:-.8px;margin:0 0 9px;color:#183043}
+.eh-returning .eh-section-head p{font-size:14px;color:#50697b;margin:0}
+.eh-returning .eh-project-grid{grid-template-columns:1fr;gap:0;border:1px solid #cfdce6;border-radius:8px;overflow:hidden;background:white}
+.eh-returning .eh-project{border:0;border-bottom:1px solid #dce5ec;border-radius:0;padding:18px 20px;align-items:center;gap:20px}
+.eh-returning .eh-project:last-child{border-bottom:0}.eh-returning .eh-project:hover{background:#f1f6fc;box-shadow:none}
+.eh-returning .eh-project-icon{width:112px;height:76px;display:grid;place-items:center;border:1px solid #d0dde6;background:#edf2f6;overflow:hidden;border-radius:5px;padding:0;flex:none}
+.eh-project-icon img{width:100%;height:100%;object-fit:contain}
+.eh-returning .eh-project-copy{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;align-items:center}
+.eh-returning .eh-project-copy>span{font-size:11px;letter-spacing:.4px;color:#4f6576;grid-column:1}
+.eh-returning .eh-project h3{font-size:17px;margin:3px 0;white-space:normal;line-height:1.4;grid-column:1}
+.eh-returning .eh-project p{font-size:13px;line-height:1.5;margin:0;grid-column:1}
+.eh-returning .eh-project small{font-size:12px;color:#50697b;grid-column:2;grid-row:1/4}
+.eh-returning .eh-project>svg{width:20px;height:20px;margin:0}
+.eh-recent-foot{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:15px}
+.eh-recent-foot p{font-size:12px;color:#50697b;line-height:1.6}
+.eh-returning .eh-resources{padding:28px 0 32px;border-top:1px solid #d3dfe8}
+.eh-returning .eh-section-head h2{font-size:22px;letter-spacing:-.4px}
+.eh-returning .eh-resource-grid{gap:24px}
+.eh-returning .eh-resource{padding:0;border:0;border-radius:0;background:transparent;color:#183043}
+.eh-returning .eh-resource-icon{background:#e8eef5;color:#3c617e;padding:9px;margin-bottom:14px}
+.eh-returning .eh-resource h3{font-size:17px;letter-spacing:-.3px}
+.eh-returning .eh-resource p{font-size:13px;color:#50697b;margin-bottom:12px;line-height:1.65}
+.eh-returning .eh-resource-link,.eh-returning .eh-resource-dark .eh-resource-link{color:#235c9b;min-height:44px;font-size:13px}
+.eh-returning .eh-workflow{padding:28px 0 36px;border-top:1px solid #d3dfe8}
+.eh-returning .eh-step{padding-top:0;border:0}.eh-returning .eh-step-top{margin-bottom:12px}
+.eh-returning .eh-step h3{font-size:15px}.eh-returning .eh-step p{font-size:13px}
+@media(max-width:780px){.eh-returning .eh-section-head{align-items:flex-start;flex-wrap:wrap;gap:18px}.eh-returning .eh-resource{grid-template-columns:44px minmax(0,1fr)}.eh-returning .eh-project-copy{display:block}.eh-returning .eh-project small{display:block;margin-top:6px}.eh-returning .eh-project-icon{width:82px;height:70px}.eh-returning .eh-resource-grid{gap:24px}.eh-returning .eh-resource-icon{margin-bottom:0}}
+@media(max-width:520px){.eh-wrap{padding:0 20px}.eh-returning h1{font-size:28px}.eh-returning .eh-recent{padding:28px 0}.eh-returning .eh-section-head{margin-bottom:20px}.eh-returning .eh-actions{width:100%;gap:10px}.eh-returning .eh-actions .eh-btn{flex:1;font-size:13px;min-height:44px;padding:10px}.eh-returning .eh-project{padding:15px 12px;gap:12px}.eh-returning .eh-project-icon{width:62px;height:70px}.eh-returning .eh-project h3{font-size:15px}.eh-returning .eh-project>svg{display:none}.eh-returning .eh-project p{white-space:normal;font-size:12px}.eh-recent-foot{align-items:flex-start;gap:12px}.eh-recent-foot p{max-width:210px}.eh-home .eh-text-link{font-size:12px;white-space:normal}.eh-brand small{font-size:8px;letter-spacing:.3px}.eh-hero-copy>.eh-local-note{font-size:12px}.eh-step p,.eh-resource p{font-size:13px}.eh-home .eh-nav-cta{min-height:44px;font-size:11px}.eh-home .eh-profile{min-height:44px;min-width:44px}}

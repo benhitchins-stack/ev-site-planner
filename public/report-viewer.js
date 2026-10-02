@@ -41,11 +41,18 @@ function mount(root,{canvasId=''}={}){
 const font=doc=>doc.getFontList().EVSans?'EVSans':'helvetica';
 function fitted(doc,value,width){let s=String(value??'').replace(/[\u2010-\u2015]/g,'-');if(doc.getTextWidth(s)<=width)return s;while(s&&doc.getTextWidth(s+'…')>width)s=s.slice(0,-1);return s+'…';}
 function header(doc,{title,project=pack,W=doc.internal.pageSize.getWidth(),M=14}={}){
- doc.setFillColor(23,43,59);doc.rect(0,0,W,33,'F');const available=W-2*M-(project.brandLogo?44:0);
- doc.setFont(font(doc),'bold');doc.setFontSize(7);doc.setTextColor(212,233,155);doc.text(fitted(doc,project.brandName||'EV SITE PLANNER',available),M,8.5);
- doc.setFontSize(16);doc.setTextColor(255,255,255);doc.text(fitted(doc,title,available),M,18);
- doc.setFont(font(doc),'normal');doc.setFontSize(9);doc.setTextColor(215,227,239);doc.text(fitted(doc,project.name||'Untitled project',available),M,26);
- if(project.brandLogo){doc.setFillColor(255,255,255);doc.roundedRect(W-M-35,6,35,21,2,2,'F');window.EVProfile?.drawLogo(doc,project.brandLogo,W-M-33,8,31,17);}
+ const previous={font:doc.getFont(),size:doc.getFontSize(),colour:doc.getTextColor()};
+ const available=W-2*M-(project.brandLogo?44:0);
+ doc.setFillColor(255,255,255);doc.rect(0,0,W,37,'F');
+ doc.setFillColor(37,99,235);doc.rect(M,5,9,1.2,'F');
+ doc.setFont(font(doc),'bold');doc.setFontSize(7.5);doc.setTextColor(64,88,106);doc.text(fitted(doc,project.brandName||'EV Site Planner',available-12),M+12,7);
+ doc.setFontSize(16);doc.setTextColor(24,48,67);doc.text(fitted(doc,title,available),M,17);
+ doc.setFont(font(doc),'normal');doc.setFontSize(9);doc.setTextColor(54,78,96);doc.text(fitted(doc,project.name||'Untitled project',available),M,25);
+ doc.setFontSize(7.5);doc.setTextColor(79,101,118);
+ doc.text(fitted(doc,[project.jobRef?'Ref '+project.jobRef:'Reference not recorded','Revision '+(project.rev||'A'),new Date().toLocaleDateString('en-GB')].join(' · '),available),M,31.5);
+ if(project.brandLogo)window.EVProfile?.drawLogo(doc,project.brandLogo,W-M-36,6,36,23);
+ doc.setDrawColor(191,207,219);doc.setLineWidth(.25);doc.line(M,36,W-M,36);
+ doc.setFont(previous.font.fontName,previous.font.fontStyle);doc.setFontSize(previous.size);doc.setTextColor(previous.colour);
 }
 function footer(doc,{project=pack,M=14}={}){
  const total=doc.getNumberOfPages();

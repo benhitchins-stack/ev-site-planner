@@ -749,10 +749,10 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 </style>
 <link rel="stylesheet" href="cdm-controls.css">
 <link rel="stylesheet" href="workspace.css?v=e29080d0f652">
-<link rel="stylesheet" href="home.css?v=16beb7847de3">
+<link rel="stylesheet" href="home.css?v=d6e9cff0c355">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
 <link rel="stylesheet" href="design-preview.css?v=813a64af3286">
-<link rel="stylesheet" href="workbench.css?v=5eabd2b03781">
+<link rel="stylesheet" href="workbench.css?v=5c04665e6ec3">
 </head>
 <body>
 <template id="__bundler_thumbnail">
@@ -3630,10 +3630,23 @@ function drawUnit(c,vw,it,labelK,forExport){
   }
   drawUnitInner(c,vw,it,labelK,forExport);
 }
+/* Flat equipment drawing, using the same bounds and rotation as the saved unit. */
+function drawTechnicalCharger(c,it,w,h){
+  c.save();c.shadowColor="transparent";c.lineWidth=Math.max(1.3,Math.min(2.5,w*.035));
+  c.strokeStyle="#183043";c.fillStyle="#FFFFFF";
+  const fsm=isFSMVariant(it.variant),bodyH=fsm?h*.62:h,top=-h/2;
+  if(fsm&&it.pad!==false){const ph=Math.max(5,w*.2);c.fillStyle='#EDF2F6';c.strokeRect(-w*.65,h/2-ph/2,w*1.3,ph);c.fillRect(-w*.65,h/2-ph/2,w*1.3,ph);c.fillStyle='#fff';}
+  rrect(c,-w/2,top,w,bodyH,Math.min(5,w*.1));c.fill();c.stroke();
+  if(fsm){c.fillStyle="#EDF2F6";c.fillRect(-w*.12,top+bodyH,w*.24,h-bodyH);c.strokeRect(-w*.12,top+bodyH,w*.24,h-bodyH);c.beginPath();c.moveTo(-w*.4,h/2);c.lineTo(w*.4,h/2);c.stroke();}
+  const twin=['twin_ped','solo_dfsm','dc_rapid'].includes(it.variant),r=Math.max(2,w*(twin?.13:.18)),yy=top+bodyH*.65;
+  for(const x of twin?[-w*.25,w*.25]:[0]){c.beginPath();c.arc(x,yy,r,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(x-r*.5,yy);c.lineTo(x+r*.5,yy);c.stroke();}
+  c.font='700 '+Math.max(7,Math.min(15,w*.23))+'px Hanken Grotesk, sans-serif';c.fillStyle="#183043";c.textAlign="center";c.textBaseline="middle";c.fillText('EV',0,top+bodyH*.27);
+  c.restore();
+}
 function drawUnitInner(c,vw,it,labelK,forExport){
   const uview = eqViewOf(it);
   const isPlan = uview==="plan";
-  const im = unitImage(it); if(uview==="side"&&(!im||!im.complete||!im.naturalWidth)) return;
+  const im = unitImage(it); if(uview==="side"&&(!im||!im.complete||!im.naturalWidth)&&!window.EVDrawingStyle?.technical()) return;
   const imr = (im&&im.complete&&im.naturalWidth) ? im.height/im.width : 1.9;
   const w = it.w*vw.zoom;
   const h = isPlan ? w*unitPlanRatio(it) : (uview==="side" ? w*imr : isoBBox(w, w*unitPlanRatio(it), w*Math.min(2.4,Math.max(.8,imr)), uview, 1).bh);
@@ -3659,6 +3672,8 @@ function drawUnitInner(c,vw,it,labelK,forExport){
   c.translate(cx,cy); c.rotate((it.rot||0)*Math.PI/180); if(tk!==1) c.scale(1,tk);
   if(isPlan){
     drawUnitPlanArt(c,vw,it,w,h);
+  } else if(window.EVDrawingStyle?.technical()){
+    drawTechnicalCharger(c,it,w,h);
   } else if(uview==="iso"||uview==="isotop"){
     drawUnitIsoArt(c,vw,it,w,uview,imr);
   } else {
@@ -3685,7 +3700,7 @@ function drawUnitInner(c,vw,it,labelK,forExport){
       socks.forEach(a=>{ const sa=S(a.x,a.y); c.beginPath(); c.arc(sa[0]-cx, sa[1]-cy, 5.5, 0, Math.PI*2); c.fill(); c.stroke(); });
     }
     c.restore(); c.setLineDash([]);
-    if(pack.unit3d && uview==="side"){
+    if(pack.unit3d && uview==="side" && !window.EVDrawingStyle?.technical()){
       const shx=cx+fsmDx, shy=cy+hEff/2+24;
       c.save();
       c.shadowColor="rgba(0,0,0,.35)"; c.shadowBlur=6; c.shadowOffsetY=2;
@@ -3725,11 +3740,10 @@ function drawUnitInner(c,vw,it,labelK,forExport){
     c.font=`800 ${fs}px -apple-system,system-ui,sans-serif`;
     const tw=c.measureText(txt).width, bw2=tw+12*kk, bh2=fs+7*kk;
     const bx=cx, by=cy-hEff/2-bh2*0.62-3*kk;
-    c.shadowColor="rgba(0,0,0,.4)"; c.shadowBlur=4; c.shadowOffsetY=1.5;
-    c.fillStyle="#16232E"; rrect(c,bx-bw2/2,by-bh2/2,bw2,bh2,bh2/2); c.fill();
     c.shadowColor="transparent";
-    c.strokeStyle="rgba(255,255,255,.7)"; c.lineWidth=1.1; rrect(c,bx-bw2/2,by-bh2/2,bw2,bh2,bh2/2); c.stroke();
-    c.fillStyle="#1E6BFF"; c.textAlign="center"; c.textBaseline="middle"; c.fillText(txt,bx,by+0.5);
+    c.fillStyle="#FFFFFF"; rrect(c,bx-bw2/2,by-bh2/2,bw2,bh2,4*kk); c.fill();
+    c.strokeStyle="#8195A5"; c.lineWidth=1.1; c.stroke();
+    c.fillStyle="#183043"; c.textAlign="center"; c.textBaseline="middle"; c.fillText(txt,bx,by+0.5);
     c.restore();
   }
   // label (always upright)
@@ -3747,15 +3761,15 @@ function drawUnitPlanArt(c,vw,it,w,h){
     rrect(c,-pw/2,-pd2/2,pw,pd2,2); c.fill(); c.stroke();
   }
   const r=Math.min(5,w*0.12);
-  c.shadowColor="rgba(0,0,0,.35)"; c.shadowBlur=5; c.shadowOffsetY=2;
-  c.fillStyle="#16232E"; rrect(c,-w/2,-h/2,w,h,r); c.fill();
+  c.shadowColor="rgba(0,0,0,.35)"; c.shadowBlur=window.EVDrawingStyle?.technical()?0:5; c.shadowOffsetY=0;
+  c.fillStyle=window.EVDrawingStyle?.technical()?"#FFFFFF":"#16232E"; rrect(c,-w/2,-h/2,w,h,r); c.fill();
   c.shadowColor="transparent";
-  c.strokeStyle="#1E6BFF"; c.lineWidth=Math.max(1.3,w*0.05); rrect(c,-w/2,-h/2,w,h,r); c.stroke();
+  c.strokeStyle="#183043"; c.lineWidth=Math.max(1.3,w*0.05); rrect(c,-w/2,-h/2,w,h,r); c.stroke();
   // socket / front edge tick
-  c.fillStyle="#1E6BFF"; c.fillRect(-w*0.22, h/2-Math.max(2,h*0.14), w*0.44, Math.max(2,h*0.14));
+  c.fillStyle="#183043"; c.fillRect(-w*0.22, h/2-Math.max(2,h*0.14), w*0.44, Math.max(2,h*0.14));
   // bolt glyph
   const s=Math.min(w,h)*0.62;
-  c.fillStyle="#3D86FF";
+  c.fillStyle="#183043";
   c.save(); c.translate(0,-h*0.04); c.scale(s/24,s/24); c.beginPath();
   c.moveTo(3.4,-11); c.lineTo(-6,2.2); c.lineTo(-1.2,2.2); c.lineTo(-2.6,11); c.lineTo(6,-2.4); c.lineTo(1.6,-2.4); c.closePath(); c.fill(); c.restore();
 }
@@ -7092,19 +7106,13 @@ function labelInk(bg){
   return L>0.62 ? "#16232E" : "#FBF8F2";
 }
 function glyphLabel(c, cx, topY, text, ink, bg, labelK, center, seld){
-  if(ink==="#0c1206") ink=labelInk(bg);
-  const fs=12.5*labelK; c.font=`600 ${fs}px -apple-system,system-ui,sans-serif`;
-  const padX=8*labelK, padY=4.5*labelK;
-  const w=c.measureText(text).width+padX*2, h=fs+padY*2;
-  const x = center ? cx-w/2 : cx-w/2;
-  const y = center ? topY-h/2 : topY;
-  c.save();
-  c.shadowColor="rgba(0,0,0,.4)"; c.shadowBlur=5; c.shadowOffsetY=1.5;
-  c.fillStyle=bg; rrect(c,x,y,w,h,h/2); c.fill();
-  c.restore();
-  if(seld){ c.strokeStyle="#fff"; c.lineWidth=1.5; rrect(c,x,y,w,h,h/2); c.stroke(); }
-  c.fillStyle=ink; c.textAlign="center"; c.textBaseline="middle";
-  c.fillText(text, x+w/2, y+h/2+0.5);
+  const fs=12.5*labelK,padX=8*labelK,padY=4.5*labelK;
+  c.save();c.font=`600 ${fs}px Hanken Grotesk,sans-serif`;
+  const w=c.measureText(text).width+padX*2,h=fs+padY*2,x=cx-w/2,y=center?topY-h/2:topY;
+  c.shadowColor="transparent";c.fillStyle=seld?'#EFF5FF':'#FFFFFF';c.strokeStyle=seld?'#2563EB':'#8195A5';c.lineWidth=seld?1.8:1;
+  rrect(c,x,y,w,h,4*labelK);c.fill();c.stroke();
+  if(bg&&bg!=='#FFFFFF'&&bg!=='#16232E'){c.fillStyle=bg;c.fillRect(x+1.5*labelK,y+4*labelK,2*labelK,h-8*labelK);}
+  c.fillStyle="#183043";c.textAlign="center";c.textBaseline="middle";c.fillText(text,cx,y+h/2);c.restore();
   return {x,y,w,h};
 }
 
@@ -9566,7 +9574,7 @@ function eqViewCtl(it){
   const names={side:"Side-on",plan:"Overhead",iso:"3D side",isotop:"3D top"};
   return `<div class="prop" style="margin-top:12px"><label>Drawing view${hintBtn('eqview')}</label>${hintBox('eqview')}
   <div class="seg grid3">${opts.map(([v,t])=>`<button data-eqview="${v}" class="${cur===v?'on':''}">${t}</button>`).join("")}</div>
-  <div class="sub" style="color:var(--faint);font-size:11px">Auto follows the pack default under Display (${names[pack.eqView||"side"]||"Side-on"}).</div>
+  <div class="sub" style="color:var(--faint);font-size:11px">Auto uses the default in Plan settings (${names[pack.eqView||"side"]||"Side-on"}).</div>
   <label>3D tilt <em style="font-style:normal;color:var(--faint)">· <span id="eqtiltv">${tilt}</span>°${tilt?'':' · off'}</em></label>
   <div style="display:flex;gap:8px;align-items:center"><input type="range" id="eqtilt" min="0" max="60" step="5" value="${tilt}" style="flex:1;accent-color:var(--accent)">${tilt?`<button class="pbtn" id="eqtiltclear" style="flex:none">Flat</button>`:''}</div>
   <div class="sub" style="color:var(--faint);font-size:11px">Match the camera angle so the symbol sits on the surface, not stood up in it.</div>
@@ -12166,18 +12174,17 @@ function connectorChoice(){
 async function buildCustomerPdf(opts){
   opts = opts || {};
   const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+  const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4",compress:true,putOnlyUsedFonts:true});
+  window.EVDelivery?.installFonts(doc);
   const expPhotos = pack.photos.filter(p=>p.includeInPdf!==false);
   const PW=210, PH=297, M=16;
-  const BEIGE=[242,245,248], NAVY=[21,42,57], LIME=[30,107,255], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237], INK=[34,48,54];
+  const BEIGE=[255,255,255], NAVY=[21,42,57], LIME=[30,107,255], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237], INK=[34,48,54];
   const GREEN=[75,160,105], SUN=[206,158,46], SKY=[88,153,168], EARTH=[164,116,60], PLUM=[142,68,133];
   const bg=()=>{ doc.setFillColor(...BEIGE); doc.rect(0,0,PW,PH,"F"); };
-  const logo=await logoPngDataUrl("rgb(21,42,57)", 132);
-  const illo=await svgToPng(COVER_ILLO_TTL, "rgb(30,107,255)", 360);
   let y=M;
-  function newPage(){ doc.addPage(); bg(); y=M+4; }
+  function newPage(){ doc.addPage(); bg(); window.EVReportBranding?.header(doc,{title:"EV charging plan",M}); y=46; }
   function ensureSpace(need){ if(y+need>PH-M-6){ newPage(); } }
-  function heading(txt){ ensureSpace(16); doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15); doc.text(txt,M,y); y+=2.6; doc.setFillColor(...LIME); doc.roundedRect(M,y,18,1.6,0.8,0.8,"F"); y+=8; doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.setTextColor(...DIM); }
+  function heading(txt){ ensureSpace(16); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(15); doc.text(txt,M,y); y+=2.6; doc.setFillColor(...LIME); doc.roundedRect(M,y,18,1.6,0.8,0.8,"F"); y+=8; doc.setFont("EVSans","normal"); doc.setFontSize(11); doc.setTextColor(...DIM); }
   function drawTick(x,cy,r,col){ doc.setFillColor(...col); doc.circle(x,cy,r,"F"); doc.setDrawColor(...WHITE); doc.setLineWidth(0.7); doc.line(x-r*0.45,cy+r*0.05,x-r*0.1,cy+r*0.42); doc.line(x-r*0.1,cy+r*0.42,x+r*0.5,cy-r*0.35); doc.setLineWidth(0.2); }
   function para(txt,x,w,lh){ lh=lh||5.4; doc.splitTextToSize(txt,w).forEach(line=>{ ensureSpace(lh); doc.text(line,x,y); y+=lh; }); }
 
@@ -12194,34 +12201,20 @@ async function buildCustomerPdf(opts){
 
   /* ---------------- COVER ---------------- */
   bg();
-  if(logo) doc.addImage(logo,"PNG",M,M,14,14*40/45);
-  if(illo) doc.addImage(illo.data,"PNG",PW-M-30,M-2,30,30*illo.h/illo.w);
-  // eyebrow
-  doc.setTextColor(...DIM); doc.setFont("helvetica","bold"); doc.setFontSize(10.5);
-  doc.text(pack.mode==="domestic"?"H O M E   C H A R G E   P L A N":"E V   C H A R G I N G   P L A N", M, 120);
-  // hero title
-  doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(40);
-  doc.text(pack.mode==="domestic"?"Your home charge":"Your EV charging", M, 138);
-  doc.text("plan.", M, 154);
-  doc.setFillColor(...LIME); doc.roundedRect(M, 162, 40, 3, 1.5,1.5, "F");
-  // site + meta
-  doc.setFont("helvetica","bold"); doc.setFontSize(15); doc.setTextColor(...INK);
-  if(pack.name) doc.text(pack.name, M, 180);
-  doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.setTextColor(...DIM);
-  let cy=188;
-  { const al=siteAddressLine(); if(al){ doc.text(al, M, cy); cy+=6; } }
-  if(pack.jobRef){ doc.text("Case number: "+pack.jobRef, M, cy); cy+=6; }
-  doc.text("Prepared: "+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}), M, cy); cy+=6;
-  doc.splitTextToSize("Chargers: "+(unitSummaryText()||"as marked on the plans"), PW-2*M).forEach(l=>{ doc.text(l, M, cy); cy+=6; });
-  doc.text(pack.mode==="domestic"?"Project type: Domestic":"Project type: Commercial", M, cy); cy+=6;
-  if(pmName()){ doc.text("Prepared by: "+pmName(), M, cy); cy+=6; }
+  window.EVReportBranding?.header(doc,{title:pack.mode==="domestic"?"Home charge plan":"EV charging plan",M});
+  doc.setTextColor(...NAVY);doc.setFont("EVSans","bold");doc.setFontSize(25);
+  let cy=76;
+  doc.splitTextToSize(pack.name||"Proposed installation",PW-2*M).forEach(line=>{doc.text(line,M,cy);cy+=11;});
+  cy+=5;doc.setFont("EVSans","normal");doc.setFontSize(11);doc.setTextColor(...DIM);
+  const coverRows=[siteAddressLine(),pack.custName?"Client: "+pack.custName:"",pack.jobRef?"Reference: "+pack.jobRef:"","Revision: "+(pack.rev||"A"),"Prepared: "+new Date().toLocaleDateString("en-GB"),"Chargers: "+(unitSummaryText()||"As marked on the plans"),pmName()?"Prepared by: "+pmName():""];
+  coverRows.filter(Boolean).forEach(value=>{doc.splitTextToSize(value,PW-2*M).forEach(line=>{if(cy>225){newPage();cy=50;}doc.text(line,M,cy);cy+=6;});cy+=3;});
   // status banner
   const by=PH-M-40, bw=PW-2*M, bh=30;
   doc.setFillColor(...WHITE); doc.roundedRect(M,by,bw,bh,4,4,"F");
   doc.setFillColor(...status.col); doc.circle(M+12,by+bh/2,4.2,"F");
   // A coloured dot identifies the recorded outcome; it does not imply approval.
-  doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text(status.t, M+20, by+12);
-  doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(...DIM);
+  doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(13); doc.text(status.t, M+20, by+12);
+  doc.setFont("EVSans","normal"); doc.setFontSize(10.5); doc.setTextColor(...DIM);
   doc.splitTextToSize(status.b, bw-26).forEach((line,i)=>doc.text(line, M+20, by+18.5+i*5));
 
   /* ---------------- LETTER + WHAT WE'RE INSTALLING ---------------- */
@@ -12230,7 +12223,7 @@ async function buildCustomerPdf(opts){
     const letter=(pack.custLetter&&pack.custLetter.trim())||genLetter();
     if(letter){
       heading(pmName()?("A note from "+pmName()):"Project note");
-      doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+      doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
       letter.split("\n").forEach(line=>{
         if(!line.trim()){ y+=2.8; return; }
         doc.splitTextToSize(line, PW-2*M).forEach(l=>{ ensureSpace(5.6); doc.text(l, M, y); y+=5.6; });
@@ -12240,7 +12233,7 @@ async function buildCustomerPdf(opts){
   }
 
   heading("Proposed installation");
-  doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+  doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
   para("The plans show the proposed charging equipment and routes. Confirm the installation scope with the contractor before work starts:", M, PW-2*M);
   y+=3;
   const spdFitted=pack.photos.some(p=>p.includeInPdf!==false&&p.items.some(i=>(i.type==="evdb"||i.type==="ipevdb")&&i.spd===true));
@@ -12249,20 +12242,20 @@ async function buildCustomerPdf(opts){
     ["Proposed containment and cabling along the marked routes"],
     ["Protection, testing and commissioning scope to be agreed with the installer"]
   ];
-  doc.setFont("helvetica","normal"); doc.setFontSize(11);
+  doc.setFont("EVSans","normal"); doc.setFontSize(11);
   const inclRows=incl.map(([t])=>doc.splitTextToSize(String(t), PW-2*M-25));
   const cardH=inclRows.reduce((s,l)=>s+Math.max(9,l.length*5.4+3.6),0)+12;
   ensureSpace(cardH);
   doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,cardH,4,4,"F");
   let ly=y+11;
-  inclRows.forEach(lines=>{ doc.setFillColor(...SKY); doc.circle(M+9,ly-1.4,1.5,"F"); doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11); let tly=ly; lines.forEach(l=>{ doc.text(l, M+16, tly); tly+=5.4; }); ly+=Math.max(9,lines.length*5.4+3.6); });
+  inclRows.forEach(lines=>{ doc.setFillColor(...SKY); doc.circle(M+9,ly-1.4,1.5,"F"); doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11); let tly=ly; lines.forEach(l=>{ doc.text(l, M+16, tly); tly+=5.4; }); ly+=Math.max(9,lines.length*5.4+3.6); });
   y+=cardH+12;
 
   /* ---------------- YOUR DESIGN, EXPLAINED ---------------- */
   { const nar=designNarrative(); if(nar.length){
       ensureSpace(44);
       heading("Design summary");
-      nar.forEach(([h,b])=>{ ensureSpace(22); doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11.5); doc.text(h, M, y); y+=5.6; doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(10.6); para(b, M, PW-2*M, 5.2); y+=3.5; });
+      nar.forEach(([h,b])=>{ ensureSpace(22); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11.5); doc.text(h, M, y); y+=5.6; doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(10.6); para(b, M, PW-2*M, 5.2); y+=3.5; });
       y+=5;
   } }
 
@@ -12271,7 +12264,7 @@ async function buildCustomerPdf(opts){
     const sel=selectedNeeds(); if(!sel.length) return;
     ensureSpace(44);
     heading("What we need from you");
-    doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
     para(intro||"Send the following to the person reviewing this plan:", M, PW-2*M); y+=2;
     sel.forEach(n=>{
       doc.setFontSize(11);
@@ -12283,24 +12276,24 @@ async function buildCustomerPdf(opts){
       doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,hh,3,3,"F");
       doc.setDrawColor(...NAVY); doc.setLineWidth(0.5); doc.roundedRect(M+6,y+4.6,4.6,4.6,1.2,1.2,"D"); doc.setLineWidth(0.2);
       let yy=y+8.4;
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11);
+      doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11);
       tl.forEach(l=>{ doc.text(l, M+16, yy); yy+=5.4; });
-      if(dl.length){ doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); dl.forEach(l=>{ doc.text(l, M+16, yy); yy+=4.8; }); }
-      if(n.link){ doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(...SKY); doc.textWithLink(n.link, M+16, yy, {url:n.link}); yy+=5.4; }
-      doc.setFont("helvetica","normal");
+      if(dl.length){ doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); dl.forEach(l=>{ doc.text(l, M+16, yy); yy+=4.8; }); }
+      if(n.link){ doc.setFont("EVSans","normal"); doc.setFontSize(9.5); doc.setTextColor(...SKY); doc.textWithLink(n.link, M+16, yy, {url:n.link}); yy+=5.4; }
+      doc.setFont("EVSans","normal");
       y+=hh+4;
     });
     y+=6;
   }
   function outcomeNotePara(){
-    if(pack.outcomeNote && pack.outcomeNote.trim()){ y+=2; doc.setTextColor(...DIM); doc.setFont("helvetica","italic"); doc.setFontSize(10.5); para(pack.outcomeNote.trim(), M, PW-2*M); doc.setFont("helvetica","normal"); }
+    if(pack.outcomeNote && pack.outcomeNote.trim()){ y+=2; doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5); para(pack.outcomeNote.trim(), M, PW-2*M); doc.setFont("EVSans","normal"); }
   }
   if(OUT==="nonstandard"){
     ensureSpace(40); // keep extras heading with its intro + card
     heading("Additional works");
-    doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
     para("The project records additional works. Review the items below and agree the scope, cost and terms with the contractor before booking.", M, PW-2*M);
-    if(pack.outcomeNote && pack.outcomeNote.trim()){ y+=1; doc.setTextColor(...DIM); doc.setFont("helvetica","italic"); doc.setFontSize(10.5); para(pack.outcomeNote.trim(), M, PW-2*M); doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.setTextColor(...INK); }
+    if(pack.outcomeNote && pack.outcomeNote.trim()){ y+=1; doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5); para(pack.outcomeNote.trim(), M, PW-2*M); doc.setFont("EVSans","normal"); doc.setFontSize(11); doc.setTextColor(...INK); }
     y+=3;
     const extras=[];
     if(pack.extraGround) extras.push(["Groundwork to run the cable underground", pack.extraGround+" m"]);
@@ -12310,23 +12303,23 @@ async function buildCustomerPdf(opts){
       const eh=extras.length*9+10; ensureSpace(eh);
       doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,eh,4,4,"F");
       let ey=y+10;
-      extras.forEach(([t,v])=>{ doc.setFillColor(...SUN); doc.circle(M+11,ey-1.4,1.6,"F"); doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.text(t, M+16, ey); doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); doc.text(v, PW-M-7, ey, {align:"right"}); ey+=9; });
+      extras.forEach(([t,v])=>{ doc.setFillColor(...SUN); doc.circle(M+11,ey-1.4,1.6,"F"); doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11); doc.text(t, M+16, ey); doc.setFont("EVSans","bold"); doc.setTextColor(...NAVY); doc.text(v, PW-M-7, ey, {align:"right"}); ey+=9; });
       y+=eh+10;
     }
-    if(pack.extraFee){ ensureSpace(8); doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); doc.setFontSize(11.5); doc.text("Recorded additional cost: £"+pack.extraFee, M, y); y+=6.5; doc.setFont("helvetica","normal"); doc.setFontSize(11); }
+    if(pack.extraFee){ ensureSpace(8); doc.setFont("EVSans","bold"); doc.setTextColor(...NAVY); doc.setFontSize(11.5); doc.text("Recorded additional cost: £"+pack.extraFee, M, y); y+=6.5; doc.setFont("EVSans","normal"); doc.setFontSize(11); }
     doc.setFontSize(10.5); doc.setTextColor(...DIM);
     para("Refer to the agreed quotation for payment and cancellation terms.", M, PW-2*M);
     doc.setFontSize(11); doc.setTextColor(...INK); y+=4;
   } else if(OUT==="moreinfo"){
     heading("Information needed");
-    doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
     para("Further information is needed to review the proposed installation. Check the notes and requested items below.", M, PW-2*M);
     outcomeNotePara();
     y+=6;
     needsSection();
   } else if(OUT==="permission"){
     heading("Permission before we can proceed");
-    doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
     para("Written permission is recorded as required for this project. Confirm which landowner, landlord or authority must provide consent and which equipment positions or routes it covers.", M, PW-2*M);
     y+=2;
     para("Keep the written consent and any conditions with the project documents.", M, PW-2*M);
@@ -12335,7 +12328,7 @@ async function buildCustomerPdf(opts){
     needsSection("Provide these documents for review:");
   } else if(OUT==="dno"){
     heading("About your electricity supply");
-    doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
     para("DNO review is recorded as required for this project. Confirm the application status, the proposed demand and any required supply works with the person responsible for the application.", M, PW-2*M);
     y+=2;
     para(pack.dnoRef?"Recorded application reference: "+pack.dnoRef+". Check the current status and retain the DNO response.":"No application reference is recorded. Confirm whether an application has been submitted.", M, PW-2*M);
@@ -12344,7 +12337,7 @@ async function buildCustomerPdf(opts){
   } else if(OUT==="groundworks"){
     ensureSpace(82);
     heading("Groundworks scope");
-    doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
     para("Groundworks are recorded for this project. Ask the contractor to confirm the marked route, buried services and construction details before agreeing costs and dates. Review the following scope:", M, PW-2*M);
     y+=3;
     const scope=[
@@ -12355,7 +12348,7 @@ async function buildCustomerPdf(opts){
     const gh=scope.length*9+10; ensureSpace(gh);
     doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,gh,4,4,"F");
     let gy=y+10;
-    scope.forEach(t=>{ doc.setFillColor(...EARTH); doc.circle(M+11,gy-1.4,1.6,"F"); doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.text(t, M+16, gy); gy+=9; });
+    scope.forEach(t=>{ doc.setFillColor(...EARTH); doc.circle(M+11,gy-1.4,1.6,"F"); doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11); doc.text(t, M+16, gy); gy+=9; });
     y+=gh+8;
     outcomeNotePara();
     y+=4;
@@ -12363,8 +12356,8 @@ async function buildCustomerPdf(opts){
     ensureSpace(26);
     doc.setFillColor(244,250,246); doc.roundedRect(M,y,PW-2*M,22,4,4,"F");
     drawTick(M+11,y+11,3.4,GREEN);
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text("Standard scope recorded", M+18, y+9);
-    doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(...DIM);
+    doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(12); doc.text("Standard scope recorded", M+18, y+9);
+    doc.setFont("EVSans","normal"); doc.setFontSize(10.5); doc.setTextColor(...DIM);
     doc.text("Check the recorded scope against the agreed quotation.", M+18, y+15.5);
     y+=30;
   }
@@ -12384,17 +12377,17 @@ async function buildCustomerPdf(opts){
     if(L.cable>0) tech.push(["Cable run (total)",L.cable+" m"]);
     if(L.trunk>0) tech.push(["Trunking (total)",L.trunk+" m"]);
     if(tech.length>1){
-      doc.setFont("helvetica","bold"); doc.setFontSize(10.5);
+      doc.setFont("EVSans","bold"); doc.setFontSize(10.5);
       const rows=tech.map(([k,v])=>{ const lines=doc.splitTextToSize(String(v), PW-2*M-64); return {k:k, lines:lines, h:Math.max(8.4, lines.length*5+3.4)}; });
       const th=rows.reduce((s,r)=>s+r.h,0)+8;
       ensureSpace(th+30); // keep heading + intro with the table
       heading("Recorded technical details");
-      doc.setTextColor(...DIM); doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
+      doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5);
       para("Check these details against the agreed design before installation.", M, PW-2*M); y+=2;
       ensureSpace(th);
       doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,th,4,4,"F");
       let ty=y+9;
-      rows.forEach((r,i)=>{ if(i>0){ doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.line(M+8,ty-4.2,PW-M-8,ty-4.2); } doc.setTextColor(...DIM); doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.text(r.k, M+9, ty); doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); let vy=ty; r.lines.forEach(l=>{ doc.text(l, PW-M-9, vy, {align:"right"}); vy+=5; }); ty+=r.h; });
+      rows.forEach((r,i)=>{ if(i>0){ doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.line(M+8,ty-4.2,PW-M-8,ty-4.2); } doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5); doc.text(r.k, M+9, ty); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); let vy=ty; r.lines.forEach(l=>{ doc.text(l, PW-M-9, vy, {align:"right"}); vy+=5; }); ty+=r.h; });
       y+=th+12;
     }
   }
@@ -12404,21 +12397,21 @@ async function buildCustomerPdf(opts){
   heading("Next steps");
   const steps=nextStepsList();
   steps.forEach((s,i)=>{
-    doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
+    doc.setFont("EVSans","normal"); doc.setFontSize(10.5);
     const stepLines=doc.splitTextToSize(s[1], PW-2*M-14);
     // Keep each step together, including the contact panel after the final step.
     ensureSpace(11+stepLines.length*5+(i===steps.length-1?24:0));
     doc.setFillColor(...LIME); doc.circle(M+5,y+1,5,"F");
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text(String(i+1), M+5, y+2.4, {align:"center"});
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text(s[0], M+14, y);
-    doc.setTextColor(...DIM); doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
+    doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(12); doc.text(String(i+1), M+5, y+2.4, {align:"center"});
+    doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(12); doc.text(s[0], M+14, y);
+    doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5);
     let sy=y+6; stepLines.forEach(line=>{ doc.text(line, M+14, sy); sy+=5; });
     y=sy+5;
   });
   y+=2; ensureSpace(16);
   doc.setFillColor(...NAVY); doc.roundedRect(M,y,PW-2*M,16,4,4,"F");
-  doc.setTextColor(...WHITE); doc.setFont("helvetica","bold"); doc.setFontSize(11.5); doc.text("Comments or changes", M+9, y+7);
-  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(235,238,222); doc.text("Contact the person who issued this plan.", M+9, y+12.4);
+  doc.setTextColor(...WHITE); doc.setFont("EVSans","bold"); doc.setFontSize(11.5); doc.text("Comments or changes", M+9, y+7);
+  doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(235,238,222); doc.text("Contact the person who issued this plan.", M+9, y+12.4);
   y+=22;
 
   /* ---------------- PHOTOS ---------------- */
@@ -12427,14 +12420,14 @@ async function buildCustomerPdf(opts){
       newPage();
       if(i===0){
         heading("Your survey photos");
-        doc.setTextColor(...DIM); doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
+        doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5);
         para("Site photos and drawings with the proposed installation marked up.", M, PW-2*M); y+=2;
       } else {
-        doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Your survey photos", M, y); y+=8;
+        doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(13); doc.text("Your survey photos", M, y); y+=8;
       }
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11.5);
+      doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11.5);
       doc.text(`${i+1}. ${p.name}`, M, y);
-      doc.setTextColor(...FAINT); doc.setFont("helvetica","normal"); doc.setFontSize(8.5);
+      doc.setTextColor(...FAINT); doc.setFont("EVSans","normal"); doc.setFontSize(8.5);
       doc.text(`Photo ${i+1} of ${expPhotos.length}`, PW-M, y, {align:"right"});
       y+=4;
       const hasCap = p.caption && p.caption.trim();
@@ -12446,7 +12439,7 @@ async function buildCustomerPdf(opts){
       const ix=(PW-w)/2;
       doc.setFillColor(...WHITE); doc.roundedRect(ix-3,y-1,w+6,h+6,4,4,"F");
       doc.addImage(cn.toDataURL("image/jpeg",0.92),"JPEG",ix, y+2, w, h);
-      if(hasCap){ let ccy=y+2+h+8; doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); capLines.forEach(line=>{ doc.text(line, M, ccy); ccy+=4.8; }); }
+      if(hasCap){ let ccy=y+2+h+8; doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); capLines.forEach(line=>{ doc.text(line, M, ccy); ccy+=4.8; }); }
     });
   }
 
@@ -12461,32 +12454,26 @@ async function buildCustomerPdf(opts){
 async function buildPdf(opts){
   opts = opts || {};
   const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+  const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4",compress:true,putOnlyUsedFonts:true});
+  window.EVDelivery?.installFonts(doc);
   const expPhotos = pack.photos.filter(p=>p.includeInPdf!==false);
   const PW=210, PH=297, M=14;
-  const NAVY=[21,42,57], BEIGE=[242,245,248], LIME=[30,107,255], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237];
+  const NAVY=[21,42,57], BEIGE=[255,255,255], LIME=[30,107,255], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237];
   const bg=()=>{ doc.setFillColor(...BEIGE); doc.rect(0,0,PW,PH,"F"); };
-  const logo=await logoPngDataUrl("rgb(21,42,57)", 132);
   let y;
-  function ensureSpace(need){ if(y+need>PH-M){ doc.addPage(); bg(); y=M; } }
-  function heading(txt){ ensureSpace(12); doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11.5); doc.text(txt,M,y); y+=2.2; doc.setFillColor(...LIME); doc.rect(M,y,16,1,"F"); y+=6.5; doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); }
+  function ensureSpace(need){ if(y+need>PH-M-3){ doc.addPage(); bg(); window.EVReportBranding?.header(doc,{title:"Site survey",M}); y=46; } }
+  function heading(txt){ ensureSpace(23); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11.5); doc.text(txt,M,y); y+=2.2; doc.setFillColor(...LIME); doc.rect(M,y,16,1,"F"); y+=6.5; doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); }
 
   bg();
-  if(logo) doc.addImage(logo,"PNG",M,M,13,13*40/45);
-  doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(18);
-  doc.text(pack.mode==="domestic"?"Home Charge Survey":"Commercial Site Survey", M+18, M+7);
-  doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(...DIM);
-  doc.text(pack.mode==="domestic"?"Domestic EV charging · survey & install plan":"Workplace & destination charging · install plan", M+18, M+13);
-  doc.setFillColor(...LIME); doc.rect(M, M+19, PW-2*M, 1.4, "F");
-
-  y=M+30;
+  window.EVReportBranding?.header(doc,{title:pack.mode==="domestic"?"Home charge survey":"Commercial site survey",M});
+  y=46;
   if(pack.name){
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(13);
-    doc.text(pack.name, M, y); y+=7;
+    doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(13);
+    doc.splitTextToSize(pack.name,PW-2*M).forEach(line=>{ensureSpace(7);doc.text(line,M,y);y+=7;});
   }
-  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
-  { const al=siteAddressLine(); if(al){ doc.text(al, M, y); y+=5.5; } }
-  if(pack.jobRef){ doc.text("Case number: "+pack.jobRef, M, y); y+=5.5; }
+  doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+  { const al=siteAddressLine(); if(al){ doc.splitTextToSize(al,PW-2*M).forEach(line=>{ensureSpace(5.5);doc.text(line,M,y);y+=5.5;}); } }
+  if(pack.jobRef){ doc.splitTextToSize("Reference: "+pack.jobRef,PW-2*M).forEach(line=>{ensureSpace(5.5);doc.text(line,M,y);y+=5.5;}); }
   { const sd=pack.surveyDate?new Date(pack.surveyDate+"T12:00:00"):null;
     doc.text("Date: "+((sd&&!isNaN(sd))?sd:new Date()).toLocaleDateString("en-GB"), M, y); y+=5.5; }
   { const s=unitSummaryText(); if(s){ doc.splitTextToSize("Chargers: "+s, PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.5; }); } }
@@ -12495,9 +12482,9 @@ async function buildPdf(opts){
   if(pack.earthing){ doc.text("Earthing: "+pack.earthing, M, y); y+=5.5; }
   if(pack.mainFuse){ doc.text("Main fuse: "+pack.mainFuse, M, y); y+=5.5; }
   if(pack.earthWiz&&pack.earthWiz.done&&Array.isArray(pack.earthWiz.lines)){
-    y+=1.5; doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); doc.setFontSize(10);
+    y+=1.5; doc.setFont("EVSans","bold"); doc.setTextColor(...NAVY); doc.setFontSize(10);
     ensureSpace(8); doc.text("Earthing & protection decision · "+(pack.earthWiz.earthing||pack.earthing||"")+" · "+(pack.earthWiz.date||""), M, y); y+=5;
-    doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...DIM);
+    doc.setFont("EVSans","normal"); doc.setFontSize(9); doc.setTextColor(...DIM);
     pack.earthWiz.lines.forEach(l=>{ doc.splitTextToSize("-  "+l, PW-2*M-4).forEach(line=>{ ensureSpace(5); doc.text(line, M+2, y); y+=4.4; }); });
     doc.setFontSize(10); y+=1;
   }
@@ -12506,11 +12493,11 @@ async function buildPdf(opts){
     const od=OUTCOME_DEFS[pack.outcome]||{};
     const oc=od.col||NAVY, otxt=od.label||pack.outcome;
     y+=1.5;
-    doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
+    doc.setFont("EVSans","bold"); doc.setFontSize(9.5);
     const opw=doc.getTextWidth(otxt)+11;
     doc.setFillColor(...oc); doc.roundedRect(M,y-4.6,opw,7,3.5,3.5,"F");
     doc.setTextColor(255,255,255); doc.text(otxt, M+5.5, y);
-    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+    doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
     y+=7;
     if(pack.outcome==="nonstandard"){
       if(pack.extraGround){ doc.text("-  Groundworks: "+pack.extraGround+" m", M+4, y); y+=5.2; }
@@ -12528,9 +12515,9 @@ async function buildPdf(opts){
 
   if(pack.coverSummary && pack.coverSummary.trim()){
     doc.setDrawColor(...LINE); doc.setLineWidth(0.2);
-    doc.setTextColor(...DIM); doc.setFont("helvetica","italic"); doc.setFontSize(10);
+    doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10);
     doc.splitTextToSize(pack.coverSummary.trim(), PW-2*M).forEach(line=>{ ensureSpace(6); doc.text(line, M, y); y+=5.2; });
-    doc.setFont("helvetica","normal"); y+=4;
+    doc.setFont("EVSans","normal"); y+=4;
   }
 
   // Project scope - white card summarising the marked-up scope across all included photos
@@ -12543,28 +12530,28 @@ async function buildPdf(opts){
   else { doc.setDrawColor(...LINE); doc.setLineWidth(0.2); }
   doc.roundedRect(M,y,PW-2*M,cardH,3,3,"FD");
   doc.setLineWidth(0.2);
-  doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(11);
+  doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11);
   doc.text("Project scope", M+6, y+8);
   if(approvedStd){
     // green "confirmed" pill with tick, right-aligned in the header
     const pillTxt="Scope confirmed", pw=doc.getTextWidth(pillTxt)+12, px=PW-M-6-pw, py=y+3.4;
     doc.setFillColor(...GREEN); doc.roundedRect(px,py,pw,7,3.5,3.5,"F");
-    doc.setTextColor(...WHITE); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+    doc.setTextColor(...WHITE); doc.setFont("EVSans","bold"); doc.setFontSize(8);
     // tick mark
     doc.setDrawColor(...WHITE); doc.setLineWidth(0.9);
     doc.line(px+4, py+3.7, px+5.4, py+5.1); doc.line(px+5.4, py+5.1, px+7.8, py+2.2);
     doc.setLineWidth(0.2);
     doc.text(pillTxt, px+9, py+4.8);
-    doc.setFont("helvetica","normal");
+    doc.setFont("EVSans","normal");
   }
-  doc.setFont("helvetica","normal"); doc.setFontSize(10);
+  doc.setFont("EVSans","normal"); doc.setFontSize(10);
   const rowItems=scopeRows;
   let ry=y+16;
   rowItems.forEach(([label,val,sw])=>{
     doc.setFillColor(...sw); doc.roundedRect(M+6, ry-2.6, 7, 3.2, 0.8,0.8,"F");
     if(sw[0]>240){ doc.setDrawColor(...LINE); doc.roundedRect(M+6, ry-2.6, 7, 3.2, 0.8,0.8,"S"); }
     doc.setTextColor(...NAVY); doc.text(label, M+17, ry);
-    doc.setFont("helvetica","bold"); doc.text(val, PW-M-6, ry, {align:"right"}); doc.setFont("helvetica","normal");
+    doc.setFont("EVSans","bold"); doc.text(val, PW-M-6, ry, {align:"right"}); doc.setFont("EVSans","normal");
     ry+=7;
   });
   doc.setTextColor(...FAINT); doc.setFontSize(8.2);
@@ -12576,8 +12563,8 @@ async function buildPdf(opts){
     heading("Revision history");
     pack.revHistory.slice(-8).forEach(r=>{
       ensureSpace(6);
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.text("Rev "+String(r.rev||"").slice(0,3), M, y);
-      doc.setFont("helvetica","normal"); doc.setTextColor(...DIM);
+      doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.text("Rev "+String(r.rev||"").slice(0,3), M, y);
+      doc.setFont("EVSans","normal"); doc.setTextColor(...DIM);
       doc.text(String(r.at||""), M+20, y);
       if(r.by) doc.text(String(r.by).slice(0,20), M+44, y);
       doc.text(doc.splitTextToSize(String(r.note||"-"), PW-2*M-86)[0]||"-", M+86, y);
@@ -12610,9 +12597,9 @@ async function buildPdf(opts){
   const cps=[]; expPhotos.forEach(p=>p.items.forEach(i=>{ if(i.type==="connpoint") cps.push(i.loc||"Main consumer unit / fuse board"); }));
   if(cps.length){
     const uniq=[...new Set(cps)];
-    y+=1; ensureSpace(6); doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY);
+    y+=1; ensureSpace(6); doc.setFont("EVSans","bold"); doc.setTextColor(...NAVY);
     doc.text("Supply connection point: "+uniq.join(", "), M, y); y+=5.8;
-    doc.setFont("helvetica","normal");
+    doc.setFont("EVSans","normal");
   }
   // Existing customer-owned items (meter, cutout, earth terminal, main switch/isolator, meter cabinet)
   // are shown on the plan for reference only and are NOT listed as equipment to supply.
@@ -12633,10 +12620,10 @@ async function buildPdf(opts){
     heading("Cable & trunking runs");
     const cx1=M, cx2=M+76, cx3=PW-M;
     ensureSpace(9);
-    doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(...NAVY);
+    doc.setFont("EVSans","bold"); doc.setFontSize(9); doc.setTextColor(...NAVY);
     doc.text("Run", cx1, y); doc.text("Photo", cx2, y); doc.text("Length", cx3, y, {align:"right"});
     y+=1.8; doc.setDrawColor(...LINE); doc.line(M,y,PW-M,y); y+=4.8;
-    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+    doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
     const totals={};
     runs.forEach(r=>{
       // wrap the run name inside its own column so it never collides with the Photo column
@@ -12650,17 +12637,17 @@ async function buildPdf(opts){
       if(r.len!=null) totals[r.name]=(totals[r.name]||0)+r.len;
     });
     y+=1.2; doc.setDrawColor(...LINE); doc.line(M,y,PW-M,y); y+=5.2;
-    doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY);
+    doc.setFont("EVSans","bold"); doc.setTextColor(...NAVY);
     Object.keys(totals).forEach(nm=>{ const tl=doc.splitTextToSize("Total "+nm, PW-2*M-26); ensureSpace(tl.length*5.4+0.6); tl.forEach((ln,ix)=>doc.text(ln, cx1, y+ix*5.4)); doc.text(totals[nm].toFixed(1)+" m", cx3, y, {align:"right"}); y+=(tl.length-1)*5.4+5.8; });
     // Allowance-based chargeable summary (single source of truth, matches the extras + customer PDF)
     const La=rxComputeLengths();
     const cableOver=Math.max(0, +(La.cable-STD_CABLE).toFixed(2)), trunkOver=Math.max(0, +(La.trunk-STD_TRUNK).toFixed(2));
     if(La.cable>0 || La.trunk>0){
       y+=0.8; doc.setDrawColor(...LINE); doc.line(M,y,PW-M,y); y+=5;
-      doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...FAINT);
+      doc.setFont("EVSans","normal"); doc.setFontSize(9); doc.setTextColor(...FAINT);
       if(La.cable>0){ ensureSpace(5.4); doc.text(`Cable allowance ${STD_CABLE} m  ·  marked ${La.cable} m`, cx1, y); y+=5.2; }
       if(La.trunk>0){ ensureSpace(5.4); doc.text(`Trunking allowance ${STD_TRUNK} m  ·  marked ${La.trunk} m`, cx1, y); y+=5.2; }
-      doc.setFont("helvetica","bold"); doc.setFontSize(10);
+      doc.setFont("EVSans","bold"); doc.setFontSize(10);
       const over=[]; if(cableOver>0) over.push(["Chargeable cable (beyond allowance)", cableOver]); if(trunkOver>0) over.push(["Chargeable trunking (beyond allowance)", trunkOver]);
       if(over.length){ over.forEach(([t,v])=>{ ensureSpace(6); doc.setTextColor(200,95,20); doc.text(t, cx1, y); doc.text(v.toFixed(1)+" m", cx3, y, {align:"right"}); y+=5.8; }); }
       else { ensureSpace(6); doc.setTextColor(75,160,105); doc.text("Within standard allowance, no chargeable cable/trunking", cx1, y); y+=5.8; }
@@ -12676,12 +12663,12 @@ async function buildPdf(opts){
         ensureSpace(10.5);
         const fc=r.fc;
         const okc=r.st==="fail"?[204,56,46]:(r.st==="warn"?[154,122,26]:(r.st==="ok"?[38,122,67]:FAINT));
-        doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
+        doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(9.5);
         doc.text(doc.splitTextToSize(r.name+" · "+(r.p.name||"plan"), PW-2*M-52)[0], M, y);
         doc.setTextColor(...okc);
         doc.text(r.st==="fail"?"CHECK FAILS":r.st==="warn"?"PASS · NEAR LIMIT":r.st==="ok"?"PASS":"INCOMPLETE", PW-M, y, {align:"right"});
         y+=4.4;
-        doc.setFont("helvetica","normal"); doc.setFontSize(8.4); doc.setTextColor(...DIM);
+        doc.setFont("EVSans","normal"); doc.setFontSize(8.4); doc.setTextColor(...DIM);
         const zsTxt=fc.zs.tt?("TT / RA "+(fc.zs.ra!=null?fc.zs.ra+" ohm":"not set")):("Zs "+(fc.zs.v!=null?fc.zs.v.toFixed(2):"?")+" / max "+fc.zs.max+" ohm");
         const line=fc.F.name+" "+fc.csa+" mm² · "+fc.dev+fc.inA+" · "+(r.L!=null?r.L+" m":"no length")+" · Ib "+fc.ib+" A · Iz "+(fc.iz!=null?fc.iz:"?")+" A · VD "+(fc.vd.pct!=null?fc.vd.pct.toFixed(1)+"%":"?")+" · "+zsTxt+" · CPC "+fc.cpc+" mm²"+(fc.suggest?" · use "+fc.suggest+" mm²":"")+(fc.sugIn?" · device "+fc.dev+fc.sugIn:"");
         doc.text(doc.splitTextToSize(line, PW-2*M)[0], M, y);
@@ -12714,28 +12701,26 @@ async function buildPdf(opts){
     heading("Note to engineer");
     rows.forEach(([k,v])=>{
       ensureSpace(6);
-      doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); doc.setFontSize(10);
+      doc.setFont("EVSans","bold"); doc.setTextColor(...NAVY); doc.setFontSize(10);
       doc.text(k, M, y);
-      doc.setFont("helvetica","normal"); doc.setTextColor(...DIM);
+      doc.setFont("EVSans","normal"); doc.setTextColor(...DIM);
       doc.splitTextToSize(String(v), PW-2*M-38).forEach((ln,ix)=>{ if(ix>0) ensureSpace(5.2); doc.text(ln, M+36, y); y+=5.2; });
     });
     if((pack.engineerNote||"").trim()){
-      y+=1.5; doc.setFont("helvetica","normal"); doc.setTextColor(...DIM); doc.setFontSize(10);
+      y+=1.5; doc.setFont("EVSans","normal"); doc.setTextColor(...DIM); doc.setFontSize(10);
       doc.splitTextToSize(pack.engineerNote.trim(), PW-2*M).forEach(ln=>{ ensureSpace(5.4); doc.text(ln, M, y); y+=5.2; });
     }
     y+=4;
   }
 
-  if(pack.notes){ heading("Notes"); doc.setFont("helvetica","normal"); doc.setTextColor(...DIM);
+  if(pack.notes){ heading("Notes"); doc.setFont("EVSans","normal"); doc.setTextColor(...DIM);
     doc.splitTextToSize(pack.notes, PW-2*M).forEach(line=>{ ensureSpace(6); doc.text(line,M,y); y+=5.4; }); }
 
   // Works & information request page
   if((pack.enablingWorks||[]).length){
-    doc.addPage(); bg(); y=M+16;
-    if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
-    doc.text("Works & information request", M+12, M+5);
-    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+    doc.addPage(); bg(); y=46;
+      window.EVReportBranding?.header(doc,{title:"Works & information request",M});
+    doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
     doc.splitTextToSize("To be completed or provided by the client / principal contractor ahead of the installation visit. Routes, positions and bay layouts are marked on the attached plans.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.2; });
     y+=4;
     const works=ENABLING_DEFS.filter(n=>(pack.enablingWorks||[]).includes(n.k));
@@ -12747,20 +12732,20 @@ async function buildPdf(opts){
       doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,hh,3,3,"F");
       doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.roundedRect(M,y,PW-2*M,hh,3,3,"S");
       doc.setFillColor(30,107,255); doc.circle(M+9,y+hh/2,3.2,"F");
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(9);
+      doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(9);
       doc.text(String(ix+1), M+9, y+hh/2+1.1, {align:"center"});
       let ty=y+8;
-      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
+      doc.setFont("EVSans","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
       tl.forEach(ln=>{ doc.text(ln, M+18, ty); ty+=5.4; });
-      doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(...DIM);
+      doc.setFont("EVSans","normal"); doc.setFontSize(9.5); doc.setTextColor(...DIM);
       dl.forEach(ln=>{ doc.text(ln, M+18, ty); ty+=4.8; });
       y+=hh+4;
     });
     if((pack.enablingNote||"").trim()){
       y+=2; ensureSpace(12);
-      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
+      doc.setFont("EVSans","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
       doc.text("Notes", M, y); y+=5.4;
-      doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+      doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
       doc.splitTextToSize(pack.enablingNote.trim(), PW-2*M).forEach(ln=>{ ensureSpace(5.4); doc.text(ln, M, y); y+=5.2; });
     }
   }
@@ -12773,34 +12758,28 @@ async function buildPdf(opts){
       doc.addPage("a4","landscape");
       const LW=297, LH=210;
       doc.setFillColor(...BEIGE); doc.rect(0,0,LW,LH,"F");
-      if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12);
-      doc.text("Single-line diagram (schematic)", M+12, M+5);
-      doc.setTextColor(...FAINT); doc.setFont("helvetica","normal"); doc.setFontSize(8.5);
-      doc.text("Derived from the plan markup · dashed legs still to be routed", LW-M, M+5, {align:"right"});
-      const availW=LW-2*M, availH=LH-M-14-M;
+      window.EVReportBranding?.header(doc,{title:"Single-line diagram",M});
+      doc.setTextColor(...DIM);doc.setFont("EVSans","normal");doc.setFontSize(8.5);
+      doc.text("Derived from the markup. Dashed connections have no recorded route.",M,43);
+      const availW=LW-2*M, availH=LH-48-M;
       let w=availW, h=w*cnv.height/cnv.width; if(h>availH){ h=availH; w=h*cnv.width/cnv.height; }
-      doc.addImage(cnv.toDataURL("image/png"),"PNG",(LW-w)/2, M+10, w, h);
+      doc.addImage(cnv.toDataURL("image/png"),"PNG",(LW-w)/2, 48, w, h);
     }
   }catch(e){ console.warn("SLD page skipped", e); }
 
   // photo pages
   expPhotos.forEach((p,i)=>{
     doc.addPage("a4","portrait"); bg();
-    if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12);
-    doc.text(`${i+1}. ${p.name}`, M+12, M+5);
-    doc.setTextColor(...FAINT); doc.setFont("helvetica","normal"); doc.setFontSize(8.5);
-    doc.text(`Photo ${i+1} of ${expPhotos.length}`, PW-M, M+5, {align:"right"});
+    window.EVReportBranding?.header(doc,{title:`${i+1}. ${p.name}`,M});
     const hasCap = p.caption && p.caption.trim();
     const capLines = hasCap ? doc.splitTextToSize(p.caption.trim(), PW-2*M) : [];
     const capH = hasCap ? capLines.length*4.6 + 4 : 0;
     const cn=renderPhotoToCanvas(p, 2000);
-    const availW=PW-2*M, availH=PH-2*M-14-capH;
+    const availW=PW-2*M, availH=PH-M-44-capH;
     let w=availW, h=w*cn.height/cn.width; if(h>availH){ h=availH; w=h*cn.width/cn.height; }
-    doc.addImage(cn.toDataURL("image/jpeg",0.92),"JPEG",(PW-w)/2, M+12, w, h);
+    doc.addImage(cn.toDataURL("image/jpeg",0.92),"JPEG",(PW-w)/2, 42, w, h);
     if(hasCap){
-      let cy=M+12+h+5; doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(...DIM);
+      let cy=42+h+5; doc.setFont("EVSans","normal"); doc.setFontSize(9.5); doc.setTextColor(...DIM);
       capLines.forEach(line=>{ doc.text(line, M, cy); cy+=4.6; });
     }
   });
@@ -12809,19 +12788,15 @@ async function buildPdf(opts){
     fpsAll.forEach((rec,idx)=>{
       const fp=rec.fp;
       doc.addPage(); bg();
-      if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
-      doc.text("Feeder pillar schedule"+(fpsAll.length>1?` (${idx+1} of ${fpsAll.length})`:""), M+12, M+5);
-      doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(...FAINT);
-      doc.text(`${fp.label||"Feeder pillar"} · ${rec.photo.name||"plan"}`, PW-M, M+5, {align:"right"});
+      window.EVReportBranding?.header(doc,{title:"Feeder pillar schedule"+(fpsAll.length>1?` (${idx+1} of ${fpsAll.length})`:""),M});
       const s=FP_SIZES[fp.fpSize], mmv=fpMM(fp), padv=fpPadMM(fp);
       const sheet=renderFPSheet(fp);
-      const iw=PW-2*M, ih=iw*(sheet.height/sheet.width);
-      doc.addImage(sheet.toDataURL("image/jpeg",.92),"JPEG",M,M+10,iw,ih);
-      let yy=M+10+ih+9;
-      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
+      const iw=PW-2*M, ih=Math.min(158,iw*(sheet.height/sheet.width)),sw=ih*sheet.width/sheet.height;
+      doc.addImage(sheet.toDataURL("image/jpeg",.92),"JPEG",M+(iw-sw)/2,42,sw,ih);
+      let yy=42+ih+9;
+      doc.setFont("EVSans","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
       doc.text("Specification",M,yy); yy+=5.2;
-      doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(60,72,84);
+      doc.setFont("EVSans","normal"); doc.setFontSize(9); doc.setTextColor(60,72,84);
       const lay=(fp.fpLayout&&fp.fpLayout.length)?fp.fpLayout:fpAutoLayout(fp);
       const counts={}; lay.forEach(e=>{ const d=FP_EQUIP[e.k]; if(d&&e.k!=="note") counts[d.name]=(counts[d.name]||0)+1; });
       const wl=feederWayLabels(fp);
@@ -12839,19 +12814,17 @@ async function buildPdf(opts){
   // Commissioning punch list page
   { const tasks=punchTasks();
     if(tasks.length){
-      doc.addPage(); bg(); y=M+16;
-      if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
-      doc.text("Commissioning punch list", M+12, M+5);
-      doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+      doc.addPage(); bg(); y=46;
+      window.EVReportBranding?.header(doc,{title:"Commissioning punch list",M});
+      doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
       doc.text("Tick off on install day. Generated from marked drill points, chambers and notes.", M, y); y+=8;
       tasks.forEach(t=>{
         ensureSpace(10);
         if(t.done){ doc.setFillColor(...NAVY); doc.setDrawColor(...NAVY); doc.setLineWidth(0.4); doc.rect(M+2,y-3.6,4.6,4.6,"FD"); doc.setDrawColor(255,255,255); doc.setLineWidth(0.8); doc.line(M+3.2,y-1.3,M+4.2,y-0.2); doc.line(M+4.2,y-0.2,M+6,y-2.7); }
         else { doc.setDrawColor(...NAVY); doc.setLineWidth(0.5); doc.rect(M+2,y-3.6,4.6,4.6,"S"); }
-        doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(10);
+        doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(10);
         doc.text(doc.splitTextToSize(t.name, PW-2*M-66)[0], M+10, y);
-        doc.setFont("helvetica","normal"); doc.setTextColor(...FAINT); doc.setFontSize(9);
+        doc.setFont("EVSans","normal"); doc.setTextColor(...FAINT); doc.setFontSize(9);
         doc.text(doc.splitTextToSize(t.photo,52)[0], PW-M, y, {align:"right"});
         y+=8;
       });
@@ -12861,11 +12834,9 @@ async function buildPdf(opts){
     if(sl.length){
       const st=snagStats(); const ss=pack.snagSign||{}; const signed=snagSignedOff();
       const SEV_RGB={minor:[201,150,20],major:[224,90,38],safety:[212,38,38]}; const FIXG=[42,120,65];
-      doc.addPage(); bg(); y=M+16;
-      if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
-      doc.text("Snag & rectification list", M+12, M+5);
-      doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+      doc.addPage(); bg(); y=46;
+      window.EVReportBranding?.header(doc,{title:"Snag & rectification list",M});
+      doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
       doc.text(st.open ? (st.open+" of "+st.total+" open"+(st.safety?" \u00b7 "+st.safety+" safety":"")+" \u00b7 pin numbers match the marked-up photos") : ("All "+st.total+" closed out \u00b7 pin numbers match the marked-up photos"), M, y); y+=8;
       sl.forEach(({it,photo})=>{
         const open=it.st!=="fixed";
@@ -12879,11 +12850,11 @@ async function buildPdf(opts){
         doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,hh,3,3,"F");
         doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.roundedRect(M,y,PW-2*M,hh,3,3,"S");
         doc.setFillColor(col[0],col[1],col[2]); doc.circle(M+8.4,y+hh/2,3.2,"F");
-        doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+        doc.setTextColor(255,255,255); doc.setFont("EVSans","bold"); doc.setFontSize(8);
         doc.text(String(it.n||"!"), M+8.4, y+hh/2+1.1, {align:"center"});
         doc.setTextColor(...NAVY); doc.setFontSize(10);
         let ty=y+6.8; tl.forEach(ln=>{ doc.text(ln, M+15.5, ty); ty+=4.8; });
-        doc.setFont("helvetica","normal"); doc.setFontSize(8.6); doc.setTextColor(...DIM);
+        doc.setFont("EVSans","normal"); doc.setFontSize(8.6); doc.setTextColor(...DIM);
         doc.text(sub, M+15.5, ty+0.4);
         if(hasShots){
           let ix=M+15.5; const iy=ty+3.4, iw=46, ih=34.5;
@@ -12891,27 +12862,27 @@ async function buildPdf(opts){
             if(!it[k]) return;
             try{ doc.addImage(it[k],"JPEG",ix,iy,iw,ih); }catch(_){ }
             doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.rect(ix,iy,iw,ih,"S");
-            doc.setFont("helvetica","bold"); doc.setFontSize(6.6); doc.setTextColor(...FAINT);
+            doc.setFont("EVSans","bold"); doc.setFontSize(6.6); doc.setTextColor(...FAINT);
             doc.text(cap, ix, iy+ih+3);
             ix+=iw+5;
           });
         }
-        doc.setFont("helvetica","bold"); doc.setFontSize(8.4); doc.setTextColor(col[0],col[1],col[2]);
+        doc.setFont("EVSans","bold"); doc.setFontSize(8.4); doc.setTextColor(col[0],col[1],col[2]);
         doc.text(open?"OPEN":"FIXED", PW-M-4, y+7, {align:"right"});
         y+=hh+3;
       });
       y+=4; ensureSpace(38);
-      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
+      doc.setFont("EVSans","bold"); doc.setFontSize(10.5); doc.setTextColor(...NAVY);
       doc.text(signed?("Signed off: all items closed out"+(ss.date?" \u00b7 "+ss.date:"")):"Sign-off: to complete once every item above is closed out", M, y); y+=4;
       const bw=(PW-2*M-8)/2;
       const sbox=(bx,title,name)=>{
         doc.setFillColor(...WHITE); doc.roundedRect(bx,y,bw,26,3,3,"F");
         doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.roundedRect(bx,y,bw,26,3,3,"S");
-        doc.setFont("helvetica","bold"); doc.setFontSize(7.4); doc.setTextColor(...FAINT);
+        doc.setFont("EVSans","bold"); doc.setFontSize(7.4); doc.setTextColor(...FAINT);
         doc.text(title.toUpperCase(), bx+5, y+6);
-        if(name){ doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(...NAVY); doc.text(name, bx+5, y+15.4); }
+        if(name){ doc.setFont("EVSans","normal"); doc.setFontSize(10.5); doc.setTextColor(...NAVY); doc.text(name, bx+5, y+15.4); }
         doc.setDrawColor(150,158,168); doc.setLineWidth(0.3); doc.line(bx+5,y+17.6,bx+bw-5,y+17.6);
-        doc.setFont("helvetica","normal"); doc.setFontSize(7.4); doc.setTextColor(...FAINT);
+        doc.setFont("EVSans","normal"); doc.setFontSize(7.4); doc.setTextColor(...FAINT);
         doc.text((signed&&name)?("Signature \u00b7 "+(ss.date||"")):"Signature / date", bx+5, y+22.4);
       };
       sbox(M, pack.mode==="domestic"?"Fixed & checked by (installer)":"Closed out by (contractor)", ss.by||"");
@@ -12920,11 +12891,9 @@ async function buildPdf(opts){
     } }
   // Compliance & notifications status page
   if(((pack.compliance||[]).length+(pack.complianceNA||[]).length)){
-    doc.addPage(); bg(); y=M+16;
-    if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-    doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
-    doc.text("Compliance & progress", M+12, M+5);
-    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+    doc.addPage(); bg(); y=46;
+      window.EVReportBranding?.header(doc,{title:"Compliance & progress",M});
+    doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
     { const cpr=compProgress();
       doc.text("Progress: "+cpr.done+" of "+cpr.applicable+" complete"+(cpr.na?" \u00b7 "+cpr.na+" marked not required":"")+". Open items remain outstanding.", M, y); y+=5.5;
       doc.setFillColor(226,230,235); doc.roundedRect(M,y,PW-2*M,3.2,1.6,1.6,"F");
@@ -12943,11 +12912,11 @@ async function buildPdf(opts){
       if(st==="done"){ doc.setFillColor(75,160,105); doc.circle(M+8,y+hh/2,2.6,"F"); doc.setDrawColor(255,255,255); doc.setLineWidth(0.7); doc.line(M+6.9,y+hh/2+0.2,M+7.7,y+hh/2+1.1); doc.line(M+7.7,y+hh/2+1.1,M+9.2,y+hh/2-1.2); doc.setLineWidth(0.2); }
       else if(st==="na"){ doc.setFillColor(150,158,168); doc.circle(M+8,y+hh/2,2.6,"F"); doc.setDrawColor(255,255,255); doc.setLineWidth(0.7); doc.line(M+6.6,y+hh/2,M+9.4,y+hh/2); doc.setLineWidth(0.2); }
       else { doc.setDrawColor(206,158,46); doc.setLineWidth(0.8); doc.circle(M+8,y+hh/2,2.6,"S"); doc.setLineWidth(0.2); }
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(10);
+      doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(10);
       doc.text(n.t+(st==="done"?"":(st==="na"?" · not required":" · outstanding")), M+14, y+6.6);
-      doc.setFont("helvetica","normal"); doc.setFontSize(8.8); doc.setTextColor(...DIM);
+      doc.setFont("EVSans","normal"); doc.setFontSize(8.8); doc.setTextColor(...DIM);
       let ty=y+11; dl.forEach(ln=>{ doc.text(ln, M+14, ty); ty+=4.6; });
-      if(ex.length){ doc.setFont("helvetica","bold"); doc.setTextColor(...NAVY); ex.forEach(ln=>{ doc.text(ln, M+14, ty); ty+=4.6; }); doc.setFont("helvetica","normal"); doc.setTextColor(...DIM); }
+      if(ex.length){ doc.setFont("EVSans","bold"); doc.setTextColor(...NAVY); ex.forEach(ln=>{ doc.text(ln, M+14, ty); ty+=4.6; }); doc.setFont("EVSans","normal"); doc.setTextColor(...DIM); }
       y+=hh+3;
     });
   }
@@ -12956,35 +12925,33 @@ async function buildPdf(opts){
     const imgsA=pack.attachments.filter(a=>(a.type||"").startsWith("image/")&&a.src);
     const docsA=pack.attachments.filter(a=>!(a.type||"").startsWith("image/")||!a.src);
     if(docsA.length){
-      doc.addPage(); bg(); y=M+16;
-      if(logo) doc.addImage(logo,"PNG",M,M-1,9,9*40/45);
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(15);
-      doc.text("Project pack: attached documents", M+12, M+5);
-      doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
+      doc.addPage(); bg(); y=46;
+      window.EVReportBranding?.header(doc,{title:"Project pack: attached documents",M});
+      doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
       doc.splitTextToSize(docsA.some(a=>!a.src)?"These project-pack records include file details only. Obtain any missing file contents from the original project source before issue.":"These documents are stored inside the project file (.evplan.json) and issued alongside this PDF.", PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.2; });
       y+=4;
       docsA.forEach(a=>{
         ensureSpace(15);
         doc.setFillColor(...WHITE); doc.roundedRect(M,y,PW-2*M,12,3,3,"F");
         doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.roundedRect(M,y,PW-2*M,12,3,3,"S");
-        doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(10);
+        doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(10);
         doc.text(doc.splitTextToSize(a.name, PW-2*M-50)[0], M+6, y+7.5);
-        doc.setFont("helvetica","normal"); doc.setTextColor(...DIM); doc.setFontSize(9);
+        doc.setFont("EVSans","normal"); doc.setTextColor(...DIM); doc.setFontSize(9);
         doc.text(((a.size/1024/1024)||0).toFixed(2)+" MB", PW-M-6, y+7.5, {align:"right"});
         y+=15;
       });
     }
     for(const a of imgsA){
       doc.addPage(); bg();
-      doc.setTextColor(...NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(12);
-      doc.text(doc.splitTextToSize("Attachment: "+a.name, PW-2*M)[0], M, M+4);
+      doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(12);
+      window.EVReportBranding?.header(doc,{title:"Attachment: "+a.name,M});
       try{
         const dim=await new Promise(r=>{ const im=new Image(); im.onload=()=>r({w:im.width,h:im.height}); im.onerror=()=>r(null); im.src=a.src; });
         if(dim){
           const fmt=(a.type||"").includes("png")?"PNG":((a.type||"").includes("webp")?"WEBP":"JPEG");
-          const maxW=PW-2*M, maxH=PH-M-30;
+          const maxW=PW-2*M, maxH=PH-M-44;
           const kk=Math.min(maxW/dim.w, maxH/dim.h);
-          doc.addImage(a.src, fmt, M+(maxW-dim.w*kk)/2, M+10, dim.w*kk, dim.h*kk);
+          doc.addImage(a.src, fmt, M+(maxW-dim.w*kk)/2, 42, dim.w*kk, dim.h*kk);
         }
       }catch(_){ }
     }
@@ -15922,12 +15889,12 @@ setTimeout(()=>{ try{
   });
 }catch(_){ } }, 2500);
 </script>
-<script src="profile.js?v=89deddb259ec"></script>
+<script src="profile.js?v=486440b3b6b5"></script>
 <script src="report-fonts.js?v=db719569bbc1"></script>
-<script src="home.js?v=afd2b005b7e7"></script>
-<script src="report-viewer.js?v=0c9bb9a0742b"></script>
-<script src="workspace.js?v=59e83d9de05a"></script>
-<script src="delivery.js?v=3c60ff9bb372"></script>
-<script src="workbench.js?v=4ca8665acc90"></script>
+<script src="home.js?v=59f3ddfb3c99"></script>
+<script src="report-viewer.js?v=6f3790a6ee5c"></script>
+<script src="workspace.js?v=f976c1237847"></script>
+<script src="delivery.js?v=23a296844ba8"></script>
+<script src="workbench.js?v=4c0b3b437581"></script>
 </body>
 </html>

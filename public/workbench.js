@@ -8,6 +8,8 @@ try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved)fo
 const saveLibrary=()=>{try{localStorage.setItem(storageKey,JSON.stringify(library));}catch(_){toast('Equipment preferences could not be saved in this browser.');}};
 const drawing=()=>{pack.workspace=pack.workspace||{};return pack.workspace.drawing||(pack.workspace.drawing={});};
 const compact=()=>drawing().labels!=='full';
+const technical=()=>drawing().symbols!=='illustrated';
+window.EVDrawingStyle={technical};
 const prefixes={unit:'CP',evdb:'DB',ipevdb:'DB',consumerunit:'DB',panelboard:'DB',feeder:'FP',arrayboard:'LM',isolator:'IS',meter:'M',cutout:'F',ctchamber:'CT',ipbox:'JB',henley:'HB',earthterm:'ET',fusesaver:'LL',mcb:'MCB',rcd:'RCD',din:'PD',garagesplit:'DB'};
 function ensureReferences(){
  const items=pack.photos.flatMap(p=>p.items||[]).filter(i=>prefixes[i.type]),used=new Set(),next={};
@@ -159,14 +161,30 @@ $('rail').addEventListener('click',e=>{
  const pick=e.target.closest('[data-wb-pick]');if(pick){choose(registry.get(pick.dataset.wbPick));return;}
  const place=e.target.closest('[data-wb-place-model]');if(place){const entry=registry.get(place.dataset.wbPlaceModel);setTool(entry.tool);pendingModel=entry;palOpen=false;syncPalette();}
 });
+$('side').addEventListener('click',e=>{if(e.target.closest('[data-eqview]')&&technical()){drawing().symbols='illustrated';if($('wbSymbolStyle'))$('wbSymbolStyle').value='illustrated';toast('Product illustrations enabled for equipment views.');}},true);
 $('side').addEventListener('click',e=>{if(e.target.closest('[data-wb-repeat]')){const it=findItem(sel);if(it?.type==='unit'){const copy=JSON.parse(JSON.stringify(it));setTool('unit:'+it.variant);repeatItem=copy;$('evInspectorClose').click();toast('Tap the plan to place another '+unitDisplayName(it)+'.');}}});
 
 // Short references on screen retain the original labels and full export descriptions.
 let labelBoxes=[],referenceHits=[];
 const originalScene=drawScene;
 drawScene=function(c,vw,k,forExport){ensureReferences();labelBoxes=[];if(!forExport)referenceHits=[];originalScene(c,vw,k,forExport);};
+function drawTechnicalEquipment(c,vw,it,k,forExport){
+ const defaults={evdb:[120,90],ipevdb:[126,108],ipbox:[100,80],henley:[88,42],meter:[76,98],ctchamber:[150,96],earthterm:[92,34],cutout:[78,112],isolator:[88,88],fusesaver:[46,62],mcb:[38,64],rcd:[64,64],din:[38,64],consumerunit:[156,76],panelboard:[180,100],garagesplit:[92,62],feeder:[150,170],arrayboard:[150,110]};
+ const size=defaults[it.type]||[80,80],w=(it.w||size[0])*vw.zoom,h=(it.type==='feeder'&&eqViewOf(it)==='plan'?w*fpMM(it).d/fpMM(it).w:(it.h||size[1])*vw.zoom),x=it.x*vw.zoom+vw.ox,y=it.y*vw.zoom+vw.oy;
+ const code=it.type==='meter'?'kWh':prefixes[it.type]||'EQ';
+ c.save();c.translate(x,y);c.rotate((it.rot||0)*Math.PI/180);c.shadowColor='transparent';c.fillStyle='#fff';c.strokeStyle='#183043';c.lineWidth=Math.max(1.2,Math.min(w,h)*.025);
+ if(it.type==='feeder'&&it.pad!==false){const mm=fpMM(it),pm=fpPadMM(it),pw=w*pm.w/mm.w,ph=eqViewOf(it)==='plan'?h*pm.d/mm.d:Math.max(6,w*.18);c.fillStyle='#edf2f6';c.fillRect(-pw/2,eqViewOf(it)==='plan'?-ph/2:h/2-ph/2,pw,ph);c.strokeRect(-pw/2,eqViewOf(it)==='plan'?-ph/2:h/2-ph/2,pw,ph);c.fillStyle='#fff';}
+ rrect(c,-w/2,-h/2,w,h,Math.min(4,w*.08));c.fill();c.stroke();
+ c.beginPath();c.moveTo(-w*.3,-h*.26);c.lineTo(w*.3,-h*.26);c.stroke();
+ c.font='700 '+Math.max(7,Math.min(16,w/(code.length*.75)))+'px Hanken Grotesk, sans-serif';c.fillStyle='#183043';c.textAlign='center';c.textBaseline='middle';c.fillText(code,0,h*.08);
+ const rating=it.rating||it.mainRating;if(rating&&w>24&&h>32){c.font='600 '+Math.max(7,Math.min(12,w*.2))+'px Hanken Grotesk, sans-serif';c.fillText(rating+' A',0,h*.33);}
+ if(sel===it.id&&!forExport){c.strokeStyle='#2563eb';c.lineWidth=2;c.setLineDash([6,4]);c.strokeRect(-w/2-4,-h/2-4,w+8,h+8);}
+ c.restore();
+ if(pack.showLabels!==false){const description=[it.label||typeName(it),it.brand,it.rating?it.rating+' A':'',it.mainRating?it.mainRating+' A main':'',it.rcdType?'Type '+it.rcdType:'',it.trip?it.trip+' mA':'',it.curve,it.poles,it.phase?String(it.phase)+'ph':'',it.ratio,it.array,it.earthSys,it.earthCsa?it.earthCsa+' mm²':''].filter(Boolean).join(' · ');glyphLabelRot(c,x,y,it.rot||0,0,eqLabelLY(it,h,labK(it,k)),description,'#183043','#fff',labK(it,k));}
+}
 for(const name of ['drawUnit','drawPlanEquip','drawIsoEquip','drawEvdb','drawIpEvdb','drawIpBox','drawHenley','drawMeter','drawCTChamber','drawEarthTerminal','drawCutout','drawIsolator','drawLoadLimiterEquipment','drawMcbItem','drawRcdItem','drawDinItem','drawConsumerUnit','drawPanelBoard','drawGarageSplit','drawFeederPillar','drawArrayBoard']){
-  const original=window[name];if(!original)continue;
+  const legacy=window[name];if(!legacy)continue;
+ const original=(c,vw,it,k,forExport,...args)=>technical()&&it.type!=='unit'&&prefixes[it.type]&&!it.asLabel?drawTechnicalEquipment(c,vw,it,k,forExport):legacy(c,vw,it,k,forExport,...args);
   window[name]=function(c,vw,it,k,forExport,...args){
   if((forExport||!compact())&&it.planRef&&pack.showLabels!==false){
    const label=it.label;if(!String(label||'').startsWith(it.planRef))it.label=it.planRef+(label?' · '+label:'');
@@ -215,16 +233,26 @@ function updateKey(p){
 }
 function addDrawingControls(){
  const strip=$('evPlanStrip');if(!strip)return;
- if($('wbDrawingTools')){$('wbLabelMode').value=compact()?'compact':'full';return;}
- const controls=document.createElement('div');controls.id='wbDrawingTools';controls.innerHTML='<label class="wb-label-mode"><span>Labels</span><select id="wbLabelMode" aria-label="On-screen equipment labels"><option value="compact">References</option><option value="full">Full details</option></select></label><button type="button" class="ev-btn" id="wbKeyToggle" aria-expanded="'+!keyPanel.hidden+'" aria-controls="wbPlanKey">Key</button>';
- strip.insertBefore(controls,$('evInspectorToggle'));$('wbLabelMode').value=compact()?'compact':'full';$('wbLabelMode').title='On-screen labels. Exports keep full equipment descriptions.';
- $('wbLabelMode').onchange=e=>{drawing().labels=e.target.value;drawCanvas();};$('wbKeyToggle').onclick=()=>{keyPanel.hidden=!keyPanel.hidden;keySignature='';$('wbKeyToggle').setAttribute('aria-expanded',String(!keyPanel.hidden));if(!keyPanel.hidden&&activePhoto())updateKey(activePhoto());};
+ if($('wbDrawingTools')){$('wbLabelMode').value=compact()?'compact':'full';$('wbSymbolStyle').value=technical()?'technical':'illustrated';return;}
+ const controls=document.createElement('details');controls.id='wbDrawingTools';
+ controls.innerHTML='<summary class="ev-btn" aria-label="Drawing display options" title="Drawing display options">Display</summary><div class="wb-display-options"><label class="wb-label-mode"><span>Equipment labels</span><select id="wbLabelMode" aria-label="On-screen equipment labels"><option value="compact">References</option><option value="full">Full details</option></select></label><label class="wb-label-mode"><span>Equipment style</span><select id="wbSymbolStyle" aria-label="Equipment drawing style"><option value="technical">Technical symbols</option><option value="illustrated">Product illustrations</option></select></label><p>Equipment style applies to the drawing and exports. Exports retain full descriptions.</p><button type="button" class="ev-btn" id="wbKeyToggle" aria-expanded="'+!keyPanel.hidden+'" aria-controls="wbPlanKey">'+(keyPanel.hidden?'Show plan key':'Hide plan key')+'</button></div>';
+ strip.insertBefore(controls,$('evInspectorToggle'));$('wbLabelMode').value=compact()?'compact':'full';$('wbSymbolStyle').value=technical()?'technical':'illustrated';
+ $('wbLabelMode').onchange=e=>{drawing().labels=e.target.value;drawCanvas();};
+ $('wbSymbolStyle').onchange=e=>{drawing().symbols=e.target.value;drawCanvas();};
+ $('wbKeyToggle').onclick=()=>{keyPanel.hidden=!keyPanel.hidden;keySignature='';$('wbKeyToggle').setAttribute('aria-expanded',String(!keyPanel.hidden));$('wbKeyToggle').textContent=keyPanel.hidden?'Show plan key':'Hide plan key';if(!keyPanel.hidden&&activePhoto())updateKey(activePhoto());};
 }
-keyPanel.addEventListener('click',e=>{if(e.target.closest('[data-wb-close-key]')){keyPanel.hidden=true;$('wbKeyToggle')?.setAttribute('aria-expanded','false');$('wbKeyToggle')?.focus();}});
+document.addEventListener('click',e=>{const controls=$('wbDrawingTools');if(controls?.open&&!controls.contains(e.target))controls.open=false;});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('wbDrawingTools')?.open){$('wbDrawingTools').open=false;$('wbDrawingTools').querySelector('summary').focus();e.stopPropagation();}});
+keyPanel.addEventListener('click',e=>{if(e.target.closest('[data-wb-close-key]')){keyPanel.hidden=true;$('wbKeyToggle')?.setAttribute('aria-expanded','false');if($('wbKeyToggle'))$('wbKeyToggle').textContent='Show plan key';$('wbKeyToggle')?.focus();}});
 const originalDrawScene=drawScene;
 drawScene=function(c,vw,k,forExport){originalDrawScene(c,vw,k,forExport);if(!forExport&&pack.showLegend===false){drawReferences(c);const p=activePhoto();if(p)updateKey(p);}};
 // Keep the legend and title beneath exported artwork, clear of survey evidence.
 const originalExportCanvas=renderPhotoToCanvas;
+function renderArtwork(p,maxW){
+ const legend=pack.showLegend,title=pack.showTitleBlock,active=pack.active;
+ pack.showLegend=false;pack.showTitleBlock=false;
+ try{return originalExportCanvas(p,maxW);}finally{pack.showLegend=legend;pack.showTitleBlock=title;pack.active=active;}
+}
 renderPhotoToCanvas=function(p,maxW){
  const legend=pack.showLegend,title=pack.showTitleBlock,active=pack.active;let artwork;
  pack.showLegend=false;pack.showTitleBlock=false;
@@ -235,10 +263,16 @@ renderPhotoToCanvas=function(p,maxW){
  function wrap(value,width){const lines=[];let line='';for(const word of String(value||'').split(/\s+/)){if(line&&probe.measureText(line+' '+word).width>width){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return lines;}
  const rows=legend===false?[]:originalLegend(probe,{zoom:1,ox:0,oy:0},p,1,true,true)||[];
  const heights=Array(colCount).fill(0),entries=rows.map((r,i)=>{const col=i%colCount,lines=wrap(r.name,colW-34*k),y=heights[col];heights[col]+=Math.max(25*k,lines.length*17*k+10*k);return{r,col,y,lines};});
- const titleLines=title===false?[]:wrap([pack.brandName,pack.name||'Untitled project',p.name,pack.jobRef?'Ref '+pack.jobRef:'','Rev '+(pack.rev||'A'),pack.surveyedBy,new Date().toLocaleDateString('en-GB'),p.scale?.pxPerM?'Scale recorded':'Not to scale'].filter(Boolean).join(' · '),W-2*pad);
- const titleH=titleLines.length?titleLines.length*17*k+pad:0,legendH=rows.length?Math.max(...heights)+pad+22*k:0;
- const cn=document.createElement('canvas');cn.width=W;cn.height=Math.ceil(artwork.height+titleH+legendH+pad);const c=cn.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,W,cn.height);c.drawImage(artwork,0,0);c.strokeStyle='#cbd8e2';c.lineWidth=k;c.beginPath();c.moveTo(pad,artwork.height+pad/2);c.lineTo(W-pad,artwork.height+pad/2);c.stroke();
- c.font='500 '+fs+'px Hanken Grotesk, sans-serif';c.textAlign='left';c.textBaseline='top';c.fillStyle='#334f63';titleLines.forEach((line,i)=>c.fillText(line,pad,artwork.height+pad+i*17*k));
+ const leftW=(W-pad*2)*.62,rightX=pad+leftW+gap,rightW=W-pad-rightX;
+ const titleLines=title===false?[]:wrap(pack.name||'Untitled project',leftW);
+ const planLines=title===false?[]:wrap(p.name||'Plan',leftW);
+ const detailLines=title===false?[]:wrap([pack.brandName,pack.surveyedBy?'Prepared by '+pack.surveyedBy:''].filter(Boolean).join(' · '),leftW);
+ const metaLines=title===false?[]:wrap([pack.jobRef?'Ref '+pack.jobRef:'Reference not recorded','Revision '+(pack.rev||'A'),new Date().toLocaleDateString('en-GB'),p.scale?.pxPerM?'Scale calibrated · not to printed scale':'Not to scale'].join(' · '),rightW);
+ const titleH=title===false?0:Math.max((titleLines.length+planLines.length+detailLines.length)*18*k+pad*2,metaLines.length*18*k+pad*2+16*k),legendH=rows.length?Math.max(...heights)+pad+22*k:0;
+ const cn=document.createElement('canvas');cn.width=W;cn.height=Math.ceil(artwork.height+titleH+legendH+pad);const c=cn.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,W,cn.height);c.drawImage(artwork,0,0);c.strokeStyle='#b8c9d7';c.lineWidth=k;c.beginPath();c.moveTo(pad,artwork.height+pad/2);c.lineTo(W-pad,artwork.height+pad/2);c.stroke();
+ c.textAlign='left';c.textBaseline='top';let ty=artwork.height+pad;
+ for(const [lines,weight,colour] of [[titleLines,700,'#183043'],[planLines,500,'#334f63'],[detailLines,500,'#4f6576']]){c.font=weight+' '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle=colour;for(const line of lines){c.fillText(line,pad,ty);ty+=18*k;}}
+ if(title!==false){c.font='650 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#183043';c.fillText('Drawing details',rightX,artwork.height+pad);c.font='500 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#4f6576';metaLines.forEach((line,i)=>c.fillText(line,rightX,artwork.height+pad+18*k*(i+1)));}
  const base=artwork.height+titleH+pad;
  if(rows.length){c.font='650 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#244157';c.fillText('Plan key',pad,base);}
  for(const {r,col,y,lines}of entries){const x=pad+col*(colW+gap),yy=base+22*k+y;
@@ -248,7 +282,7 @@ renderPhotoToCanvas=function(p,maxW){
  }
  return cn;
 };
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!keyPanel.hidden){keyPanel.hidden=true;$('wbKeyToggle')?.setAttribute('aria-expanded','false');}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!keyPanel.hidden){keyPanel.hidden=true;$('wbKeyToggle')?.setAttribute('aria-expanded','false');if($('wbKeyToggle'))$('wbKeyToggle').textContent='Show plan key';}});
 installLibrary();renderSide();
-window.EVWorkbench={ensureReferences,version:'workbench-r3'};
+window.EVWorkbench={ensureReferences,renderArtwork,version:'workbench-r4'};
 })();
