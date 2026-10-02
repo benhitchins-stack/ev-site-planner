@@ -11,8 +11,15 @@ const visible=(pack,item)=>!item.option||!pack.optionView||pack.optionView==='al
 function length(item,photo){
  if(item.manualLen!=null)return finite(item.manualLen,Number.MIN_VALUE)?Number(item.manualLen):null;
  if(!finite(photo?.scale?.pxPerM,Number.MIN_VALUE)||!Array.isArray(item.pts)||item.pts.length<2)return null;
- let pixels=0;for(let n=1;n<item.pts.length;n++){const a=item.pts[n-1],b=item.pts[n];if(![a.x,a.y,b.x,b.y].every(Number.isFinite))return null;pixels+=Math.hypot(b.x-a.x,b.y-a.y);}
- return pixels>0?pixels/Number(photo.scale.pxPerM):null;
+ const refs=(Array.isArray(photo.scale.refs)?photo.scale.refs:[]).filter(r=>r&&finite(r.ppm,Number.MIN_VALUE)&&Number.isFinite(Number(r.mx))&&Number.isFinite(Number(r.my)));
+ const scaleAt=(x,y)=>{
+  if(refs.length<2)return Number(photo.scale.pxPerM);
+  let weights=0,weighted=0;
+  for(const r of refs){const distance=(x-Number(r.mx))**2+(y-Number(r.my))**2;if(distance<1)return Number(r.ppm);const weight=1/distance;weights+=weight;weighted+=weight*Number(r.ppm);}
+  return weighted/weights;
+ };
+ let metres=0;for(let n=1;n<item.pts.length;n++){const a=item.pts[n-1],b=item.pts[n];if(![a.x,a.y,b.x,b.y].every(Number.isFinite))return null;metres+=Math.hypot(b.x-a.x,b.y-a.y)/scaleAt((a.x+b.x)/2,(a.y+b.y)/2);}
+ const rounded=Number(metres.toFixed(1));return rounded>0&&Number.isFinite(rounded)?rounded:null;
 }
 function ensure(pack){
  pack.workspace=record(pack.workspace)?pack.workspace:{};

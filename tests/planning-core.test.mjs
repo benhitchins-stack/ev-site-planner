@@ -107,3 +107,12 @@ test('impact detects plan captions, moved equipment and report branding changes'
  const moved=b.photos[0].items.splice(1,1)[0];b.photos.push({id:'second',name:'Second plan',items:[moved]});
  const changes=C.differences(a,b);assert(changes.some(c=>c.kind==='plan'));assert(changes.some(c=>c.kind==='moved'&&c.target.itemId==='charger'));assert(changes.filter(c=>c.kind==='branding').length>=2);
 });
+
+test('comparison lengths agree with perspective references and the existing drawing calculator',()=>{
+ const photo={scale:{pxPerM:15,refs:[{mx:0,my:0,ppm:10},{mx:100,my:0,ppm:20}]}},route={pts:[{x:50,y:0},{x:150,y:0}]};
+ assert.equal(C.length(route,photo),5);
+ const html=readFileSync(new URL('../public/EV Site Planner.html',import.meta.url),'utf8'),context=vm.createContext({});
+ vm.runInContext(html.slice(html.indexOf('function parseRouteLength('),html.indexOf('function scaleSpread(')),context);
+ assert.equal(C.length(route,photo),context.routeLen(route,photo));
+ route.manualLen=7.25;assert.equal(C.length(route,photo),context.routeLen(route,photo));
+});

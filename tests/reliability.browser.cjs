@@ -25,12 +25,15 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
  try{
   await check('Backup finishes an in-progress route and exports its points',async p=>{
    await markup(p);
-   const before=await p.evaluate(()=>{const count=activePhoto().items.length;setTool('route:swa');handleTap(...S(80,150));handleTap(...S(300,150));return count;});
+   await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   const before=await p.evaluate(()=>{const count=activePhoto().items.length;setTool('route:swa');handleTap(...S(80,150));handleTap(...S(300,150));return {count,points:JSON.parse(JSON.stringify(draftRoute.pts))};});
+   assert(before.points.length>=2,'The fixture has an unfinished route');
    const waiting=p.waitForEvent('download');await p.locator('#evBackupTop').click();
    const download=await waiting,file=path.join(out,'route-backup.evplan.json');await download.saveAs(file);
    const exported=JSON.parse(fs.readFileSync(file,'utf8'));
-   assert.equal(exported.photos[0].items.length,before+1);
-   assert.equal(exported.photos[0].items.at(-1).pts.length,2);
+   assert.equal(exported.photos[0].items.length,before.count+1);
+   // Smart routing may add bends when threading through an existing trench.
+   assert.deepEqual(exported.photos[0].items.at(-1).pts,before.points,'Every draft point is preserved exactly');
    assert.equal(await p.evaluate(()=>!!draftRoute),false);
   });
   await check('Backup waits for photo decoding and blocks duplicate exports or project switches',async p=>{
