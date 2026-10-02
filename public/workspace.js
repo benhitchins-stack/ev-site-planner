@@ -206,19 +206,32 @@ function renderProjectCards(){
  }).join('')+'</div>':filtered?empty('No matching projects','Try a different search or project type.'):'<div class="ev-empty ev-empty-projects">'+planArt+'<b>No saved projects yet</b>Enter the site details, then add a drawing or photo.<div class="ev-actions">'+btn('Create a project','new','primary','plus')+btn('Try an example project','example','','arrow')+'</div></div>';
  hydratePreviews($('evProjectCards'));
 }
-function flowSteps(prog){
+function stageSteps(prog){
  const s=stats(),w=ensure(),unscaled=pack.photos.filter(x=>!x.scale?.pxPerM).length,snag=snagStats();
  let facts=[];try{facts=window.EVPlanningCore?EVPlanningCore.facts(pack):[];}catch(_){}
  const missing=facts.filter(f=>f.status==='missing').length,assumed=facts.filter(f=>f.status==='assumed').length;
- const steps=[
+ return [
   ['markup','Markup','pen',!s.plans?['todo','Add a plan']:unscaled?['attention',count(unscaled,'plan')+' without a scale']:!s.units?['todo','Place the chargers']:['done',count(s.units,'charger symbol')+' placed']],
   ['planning','Design lab','tools',missing?['attention',count(missing,'value')+' missing']:assumed?['todo',count(assumed,'value')+' assumed']:facts.length?['done','Evidence recorded']:['todo','Nothing to check yet']],
   ['programme','Programme','calendar',!prog?.b?['todo','Dates to set']:prog.active.length&&prog.complete===prog.active.length?['done','All activities complete']:['active','Starts '+niceDate(prog.b.from)]],
   ['snags','Snags','flag',snag.open?['attention',count(snag.open,'open snag')]:snag.total?['done','All snags fixed']:['todo','None recorded']],
   ['issue','Issue','send',w.issues.length?['done',count(w.issues.length,'download')]:['todo','Nothing issued yet']]
  ];
- const label={done:'Done',active:'In progress',attention:'Needs attention',todo:'To do'};
+}
+const stageLabel={done:'Done',active:'In progress',attention:'Needs attention',todo:'To do'};
+function flowSteps(prog){
+ const steps=stageSteps(prog),label=stageLabel;
  return '<nav class="ev-flow" aria-label="Project stages"><ol>'+steps.map(([a,t,ic,[state,d]],i)=>'<li><button type="button" class="ev-flow-step '+state+'" data-ev-action="'+a+'"><span class="ev-flow-mark">'+icon(state==='done'?'check':state==='attention'?'alert':ic)+'</span><span class="ev-flow-copy"><small>Step '+(i+1)+'<span class="ed-sr-only"> · '+label[state]+'</span></small><b>'+t+'</b><em>'+h(d)+'</em></span></button></li>').join('')+'</ol></nav>';
+}
+// Project pages share the overview's navy header. The stage strip is read-only: it summarises a programme only once the Programme page has created one.
+function programmeSnapshot(){try{if(Array.isArray(pack.programme?.activities))return window.EVDelivery?.programmeSummary()||null;}catch(_){}return null;}
+function stageStrip(current){
+ let steps;try{steps=stageSteps(programmeSnapshot());}catch(_){return '';}
+ return '<nav class="ev-stage-strip" aria-label="Project stages"><ol>'+steps.map(([a,t,ic,[state,d]],i)=>'<li><button type="button" class="ev-stage '+state+(a===current?' current':'')+'" data-ev-action="'+a+'"'+(a===current?' aria-current="page"':'')+' title="'+h(d)+'"><span class="ev-stage-mark">'+icon(state==='done'?'check':state==='attention'?'alert':ic)+'</span><span class="ev-stage-copy"><small>Step '+(i+1)+'<span class="ed-sr-only"> · '+stageLabel[state]+'</span></small><b>'+t+'</b></span></button></li>').join('')+'</ol></nav>';
+}
+function pageHead(title,sub,actions='',stage=''){
+ const eyebrow=stage?h(modeName())+' project'+(pack.jobRef?' / '+h(pack.jobRef):''):'';
+ return '<header class="ev-page-head'+(stage?' has-stages':'')+'"><div class="ev-page-head-main"><div>'+(eyebrow?'<div class="ev-eyebrow">'+eyebrow+'</div>':'')+'<h1>'+title+'</h1><p>'+sub+'</p></div>'+(actions?'<div class="ev-actions">'+actions+'</div>':'')+'</div>'+(stage?stageStrip(stage):'')+'</header>';
 }
 function overviewPage(){
  const s=stats(),w=ensure(),p=activePhoto()||pack.photos[0],tasks=[];
@@ -268,14 +281,14 @@ async function dashboardImage(){
  const token=++dashboardImageToken,p=activePhoto()||pack.photos[0],project=pack.projId;if(!p)return;
  try{await window.EVDelivery?.preparePlan(p);const canvas=await (window.EVWorkbench?.renderArtwork||renderPhotoToCanvas)(p,1600);if(route==='overview'&&token===dashboardImageToken&&pack.projId===project&&$('evDashboardPlan'))$('evDashboardPlan').src=canvas.toDataURL('image/png');if(pack.projId===project)storePreview(project,canvas);}catch(_){}
 }
-function programmePage(){return heading('Project programme','Set activity dates, assign responsibilities and record progress.',btn('Open markup','markup','','pen'))+'<div id="evProgrammeMount"></div>';}
-function snagsPage(){if(window.EVDelivery)return heading('Snag register','Record each snag, its location, who will fix it and the target date. Add photos before and after the work.',btn('Review snag report','snag-report','','file')+btn('Add a snag on the plan','add-snag','primary','plus'))+'<div id="evSnagMount"></div>';const rows=snagList();return heading('Snag register','Findings are linked to their location on the plan. Open an item to add details and before or after photos.',btn('Add a snag on the plan','add-snag','primary','plus'))+
+function programmePage(){return pageHead('Project programme','Set activity dates, assign responsibilities and record progress.',btn('Open markup','markup','','pen'),'programme')+'<div id="evProgrammeMount"></div>';}
+function snagsPage(){if(window.EVDelivery)return pageHead('Snag register','Record each snag, its location, who will fix it and the target date. Add photos before and after the work.',btn('Review snag report','snag-report','','file')+btn('Add a snag on the plan','add-snag','primary','plus'),'snags')+'<div id="evSnagMount"></div>';const rows=snagList();return pageHead('Snag register','Findings are linked to their location on the plan. Open an item to add details and before or after photos.',btn('Add a snag on the plan','add-snag','primary','plus'),'snags')+
  '<div class="ev-stats">'+[['Total findings',rows.length],['Open',rows.filter(x=>x.it.st!=='fixed').length],['Fixed',rows.filter(x=>x.it.st==='fixed').length],['Safety items open',rows.filter(x=>x.it.st!=='fixed'&&x.it.sev==='safety').length]].map(([t,n])=>'<div class="ev-stat"><label>'+t+'</label><b>'+n+'</b></div>').join('')+'</div>'+
  '<section class="ev-card">'+(rows.length?'<div class="ev-table-wrap"><table class="ev-table"><thead><tr><th>Item</th><th>Finding / plan</th><th>Assigned to</th><th>Severity</th><th>Status</th><th></th></tr></thead><tbody>'+rows.map(({it,photo})=>'<tr><td>'+h(it.n||'•')+'</td><td><b>'+h(it.label||'Untitled finding')+'</b><small>'+h(photo.name)+'</small></td><td>'+h(it.who||'Unassigned')+'</td><td>'+h(SNAG_SEVS[it.sev||'minor']?.label||'Minor')+'</td><td><span class="ev-pill '+(it.st==='fixed'?'green':'amber')+'">'+(it.st==='fixed'?'Fixed':'Open')+'</span></td><td><button class="ev-btn" data-ev-snag="'+h(it.id)+'" data-photo-id="'+h(photo.id)+'">Open</button></td></tr>').join('')+'</tbody></table></div>':empty('No snags recorded','Place a numbered snag marker on a plan, then record the finding and who will put it right.',btn('Open markup','markup','','pen')))+'</section>';
 }
 function issuePage(){const w=ensure(),plans=pack.photos.length;
  const out=([ic,t,d,a,l])=>'<article class="ev-out"><span class="ev-out-icon">'+icon(ic)+'</span><h3>'+t+'</h3><p>'+d+'</p>'+btn(l,a,a==='plans'?'primary':'')+'</article>';
- return heading('Review & issue','Choose a document, review its contents and download it.',btn('Project backup','backup','','download'))+
+ return pageHead('Review & issue','Choose a document, review its contents and download it.',btn('Project backup','backup','','download'),'issue')+
  (!plans?'<div class="ev-notice">Add a site plan or photo in Markup before creating a drawing pack.</div>':'')+
  '<h2 class="ev-group-title">Drawings and packs</h2><div class="ev-outs">'+[
   ['plan','Marked-up plans','Choose the plans and photos, inspect the markup and download one PDF.','plans','Select & preview'],
@@ -409,7 +422,7 @@ async function importBackup(file){return changeProject(async()=>{
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();fitView();draw();await persist();go('overview');toast('Project backup opened as a separate copy');return true;
 });}
-window.EVWorkspace={go,persist,withProject:changeProject,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
+window.EVWorkspace={go,persist,pageHead,withProject:changeProject,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
 EVReportViewer.enhanceLegacy();
 go('home');
 // Wait for saved-project recovery before following links from the website home page.
