@@ -95,7 +95,7 @@ jobs:
         engine: [chromium, firefox, webkit]
     env:
       EVSP_BROWSER: ${{ matrix.engine }}
-      EVSP_TEST_OUTPUT: ${{ runner.temp }}/evsp-planning-${{ matrix.engine }}
+      EVSP_TEST_OUTPUT: /tmp/evsp-planning-${{ matrix.engine }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -113,6 +113,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: planning-${{ matrix.engine }}
-          path: ${{ runner.temp }}/evsp-planning-${{ matrix.engine }}
+          path: ${{ env.EVSP_TEST_OUTPUT }}
           if-no-files-found: ignore
           retention-days: 14
