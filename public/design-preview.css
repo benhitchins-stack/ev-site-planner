@@ -567,3 +567,55 @@ body, #evApp {font-family: var(--font);}
 .ev-scale-status.set {background: #eef5d8; border-color: #cfe39a; color: #2f4a16;}
 #root .zoombar {border-radius: 12px; border-color: #cddae4; box-shadow: 0 10px 30px #10283c26;}
 #evWorkbench .ev-tech-menu {color: var(--ink);}
+
+/* Drawing page panels and dialogs: the equipment picker, the plan settings panel, the project and review dialogs and the photo adjuster open with the planner's navy title row, with lime marking the active tab or choice, so they match the tool strip. Their content stays light. */
+#evApp .ev-inspector-head {background: var(--ev-navy); color: #fff; border-bottom: 0;}
+#evApp .ev-inspector-head small {color: var(--ev-on-navy-dim);}
+#evApp .ev-inspector-head b {color: #fff;}
+#evApp .ev-inspector-head #wbItemSummary {color: var(--ev-on-navy);}
+#evApp .ev-inspector-head .ev-btn, #evApp .ev-inspector-head .ev-icon-btn {background: #ffffff14; border: 1px solid #ffffff33; color: #fff; box-shadow: none;}
+#evApp .ev-inspector-head .ev-btn:hover, #evApp .ev-inspector-head .ev-icon-btn:hover {background: #ffffff24; border-color: #ffffff66;}
+#evApp #root .side .tab {background: var(--ev-navy); border-bottom: 1px solid #0b1b29; padding: 0 12px 10px;}
+#evApp #root .side .tab button {background: transparent; color: #c9d6e0;}
+#evApp #root .side .tab button:hover {background: #ffffff14; color: #fff;}
+#evApp #root .side .tab button.on {background: var(--ev-lime); color: var(--ev-lime-ink);}
+#evApp #root .side .snav button.on {background: #eef5d8; color: #2f4a16;}
+#evApp #root .side .seg button.on {background: var(--ev-navy); border-color: var(--ev-navy); color: #fff; box-shadow: none;}
+#evApp #root .side .card {border-radius: 12px; box-shadow: 0 2px 10px #10283c0f;}
+#root .rail #wbLibraryHeader {background: var(--ev-navy); border-bottom: 1px solid #0b1b29; color: #fff;}
+#root .rail .wb-library-heading b {color: #fff;}
+#root .rail .wb-library-heading .ev-icon-btn {background: #ffffff14; border: 1px solid #ffffff33; color: #fff;}
+#root .rail .wb-library-heading .ev-icon-btn:hover {background: #ffffff24; border-color: #ffffff66;}
+#root .rail .wb-search {color: var(--ev-on-navy);}
+#root .rail .wb-search input {border-color: #ffffff33;}
+#root .rail .wb-library-tabs button {color: #c9d6e0;}
+#root .rail .wb-library-tabs button:hover {color: #fff;}
+#root .rail .wb-library-tabs button[aria-selected=true] {border-color: var(--ev-lime); color: #fff;}
+#root .wb-tool-cell .tool.on {background: #eef5d8; border-color: #b7cf6b;}
+.ev-backdrop .ev-dialog {border-radius: 16px;}
+.ev-backdrop .ev-dialog-head {background: var(--ev-navy); color: #fff; border-bottom: 1px solid #0b1b29;}
+.ev-backdrop .ev-dialog-head h2 {color: #fff;}
+.ev-backdrop .ev-dialog-head p {color: var(--ev-on-navy);}
+.ev-backdrop .ev-dialog-head .ev-btn, .ev-backdrop .ev-dialog-head .ev-icon-btn {background: #ffffff14; border: 1px solid #ffffff33; color: #fff; box-shadow: none;}
+.ev-backdrop .ev-dialog-head .ev-btn:hover, .ev-backdrop .ev-dialog-head .ev-icon-btn:hover {background: #ffffff24; border-color: #ffffff66;}
+.ev-backdrop .ev-dialog-steps {background: var(--ev-navy); padding: 0 26px; border-bottom: 1px solid #0b1b29;}
+.ev-backdrop .ev-dialog-steps button {padding: 12px 10px 11px; color: #c9d6e0; border-bottom-color: #ffffff1f;}
+.ev-backdrop .ev-dialog-steps button:hover {color: #fff;}
+.ev-backdrop .ev-dialog-steps button.on {border-color: var(--ev-lime); color: #fff;}
+#rxBackdrop .rx {border-radius: 16px;}
+#rxBackdrop .rx .rx-head {background: var(--ev-navy); color: #fff; border-bottom: 1px solid #0b1b29;}
+#rxBackdrop .rx .rx-head h4 {color: #fff;}
+#rxBackdrop .rx .rx-head .sub {color: var(--ev-on-navy);}
+#peBackdrop .pe {border-radius: 16px; padding-top: 0;}
+#peBackdrop .pe .pe-head {background: var(--ev-navy); color: #fff; margin: 0 -18px 16px; padding: 14px 18px;}
+#peBackdrop .pe .pe-head h4 {color: #fff;}
+#peBackdrop .pe .pe-head .sub {color: var(--ev-on-navy);}
+#rxBackdrop .rx .pe-close, #peBackdrop .pe .pe-close {background: #ffffff14; border: 1px solid #ffffff33; color: #fff;}
+#rxBackdrop .rx .pe-close:hover, #peBackdrop .pe .pe-close:hover {background: #ffffff24; border-color: #ffffff66; color: #fff;}
+#evWorkbench .ev-tech-menu {border-radius: 12px; border-color: #cddae4; box-shadow: 0 10px 30px #10283c26;}
+#evWorkbench .ev-tech-menu button:hover {background: #f0f5fa;}
+#evPlanStrip .wb-display-options {border-radius: 12px; border-color: #cddae4; box-shadow: 0 10px 30px #10283c26;}
+#evApp .ev-inspector-head button:focus-visible, #root .rail #wbLibraryHeader button:focus-visible, .ev-backdrop .ev-dialog-head button:focus-visible, .ev-backdrop .ev-dialog-steps button:focus-visible, #rxBackdrop .rx .pe-close:focus-visible, #peBackdrop .pe .pe-close:focus-visible {outline-color: var(--ev-lime);}
+@media (max-width: 700px) {
+  .ev-backdrop .ev-dialog-steps {padding: 0 20px;}
+}
