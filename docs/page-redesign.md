@@ -54,3 +54,7 @@ Added 2 October 2026 after the brand theme. When the browser already has saved p
 ## Project page headers
 
 Added 2 October 2026. Design lab, Programme, Snags and Review & issue open with the same navy header as the overview: the project type and reference as the eyebrow, the page title and description, and the page actions on the right, with the primary action in lime. Under the header, a compact stage strip shows the five project stages with the same done, in progress, needs attention and to do states as the overview, marks the current page, and opens any stage on tap. Phones scroll the strip sideways. My profile uses the navy header without the strip. The header and strip are built by `pageHead` in `workspace.js` (shared with `planning.js` and `profile.js` through `EVWorkspace.pageHead`), and the strip reads the same stage summary as the overview without writing to the project. Your projects keeps its white heading above the navy Continue working card.
+
+## Guide and course headers
+
+Added 2 October 2026. The Guide Library and Learning Hub pages open with the planner's navy bar: white page name and subtitle, a quiet More tools button and a lime Back to planner action, so the pages reached from Home's guide cards share the look of the planner. The page content below the bar is unchanged. The colours sit in each page's header markup; `resources.css` adds the bar's shadow, the hover states and a lime focus ring.

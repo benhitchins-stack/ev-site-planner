@@ -57,3 +57,9 @@
   .er-course-stats { width: 100%; justify-content: space-between; gap: 8px !important; padding: 14px !important; }
   .er-guide-main a, .er-lesson-main a { overflow-wrap: anywhere; }
 }
+
+/* The guide and course headers share the planner's navy bar: white brand text, a quiet More tools button and a lime Back to planner action. */
+.er-header { box-shadow: 0 6px 20px #10283c33; }
+.er-header summary:hover { background: #ffffff24 !important; border-color: #ffffff66 !important; }
+.er-header > a:hover { background: #e2f1b6 !important; border-color: #e2f1b6 !important; }
+.er-header a:focus-visible, .er-header summary:focus-visible { outline-color: #d4e99b; }
