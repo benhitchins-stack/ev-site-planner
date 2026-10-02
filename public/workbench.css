@@ -281,3 +281,102 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 @media(prefers-reduced-motion:reduce){.ev-btn,.pbtn{transition:none}}
 
 .ev-plan-picks img{width:44px;height:34px;object-fit:cover;flex:none;border-radius:4px}.ev-plan-picks span{text-align:left}.ev-plan-picks small{display:block;margin-top:4px;font-size:11px;color:#647b8d}
+
+/* Presentation: common type sizes, lighter grouping and more room for the plan. */
+:root{--ev-radius:8px;--control-border:#aabcca;--dim:#4f6576;--faint:#5d7384}
+.ev-card{box-shadow:none}.ev-card-head{padding:16px 20px}.ev-card-body{padding:20px}
+.ev-field,.wb-search{font-size:13px}.ev-field small,.ed-help,.ep-storage-note,.ep-preferences small,.ep-apply p{font-size:12px;line-height:1.65}
+.ev-field input,.ev-field select,.ev-field textarea{border-color:var(--control-border);border-radius:7px;font-size:14px}
+.ev-table th{font-size:12px;text-transform:none;letter-spacing:0;color:#4f6576}.ev-table td{font-size:13px}
+.ev-table td small{font-size:12px}.ev-out p,.ev-empty,.ev-kv{font-size:13px}
+.ev-top{height:60px;padding:0 24px;gap:12px}
+.ev-top-title small{font-size:11px;letter-spacing:.3px;text-transform:none;margin-bottom:2px}
+#evApp[data-route=overview] .ev-top-title b{display:none}
+#evApp[data-route=overview] .ev-top-title small{font-size:13px;margin:0;color:#405a6e}
+#evApp[data-route=overview] #evModePill{display:none}
+#evScreen{padding:28px 32px 40px}
+.ev-overview-heading{margin-bottom:22px;align-items:flex-start}
+.ev-overview-heading h1{font-size:30px;line-height:1.2;max-width:900px}
+.ev-overview-heading .ev-eyebrow{font-size:12px;text-transform:none;letter-spacing:.3px;margin-bottom:8px}
+.ev-metrics{margin-bottom:24px;padding:15px 0}
+.ev-metric span:not(.ev-metric-icon){font-size:13px}.ev-metric small{font-size:12px}
+.ev-overview-grid{grid-template-columns:minmax(0,2fr) minmax(275px,1fr);gap:24px}
+.ev-live-plan{background:#edf1f4;background-image:none;height:390px;padding:10px;width:100%;cursor:pointer}
+.ev-live-plan img{filter:none;object-fit:contain}.ev-live-plan:hover{background:#e3ebf2}
+.ev-plan-card-foot small{font-size:12px}.ev-plan-card-foot b{font-size:14px}
+.ev-next-card{border:0;background:transparent}.ev-next-card .ev-card-head{padding:0 0 14px;min-height:0;border-bottom:1px solid #d3dfe8}
+.ev-next-list{padding:0}.ev-next-list button{padding:19px 0}.ev-next-list b{font-size:14px}
+.ev-next-list small{color:#4f6576;font-size:13px}.ev-next-footer{padding:15px 0;background:transparent;font-size:12px}
+.ev-dashboard-bottom{gap:24px;margin-top:28px;border-top:1px solid #d4dfe7;padding-top:24px}
+.ev-dashboard-bottom>.ev-card{border:0;background:transparent}
+.ev-dashboard-bottom .ev-card-head{padding:0 0 14px;min-height:40px;border:0}.ev-dashboard-bottom .ev-card-body{padding:0}
+.ev-delivery-summary{padding-left:0!important}.ev-delivery-summary .ev-summary-icon{display:none}
+.ev-download-strip{border-radius:0;border:0;border-top:1px solid #d4dfe7;background:transparent;padding:20px 0;font-size:12px}
+#evWorkbench.ev-toolbar-mode{min-height:52px}
+.ev-toolstrip{padding:6px 12px;gap:8px;min-height:52px}
+#evWorkbench .cattab{font-size:13px;height:38px;padding:8px}
+#evWorkbench .ptool{width:36px;height:38px}
+.ev-undo-group{gap:0;padding-right:8px}.ev-undo-group button{width:34px;min-height:38px}
+#evPlanStrip{height:48px;min-height:48px;padding:0 16px;gap:10px;background:#f7f9fb;position:relative;z-index:42}
+#evPlanStrip #evActivePlan{max-width:360px;font-size:13px;padding:6px 8px;height:36px;border:1px solid #c2cfda;border-radius:6px;background:white}
+#evPlanStrip>.ev-btn{min-height:36px;font-size:12px}
+#evPlanStrip .ev-plan-meta{font-size:12px}.ev-scale-status{font-size:12px}
+#root .stage{background:#e7edf2;background-image:none}
+#root .tgroup{font-size:11px;letter-spacing:.4px}.tool span{font-size:12px;line-height:1.35}
+#root .side .wb-field label{font-size:13px}.wb-section-body{gap:18px}
+.ev-inspector-head>div{flex:1}#evInspectorExpand{display:none}
+#wbDrawingTools{display:block;position:relative;margin-left:auto;flex:none}
+#wbDrawingTools>summary{list-style:none;min-height:36px;font-size:12px;cursor:pointer;padding:7px 11px}
+#wbDrawingTools>summary::-webkit-details-marker{display:none}
+#wbDrawingTools>summary::after{content:'⌄';font-size:14px;margin-left:5px}
+#wbDrawingTools[open]>summary{background:#edf3fd;border-color:#8faee0;color:#234f99}
+.wb-display-options{display:flex;flex-direction:column;gap:16px;position:absolute;right:0;top:calc(100% + 8px);width:260px;padding:18px;background:#fff;border:1px solid #bdcddb;border-radius:8px;box-shadow:0 8px 28px #17304422;z-index:50}
+.wb-display-options .wb-label-mode{display:flex;align-items:stretch;flex-direction:column;font-size:13px;gap:7px;color:#334f63}
+.wb-display-options .wb-label-mode>span{display:block}
+#evPlanStrip .wb-display-options select{max-width:none;width:100%;font-size:13px;height:40px;border:1px solid var(--control-border);padding:8px;background:white;border-radius:6px}
+.wb-display-options p{font-size:12px;line-height:1.55;color:#4f6576}.wb-display-options #wbKeyToggle{font-size:13px;min-height:40px}
+.ep-document-preview{border-radius:8px;padding:16px;background:#edf1f5}.ep-preview-label{font-size:12px;letter-spacing:.4px;text-transform:none}
+.ep-header-preview{margin-bottom:16px}.ep-header-preview>span{display:block;font-size:12px;font-weight:650;color:#3e596e;margin-bottom:8px}
+#epHeaderImage canvas{position:static!important;width:100%;height:auto;display:block;border:1px solid #ccd8e1;background:white}
+#epSampleImage{min-height:0}#epSampleImage canvas{box-shadow:none}.ep-document-preview>p{font-size:12px}
+.ep-preferences{margin-top:22px}.ep-preferences .ev-card-body{padding:20px}.ep-form-heading{letter-spacing:0}
+.ep-apply b{font-size:14px}.ep-save{color:#395c42}.ep-logo-box{border-style:solid;border-color:#bccbd7;background:#fff}
+@media(max-width:1200px){
+ #evPlanStrip .ev-scale-status{display:none}
+ .ev-overview-grid{grid-template-columns:minmax(0,1.65fr) minmax(255px,1fr)}
+ #evWorkbench .cattab{font-size:12px}
+}
+@media(max-width:1000px){.ev-overview-grid{grid-template-columns:1fr}.ev-next-card .ev-card-head{padding-top:6px}.ev-next-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}.ev-live-plan{height:360px}}
+@media(max-width:700px){
+ .ev-top{height:56px;padding:0 10px;gap:8px}.ev-top-title small{font-size:11px}.ev-top-title b{font-size:14px}
+ #evScreen{padding:24px 18px 32px}.ev-overview-heading h1{font-size:26px}
+ .ev-overview-heading>.ev-btn{width:auto;min-height:44px;height:auto;font-size:12px;gap:7px;padding:9px}
+ .ev-overview-heading>.ev-btn span{display:none}
+ .ev-metric span:not(.ev-metric-icon){font-size:12px}.ev-live-plan{height:270px;padding:6px}
+ .ev-next-list{display:block}.ev-dashboard-bottom{padding-top:22px;margin-top:22px;gap:24px}
+ #evWorkbench.ev-toolbar-mode{min-height:104px}
+ .ev-toolstrip{gap:4px 8px;padding:4px 10px;min-height:104px}
+ #evWorkbench .catbar{flex:1 1 auto;width:auto}
+ #evWorkbench .ptools{gap:0;margin:0;justify-content:flex-start}
+ #evWorkbench .ptool{width:44px;min-width:44px;height:44px}
+ .ev-undo-group{order:2;gap:0;padding:0;border:0}.ev-undo-group button{width:44px;min-height:44px}
+ #evToolCategory{order:3;height:44px;flex:1 1 calc(100% - 58px);font-size:14px;padding:8px}
+ #evWorkbench .ev-tech{order:4}#evWorkbench .ev-tech>.ev-btn{width:44px;height:44px;min-height:44px}
+ #evPlanStrip{height:52px;min-height:52px;flex-wrap:nowrap;padding:4px 8px;gap:6px;align-content:normal}
+ #evPlanStrip #evActivePlan{height:44px;min-width:0;max-width:none;flex:1 1 0;font-size:13px;padding:6px}
+ #evPlanStrip>.ev-btn[data-ev-action=add-files]{width:44px;min-width:44px;flex:none;height:44px;font-size:0;padding:7px}
+ #wbDrawingTools{flex:none;margin:0}#wbDrawingTools>summary{min-height:44px;font-size:12px;padding:7px 9px;gap:0}
+ #wbDrawingTools>summary::after{margin-left:3px}
+ #evInspectorToggle{width:44px;height:44px;min-height:44px;margin:0;flex:none}
+ .wb-display-options{width:min(260px,calc(100vw - 24px));right:0;top:calc(100% + 8px)}
+ #evPlanStrip .wb-display-options select{height:44px;font-size:14px;width:100%}
+ .wb-display-options #wbKeyToggle{min-height:44px}
+ #root .side,#root .side.open{height:45%;max-height:40dvh;border-radius:12px 12px 0 0}
+ #evApp.ev-inspector-expanded #root .side{height:80%;max-height:66dvh}
+ #evInspectorExpand{display:inline-flex;min-height:44px;font-size:12px;padding:8px 10px;flex:none}
+ .ev-inspector-head{gap:8px;padding:8px 12px}.ev-inspector-head b{font-size:14px}
+ .ep-document-preview{padding:12px}.ev-field input,.ev-field select,.ev-field textarea,#root .side .wb-field input,#root .side .wb-field select{font-size:16px!important}
+}
+#root .side{transition:none}
+#epPanel-branding .ep-header-preview{margin:24px 0 16px;padding:16px;background:#edf1f5;border:1px solid #d3dfe8;border-radius:8px}
+#epPanel-branding #epHeaderImage{font-size:12px;color:#4f6576}

@@ -186,7 +186,7 @@ async function buildSnags(options){
  const all=snagList(),rows=all.filter(({it})=>options.scope==='all'||(it.st==='fixed'?'fixed':'open')===options.scope);if(!rows.length)throw Error('There are no snags in this selection.');
  const settings=reportSettings(),k=pdfKit('Snag report');
  k.details([['Inspection date',parse(settings.date)?date(settings.date):'Not recorded'],['Prepared by',settings.preparedBy||pack.surveyedBy],['Report selection',options.scope==='all'?'All findings':options.scope==='open'?'Open findings only':'Fixed findings only']]);
- k.paragraph(rows.length+' findings included: '+rows.filter(x=>x.it.st!=='fixed').length+' open, '+rows.filter(x=>x.it.st==='fixed').length+' fixed.',10,true);
+ k.paragraph(rows.length+(rows.length===1?' finding included: ':' findings included: ')+rows.filter(x=>x.it.st!=='fixed').length+' open, '+rows.filter(x=>x.it.st==='fixed').length+' fixed.',10,true);
  if(settings.notes){k.section('Report notes');k.paragraph(settings.notes);}
  k.section('Register summary');k.table(['Ref / finding','Owner / target','Severity','Status'],rows.map(({it})=>['SN-'+String(it.n||0).padStart(2,'0')+'\n'+(it.label||'Untitled finding'),(it.who||'Unassigned')+'\n'+(parse(it.targetDate)?date(it.targetDate):'No target date'),severityNames[it.sev]||'Minor',it.st==='fixed'?'Fixed':'Open']),[82,45,27,28]);
  for(const {it,photo} of rows){

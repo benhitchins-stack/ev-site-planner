@@ -37,7 +37,7 @@ const {chromium} = require('playwright');
     await page.screenshot({path:path.join(artifacts,'home-desktop.png')});
     pass('Home page opens with all local assets');
 
-    await page.locator('.eh-hero [data-ev-action="new"]').click();
+    await page.locator('.eh-home [data-ev-action="new"]').click();
     await page.locator('[data-ev-field="address"]').fill('Fictional test address only');
     await page.locator('[data-ev-close-details]').first().click();
     const firstId = await page.evaluate(async()=>{await EVWorkspace.persist();return pack.projId;});
@@ -47,7 +47,7 @@ const {chromium} = require('playwright');
     assert.equal(await page.locator('.eh-project').count(),1);
     pass('Address-only work survives reload and appears in recent projects');
 
-    await page.evaluate(()=>{const b=document.querySelector('.eh-hero [data-ev-action="example"]');b.click();b.click();});
+    await page.evaluate(()=>{const b=document.querySelector('.eh-home [data-ev-action="example"]');b.click();b.click();});
     await page.waitForFunction(()=>EVWorkspace.route()==='overview'&&pack.photos.length===1);
     assert.equal(await page.evaluate(()=>projIndex().length),2);
     pass('Rapid repeated project creation opens one example');
@@ -74,11 +74,11 @@ const {chromium} = require('playwright');
 
     const backup = await page.evaluate(()=>JSON.stringify(serialisablePack()));
     await page.locator('.ev-brand').click();await page.waitForFunction(()=>EVWorkspace.route()==='home');
-    let picker=page.waitForEvent('filechooser');await page.locator('.eh-hero [data-ev-action="open"]').click();
+    let picker=page.waitForEvent('filechooser');await page.locator('.eh-home [data-ev-action="open"]').click();
     await (await picker).setFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from('{broken')});
     await page.waitForFunction(()=>!document.getElementById('evApp').hasAttribute('aria-busy'));
     assert.equal(await page.evaluate(()=>pack.projId),'fallback-check');
-    picker=page.waitForEvent('filechooser');await page.locator('.eh-hero [data-ev-action="open"]').click();
+    picker=page.waitForEvent('filechooser');await page.locator('.eh-home [data-ev-action="open"]').click();
     await (await picker).setFiles({name:'project.evplan.json',mimeType:'application/json',buffer:Buffer.from(backup)});
     await page.waitForFunction(()=>EVWorkspace.route()==='overview'&&pack.projId!=='fallback-check');
     assert.equal(await page.evaluate(()=>pack.cdm.client),'Fictional recovery client');
@@ -95,7 +95,7 @@ const {chromium} = require('playwright');
     pass('CDM controls and the new markup settings tabs remain accessible');
 
     await page.locator('.ev-brand').click();await page.waitForFunction(()=>EVWorkspace.route()==='home');
-    await page.locator('.eh-hero [data-ev-action="example"]').click();await page.waitForFunction(()=>pack.photos.length===1&&EVWorkspace.route()==='overview');
+    await page.locator('.eh-home [data-ev-action="example"]').click();await page.waitForFunction(()=>pack.photos.length===1&&EVWorkspace.route()==='overview');
     await page.locator('[data-ev-route="markup"]').click();
     await page.screenshot({path:path.join(artifacts,'markup-desktop.png')});
     await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview canvas');
