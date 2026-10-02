@@ -25,7 +25,7 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
  try{
 
   await check('Project details retains its position when a touch tablet moves between fields',async p=>{
-   await p.locator('#evEditTop').tap();
+   await p.getByRole('button',{name:'Edit project details',exact:true}).tap();
    await p.locator('[data-ev-field="name"]').tap();
    await p.waitForTimeout(150);
    // Mobile Safari can pan the document while its keyboard is open. Provide a
@@ -55,7 +55,7 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
   },null,{viewport:{width:820,height:1180},hasTouch:true});
 
   await check('Project details preserves typing through tablet viewport changes and wizard steps',async p=>{
-   await p.locator('#evEditTop').tap();
+   await p.getByRole('button',{name:'Edit project details',exact:true}).tap();
    const ref=p.locator('[data-ev-field="jobRef"]');
    await p.locator('[data-ev-field="name"]').fill('iPad survey');
    await ref.tap();await ref.fill('IPAD-002');
@@ -75,7 +75,7 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    await p.locator('[data-ev-field="workspace.contactEmail"]').fill('site@example.com');
    await p.locator('[data-ev-close-details]').last().tap();
    await p.evaluate(()=>EVWorkspace.persist());await p.reload({waitUntil:'networkidle'});
-   await p.waitForFunction(()=>window.EVWorkspace);await p.locator('#evEditTop').click();
+   await p.waitForFunction(()=>window.EVWorkspace);await p.evaluate(async()=>{await window.__evRestorePromise;await window.__evProjectIndexReady;EVWorkspace.go('overview');});await p.getByRole('button',{name:'Edit project details',exact:true}).click();
    assert.equal(await ref.inputValue(),'IPADX-002');
    assert.equal(await p.locator('[data-ev-field="name"]').inputValue(),'iPad survey');
    assert.deepEqual(await p.evaluate(()=>({notes:pack.notes,client:pack.custName,email:pack.workspace.contactEmail})),{notes:'Typed scope on an iPad',client:'Tablet client',email:'site@example.com'});
