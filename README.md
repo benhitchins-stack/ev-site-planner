@@ -1,5 +1,16 @@
 # EV Site Planner
 
+## Design lab and reliability
+
+Open **Design lab** from a project for survey evidence, design comparison,
+change impact, charging-day scenarios, phased expansion/replay and revision
+history. See the [workflow guide](docs/design-lab.md) and
+[independent electrical review handoff](docs/electrical-review-handoff.md).
+
+Project saves now detect conflicting tabs. **Your projects → Recover missing
+projects** can restore full saved records that disappeared from the index.
+PDF.js is upgraded to the verified 6.3.289 release.
+
 ## Current workspace
 
 The site includes the project dashboard and Markup workspace. Open a worked
@@ -206,3 +217,16 @@ Invalid route lengths have inline feedback. Missing upstream cable information
 and unverified TT CPC disconnection data remain incomplete in calculations.
 These changes do not validate the inherited engineering tables or replace a
 qualified design review.
+
+
+To run the planning browser suite on Linux, also install libheif-examples and
+libheif-plugin-x265 so the genuine HEIC fixture can be generated:
+
+```sh
+EVSP_TEST_OUTPUT=/tmp/evsp-planning python3 tests/make-heic-fixture.py
+EVSP_TEST_OUTPUT=/tmp/evsp-planning npm run test:planning
+```
+
+Use EVSP_BROWSER=firefox or EVSP_BROWSER=webkit to change engines.
+The release workflow runs scripts/verify-live.mjs after Pages deployment,
+checking the published bytes and HTTPS against the committed release.

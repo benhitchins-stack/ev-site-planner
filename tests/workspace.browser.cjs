@@ -14,7 +14,7 @@ const {chromium} = require('playwright');
       let file = path.join(root, decodeURIComponent(new URL(req.url,'http://local').pathname));
       if (!file.startsWith(root + path.sep) && file !== root) throw Error('Invalid path');
       if (fs.statSync(file).isDirectory()) file = path.join(file,'index.html');
-      const mime = {'.html':'text/html','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2'};
+      const mime = {'.html':'text/html','.js':'application/javascript','.mjs':'application/javascript','.wasm':'application/wasm','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2'};
       res.setHeader('Content-Type',mime[path.extname(file)] || 'application/octet-stream');
       fs.createReadStream(file).pipe(res);
     } catch {res.statusCode=404;res.end('Not found');}
@@ -53,10 +53,10 @@ const {chromium} = require('playwright');
     pass('Rapid repeated project creation opens one example');
 
     const snapshot = await page.evaluate(async()=>{
-      const original=idbSet;let release;const gate=new Promise(r=>release=r);
-      idbSet=async(k,v)=>{await gate;return original(k,v);};
+      const original=EVProjectStore.save;let release;const gate=new Promise(r=>release=r);
+      EVProjectStore.save=async(...args)=>{await gate;return original(...args);};
       pack.photos[0].items[0].label='Before queued save';const saving=EVWorkspace.persist();
-      pack.photos[0].items[0].label='Later edit';release();await saving;idbSet=original;
+      pack.photos[0].items[0].label='Later edit';release();await saving;EVProjectStore.save=original;
       return (await idbGet('proj_'+pack.projId)).pack.photos[0].items[0].label;
     });
     assert.equal(snapshot,'Before queued save');

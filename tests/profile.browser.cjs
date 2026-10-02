@@ -14,7 +14,7 @@ const {chromium} = require('playwright');
       let file = path.join(root, decodeURIComponent(new URL(req.url,'http://local').pathname));
       if (!file.startsWith(root + path.sep) && file !== root) throw Error('Invalid path');
       if (fs.statSync(file).isDirectory()) file = path.join(file,'index.html');
-      const mime = {'.html':'text/html','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2'};
+      const mime = {'.html':'text/html','.js':'application/javascript','.mjs':'application/javascript','.wasm':'application/wasm','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2'};
       res.setHeader('Content-Type',mime[path.extname(file)] || 'application/octet-stream');
       fs.createReadStream(file).pipe(res);
     } catch {res.statusCode=404;res.end('Not found');}

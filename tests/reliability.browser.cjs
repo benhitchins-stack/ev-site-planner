@@ -8,7 +8,7 @@ const engineName=process.env.EVSP_BROWSER||'chromium';
 if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupported EVSP_BROWSER');
 (async()=>{
  const root=path.resolve(__dirname,'../public'),out=process.env.EVSP_TEST_OUTPUT||'/tmp/evsp-reliability-'+engineName;fs.mkdirSync(out,{recursive:true});
- const server=http.createServer((req,res)=>{try{let f=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://test').pathname));if(!f.startsWith(root+path.sep)&&f!==root)throw Error();if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',({'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'})[path.extname(f)]||'application/octet-stream');fs.createReadStream(f).pipe(res);}catch(_){res.writeHead(404);res.end();}});
+ const server=http.createServer((req,res)=>{try{let f=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://test').pathname));if(!f.startsWith(root+path.sep)&&f!==root)throw Error();if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',({'.html':'text/html','.js':'application/javascript','.mjs':'application/javascript','.wasm':'application/wasm','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'})[path.extname(f)]||'application/octet-stream');fs.createReadStream(f).pipe(res);}catch(_){res.writeHead(404);res.end();}});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
  const browser=await engines[engineName].launch({headless:true,...(engineName==='chromium'?{...(process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH}:{}),args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}:{})});
  const results=[];
@@ -25,12 +25,15 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
  try{
   await check('Backup finishes an in-progress route and exports its points',async p=>{
    await markup(p);
-   const before=await p.evaluate(()=>{const count=activePhoto().items.length;setTool('route:swa');handleTap(...S(80,150));handleTap(...S(300,150));return count;});
+   await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   const before=await p.evaluate(()=>{const count=activePhoto().items.length;setTool('route:swa');handleTap(...S(80,150));handleTap(...S(300,150));return {count,points:JSON.parse(JSON.stringify(draftRoute.pts))};});
+   assert(before.points.length>=2,'The fixture has an unfinished route');
    const waiting=p.waitForEvent('download');await p.locator('#evBackupTop').click();
    const download=await waiting,file=path.join(out,'route-backup.evplan.json');await download.saveAs(file);
    const exported=JSON.parse(fs.readFileSync(file,'utf8'));
-   assert.equal(exported.photos[0].items.length,before+1);
-   assert.equal(exported.photos[0].items.at(-1).pts.length,2);
+   assert.equal(exported.photos[0].items.length,before.count+1);
+   // Smart routing may add bends when threading through an existing trench.
+   assert.deepEqual(exported.photos[0].items.at(-1).pts,before.points,'Every draft point is preserved exactly');
    assert.equal(await p.evaluate(()=>!!draftRoute),false);
   });
   await check('Backup waits for photo decoding and blocks duplicate exports or project switches',async p=>{

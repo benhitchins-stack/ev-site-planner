@@ -15,7 +15,8 @@
     "test:refinement": "node tests/refinement.browser.cjs",
     "test:debug": "node tests/deep-debug.browser.cjs",
     "test:presentation": "node tests/presentation.browser.cjs",
-    "test:reliability": "node tests/reliability.browser.cjs"
+    "test:reliability": "node tests/reliability.browser.cjs",
+    "test:planning": "node tests/planning.browser.cjs"
   },
   "engines": {
     "node": ">=18"
