@@ -62,3 +62,7 @@ Added 2 October 2026. The Guide Library and Learning Hub pages open with the pla
 ## Drawing page tool strip
 
 Added 2 October 2026. The Markup tool strip (undo and redo, the four canvas tools, the equipment categories, Technical and Focus) takes the planner's navy, with the active tool and the open category marked in lime, so the drawing page matches the page headers. The plan strip below stays light to frame the canvas, with a lime tint on the Scale recorded chip, and the zoom control gets the soft card shadow. Styles only: the controls, their order and their behaviour are unchanged, and the Technical menu keeps its dark text. The rules are at the end of `design-preview.css`.
+
+## Drawing page panels and dialogs
+
+Added 2 October 2026. The panels and dialogs that open from the Markup page take the planner's navy title row: the equipment picker (title, search and Library, Favourites and Recent tabs), the plan settings panel (eyebrow, title and its Plans & settings and Selected item tabs), the project details and review dialogs (title, description and step tabs), the plan review and export dialog and the photo adjuster. Lime marks the active tab, a chosen equipment tile and the active segment choice, and the sub-navigation in the plan settings panel takes a lime tint. The Technical menu and the Display options keep their light look with the rounded corners and soft shadow used elsewhere. Content areas, forms, buttons and footers are unchanged. Styles only, at the end of `design-preview.css`.
