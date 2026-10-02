@@ -619,3 +619,29 @@ body, #evApp {font-family: var(--font);}
 @media (max-width: 700px) {
   .ev-backdrop .ev-dialog-steps {padding: 0 20px;}
 }
+
+/* Older pop-ups: the technical dialogs (single-line diagram, cable calculations, charging simulator, DNO data, materials list, earthing wizard, PDF import), the CDM project controls and the measurement prompts open with the same navy title row as the newer panels, with lime marking the active CDM tab. Their content and footers are unchanged. */
+.wlc-backdrop .wlc {border-radius: 16px; padding-top: 0;}
+.wlc-backdrop .wlc > .wlc-head {background: var(--ev-navy); color: #fff; margin: 0 -26px 18px; padding: 20px 26px 18px;}
+.wlc-backdrop .wlc > .wlc-head h2 {color: #fff;}
+.wlc-backdrop .wlc > .wlc-head p {color: var(--ev-on-navy);}
+.wlc-backdrop .wlc > .wlc-head em, .wlc-backdrop .wlc > .wlc-head small {color: var(--ev-on-navy-dim);}
+.wlc-backdrop .wlc > .wlc-head .wlc-logo {color: #fff;}
+.evsp-cdm-dialog .evsp-cdm-head {background: var(--ev-navy); border-bottom: 0;}
+.evsp-cdm-dialog .evsp-cdm-head h2 {color: #fff;}
+.evsp-cdm-dialog .evsp-cdm-head p {color: var(--ev-on-navy);}
+.evsp-cdm-dialog .evsp-cdm-close {background: #ffffff14; border-color: #ffffff33; color: #fff;}
+.evsp-cdm-dialog .evsp-cdm-close:hover {background: #ffffff24; border-color: #ffffff66;}
+.evsp-cdm-dialog .evsp-cdm-tabs {background: var(--ev-navy); border-bottom: 1px solid #0b1b29; padding: 0 24px 10px;}
+.evsp-cdm-dialog .evsp-cdm-tabs button {color: #c9d6e0;}
+.evsp-cdm-dialog .evsp-cdm-tabs button:hover {background: #ffffff14; color: #fff;}
+.evsp-cdm-dialog .evsp-cdm-tabs button.on {background: var(--ev-lime); border-color: var(--ev-lime); color: var(--ev-lime-ink); box-shadow: none;}
+.sheet-backdrop .sheet {border-radius: 16px; padding-top: 0;}
+.sheet-backdrop .sheet h4 {background: var(--ev-navy); color: #fff; margin: 0 -22px 0; padding: 18px 22px 16px;}
+.sheet-backdrop .sheet .slab {background: var(--ev-navy); color: var(--ev-on-navy); margin: -12px -22px 16px; padding: 0 22px 16px;}
+.sheet-backdrop .sheet .slab + .sheet-help, .sheet-backdrop .sheet h4 + .sheet-help {margin-top: 0;}
+.wlc-backdrop .wlc button:focus-visible, .sheet-backdrop .sheet button:focus-visible {outline-color: #80a8ee;}
+.evsp-cdm-dialog .evsp-cdm-head button:focus-visible, .evsp-cdm-dialog .evsp-cdm-tabs button:focus-visible {outline-color: var(--ev-lime);}
+@media (max-width: 760px) {
+  .evsp-cdm-dialog .evsp-cdm-tabs {padding: 0 12px 8px;}
+}
