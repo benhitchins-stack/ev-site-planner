@@ -31,6 +31,8 @@ function programme(){
   p.activities=progAutoPhases().map(a=>({id:uid(),source:a.k,name:a.t,days:duration(p.days[a.k]??a.d),note:a.note,owner:'',start:'',status:'planned',included:p.skip[a.k]!==true}));
   p.schema=2;
  }
+ // Older activity records may have no ID; keep every row independently editable.
+ const ids=new Set();for(const a of p.activities){if(!a.id||ids.has(a.id))a.id=uid();ids.add(a.id);}
  if(!Array.isArray(p.nonWorkingDates))p.nonWorkingDates=[];
  return p;
 }

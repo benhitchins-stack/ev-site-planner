@@ -1,11 +1,11 @@
 # EV Site Planner
 
-## Design preview branch
+## Current workspace
 
-This branch contains a working preview of the project dashboard and Markup
-redesign. Open a worked example from Home to explore it, or import a project
-backup. The preview address has its own browser storage, so projects saved on the
-main site will not appear here automatically.
+The site includes the project dashboard and Markup workspace. Open a worked
+example from Home to explore it, or import a project backup. Each site address
+has its own browser storage; use a downloaded backup to move projects between
+addresses or devices.
 
 The preview adds a dashboard with an annotated plan preview and recorded next
 actions, a searchable project list, collapsible navigation, a floating equipment
@@ -121,17 +121,22 @@ are available from the Technical menu and the Markup panel's Checks tab.
 
 ## Checks
 
-`npm test` runs the static integration, release, CDM lifecycle and RAMS bridge
-checks. GitHub Pages runs these checks before publishing.
+`npm test` runs static integration, release, CDM lifecycle, RAMS bridge,
+measurement, backup-validation, PDF-policy and calculation checks. Pull requests
+run these plus all browser suites. GitHub Pages waits for the same checks before
+publishing, including the Chromium, Firefox and WebKit reliability scenarios.
 
-For the optional browser regression suite, install Playwright in a development
+To run browser regression checks locally, install Playwright in a development
 environment, install its Chromium browser, then run:
 
 ```sh
-npm install --no-save --package-lock=false playwright
-npx playwright install chromium
+npm install --no-save --package-lock=false playwright@1.56.1
+npx playwright install chromium firefox webkit
 npm run test:browser
 npm run test:profile
+npm run test:reliability
+EVSP_BROWSER=firefox npm run test:reliability
+EVSP_BROWSER=webkit npm run test:reliability
 ```
 
 An existing compatible Chromium can be supplied with
@@ -156,7 +161,9 @@ The existing custom domain is managed by the repository's Pages settings.
 
 The first-party scripts and styles use content-versioned URLs. All fonts and
 runtime libraries are served locally from `public/vendor/`, including PDF import,
-HEIC conversion, 3D rendering and the resource-page runtime. This is a static site,
+HEIC conversion, 3D rendering and the resource-page runtime. The HEIC converter
+loads only when a photo cannot be decoded natively; ordinary visits do not load
+its 1.35 MB script. PDF imports and previews disable font-code evaluation. This is a static site,
 not an installable offline PWA; the separately distributed portable build is a
 different deliverable.
 
@@ -188,3 +195,14 @@ calculate a critical path or automatically supply bank holidays. Download histor
 records file downloads, not sending or approval. The tools assist qualified design
 decisions and do not certify installations. This interface release does not claim
 a new engineering or regulatory audit of inherited calculations or learning content.
+
+## Reliability review, 2 October 2026
+
+The [deep review](docs/deep-review-2026-10-02.md) records fixes, remaining risks
+and a prioritised product roadmap. Backups wait for pending image imports and
+finish active routes, project lists retain entries beyond 100 projects, and
+unsafe backup structures are rejected before replacing the open project.
+Invalid route lengths have inline feedback. Missing upstream cable information
+and unverified TT CPC disconnection data remain incomplete in calculations.
+These changes do not validate the inherited engineering tables or replace a
+qualified design review.

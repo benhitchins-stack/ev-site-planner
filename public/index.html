@@ -1836,7 +1836,6 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 <script>
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
-<script src="vendor/heic2any.min.js"></script>
 <script src="cdm-controls.js?v=9da9e61316b2"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
 <script>
@@ -2776,18 +2775,31 @@ function validateProjectBackup(pk){
   const texts=(o,keys)=>keys.forEach(k=>need(o[k]==null||typeof o[k]==="string"));
   const objects=(o,keys)=>keys.forEach(k=>need(o[k]==null||record(o[k])));
   const rows=(o,k)=>{if(o[k]!=null){need(Array.isArray(o[k]));o[k].forEach(v=>need(record(v)));}};
-  need(record(pk)&&Array.isArray(pk.photos));
+  const reserved=new Set(["__proto__","prototype","constructor"]);
+  const id=v=>need(v==null||v===""||typeof v==="string"&&/^[a-zA-Z0-9_.-]{1,128}$/.test(v)&&!reserved.has(v)&&!Object.hasOwn(Object.prototype,v));
+  const unique=(list)=>{const seen=new Set();for(const r of list||[]){id(r.id);if(r.id){need(!seen.has(r.id));seen.add(r.id);}}};
+  const image=v=>need(v==null||v===""||typeof v==="string"&&/^data:image\/(?:png|jpe?g|webp|gif|avif|bmp|svg\+xml)(?:;[^,]*)?,/i.test(v)&&!/[<>"\u0000-\u001f]/.test(v));
+  // Backups are data. Never accept prototype keys that can alter dictionary lookups.
+  const inspect=(v,depth=0)=>{need(depth<80);if(Array.isArray(v))v.forEach(x=>inspect(x,depth+1));else if(record(v))for(const [k,x] of Object.entries(v)){need(!reserved.has(k));inspect(x,depth+1);}};
+  need(record(pk)&&Array.isArray(pk.photos));inspect(pk);
   texts(pk,["name","address","postcode","jobRef","notes","custName","engineerNote","brandName","brandLogo","surveyedBy","surveyDate","rev","custLetter","payLink","replyEmail","replyPhone"]);
   objects(pk,["workspace","programme","rates","cdm","survey","punch","commissioning","sim","earthWiz","cloudGroups"]);
-  rows(pk,"attachments");rows(pk,"revHistory");
-  if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","scope","notes","backupAt"]);}
-  if(pk.programme){const p=pk.programme;objects(p,["days","skip"]);texts(p,["start","notes"]);rows(p,"activities");if(p.activities)p.activities.forEach(a=>{texts(a,["id","name","owner","start","status","note"]);need(a.days==null||Number.isFinite(Number(a.days)));});if(p.nonWorkingDates!=null)need(Array.isArray(p.nonWorkingDates)&&p.nonWorkingDates.every(v=>typeof v==="string"));}
+  rows(pk,"attachments");rows(pk,"revHistory");unique(pk.attachments);id(pk.projId);id(pk.active);image(pk.brandLogo);
+  if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport","authorProfile"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","scope","notes","backupAt"]);}
+  if(pk.programme){const p=pk.programme;objects(p,["days","skip"]);texts(p,["start","notes"]);rows(p,"activities");unique(p.activities);if(p.activities)p.activities.forEach(a=>{texts(a,["id","name","owner","start","status","note"]);need(a.days==null||Number.isFinite(Number(a.days)));});if(p.nonWorkingDates!=null)need(Array.isArray(p.nonWorkingDates)&&p.nonWorkingDates.every(v=>typeof v==="string"));}
   const photoIds=new Set(),itemIds=new Set();
   pk.photos.forEach(p=>{
-    need(record(p));texts(p,["id","name","src","srcOrig","thumb","caption"]);rows(p,"items");objects(p,["scale","crop","overlay"]);
+    need(record(p));texts(p,["id","name","src","srcOrig","thumb","caption"]);rows(p,"items");objects(p,["scale","crop","overlay"]);id(p.id);
+    ["src","srcOrig","thumb"].forEach(k=>image(p[k]));
     if(p.id){need(!photoIds.has(p.id));photoIds.add(p.id);}
     ["imgW","imgH"].forEach(k=>need(p[k]==null||Number.isFinite(Number(p[k]))&&Number(p[k])>0));
-    (p.items||[]).forEach(i=>{texts(i,["id","type","kind","label","note"]);if(i.id){need(!itemIds.has(i.id));itemIds.add(i.id);}if(i.pts!=null){need(Array.isArray(i.pts));i.pts.forEach(pt=>need(record(pt)&&Number.isFinite(Number(pt.x))&&Number.isFinite(Number(pt.y))));}});
+    if(p.scale)need(p.scale.pxPerM==null||Number.isFinite(Number(p.scale.pxPerM))&&Number(p.scale.pxPerM)>0);
+    (p.items||[]).forEach(i=>{
+      texts(i,["id","type","kind","label","note"]);id(i.id);image(i.ph1);image(i.ph2);
+      if(i.id){need(!itemIds.has(i.id));itemIds.add(i.id);}
+      need(i.manualLen==null||(typeof i.manualLen==="number"||typeof i.manualLen==="string")&&Number.isFinite(Number(i.manualLen))&&Number(i.manualLen)>0);
+      if(i.pts!=null){need(Array.isArray(i.pts));i.pts.forEach(pt=>{need(record(pt)&&Number.isFinite(Number(pt.x))&&Number.isFinite(Number(pt.y)));id(pt.anchorId);});}
+    });
   });
 }
 function normalisePack(pk){
@@ -2881,7 +2893,7 @@ function normalisePack(pk){
     p.imgW = num(p.imgW,1200); p.imgH = num(p.imgH,800);
     p.items = Array.isArray(p.items) ? p.items.filter(i=>i&&typeof i==="object") : [];
     if(p.scale && typeof p.scale==="object"){
-      p.scale.pxPerM=num(p.scale.pxPerM,null); if(!p.scale.pxPerM) delete p.scale;
+      p.scale.pxPerM=num(p.scale.pxPerM,null); if(!(p.scale.pxPerM>0)) delete p.scale;
       if(p.scale && Array.isArray(p.scale.refs)){
         p.scale.refs=p.scale.refs.filter(r=>r && isFinite(Number(r.ppm)) && Number(r.ppm)>0 && isFinite(Number(r.m)) && Number(r.m)>0).slice(0,6);
         if(!p.scale.refs.length) delete p.scale.refs;
@@ -2904,6 +2916,7 @@ function normalisePack(pk){
       if(it.labelPos!=="top") delete it.labelPos;
       if(it.type==="unit" && it.entry && !["bottom","left","right"].includes(it.entry)) delete it.entry;
       if(it.type==="route"){
+        if(it.manualLen!=null) it.manualLen=Number(it.manualLen);
         if(!ROUTE_DEFS[it.kind]) it.kind="swa";
         it.hideLabel = it.hideLabel===true;
         it.sizeK=clampNum(it.sizeK,0.35,3.5,1); if(it.sizeK===1) delete it.sizeK;
@@ -3291,11 +3304,23 @@ function resize(){
   dpr = Math.min(2, Math.max(1, window.devicePixelRatio||1));
   cv.width = cvwrap.clientWidth*dpr;
   cv.height = cvwrap.clientHeight*dpr;
-  draw();
+  // Resizing must not rebuild the settings panel while someone is typing.
+  drawCanvas();
 }
 window.addEventListener("resize", resize);
 // the hint bar below the photo shows/hides as tools change - keep the canvas + fit in step
-if(window.ResizeObserver){ new ResizeObserver(()=>{ resize(); if(viewIsFit){ fitView(); draw(); } }).observe(cvwrap); }
+if(window.ResizeObserver){
+  let resizeFrame=0;
+  new ResizeObserver(()=>{
+    // Redrawing also updates the inspector and hint bar. Defer those layout writes
+    // beyond this observation cycle, especially for WebKit's loop detection.
+    if(resizeFrame)return;
+    resizeFrame=requestAnimationFrame(()=>{
+      resizeFrame=0;if(!cvwrap.clientWidth||!cvwrap.clientHeight)return;
+      resize();if(viewIsFit){fitView();drawCanvas();}
+    });
+  }).observe(cvwrap);
+}
 
 /* ============================================================ DRAW ============================================================ */
 function draw(){
@@ -7301,16 +7326,24 @@ function legendPillHide(){ const el=document.getElementById("legendPill"); if(el
 { const el=document.getElementById("legendPill"); if(el) el.onclick=()=>{ legendPeek=!legendPeek; draw(); }; }
 
 /* ---------- measurements ---------- */
+function parseRouteLength(value){const raw=String(value??"").trim();if(!raw)return null;const n=Number(raw);return Number.isFinite(n)&&n>0?n:NaN;}
+function setRouteLengthInput(input,target){
+  const length=parseRouteLength(input.value),invalid=Number.isNaN(length);
+  input.setCustomValidity(invalid?"Enter a length greater than zero, in metres.":"");
+  input.setAttribute("aria-invalid",String(invalid));
+  const message=document.getElementById(input.id+"Error");if(message)message.textContent=input.validationMessage;
+  if(!invalid)target.manualLen=length;
+}
 function routeLen(it,p){
-  if(it.manualLen!=null) return it.manualLen;
+  if(it.manualLen!=null){const length=parseRouteLength(it.manualLen);return Number.isFinite(length)?length:null;}
   p = p || activePhoto();
-  if(p && p.scale && p.scale.pxPerM && Array.isArray(it.pts) && it.pts.length>1){
+  if(p && p.scale && Number.isFinite(Number(p.scale.pxPerM)) && Number(p.scale.pxPerM)>0 && Array.isArray(it.pts) && it.pts.length>1){
     let m=0;
     for(let i=1;i<it.pts.length;i++){
       const a=it.pts[i-1], b=it.pts[i];
       m+=Math.hypot(b.x-a.x, b.y-a.y)/pxPerMAt(p,(a.x+b.x)/2,(a.y+b.y)/2);
     }
-    return +m.toFixed(1);
+    const length=+m.toFixed(1);return Number.isFinite(length)&&length>0?length:null;
   }
   return null;
 }
@@ -8849,16 +8882,16 @@ function renderSide(){
 }
 function packPanel(){
   let photos = pack.photos.map((p,i)=>{
-    return `<div class="thumb ${p.id===pack.active?'active':''}" data-photo="${p.id}" draggable="true" data-idx="${i}">
+    return `<div class="thumb ${p.id===pack.active?'active':''}" data-photo="${esc(p.id)}" draggable="true" data-idx="${i}">
       <div class="thumb-top">
-        ${(p.thumb||p.src)?`<img src="${p.thumb||p.src}">`:`<div style="width:52px;height:40px;border-radius:5px;background:var(--line);flex-shrink:0;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg></div>`}
-        <div class="meta"><b>${esc(p.name)}</b><small>${p.items.length} item${p.items.length!==1?'s':''}${(p.scale&&p.scale.pxPerM)?' &middot; <span class="scaleflag set" data-setscale="'+p.id+'" title="Add another reference or re-set the scale">'+(()=>{const ss=scaleSpread(p);return ss?('scaled &middot; '+ss.n+' refs'+(ss.pct>8?' &plusmn;'+ss.pct+'%':'')):'scaled';})()+'</span>':' &middot; <span class="scaleflag unset" data-setscale="'+p.id+'" title="Set the scale to auto-measure runs">set scale</span>'}</small></div>
-        <button class="x rn" data-rename="${p.id}" title="Rename this plan"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-        <button class="x" data-del="${p.id}" title="Remove photo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        ${(p.thumb||p.src)?`<img src="${esc(p.thumb||p.src)}">`:`<div style="width:52px;height:40px;border-radius:5px;background:var(--line);flex-shrink:0;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg></div>`}
+        <div class="meta"><b>${esc(p.name)}</b><small>${p.items.length} item${p.items.length!==1?'s':''}${(p.scale&&p.scale.pxPerM)?' &middot; <span class="scaleflag set" data-setscale="'+esc(p.id)+'" title="Add another reference or re-set the scale">'+(()=>{const ss=scaleSpread(p);return ss?('scaled &middot; '+ss.n+' refs'+(ss.pct>8?' &plusmn;'+ss.pct+'%':'')):'scaled';})()+'</span>':' &middot; <span class="scaleflag unset" data-setscale="'+esc(p.id)+'" title="Set the scale to auto-measure runs">set scale</span>'}</small></div>
+        <button class="x rn" data-rename="${esc(p.id)}" title="Rename this plan"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+        <button class="x" data-del="${esc(p.id)}" title="Remove photo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
       <div class="thumb-actions">
-        <button class="thumb-action" data-edit="${p.id}" title="Adjust brightness, contrast and crop"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</button>
-        <button class="thumb-action" data-dupplan="${p.id}" title="Duplicate this plan + markup as Option B"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Option B</button>
+        <button class="thumb-action" data-edit="${esc(p.id)}" title="Adjust brightness, contrast and crop"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</button>
+        <button class="thumb-action" data-dupplan="${esc(p.id)}" title="Duplicate this plan + markup as Option B"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Option B</button>
       </div>
     </div>`;
   }).join("");
@@ -9037,11 +9070,11 @@ function packPanel(){
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;font-size:10.5px;font-weight:650;color:var(--faint)">
         <span style="color:${st.open?'#9A7A1A':'var(--faint)'}">${st.open} open</span><span>\u00b7</span><span style="color:var(--ok)">${st.fixed} fixed</span>${st.safety?`<span>\u00b7</span><span style="color:${SNAG_SEVS.safety.color}">${st.safety} safety</span>`:''}
       </div>
-      <div class="needs">${sl.map(({it,photo})=>{ const open=it.st!=="fixed"; const c=open?(SNAG_SEVS[it.sev]||SNAG_SEVS.minor).color:SNAG_FIXED_COL; return `<div class="needrow" data-snagjump="${it.id}" style="cursor:pointer${open?'':';opacity:.62'}">
+      <div class="needs">${sl.map(({it,photo})=>{ const open=it.st!=="fixed"; const c=open?(SNAG_SEVS[it.sev]||SNAG_SEVS.minor).color:SNAG_FIXED_COL; return `<div class="needrow" data-snagjump="${esc(it.id)}" style="cursor:pointer${open?'':';opacity:.62'}">
         <span style="flex:none;width:20px;height:20px;border-radius:50%;background:${c};color:#fff;display:grid;place-items:center;font-size:10.5px;font-weight:800;margin-top:1px">${it.n||'!'}</span>
         <span style="flex:1;min-width:0"><b>${esc(it.label||('Snag '+(it.n||'')))}</b><em>${esc(photo.name||'Photo')}${(!dom&&it.who)?' \u00b7 fix: '+esc(it.who):''}${(!open&&it.fixedOn)?' \u00b7 fixed '+esc(it.fixedOn):(open?' \u00b7 '+(SNAG_SEVS[it.sev]||SNAG_SEVS.minor).label.toLowerCase():'')}</em></span>
         ${(it.ph1||it.ph2)?`<span style="display:flex;gap:3px;flex:none;margin-top:1px">${it.ph1?`<img src="${it.ph1}" alt="Before" style="width:24px;height:18px;object-fit:cover;border-radius:4px;border:1px solid var(--line2)">`:''}${it.ph2?`<img src="${it.ph2}" alt="After" style="width:24px;height:18px;object-fit:cover;border-radius:4px;border:1px solid var(--line2)">`:''}</span>`:''}
-        <span style="display:flex;gap:4px;flex:none;margin-top:1px"><button type="button" data-snagfix="${it.id}" title="${open?'Mark as put right':'Reopen this snag'}" style="height:22px;padding:0 9px;border-radius:11px;font-size:10.5px;font-weight:700;cursor:pointer;border:1px solid ${open?'var(--line2)':'var(--ok)'};background:${open?'var(--panel)':'var(--ok)'};color:${open?'var(--dim)':'#fff'}">${open?'Fixed':'\u2713'}</button></span>
+        <span style="display:flex;gap:4px;flex:none;margin-top:1px"><button type="button" data-snagfix="${esc(it.id)}" title="${open?'Mark as put right':'Reopen this snag'}" style="height:22px;padding:0 9px;border-radius:11px;font-size:10.5px;font-weight:700;cursor:pointer;border:1px solid ${open?'var(--line2)':'var(--ok)'};background:${open?'var(--panel)':'var(--ok)'};color:${open?'var(--dim)':'#fff'}">${open?'Fixed':'\u2713'}</button></span>
       </div>`; }).join("")}</div>
       <label style="margin-top:10px">Sign-off${signed?` <em style="font-style:normal;color:var(--ok)">\u00b7 ${esc((pack.snagSign||{}).date||'')}</em>`:''}</label>
       ${st.open?`<div class="sub" style="color:var(--faint);font-size:11px;margin:-2px 0 6px">${st.open} still open: the export lists them as outstanding, with signature lines to close out on paper.</div>`:''}
@@ -9059,19 +9092,19 @@ function packPanel(){
         <div style="flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden"><div style="width:${Math.round(cs.done/Math.max(1,cs.total)*100)}%;height:100%;border-radius:4px;background:${ccol};transition:width .25s"></div></div>
         <b style="font-size:12px;color:${cs.complete?'var(--ok)':'var(--dim)'};flex:none">${cs.complete?'✓ complete':cs.done+' of '+cs.total+' chargers'}</b>
       </div>
-      ${cus.map(({it,photo,n})=>{ const r=(c.units||{})[it.id]||{}; const dn=commDone(r); const nm=esc(it.label||unitDisplayName(it)); return `<details data-comdet="${it.id}" ${commOpenSet.has(it.id)?'open':''} style="border:1px solid var(--line);border-radius:9px;background:var(--panel);margin-bottom:6px">
+      ${cus.map(({it,photo,n})=>{ const r=(c.units||{})[it.id]||{}; const dn=commDone(r); const nm=esc(it.label||unitDisplayName(it)); return `<details data-comdet="${esc(it.id)}" ${commOpenSet.has(it.id)?'open':''} style="border:1px solid var(--line);border-radius:9px;background:var(--panel);margin-bottom:6px">
         <summary style="display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;font-size:12.5px;font-weight:650;color:var(--ink)"><span style="flex:none;width:18px;height:18px;border-radius:50%;background:${dn?'var(--ok)':'var(--line2)'};color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800">${dn?'✓':n}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm}</span><em style="font-style:normal;font-size:10.5px;color:var(--faint);flex:none">${esc(photo.name||'')}</em></summary>
         <div style="padding:2px 10px 10px">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 8px">
-            <span><label>Serial no.</label><input data-comu="${it.id}:serial" value="${esc(r.serial||'')}" placeholder="on the unit"></span>
-            <span><label>Firmware</label><input data-comu="${it.id}:fw" value="${esc(r.fw||'')}" placeholder="optional"></span>
-            <span><label>Zs (Ω)</label><input data-comu="${it.id}:zs" value="${esc(r.zs||'')}" inputmode="decimal" placeholder="e.g. 0.32"></span>
-            <span><label>IR (MΩ)</label><input data-comu="${it.id}:ir" value="${esc(r.ir||'')}" placeholder="e.g. &gt;200"></span>
-            <span><label>RCD trip (ms)</label><input data-comu="${it.id}:rcd" value="${esc(r.rcd||'')}" inputmode="decimal" placeholder="e.g. 24"></span>
-            <span><label>Charge rate seen</label><input data-comu="${it.id}:rate" value="${esc(r.rate||'')}" placeholder="e.g. 7.2 kW"></span>
+            <span><label>Serial no.</label><input data-comu="${esc(it.id)}:serial" value="${esc(r.serial||'')}" placeholder="on the unit"></span>
+            <span><label>Firmware</label><input data-comu="${esc(it.id)}:fw" value="${esc(r.fw||'')}" placeholder="optional"></span>
+            <span><label>Zs (Ω)</label><input data-comu="${esc(it.id)}:zs" value="${esc(r.zs||'')}" inputmode="decimal" placeholder="e.g. 0.32"></span>
+            <span><label>IR (MΩ)</label><input data-comu="${esc(it.id)}:ir" value="${esc(r.ir||'')}" placeholder="e.g. &gt;200"></span>
+            <span><label>RCD trip (ms)</label><input data-comu="${esc(it.id)}:rcd" value="${esc(r.rcd||'')}" inputmode="decimal" placeholder="e.g. 24"></span>
+            <span><label>Charge rate seen</label><input data-comu="${esc(it.id)}:rate" value="${esc(r.rate||'')}" placeholder="e.g. 7.2 kW"></span>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
-            ${[["pen","PEN / O-PEN test"],["btn","RCD test button"],["app","App paired"],["sched","Off-peak schedule set"],["cap","Output cap set"],["lab","Circuit labelled"]].map(([f,t])=>`<button type="button" data-comt="${it.id}:${f}" style="height:24px;padding:0 10px;border-radius:12px;font-size:10.5px;font-weight:700;cursor:pointer;border:1px solid ${r[f]?'var(--ok)':'var(--line2)'};background:${r[f]?'var(--ok)':'#fff'};color:${r[f]?'#fff':'var(--dim)'}">${r[f]?'✓ ':''}${t}</button>`).join("")}
+            ${[["pen","PEN / O-PEN test"],["btn","RCD test button"],["app","App paired"],["sched","Off-peak schedule set"],["cap","Output cap set"],["lab","Circuit labelled"]].map(([f,t])=>`<button type="button" data-comt="${esc(it.id)}:${f}" style="height:24px;padding:0 10px;border-radius:12px;font-size:10.5px;font-weight:700;cursor:pointer;border:1px solid ${r[f]?'var(--ok)':'var(--line2)'};background:${r[f]?'var(--ok)':'#fff'};color:${r[f]?'#fff':'var(--dim)'}">${r[f]?'✓ ':''}${t}</button>`).join("")}
           </div>
         </div>
       </details>`; }).join("")}
@@ -9107,9 +9140,9 @@ function packPanel(){
         <div class="thumb-top">
           ${(a.type||'').startsWith('image/')&&a.src?`<img src="${a.src}">`:`<div style="width:52px;height:40px;border-radius:5px;background:var(--panel);display:grid;place-items:center;flex-shrink:0;font-size:9.5px;font-weight:800;color:var(--dim);letter-spacing:.5px">${esc((a.name.split('.').pop()||'DOC').toUpperCase().slice(0,4))}</div>`}
           <div class="meta"><b>${esc(a.name)}</b><small>${a.size?(a.size/1024/1024).toFixed(2)+' MB':''}${!a.src?' &middot; file details only':((a.type||'').startsWith('image/')?' &middot; prints in the engineer PDF':' &middot; listed in the PDF appendix')}</small></div>
-          <button class="x" data-attdel="${a.id}" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <button class="x" data-attdel="${esc(a.id)}" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>
-        <div class="thumb-actions"><button class="thumb-action" data-attdl="${a.id}" ${a.src?'':'disabled title="File contents are not stored in this device snapshot"'}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</button></div>
+        <div class="thumb-actions"><button class="thumb-action" data-attdl="${esc(a.id)}" ${a.src?'':'disabled title="File contents are not stored in this device snapshot"'}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</button></div>
       </div>`).join('')}</div>`:`<div style="color:var(--faint);font-size:12px">Attach EICs, EICRs, board schedules, drawings and permits. They save inside the project file and travel with the pack.</div>`}
     <button class="addbtn" id="addAttach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add documents</button>
   </div>`;
@@ -9311,7 +9344,7 @@ function evalProject(){
     let s="none",why=[];
     if(!lc.units&&!rows.length){ why=["No chargers or sized runs to check yet"]; }
     else if(fail||over||needEarth){ s="block"; if(fail) why.push(fail+" cable run"+(fail===1?"":"s")+" failing the BS 7671 checks"); if(over) why.push("connected load exceeds the supply rating"); if(needEarth) why.push("earthing arrangement not confirmed"); }
-    else if(nolen||tbc){ s="prog"; if(nolen) why.push(nolen+" run"+(nolen===1?"":"s")+" without a length"); if(tbc) why.push(tbc+" cable type"+(tbc===1?"":"s")+" to confirm"); }
+    else if(nolen||tbc){ s="prog"; if(nolen) why.push(nolen+" run"+(nolen===1?"":"s")+" with incomplete calculation data"); if(tbc) why.push(tbc+" cable type"+(tbc===1?"":"s")+" to confirm"); }
     else{ s="ready"; why=["Load check and every sized run pass"+(warn?" · "+warn+" near a limit, worth a look":"")]; }
     S("verify",s,why,fail+nolen+tbc+(over?1:0)+(needEarth?1:0));
     if(fail) I("crit","verify",fail+" cable run"+(fail===1?"":"s")+" failing the checks","Capacity, volt drop, Zs or CPC is failing. Open the calculator and clear the failing checks before ordering cable.","fn:cablecheck");
@@ -9595,7 +9628,7 @@ function propsPanel(){
       <div class="seg grid3">${Object.keys(ROUTE_DEFS).filter(kk=>!ROUTE_DEFS[kk].mode||ROUTE_DEFS[kk].mode===(pack.mode==="domestic"?"domestic":"commercial")).map(kk=>`<button data-drk="${kk}" class="${k===kk?'on':''}">${ROUTE_DEFS[kk].short||ROUTE_DEFS[kk].name}</button>`).join("")}</div>
       <label>Run length (m)</label>
       <div class="seg ${draftRoute.kind==="tails"?'grid4':'grid5'}">${(draftRoute.kind==="tails"?[0.5,1,1.5,2,2.5,3,4,5]:[1,2,3,5,7,10,15,20,25,30]).map(v=>`<button data-dest="${v}" class="${draftRoute.manualLen===v?'on':''}">${v}m</button>`).join("")}</div>
-      <input id="dmlen" inputmode="decimal" value="${draftRoute.manualLen!=null?draftRoute.manualLen:''}" placeholder="or type exact, e.g. 12.5" style="margin-top:6px">
+      <input id="dmlen" aria-describedby="dmlenError" inputmode="decimal" value="${draftRoute.manualLen!=null?draftRoute.manualLen:''}" placeholder="or type exact, e.g. 12.5" style="margin-top:6px"><div id="dmlenError" class="sub" role="alert"></div>
       <div class="sub" style="color:var(--faint);font-size:11px">Set the length now or fine-tune it after finishing. Tap points on the photo to draw the run.</div>
       <label>Chargeable variation</label>
       ${varSeg(draftRoute.varMode, "data-dvar")}
@@ -10140,7 +10173,7 @@ function propsPanel(){
       ${it.kind==="data"?`<label>Auto follow${hintBtn('datacable')}</label>${hintBox('datacable')}<div class="sub" style="color:var(--faint);font-size:11px">Snap one end to the Load limiter and the other to the EVDB. If a power route is snapped from that EVDB to a charger, the data cable will automatically follow it.</div>`:''}
       <label>Run length (m)${hintBtn('route')}</label>${hintBox('route')}
       <div class="seg ${it.kind==="tails"?'grid4':'grid5'}">${(it.kind==="tails"?[0.5,1,1.5,2,2.5,3,4,5]:[1,2,3,5,7,10,15,20,25,30]).map(d=>`<button data-est="${d}" class="${it.manualLen===d?'on':''}">${d}m</button>`).join("")}</div>
-      <input id="mlen" inputmode="decimal" value="${it.manualLen!=null?it.manualLen:''}" placeholder="or type exact, e.g. 12.5" style="margin-top:6px">
+      <input id="mlen" aria-describedby="mlenError" inputmode="decimal" value="${it.manualLen!=null?it.manualLen:''}" placeholder="or type exact, e.g. 12.5" style="margin-top:6px"><div id="mlenError" class="sub" role="alert"></div>
       ${(it.manualLen==null&&routeLen(it,activePhoto())!=null)?`<div class="sub" style="color:var(--ok);font-size:11px;font-weight:600;margin-top:4px">Measured from the photo scale: ${routeLen(it,activePhoto())} m. Tap a preset or type to override.</div>`:''}
       ${routeLen(it,activePhoto())==null?`<div style="background:#FFF4DC;border:1px solid #FFB950;border-radius:8px;padding:7px 10px;font-size:11.5px;color:#7A4E00;font-weight:600;margin-top:4px">⚠ No length set. Tap an estimate, type a distance, or use the <b>Set scale</b> tool so runs measure themselves.</div>`:''}      <div class="sub" style="color:var(--faint);font-size:11px">Tap an estimate or type the wheeled/paced length. Shown on the plan label and in the PDF runs table.</div>
       <label>Line style</label>
@@ -10153,8 +10186,8 @@ function propsPanel(){
       <div class="seg" style="margin-top:6px;flex-wrap:wrap">${F.sizes.map(c=>`<button data-vdc="${c}" class="${csa===c?'on':''}">${c}mm²</button>`).join("")}</div>
       ${F.ph1?'':`<div class="seg" style="margin-top:6px"><button data-vdp="1" class="${phv===1?'on':''}">1-phase · 230 V</button><button data-vdp="3" class="${phv===3?'on':''}">3-phase · 400 V</button></div>`}
       <div class="ccck" style="margin-top:6px">${fc.checks.map(c=>`<span class="${c.ok===false?'bad':c.ok==null?'na':(c.warn?'wn':'ok')}" title="${esc(c.txt)}">${c.lab} ${c.ok===false?'✕':c.ok==null?'–':'✓'}</span>`).join("")}</div>
-      <div class="sub" style="font-size:11px;margin-top:5px;line-height:1.45;${st==='fail'?'color:var(--warn);font-weight:700':st==='warn'?'color:#9A7A1A;font-weight:600':st==='ok'?'color:var(--ok);font-weight:600':'color:var(--faint)'}">${st==='nolen'?'Set a run length (or photo scale) to complete the checks':st==='fail'?`Fails ${fc.checks.filter(c=>c.ok===false).map(c=>c.lab).join(' & ')}${fc.suggest?`; try ${fc.suggest} mm²`:''}${fc.sugIn?`; device ${fc.dev}${fc.sugIn}`:''}`:st==='warn'?'Passes, but near a limit; see the full calculation':'All five checks pass on the stated assumptions'}</div>
-      <button class="pbtn" data-opencalc="${it.id}" style="margin-top:6px">Full calculation · device, method &amp; factors</button>`; })():''}
+      <div class="sub" style="font-size:11px;margin-top:5px;line-height:1.45;${st==='fail'?'color:var(--warn);font-weight:700':st==='warn'?'color:#9A7A1A;font-weight:600':st==='ok'?'color:var(--ok);font-weight:600':'color:var(--faint)'}">${st==='nolen'?'Complete the missing calculation data; see the full calculation':st==='fail'?`Fails ${fc.checks.filter(c=>c.ok===false).map(c=>c.lab).join(' & ')}${fc.suggest?`; try ${fc.suggest} mm²`:''}${fc.sugIn?`; device ${fc.dev}${fc.sugIn}`:''}`:st==='warn'?'Passes, but near a limit; see the full calculation':'All five checks pass on the stated assumptions'}</div>
+      <button class="pbtn" data-opencalc="${esc(it.id)}" style="margin-top:6px">Full calculation · device, method &amp; factors</button>`; })():''}
       ${it.kind==="duct"?`<label>Duct size (mm)${hintBtn('duct')}</label>${hintBox('duct')}
       <div class="seg">${[50,63,100,110,125,150].map(dmm=>`<button data-ductmm="${dmm}" class="${(it.ductMm||(pack.mode==="domestic"?63:125))===dmm?'on':''}">${dmm}</button>`).join("")}</div>
       <label>Burial depth</label>
@@ -10268,7 +10301,7 @@ function propsPanel(){
   return `<div class="card"><h3><span class="dot"></span>${typeName(it)}</h3>${body}${(LABELABLE.includes(it.type)||it.type==="park")?`<div class="prop"><label>Label size</label>${stepper("lsc",Math.round((it.labelScale||1)*100),"%")}<div class="sub" style="color:var(--faint);font-size:11px">Scales just the label; the ${it.type==="park"?"parking bay":"item graphic"} stays the same size.</div></div>`:''}${del}</div>`;
 }
 function typeName(it){ return it.type==="site"?((SITE_DEFS[it.kind]||{}).name||"Site feature"):it.type==="stamp"?"Callout stamp":it.type==="guide"?"Guide line":it.type==="unit"?"Charger":it.type==="evdb"?"EVDB":it.type==="ipevdb"?"IP rated EVDB":it.type==="ipbox"?"IP adaptable box":it.type==="henley"?"Henley blocks":it.type==="meter"?"Meter":it.type==="metercab"?"Meter cabinet":it.type==="gascab"?"Gas meter cabinet":it.type==="earthterm"?"Earth terminal":it.type==="cutout"?"Main fuse / cut-out":it.type==="isolator"?"Isolator":it.type==="consumerunit"?"Distribution board":it.type==="panelboard"?"Panel board":it.type==="garagesplit"?"Garage splitter":it.type==="connpoint"?"Connection point":it.type==="fusesaver"?"Load limiter":it.type==="mcb"?"MCB":it.type==="rcd"?"RCD":it.type==="din"?((DIN_DEFS[it.kind]||{}).name||"Protection device"):it.type==="customer"?"Onwards to fuse board":it.type==="feeder"?"Feeder pillar":it.type==="arrayboard"?"Load management board":it.type==="bay"?"Bay marking":it.type==="park"?"Parking":it.type==="route"?"Cable run":it.type==="mark"?(it.kind==="snag"?"Snag"+(it.n?" #"+it.n:""):"Marker"):it.type==="label"?"Label":it.type==="arrow"?"Arrow":"Box"; }
-function stepper(id,val,suf){ return `<div class="stepper"><button data-step="${id}" data-dir="-1">−</button><div class="val" id="${id}_v">${val}${suf||''}</div><button data-step="${id}" data-dir="1">+</button></div>`; }
+function stepper(id,val,suf){ return `<div class="stepper"><button data-step="${esc(id)}" data-dir="-1">−</button><div class="val" id="${esc(id)}_v">${val}${suf||''}</div><button data-step="${esc(id)}" data-dir="1">+</button></div>`; }
 
 function wireSide(){
   // pack
@@ -10328,7 +10361,7 @@ function wireSide(){
   // draft cable run controls (active while a route tool is selected)
   document.querySelectorAll("[data-drk]").forEach(b=>b.onclick=()=>{ if(!draftRoute)return; const k=b.dataset.drk; draftRoute.kind=k; tool="route:"+k; syncRail(); updateHint(); draw(); renderSide(); });
   document.querySelectorAll("[data-dest]").forEach(b=>b.onclick=()=>{ if(!draftRoute)return; const v=parseFloat(b.dataset.dest); draftRoute.manualLen=(draftRoute.manualLen===v?null:v); draw(); renderSide(); });
-  { const dm=document.getElementById("dmlen"); if(dm) dm.oninput=()=>{ if(!draftRoute)return; const n=parseFloat(dm.value); draftRoute.manualLen=(dm.value.trim()===""||isNaN(n))?null:n; }; }
+  { const dm=document.getElementById("dmlen"); if(dm) dm.oninput=()=>{ if(draftRoute)setRouteLengthInput(dm,draftRoute); }; }
   document.querySelectorAll("[data-dvar]").forEach(b=>b.onclick=()=>{ if(!draftRoute)return; draftRoute.varMode=b.dataset.dvar; renderSide(); });
   document.querySelectorAll("[data-aslabel]").forEach(b=>b.onclick=()=>{ const it=findItem(sel); if(!it) return; const want=b.dataset.aslabel==="1"; if(it.asLabel===want) return; pushHist(); it.asLabel=want; draw(); renderSide(); });
   { const df=document.getElementById("draftFinish"); if(df) df.onclick=()=>{ commitRoute(); setTool("select"); }; }
@@ -10344,7 +10377,7 @@ function wireSide(){
   document.querySelectorAll("[data-disp]").forEach(b=>b.onclick=()=>{ const k=b.dataset.disp; pack[k]=(pack[k]===false); if(k==="showChargerNos") pack.chargerNosUserSet=true; draw(); renderSide(); });
   document.querySelectorAll("[data-eqvdef]").forEach(b=>b.onclick=()=>{ pushHist(); pack.eqView=b.dataset.eqvdef; draw(); renderSide(); autosave(); });
   bindInput("ulabel",v=>it.label=v); bindInput("elabel",v=>it.label=v); bindInput("ipelabel",v=>it.label=v); bindInput("ipblabel",v=>it.label=v); bindInput("hlabel",v=>it.label=v); bindInput("metlabel",v=>it.label=v); bindInput("mclabel",v=>it.label=v); bindInput("etlabel",v=>it.label=v); bindInput("colabel",v=>it.label=v); bindInput("isolabel",v=>it.label=v); bindInput("fslabel",v=>it.label=v); bindInput("cflabel",v=>it.label=v); bindInput("culabel",v=>it.label=v); bindInput("gslabel",v=>it.label=v); bindInput("mklabel",v=>it.label=v); bindInput("ltext",v=>it.text=v); bindInput("atext",v=>it.text=v); bindInput("btext",v=>it.text=v); bindInput("plabel",v=>it.label=v); bindInput("pnum",v=>it.num=v); bindInput("fplabel",v=>it.label=v); bindInput("ablabel",v=>it.label=v); bindInput("bylabel",v=>it.label=v); bindInput("ctlabel",v=>it.label=v); bindInput("sglabel",v=>it.label=v); bindInput("sgwho",v=>it.who=v);
-  bindInput("mlen",v=>{ const n=parseFloat(v); it.manualLen=(v.trim()===""||isNaN(n))?null:n; });
+  bindInput("mlen",()=>setRouteLengthInput(document.getElementById("mlen"),it));
   bindInput("fsamp",v=>{ const n=parseInt(v,10); it.fsSet=(v.trim()===""||isNaN(n))?null:Math.max(10,Math.min(100,n)); });
   bindInput("corating",v=>{ const n=parseInt(v,10); it.rating=(v.trim()===""||isNaN(n))?null:Math.max(30,Math.min(630,n)); });
   bindInput("imcbrating",v=>{ const n=parseInt(v,10); it.rating=(v.trim()===""||isNaN(n))?null:Math.max(6,Math.min(63,n)); });
@@ -10634,10 +10667,25 @@ function canDecodeNatively(blob){
     setTimeout(()=>fin(false),8000);
   });
 }
+// Most projects use JPEG, PNG or PDF; load the 1.35 MB HEIC converter only when needed.
+let _heicDecoderPromise=null;
+function ensureHeicDecoder(){
+  if(typeof window.heic2any==="function")return Promise.resolve(window.heic2any);
+  if(!_heicDecoderPromise)_heicDecoderPromise=new Promise((resolve,reject)=>{
+    const script=document.createElement("script");let done=false;
+    const finish=(error)=>{if(done)return;done=true;clearTimeout(timer);script.onload=script.onerror=null;if(error){script.remove();reject(error);}else resolve(window.heic2any);};
+    const timer=setTimeout(()=>finish(new Error("HEIC decoder timed out")),15000);
+    script.src="vendor/heic2any.min.js";script.async=true;
+    script.onload=()=>finish(typeof window.heic2any==="function"?null:new Error("HEIC decoder unavailable"));
+    script.onerror=()=>finish(new Error("HEIC decoder could not load"));
+    document.head.appendChild(script);
+  }).catch(error=>{_heicDecoderPromise=null;throw error;});
+  return _heicDecoderPromise;
+}
 /* convert HEIC/HEIF to JPEG only when the browser can't read it natively.
    failures are counted and reported once - never one console warning per photo. */
 async function normaliseSources(list){
-  const out=[]; let fails=0; const total=list.filter(isHeicSrc).length; let n=0;
+  const out=[]; let fails=0; const total=list.filter(isHeicSrc).length; let n=0,decoderPromise;
   for(const item of list){
     if(isHeicSrc(item)){
       n++;
@@ -10645,13 +10693,12 @@ async function normaliseSources(list){
       // 1) keep the original when the browser can already decode it (no conversion = no errors)
       if(await canDecodeNatively(item.blob)){ out.push(item); continue; }
       // 2) otherwise fall back to the HEIC decoder
-      if(typeof heic2any!=="undefined"){
-        try{
-          const conv=await heic2any({blob:item.blob, toType:"image/jpeg", quality:0.9});
-          const blob=Array.isArray(conv)?conv[0]:conv;
-          out.push({name:String(item.name||"photo").replace(HEIC_RE,".jpg"), blob});
-        }catch(err){ fails++; } // undecodable + unconvertible - drop it here rather than letting it fail again downstream
-      } else { fails++; }
+      try{
+        const convert=await (decoderPromise||(decoderPromise=ensureHeicDecoder()));
+        const conv=await convert({blob:item.blob, toType:"image/jpeg", quality:0.9});
+        const blob=Array.isArray(conv)?conv[0]:conv;
+        out.push({name:String(item.name||"photo").replace(HEIC_RE,".jpg"), blob});
+      }catch(err){ fails++; } // undecodable + unconvertible - report once for this batch
     } else out.push(item);
   }
   if(fails) console.warn(fails+" HEIC photo(s) could not be converted");
@@ -10832,12 +10879,11 @@ function syncSiteChip(){
 /* free postcodes.io lookup - fails silently offline */
 function attachPostcodeLookup(inp, sug, onPick){
   let t=null, seq=0;
-  const hide=()=>{ sug.style.display="none"; sug.innerHTML=""; };
+  const hide=()=>{ ++seq; clearTimeout(t); sug.style.display="none"; sug.innerHTML=""; };
   inp.addEventListener("input", ()=>{
-    const q=inp.value.trim(); clearTimeout(t);
+    const my=++seq, q=inp.value.trim(); clearTimeout(t);
     if(q.length<2){ hide(); return; }
     t=setTimeout(()=>{
-      const my=++seq;
       fetch("https://api.postcodes.io/postcodes/"+encodeURIComponent(q)+"/autocomplete")
         .then(r=>r.json())
         .then(d=>{ if(my!==seq) return; const list=(d&&d.result)||[];
@@ -10851,10 +10897,11 @@ function attachPostcodeLookup(inp, sug, onPick){
   inp.addEventListener("blur", ()=>setTimeout(hide,250));
 }
 function postcodePicked(pc, addrEl){
-  pack.postcode=pc;
+  const project=pack;
+  project.postcode=pc;
   fetch("https://api.postcodes.io/postcodes/"+encodeURIComponent(pc))
     .then(r=>r.json())
-    .then(d=>{ const r0=d&&d.result; if(!r0) return;
+    .then(d=>{ if(pack!==project||pack.postcode!==pc)return; const r0=d&&d.result; if(!r0) return;
       if(!String(pack.address||"").trim()){
         const line=[r0.admin_ward,r0.admin_district].filter(Boolean).join(", ");
         pack.address=line; if(addrEl && document.activeElement!==addrEl) addrEl.value=line;
@@ -10902,7 +10949,7 @@ document.getElementById("btnOpen").onclick=async()=>{ if(hasMeaningfulPackConten
 document.getElementById("fileOpen").addEventListener("change", e=>{
   if(window.EVWorkspace?.importBackup){const file=e.target.files[0];e.target.value="";if(file)window.EVWorkspace.importBackup(file);return;}
   const f=e.target.files[0]; if(!f)return; const fr=new FileReader();
-  fr.onload=()=>{ try{ const d=JSON.parse(fr.result); if(!d.photos)throw 0; pack=normalisePack(d); imgKeys(); history=[]; redoStack=[]; updateUndo();
+  fr.onload=()=>{ try{ const d=JSON.parse(fr.result); validateProjectBackup(d); pack=normalisePack(d); imgKeys(); history=[]; redoStack=[]; updateUndo();
       pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
       syncSiteChip(); sideTab="pack"; setSideTab(); fitView(); draw(); window.EVWorkspace?.afterImport(); toast("Survey loaded");
     }catch(_){ toast("That doesn't look like a saved survey file"); } e.target.value=""; };
@@ -12030,13 +12077,13 @@ function rxRenderPhotos(){
   if(cnt) cnt.textContent = `${incl} of ${pack.photos.length} included`;
   wrap.innerHTML = pack.photos.map(p=>{
     const on = p.includeInPdf!==false;
-    return `<div class="rx-photo${on?"":" off"}" data-pid="${p.id}">
+    return `<div class="rx-photo${on?"":" off"}" data-pid="${esc(p.id)}">
       <div class="rx-photo-top">
         ${p.src?`<img src="${p.src}" alt="">`:`<div style="width:46px;height:36px;border-radius:5px;background:#39424B;flex-shrink:0"></div>`}
         <div class="rx-pname">${esc(p.name)}</div>
-        <button class="rx-toggle${on?" on":""}" data-rxtoggle="${p.id}">${on?"In PDF":"Hidden"}</button>
+        <button class="rx-toggle${on?" on":""}" data-rxtoggle="${esc(p.id)}">${on?"In PDF":"Hidden"}</button>
       </div>
-      <input class="rx-cap" data-rxcap="${p.id}" value="${esc(p.caption||"")}" placeholder="Caption for this photo (optional)">
+      <input class="rx-cap" data-rxcap="${esc(p.id)}" value="${esc(p.caption||"")}" placeholder="Caption for this photo (optional)">
     </div>`;
   }).join("");
   wrap.querySelectorAll("[data-rxtoggle]").forEach(b=>b.onclick=()=>{
@@ -13103,7 +13150,7 @@ function vdSuggest(L,amps,csa,ph){
 }
 /* connectivity graph over anchored power runs: feeds load auto-detection + upstream impedance chaining */
 function ccGraph(){
-  const nodes={}, edges=[], items={};
+  const nodes=Object.create(null), edges=[], items=Object.create(null);
   pack.photos.forEach(p=>p.items.forEach(i=>{ items[i.id]={it:i,p}; }));
   pack.photos.forEach(p=>p.items.forEach(it=>{
     if(it.type==="route"&&["tails","swa","hituff","run"].includes(it.kind)&&Array.isArray(it.pts)&&it.pts.length>1&&optVisible(it)){
@@ -13214,18 +13261,18 @@ function fullCalc(it,p,ovr){
   const up=ccUpstream(it);
   const r1r2=(L!=null&&CC_R20[String(csa)]&&CC_R20[String(cpc)])?((CC_R20[String(csa)]+CC_R20[String(cpc)])*F.rT*L)/1000:null;
   const zsMax=+(230*0.95/(CC_CURVE[dev]*inA)).toFixed(2);
-  const zsV=(!tt&&ze!=null&&r1r2!=null)?ze+up.r+r1r2:null;
+  const zsV=(!tt&&ze!=null&&r1r2!=null&&!up.incomplete)?ze+up.r+r1r2:null;
   const raV=(()=>{ const v=parseFloat(pack.ra); return isFinite(v)&&v>0?v:null; })();
   let ad=null;
-  if(tt) ad={tt:true, ok:true};
+  if(tt) ad={tt:true, ok:null};
   else if(zsV!=null&&zsV<=zsMax){ const If=230/zsV; const sMin=Math.sqrt(If*If*0.1)/F.k; ad={If:Math.round(If), sMin:+sMin.toFixed(2), ok:sMin<=cpc, t:0.1}; }
   const checks=[
     {k:"in", lab:"Ib\u2264In", ok:ib<=inA, txt:"design "+ib+" A vs device "+dev+inA},
     {k:"iz", lab:"In\u2264Iz", ok:iz!=null?inA<=iz:null, txt:iz!=null?("device "+inA+" A vs capacity "+iz+" A after factors"):"no tabulated value"},
     {k:"vd", lab:"VD", ok:vdPct!=null?vdPct<=5:null, warn:vdPct!=null&&vdPct>3&&vdPct<=5, txt:vdPct!=null?(vdV.toFixed(1)+" V \u00b7 "+vdPct.toFixed(1)+"% of "+base+" V"):"no length"},
     tt?{k:"zs", lab:"TT/RCD", ok:raV!=null?(raV<=200):null, txt:raV!=null?("electrode "+raV+" \u03a9 \u00b7 30 mA RCD"):"electrode RA not recorded"}
-      :{k:"zs", lab:"Zs", ok:zsV!=null?zsV<=zsMax:null, txt:zsV!=null?(zsV.toFixed(2)+" \u03a9 vs max "+zsMax+" \u03a9"):"no length"},
-    {k:"ad", lab:"CPC", ok:ad?ad.ok:null, txt:ad?(ad.tt?"adiabatic via RCD disconnection":("S \u2265 "+ad.sMin+" mm\u00b2 vs CPC "+cpc+" mm\u00b2")):"resolve Zs first"}
+      :{k:"zs", lab:"Zs", ok:zsV!=null?zsV<=zsMax:null, txt:zsV!=null?(zsV.toFixed(2)+" \u03a9 vs max "+zsMax+" \u03a9"):(up.incomplete?"upstream cable length or specification missing":"no length")},
+    {k:"ad", lab:"CPC", ok:ad?ad.ok:null, txt:ad?(ad.tt?"RCD disconnection data required; verify CPC separately":("S \u2265 "+ad.sMin+" mm\u00b2 vs CPC "+cpc+" mm\u00b2")):"resolve Zs first"}
   ];
   const anyFail=checks.some(c=>c.ok===false);
   const anyNull=checks.some(c=>c.ok==null);
@@ -13263,7 +13310,7 @@ function cableCheckData(){
   return rows;
 }
 const ccOpen=new Set();
-function ccSeg(attr,id,opts,cur){ return `<div class="ccseg">${opts.map(o=>{ const v=Array.isArray(o)?o[0]:o, l=Array.isArray(o)?o[1]:o; return `<button data-${attr}="${id}:${v}" class="${String(cur)===String(v)?'on':''}">${l}</button>`; }).join("")}</div>`; }
+function ccSeg(attr,id,opts,cur){ return `<div class="ccseg">${opts.map(o=>{ const v=Array.isArray(o)?o[0]:o, l=Array.isArray(o)?o[1]:o; return `<button data-${attr}="${esc(id)}:${v}" class="${String(cur)===String(v)?'on':''}">${l}</button>`; }).join("")}</div>`; }
 function renderCcSupply(){
   const el=document.getElementById("ccSupply"); if(!el) return;
   const zeDef=ccZeDefault();
@@ -13281,9 +13328,9 @@ function renderCcSupply(){
 function ccRow(r){
   const it=r.it, id=it.id, fc=r.fc, open=ccOpen.has(id);
   if(r.unspec){
-    return `<div class="ccrow" data-ccid="${id}">
+    return `<div class="ccrow" data-ccid="${esc(id)}">
       <div class="cctitle"><b>${esc(r.name)}</b><small>${esc(r.p.name||"Plan")}${r.L!=null?" \u00b7 "+r.L+" m":""}</small><span class="ccchip tbc">TYPE TBC</span></div>
-      <div class="ccctl"><span class="ccres" style="color:var(--dim);flex:none">Pick the cable family to run the checks:</span>${ccSeg("ccfam",id,[["swa","SWA"],["evu","EV Ultra"],["te","T&amp;E"],["sgl","Singles"]],it.ccFam||"")}<button class="ccbtn" data-ccgo="${id}" style="margin-left:auto">View</button></div>
+      <div class="ccctl"><span class="ccres" style="color:var(--dim);flex:none">Pick the cable family to run the checks:</span>${ccSeg("ccfam",id,[["swa","SWA"],["evu","EV Ultra"],["te","T&amp;E"],["sgl","Singles"]],it.ccFam||"")}<button class="ccbtn" data-ccgo="${esc(id)}" style="margin-left:auto">View</button></div>
     </div>`;
   }
   const F=fc.F;
@@ -13296,7 +13343,7 @@ function ccRow(r){
     const auto=ccDetectLoad(it);
     const famRow=(it.kind==="run")?`<div class="ccdrow"><span class="ccdl">Family</span>${ccSeg("ccfam",id,[["swa","SWA"],["evu","EV Ultra"],["te","T&amp;E"],["sgl","Singles"]],fc.fam)}</div>`:"";
     det=`<div class="ccdet">
-      <div class="ccdrow"><span class="ccdl">Design load Ib</span>${ccSeg("cca2",id,[16,20,25,32,40,50,63,80],fc.ib)}${auto?(auto.amps!==fc.ib||auto.ph!==fc.ph?`<button class="ccbtn" data-ccauto="${id}" title="Installed charger currents from the plan, including recorded caps; no diversity">From plan: ${auto.amps} A \u00b7 ${auto.ph}\u03c6 \u00b7 ${auto.n} socket${auto.n===1?"":"s"}${auto.dc?" (+DC rapid, size separately)":""}</button>`:`<span style="font-size:10.5px;color:var(--ok);font-weight:650">matches the ${auto.n} socket${auto.n===1?"":"s"} it feeds on the plan</span>`):""}</div>
+      <div class="ccdrow"><span class="ccdl">Design load Ib</span>${ccSeg("cca2",id,[16,20,25,32,40,50,63,80],fc.ib)}${auto?(auto.amps!==fc.ib||auto.ph!==fc.ph?`<button class="ccbtn" data-ccauto="${esc(id)}" title="Installed charger currents from the plan, including recorded caps; no diversity">From plan: ${auto.amps} A \u00b7 ${auto.ph}\u03c6 \u00b7 ${auto.n} socket${auto.n===1?"":"s"}${auto.dc?" (+DC rapid, size separately)":""}</button>`:`<span style="font-size:10.5px;color:var(--ok);font-weight:650">matches the ${auto.n} socket${auto.n===1?"":"s"} it feeds on the plan</span>`):""}</div>
       ${F.ph1?"":`<div class="ccdrow"><span class="ccdl">Phases</span>${ccSeg("ccph2",id,[[1,"1\u03c6 \u00b7 230 V"],[3,"3\u03c6 \u00b7 400 V"]],fc.ph)}</div>`}
       ${famRow}
       <div class="ccdrow"><span class="ccdl">Device</span>${ccSeg("ccdev",id,[["B","B"],["C","C"],["D","D"]],fc.dev)}${ccSeg("ccin",id,[16,20,25,32,40,50,63,80],fc.inA)}<span style="font-size:10.5px;color:var(--faint);font-weight:600">Type A RCBO \u00b7 max Zs ${fc.zs.max} \u03a9</span></div>
@@ -13307,20 +13354,20 @@ function ccRow(r){
         <div>Capacity: ${fc.iz!=null?`It ${fc.it0} A \u00d7 Ca ${fc.ca} \u00d7 Cg ${fc.cg}${fc.ccF!==1?" \u00d7 0.9 (buried)":""} = <b>Iz ${fc.iz} A</b> vs In ${fc.inA} A (Ib ${fc.ib} A)`:`no tabulated value for ${fc.csa} mm\u00b2 by method ${fc.meth}`}</div>
         <div>Volt drop: ${fc.vd.v!=null?`${fc.vd.mv} mV/A/m \u00d7 ${fc.ib} A \u00d7 ${r.L} m = <b>${fc.vd.v.toFixed(1)} V (${fc.vd.pct.toFixed(1)}%)</b> \u00b7 limit 5%`:"set a run length (or photo scale)"}</div>
         <div>${fc.zs.tt?`Earth fault: TT \u00b7 disconnection by the 30 mA RCD \u00b7 RA ${fc.zs.ra!=null?fc.zs.ra+" \u03a9":"not recorded"} \u00b7 keep the electrode \u2264 200 \u03a9`:`Zs: Ze ${fc.zs.ze!=null?fc.zs.ze:"?"}${fc.zs.zeAuto?" (assumed)":""}${fc.zs.up&&fc.zs.up.r>0.0005?` + upstream ${fc.zs.up.r.toFixed(3)}`:""} + R1+R2 ${fc.zs.r1r2!=null?fc.zs.r1r2.toFixed(3):"?"} = <b>${fc.zs.v!=null?fc.zs.v.toFixed(2)+" \u03a9":"?"}</b> \u00b7 max ${fc.zs.max} \u03a9 (${fc.dev}${fc.inA})${fc.zs.up&&fc.zs.up.incomplete?` \u00b7 an upstream run has no spec; chain incomplete`:""}`}</div>
-        <div>CPC check: ${fc.ad?(fc.ad.tt?"adiabatic covered by RCD disconnection at TT fault levels":`If ${fc.ad.If} A, t 0.1 s, k ${F.k} \u2192 <b>S \u2265 ${fc.ad.sMin} mm\u00b2</b> \u00b7 CPC ${fc.cpc} mm\u00b2`):"resolve the Zs check first"}</div>
+        <div>CPC check: ${fc.ad?(fc.ad.tt?"RCD disconnection data required; verify CPC separately":`If ${fc.ad.If} A, t 0.1 s, k ${F.k} \u2192 <b>S \u2265 ${fc.ad.sMin} mm\u00b2</b> \u00b7 CPC ${fc.cpc} mm\u00b2`):"resolve the Zs check first"}</div>
       </div>
     </div>`;
   }
-  return `<div class="ccrow" data-ccid="${id}">
+  return `<div class="ccrow" data-ccid="${esc(id)}">
     <div class="cctitle"><b>${esc(r.name)}</b><small>${esc(r.p.name||"Plan")}${r.L!=null?" \u00b7 "+r.L+" m":""}</small><span class="ccchip ${chipCls}">${chipTxt}</span></div>
     ${checks}
     <div class="ccctl">
-      <button class="ccbtn" data-cca="${id}" title="Cycle the design load">${fc.ib} A</button>
-      ${F.ph1?"":`<button class="ccbtn" data-ccph="${id}" title="Toggle single / three phase">${fc.ph}\u03c6 ${fc.ph===3?400:230} V</button>`}
-      <button class="ccbtn" data-ccc="${id}" title="Cycle the cable size">${fc.csa} mm\u00b2</button>
-      <button class="ccbtn" data-ccdet="${id}" title="Device, method, factors and the workings">${fc.dev}${fc.inA} \u00b7 ${mLab}${open?" \u25b4":" \u25be"}</button>
-      ${fc.suggest?`<button class="ccbtn acc" data-ccfix="${id}">Use ${fc.suggest} mm\u00b2</button>`:""}${(!fc.suggest&&fc.sugIn)?`<button class="ccbtn acc" data-ccfixin="${id}">Device \u2192 ${fc.dev}${fc.sugIn}</button>`:""}
-      <button class="ccbtn" data-ccgo="${id}" style="margin-left:auto">View</button>
+      <button class="ccbtn" data-cca="${esc(id)}" title="Cycle the design load">${fc.ib} A</button>
+      ${F.ph1?"":`<button class="ccbtn" data-ccph="${esc(id)}" title="Toggle single / three phase">${fc.ph}\u03c6 ${fc.ph===3?400:230} V</button>`}
+      <button class="ccbtn" data-ccc="${esc(id)}" title="Cycle the cable size">${fc.csa} mm\u00b2</button>
+      <button class="ccbtn" data-ccdet="${esc(id)}" title="Device, method, factors and the workings">${fc.dev}${fc.inA} \u00b7 ${mLab}${open?" \u25b4":" \u25be"}</button>
+      ${fc.suggest?`<button class="ccbtn acc" data-ccfix="${esc(id)}">Use ${fc.suggest} mm\u00b2</button>`:""}${(!fc.suggest&&fc.sugIn)?`<button class="ccbtn acc" data-ccfixin="${esc(id)}">Device \u2192 ${fc.dev}${fc.sugIn}</button>`:""}
+      <button class="ccbtn" data-ccgo="${esc(id)}" style="margin-left:auto">View</button>
     </div>
     ${det}
   </div>`;
@@ -13485,7 +13532,7 @@ function buildCalcPdf(){
     li("Capacity", fc.iz!=null?("It "+fc.it0+" A \u00d7 Ca "+fc.ca+" \u00d7 Cg "+fc.cg+(fc.ccF!==1?" \u00d7 0.9 buried":"")+" = Iz "+fc.iz+" A vs In "+fc.inA+" A (Ib "+fc.ib+" A)"):"no tabulated value for this size / method", capOk, y+24);
     li("Volt drop", fc.vd.v!=null?(fc.vd.mv+" mV/A/m \u00d7 "+fc.ib+" A \u00d7 "+r.L+" m = "+fc.vd.v.toFixed(1)+" V ("+fc.vd.pct.toFixed(1)+"%), limit 5%"):"no length set", cks.vd?cks.vd.ok:null, y+29.5);
     li(fc.zs.tt?"TT earth":"Zs", fc.zs.tt?("disconnection by 30 mA RCD \u00b7 RA "+(fc.zs.ra!=null?fc.zs.ra+" ohm":"not recorded")+" \u00b7 electrode must be 200 ohm or less"):(fc.zs.v!=null?("Ze "+fc.zs.ze+(fc.zs.zeAuto?" (assumed)":"")+(fc.zs.up&&fc.zs.up.r>0.0005?(" + upstream "+fc.zs.up.r.toFixed(3)):"")+" + R1+R2 "+fc.zs.r1r2.toFixed(3)+" = "+fc.zs.v.toFixed(2)+" ohm, max "+fc.zs.max+" ohm for "+fc.dev+fc.inA+(fc.zs.up&&fc.zs.up.incomplete?" \u00b7 upstream chain incomplete":"")):"no length set"), cks.zs?cks.zs.ok:null, y+35);
-    li("CPC", fc.ad?(fc.ad.tt?("CPC "+fc.cpc+" mm\u00b2 \u00b7 adiabatic covered by RCD disconnection at TT fault levels"):("If "+fc.ad.If+" A, t 0.1 s, k "+fc.F.k+" gives S min "+fc.ad.sMin+" mm\u00b2 vs CPC "+fc.cpc+" mm\u00b2")):"resolve the Zs check first", cks.ad?cks.ad.ok:null, y+40.5);
+    li("CPC", fc.ad?(fc.ad.tt?("CPC "+fc.cpc+" mm\u00b2 \u00b7 RCD disconnection data required; verify CPC separately"):("If "+fc.ad.If+" A, t 0.1 s, k "+fc.F.k+" gives S min "+fc.ad.sMin+" mm\u00b2 vs CPC "+fc.cpc+" mm\u00b2")):"resolve the Zs check first", cks.ad?cks.ad.ok:null, y+40.5);
     y+=50;
   });
   if(tbcs.length){
@@ -13670,6 +13717,8 @@ function openSld(){
 
 /* ============================================================ PDF SITE-PLAN IMPORT ============================================================ */
 let _pdfjsP=null;
+// Disable PDF.js font-code evaluation for both imported PDFs and generated previews.
+function openPdfDocument(lib,data){return lib.getDocument({data,isEvalSupported:false});}
 function ensurePdfJs(){
   if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
   if(_pdfjsP) return _pdfjsP;
@@ -13702,7 +13751,7 @@ async function importPdfFiles(files){
     let pdoc;
     try{
       const buf=await f.arrayBuffer();
-      pdoc=await lib.getDocument({data:buf}).promise;
+      pdoc=await openPdfDocument(lib,buf).promise;
       const base=String(f.name||"Plan").replace(/^.*[\/\\]/,"").replace(/\.[^.]+$/,"").slice(0,34)||"Plan";
       if(pdoc.numPages===1){
         const cn=await renderPdfPage(pdoc,1);
@@ -14564,7 +14613,7 @@ function saveCurrentToProjects(quiet,requireLocalSnapshot){
   const ix=projIndex().filter(x=>x.id!==pack.projId);
   const ph=pack.photos[0];
   ix.unshift({id:pack.projId, name:pack.name||document.getElementById("packname").value||"Untitled", mode:pack.mode, date:new Date().toISOString().slice(0,10), thumb:(ph&&ph.thumb)||"", n:pack.photos.length, cust:pack.custName||"", ref:pack.jobRef||"", ...projStatusMeta()});
-  saveProjIndex(ix.slice(0,30));
+  saveProjIndex(ix);
   return requireLocalSnapshot?lsOk:(lsOk||idbTried);
 }
 /* live status for the jobs list - cheap enough to refresh on every autosave */
@@ -15889,12 +15938,12 @@ setTimeout(()=>{ try{
   });
 }catch(_){ } }, 2500);
 </script>
-<script src="profile.js?v=486440b3b6b5"></script>
+<script src="profile.js?v=04d5b67b2dbd"></script>
 <script src="report-fonts.js?v=db719569bbc1"></script>
 <script src="home.js?v=59f3ddfb3c99"></script>
-<script src="report-viewer.js?v=6f3790a6ee5c"></script>
-<script src="workspace.js?v=f976c1237847"></script>
-<script src="delivery.js?v=23a296844ba8"></script>
+<script src="report-viewer.js?v=3b3b3a4bc743"></script>
+<script src="workspace.js?v=35dc994ba026"></script>
+<script src="delivery.js?v=6e2379250a28"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 # Deploys the static suite (public/) to GitHub Pages on every push to main.
-# The site is pure static output: no build step, publish public/ as-is.
+# Publish committed static output only after all regression checks pass.
 name: Deploy to GitHub Pages
 
 on:
@@ -17,15 +17,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  checks:
+    uses: ./.github/workflows/checks.yml
   deploy:
+    needs: checks
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Check the static release
-        run: npm test
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

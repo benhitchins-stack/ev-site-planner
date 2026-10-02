@@ -27,7 +27,7 @@ function mount(root,{canvasId=''}={}){
   if(token!==version||disposed)return;
   canvasBox.textContent='Preparing PDF…';thumbs.replaceChildren();buttons();
   const lib=await ensurePdfJs();if(token!==version||disposed)return;
-  const loaded=await lib.getDocument({data:doc.output('arraybuffer')}).promise;
+  const loaded=await openPdfDocument(lib,doc.output('arraybuffer')).promise;
   if(token!==version||disposed){await loaded.destroy();return;}
   pdf=loaded;page=Math.min(page,pdf.numPages);thumbs.innerHTML=Array.from({length:pdf.numPages},(_,i)=>'<button type="button" data-pdf-page="'+(i+1)+'" aria-label="Page '+(i+1)+'"><span>'+(i+1)+'</span></button>').join('');
   await show(page,true);void thumbnails(loaded,token);
@@ -105,7 +105,7 @@ function enhanceLegacy(){
  };
  closeReview=function(){if(saving)return;clearTimeout(rxDebounce);rxBuildToken++;currentDoc=null;viewer?.destroy();viewer=null;originalClose();document.getElementById('evApp').inert=false;if(window.EVWorkspace?.route()==='issue')EVWorkspace.refresh();if(focus?.isConnected)focus.focus();};
  bd.addEventListener('keydown',e=>{
-  e.stopPropagation();if(e.key!=='Tab')return;const nodes=[...bd.querySelectorAll('button:not(:disabled),input:not(:disabled),textarea,select,a[href]')].filter(x=>x.getClientRects().length&&!x.closest('[hidden]'));if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  e.stopPropagation();if(e.key==='Escape'){e.preventDefault();closeReview();return;}if(e.key!=='Tab')return;const nodes=[...bd.querySelectorAll('button:not(:disabled),input:not(:disabled),textarea,select,a[href]')].filter(x=>x.getClientRects().length&&!x.closest('[hidden]'));if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
  });
 }
 window.EVReportViewer={mount,enhanceLegacy};window.EVReportBranding={header,footer,profileSample};

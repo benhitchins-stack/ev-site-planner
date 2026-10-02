@@ -33,3 +33,23 @@ test('cable calculations retain missing lengths and scale voltage drop with rout
  }
  assert(checked>100);
 });
+
+test('known missing upstream cable data keeps earth-fault and CPC checks incomplete',()=>{
+ const c=calculator(),supply={id:'s',type:'cutout'},board={id:'b',type:'evdb'},unit={id:'u',type:'unit'};
+ const upstream={id:'upstream',type:'route',kind:'swa',pts:[{anchorId:'s'},{anchorId:'b'}]};
+ const target={id:'final',type:'route',kind:'swa',length:10,vdCsa:6,vdAmps:16,pts:[{anchorId:'b'},{anchorId:'u'}]};
+ c.pack.photos=[{items:[supply,board,unit,upstream,target]}];
+ let result=c.fullCalc(target,{}, {nosuggest:true});
+ assert.equal(result.zs.up.incomplete,true);assert.equal(result.zs.v,null);
+ assert.equal(result.checks.find(x=>x.k==='zs').ok,null);assert.equal(result.checks.find(x=>x.k==='ad').ok,null);
+ assert.equal(result.overall,'nolen');
+ upstream.length=10;result=c.fullCalc(target,{}, {nosuggest:true});
+ assert.equal(result.zs.up.incomplete,false);assert(Number.isFinite(result.zs.v));
+});
+test('a TT electrode value alone does not certify CPC disconnection performance',()=>{
+ const c=calculator();c.pack.earthing='TT';c.pack.ra='100';
+ const result=c.fullCalc({id:'test',kind:'swa',length:10,vdCsa:6,vdAmps:16,pts:[]},{},{nosuggest:true});
+ assert.equal(result.checks.find(x=>x.k==='zs').ok,true);
+ assert.equal(result.checks.find(x=>x.k==='ad').ok,null);
+ assert.equal(result.overall,'nolen');
+});
