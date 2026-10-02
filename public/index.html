@@ -2789,7 +2789,14 @@ function validateProjectBackup(pk){
   rows(pk,"attachments");rows(pk,"revHistory");unique(pk.attachments);id(pk.projId);id(pk.active);image(pk.brandLogo);
   if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport","authorProfile"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","scope","notes","backupAt"]);}
   if(pk.programme){const p=pk.programme;objects(p,["days","skip"]);texts(p,["start","notes"]);rows(p,"activities");unique(p.activities);if(p.activities)p.activities.forEach(a=>{texts(a,["id","name","owner","start","status","note"]);need(a.days==null||Number.isFinite(Number(a.days)));});if(p.nonWorkingDates!=null)need(Array.isArray(p.nonWorkingDates)&&p.nonWorkingDates.every(v=>typeof v==="string"));}
-  if(pk.workspace?.planning)EVPlanningCore.validate(pk.workspace.planning);
+  if(pk.workspace?.planning){
+    const lab=pk.workspace.planning;EVPlanningCore.validate(lab);
+    for(const entry of [...(lab.options||[]),...(lab.revisions||[])]){
+      const snapshot=EVPlanningCore.hydrate(entry.snapshot,lab.assets||{});
+      need(!snapshot.workspace?.planning?.options?.length&&!snapshot.workspace?.planning?.revisions?.length);
+      validateProjectBackup(snapshot);
+    }
+  }
   const photoIds=new Set(),itemIds=new Set();
   pk.photos.forEach(p=>{
     need(record(p));texts(p,["id","name","src","srcOrig","thumb","caption"]);rows(p,"items");objects(p,["scale","crop","overlay"]);id(p.id);

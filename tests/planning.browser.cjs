@@ -36,9 +36,10 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    assert.equal(await p.evaluate(key=>pack.workspace.planning.evidence[key].source,key),'Laser survey <A>');
   });
   await check('Design options compare quantities and connected-circuit impact',async p=>{
+   await p.evaluate(async()=>{const photo=activePhoto(),unit=photo.items.find(i=>i.type==='unit'),supply=photo.items.find(i=>i.type==='mark'&&i.kind==='supply');photo.items.push({id:'comparison-circuit',type:'route',kind:'swa',pts:[{x:supply.x,y:supply.y,anchorId:supply.id},{x:unit.x,y:unit.y,anchorId:unit.id}]});await EVWorkspace.persist();});
    await openLab(p,'compare');await p.locator('#evpOptionName').fill('Quotation <A>');await p.locator('[data-evp-action="capture-option"]').click();
    await p.waitForFunction(()=>pack.workspace.planning.options.length===1);
-   const item=await p.evaluate(async()=>{const i=activePhoto().items.find(i=>i.type==='route'&&['swa','run','hituff','tails'].includes(i.kind));i.manualLen=42;await EVWorkspace.persist();return i.id;});
+   const item=await p.evaluate(async()=>{const i=activePhoto().items.find(i=>i.id==='comparison-circuit');i.manualLen=42;await EVWorkspace.persist();return i.id;});
    await p.locator('[data-evp-tab="impact"]').click();await p.waitForSelector('#evpPlanPreview');
    assert.match(await p.locator('.evp-change-list').innerText(),/manualLen/);
    assert.match(await p.locator('#evScreen').innerText(),/Connected circuits to recheck/);

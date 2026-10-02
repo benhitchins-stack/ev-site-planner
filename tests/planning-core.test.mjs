@@ -1,3 +1,5 @@
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import '../public/planning-core.js';
@@ -83,4 +85,19 @@ test('expansion phases filter snapshots without modifying current geometry',()=>
 });
 test('planning backup validation rejects unsupported schemas, duplicate revisions and dangling phases',()=>{
  const p=make(),l=C.ensure(p);C.validate(l);l.schema=2;assert.throws(()=>C.validate(l));l.schema=1;C.capture(p,{name:'A'});l.revisions.push(C.clone(l.revisions[0]));assert.throws(()=>C.validate(l));l.revisions.pop();l.assignments.charger='missing';assert.throws(()=>C.validate(l));
+});
+
+test('complete backup validation checks hydrated revision contents and rejects unsafe hidden media',()=>{
+ const html=readFileSync(new URL('../public/EV Site Planner.html',import.meta.url),'utf8'),context=vm.createContext({EVPlanningCore:C});
+ vm.runInContext(html.slice(html.indexOf('function validateProjectBackup('),html.indexOf('function normalisePack(')),context);
+ const p=make();C.capture(p,{name:'Portable revision'});assert.doesNotThrow(()=>context.validateProjectBackup(p));
+ const revision=p.workspace.planning.revisions[0];revision.snapshot.photos[0].src='https://invalid.example/tracking.png';
+ assert.throws(()=>context.validateProjectBackup(p),/Invalid project backup/);
+});
+test('snapshot validation rejects missing assets and recursive revision histories',()=>{
+ const html=readFileSync(new URL('../public/EV Site Planner.html',import.meta.url),'utf8'),context=vm.createContext({EVPlanningCore:C});
+ vm.runInContext(html.slice(html.indexOf('function validateProjectBackup('),html.indexOf('function normalisePack(')),context);
+ const p=make();C.capture(p,{name:'A'});const r=p.workspace.planning.revisions[0];r.snapshot.photos[0].src={$asset:'absent'};assert.throws(()=>context.validateProjectBackup(p),/missing/);
+ const q=make();C.capture(q,{name:'A'});const nested=make();C.capture(nested,{name:'nested'});q.workspace.planning.revisions[0].snapshot.workspace.planning.revisions=nested.workspace.planning.revisions;
+ assert.throws(()=>context.validateProjectBackup(q),/Invalid project backup/);
 });
