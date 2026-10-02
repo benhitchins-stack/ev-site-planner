@@ -540,3 +540,30 @@ body, #evApp {font-family: var(--font);}
   .ev-stage-copy small {display: none;}
   .ev-stage-mark {width: 24px; height: 24px;}
 }
+
+/* Drawing page: the tool strip takes the planner's navy with the active tool and category in lime, so Markup matches the page headers. The plan strip below stays light to frame the canvas. */
+#evWorkbench.ev-toolbar-mode {background: var(--ev-navy) var(--ev-navy-glow); border-bottom: 1px solid #0b1b29; box-shadow: 0 6px 20px #10283c33; color: #fff;}
+#evWorkbench .ev-undo-group {border-right-color: #ffffff1f;}
+#evWorkbench .ev-undo-group button {background: transparent; border-color: transparent; color: #dbe6ef; box-shadow: none;}
+#evWorkbench .ev-undo-group button:hover {background: #ffffff14; color: #fff;}
+#evWorkbench .ev-undo-group button:disabled {opacity: .35;}
+#evWorkbench .ptools {background: #ffffff12; border-radius: 10px; padding: 3px; gap: 2px;}
+#evWorkbench .ptool {background: transparent; border-color: transparent; color: #dbe6ef; box-shadow: none;}
+#evWorkbench .ptool:not(.on):hover {background: #ffffff1f; color: #fff; box-shadow: none;}
+#evWorkbench .ptool.on {background: var(--ev-lime); border-color: var(--ev-lime); color: var(--ev-lime-ink); box-shadow: none;}
+#evWorkbench .catdiv {background: #ffffff1f;}
+#evWorkbench .cattab {background: transparent; border-color: transparent; color: #c9d6e0; box-shadow: none;}
+#evWorkbench .cattab:not(.on):hover {background: #ffffff14; color: #fff; box-shadow: none;}
+#evWorkbench .cattab.on {background: #ffffff1f; border-color: #ffffff2e; color: #fff; box-shadow: inset 0 -2px 0 var(--ev-lime);}
+#evWorkbench .cattab .cdot {background: var(--ev-lime); box-shadow: 0 0 0 2px var(--ev-navy);}
+#evWorkbench .ev-tech>.ev-btn, #evWorkbench .ev-focus-btn {background: #ffffff14; border-color: #ffffff33; color: #fff; box-shadow: none;}
+#evWorkbench .ev-tech>.ev-btn:hover, #evWorkbench .ev-focus-btn:hover {background: #ffffff24; border-color: #ffffff66;}
+#evWorkbench #evFocus[aria-pressed=true] {background: var(--ev-lime); border-color: var(--ev-lime); color: var(--ev-lime-ink);}
+#evWorkbench #evToolCategory {background: #ffffff14; border-color: #ffffff33; color: #fff;}
+#evWorkbench #evToolCategory option {background: #fff; color: var(--ink);}
+#evWorkbench button:focus-visible, #evWorkbench select:focus-visible {outline-color: var(--ev-lime);}
+#evPlanStrip {background: #f4f7fa; border-bottom: 1px solid #d9e3ec;}
+#evPlanStrip select {font-weight: 650; color: var(--ink);}
+.ev-scale-status.set {background: #eef5d8; border-color: #cfe39a; color: #2f4a16;}
+#root .zoombar {border-radius: 12px; border-color: #cddae4; box-shadow: 0 10px 30px #10283c26;}
+#evWorkbench .ev-tech-menu {color: var(--ink);}
