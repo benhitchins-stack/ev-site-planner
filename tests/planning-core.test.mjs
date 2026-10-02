@@ -116,3 +116,8 @@ test('comparison lengths agree with perspective references and the existing draw
  assert.equal(C.length(route,photo),context.routeLen(route,photo));
  route.manualLen=7.25;assert.equal(C.length(route,photo),context.routeLen(route,photo));
 });
+
+test('dual-gun DC equipment counts both connectors without doubling its cabinet power',()=>{
+ const p=make();p.photos[0].items=[{id:'rapid',type:'unit',variant:'dc_rapid',kw:'150'}];
+ const q=C.quantities(p);assert.equal(q.chargers,1);assert.equal(q.ports,2);assert.equal(q.ratedKw,150);
+});

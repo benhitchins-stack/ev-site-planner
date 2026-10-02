@@ -121,8 +121,8 @@ function quantities(pack){
   if(!visible(pack,item))continue;
   if(item.type==='unit'){
    if(item.provision==='passive'){q.passive++;continue;}
-   q.chargers++;const ports=['twin_ped','solo_dfsm'].includes(item.variant)?2:1;q.ports+=ports;
-   if(finite(item.kw,Number.MIN_VALUE))q.ratedKw+=Number(item.kw)*ports;else q.unknownPower++;
+   q.chargers++;const ports=['twin_ped','solo_dfsm','dc_rapid'].includes(item.variant)?2:1;q.ports+=ports;
+   if(finite(item.kw,Number.MIN_VALUE))q.ratedKw+=Number(item.kw)*(item.variant==='dc_rapid'?1:ports);else q.unknownPower++;
   }
   const category=item.type==='route'?(item.kind==='trench'?'trench':item.kind==='duct'?'duct':['run','swa','hituff','tails','earthcable','data'].includes(item.kind)?'cable':null):null;
   if(category){const m=length(item,photo);if(m==null)q.unknown++;else q[category]+=m;}
