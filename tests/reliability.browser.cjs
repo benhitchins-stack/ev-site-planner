@@ -105,6 +105,19 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
     assert.equal(await p.locator('#evApp').evaluate(el=>el.inert),false);
    }
   });
+
+  await check('HEIC conversion loads only on demand and shares one decoder across files',async p=>{
+   assert.equal(await p.evaluate(()=>performance.getEntriesByType('resource').some(x=>x.name.includes('heic2any'))),false);
+   let requests=0;await p.route('**/vendor/heic2any.min.js',route=>{requests++;return route.fulfill({contentType:'application/javascript',body:'window.heic2any=async()=>new Blob(["converted"],{type:"image/jpeg"});'});});
+   const result=await p.evaluate(async()=>{const original=canDecodeNatively;canDecodeNatively=async()=>false;try{return(await normaliseSources([{name:'First.heic',blob:new Blob(['one'])},{name:'Second.heic',blob:new Blob(['two'])}])).map(x=>({name:x.name,type:x.blob.type}));}finally{canDecodeNatively=original;}});
+   assert.deepEqual(result,[{name:'First.jpg',type:'image/jpeg'},{name:'Second.jpg',type:'image/jpeg'}]);assert.equal(requests,1);
+  });
+  await check('A failed HEIC decoder download can be retried',async p=>{
+   let requests=0;await p.route('**/vendor/heic2any.min.js',route=>{requests++;return requests===1?route.fulfill({status:503,body:'Unavailable'}):route.fulfill({contentType:'application/javascript',body:'window.heic2any=async()=>new Blob(["converted"],{type:"image/jpeg"});'});});
+   assert.equal(await p.evaluate(async()=>{try{await ensureHeicDecoder();return false;}catch{return true;}}),true);
+   assert.equal(await p.evaluate(async()=>typeof await ensureHeicDecoder()),'function');
+   assert.equal(requests,2);
+  });
  }finally{await browser.close();server.close();}
  console.log(results.filter(r=>r.pass).length+'/'+results.length+' reliability scenarios passed in '+engineName);
  if(results.some(r=>!r.pass))process.exitCode=1;

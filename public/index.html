@@ -1836,7 +1836,6 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 <script>
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
-<script src="vendor/heic2any.min.js"></script>
 <script src="cdm-controls.js?v=9da9e61316b2"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
 <script>
@@ -3309,7 +3308,18 @@ function resize(){
 }
 window.addEventListener("resize", resize);
 // the hint bar below the photo shows/hides as tools change - keep the canvas + fit in step
-if(window.ResizeObserver){ new ResizeObserver(()=>{ resize(); if(viewIsFit){ fitView(); draw(); } }).observe(cvwrap); }
+if(window.ResizeObserver){
+  let resizeFrame=0;
+  new ResizeObserver(()=>{
+    // Redrawing also updates the inspector and hint bar. Defer those layout writes
+    // beyond this observation cycle, especially for WebKit's loop detection.
+    if(resizeFrame)return;
+    resizeFrame=requestAnimationFrame(()=>{
+      resizeFrame=0;if(!cvwrap.clientWidth||!cvwrap.clientHeight)return;
+      resize();if(viewIsFit){fitView();draw();}
+    });
+  }).observe(cvwrap);
+}
 
 /* ============================================================ DRAW ============================================================ */
 function draw(){
@@ -10656,10 +10666,25 @@ function canDecodeNatively(blob){
     setTimeout(()=>fin(false),8000);
   });
 }
+// Most projects use JPEG, PNG or PDF; load the 1.35 MB HEIC converter only when needed.
+let _heicDecoderPromise=null;
+function ensureHeicDecoder(){
+  if(typeof window.heic2any==="function")return Promise.resolve(window.heic2any);
+  if(!_heicDecoderPromise)_heicDecoderPromise=new Promise((resolve,reject)=>{
+    const script=document.createElement("script");let done=false;
+    const finish=(error)=>{if(done)return;done=true;clearTimeout(timer);script.onload=script.onerror=null;if(error){script.remove();reject(error);}else resolve(window.heic2any);};
+    const timer=setTimeout(()=>finish(new Error("HEIC decoder timed out")),15000);
+    script.src="vendor/heic2any.min.js";script.async=true;
+    script.onload=()=>finish(typeof window.heic2any==="function"?null:new Error("HEIC decoder unavailable"));
+    script.onerror=()=>finish(new Error("HEIC decoder could not load"));
+    document.head.appendChild(script);
+  }).catch(error=>{_heicDecoderPromise=null;throw error;});
+  return _heicDecoderPromise;
+}
 /* convert HEIC/HEIF to JPEG only when the browser can't read it natively.
    failures are counted and reported once - never one console warning per photo. */
 async function normaliseSources(list){
-  const out=[]; let fails=0; const total=list.filter(isHeicSrc).length; let n=0;
+  const out=[]; let fails=0; const total=list.filter(isHeicSrc).length; let n=0,decoderPromise;
   for(const item of list){
     if(isHeicSrc(item)){
       n++;
@@ -10667,13 +10692,12 @@ async function normaliseSources(list){
       // 1) keep the original when the browser can already decode it (no conversion = no errors)
       if(await canDecodeNatively(item.blob)){ out.push(item); continue; }
       // 2) otherwise fall back to the HEIC decoder
-      if(typeof heic2any!=="undefined"){
-        try{
-          const conv=await heic2any({blob:item.blob, toType:"image/jpeg", quality:0.9});
-          const blob=Array.isArray(conv)?conv[0]:conv;
-          out.push({name:String(item.name||"photo").replace(HEIC_RE,".jpg"), blob});
-        }catch(err){ fails++; } // undecodable + unconvertible - drop it here rather than letting it fail again downstream
-      } else { fails++; }
+      try{
+        const convert=await (decoderPromise||(decoderPromise=ensureHeicDecoder()));
+        const conv=await convert({blob:item.blob, toType:"image/jpeg", quality:0.9});
+        const blob=Array.isArray(conv)?conv[0]:conv;
+        out.push({name:String(item.name||"photo").replace(HEIC_RE,".jpg"), blob});
+      }catch(err){ fails++; } // undecodable + unconvertible - report once for this batch
     } else out.push(item);
   }
   if(fails) console.warn(fails+" HEIC photo(s) could not be converted");
