@@ -20,3 +20,6 @@ body{background:#f4f6f9}#evApp{display:grid;grid-template-columns:204px minmax(0
 #edPdfCanvas canvas{position:static!important;inset:auto!important;width:var(--ed-pdf-zoom,100%)!important;max-width:none!important;height:auto!important;transform:none!important;touch-action:auto}
 
 .ed-pdf-nav{gap:10px}.ed-pdf-nav .ev-btn{padding:8px 10px;font-size:11px}.ed-pdf-nav select{width:82px;min-width:0;font:inherit;font-size:11px;padding:8px 5px;border:1px solid var(--line);background:white;border-radius:6px}.ed-pdf-nav span{white-space:nowrap}
+
+/* Keep the details wizard readable without Safari zooming when an input gains focus. */
+#evDetails .ev-field input,#evDetails .ev-field textarea,#evDetails .ev-field select{font-size:16px}
