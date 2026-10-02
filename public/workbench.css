@@ -83,22 +83,6 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .wb-key-rows b{flex:none;color:#213e55}
 .wb-key-rows span{color:#5a7081;overflow-wrap:anywhere}
 #legendPill{display:none!important}
-/* Give next actions and the current drawing more space than the project counts. */
-.ev-metrics{padding:13px 0;margin-bottom:20px;border:0;border-top:1px solid #dbe4ec;border-bottom:1px solid #dbe4ec;background:transparent;border-radius:0}
-.ev-metric{align-items:center;padding:0 20px;gap:10px}
-.ev-metric:first-child{padding-left:0}
-.ev-metric-icon{display:none}
-.ev-metric>div{display:grid;grid-template-columns:auto 1fr;gap:0 10px;align-items:center}
-.ev-metric b{grid-column:1;grid-row:1/3;font-size:25px;margin:0;letter-spacing:-.5px}
-.ev-metric span:not(.ev-metric-icon){grid-column:2;font-size:12px}
-.ev-metric small{grid-column:2;font-size:11px}
-.ev-overview-heading{margin-bottom:20px}
-.ev-overview-grid{gap:22px}
-.ev-live-plan{height:365px}
-.ev-next-list button{padding:17px 0}
-.ev-next-footer{background:#fff;font-size:12px}
-.ev-dashboard-bottom{gap:22px}
-.ev-backup-card{background:#fff}
 .ev-card-head{min-height:55px;padding:15px 20px}
 .ev-plan-picks button{min-height:44px;font-size:12px}
 /* Profile sections and a rendered sample document. */
@@ -231,14 +215,6 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
  #wbPlanKey[hidden]{display:none}
  .wb-key-heading{justify-content:space-between;margin-bottom:8px}
  .wb-key-rows{grid-template-columns:1fr;font-size:12px}
- .ev-metrics{display:flex;flex-wrap:wrap;padding:12px 0;gap:15px 0}
- .ev-metric,.ev-metric:first-child{width:50%;padding:0 10px;border:0}
- .ev-metric:nth-child(odd){padding-left:0}
- .ev-metric b{font-size:23px}
- .ev-metric small{display:none}
- .ev-metric span:not(.ev-metric-icon){font-size:11px}
- .ev-metric>div{gap:7px}
- .ev-live-plan{height:245px}
  .ev-overview-heading>.ev-btn{width:44px;height:44px}
  .ep-tabs{gap:0;width:100%}
  .ep-tabs button{flex:1;padding:10px 8px;font-size:12px}
@@ -298,20 +274,6 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .ev-overview-heading{margin-bottom:22px;align-items:flex-start}
 .ev-overview-heading h1{font-size:30px;line-height:1.2;max-width:900px}
 .ev-overview-heading .ev-eyebrow{font-size:12px;text-transform:none;letter-spacing:.3px;margin-bottom:8px}
-.ev-metrics{margin-bottom:24px;padding:15px 0}
-.ev-metric span:not(.ev-metric-icon){font-size:13px}.ev-metric small{font-size:12px}
-.ev-overview-grid{grid-template-columns:minmax(0,2fr) minmax(275px,1fr);gap:24px}
-.ev-live-plan{background:#edf1f4;background-image:none;height:390px;padding:10px;width:100%;cursor:pointer}
-.ev-live-plan img{filter:none;object-fit:contain}.ev-live-plan:hover{background:#e3ebf2}
-.ev-plan-card-foot small{font-size:12px}.ev-plan-card-foot b{font-size:14px}
-.ev-next-card{border:0;background:transparent}.ev-next-card .ev-card-head{padding:0 0 14px;min-height:0;border-bottom:1px solid #d3dfe8}
-.ev-next-list{padding:0}.ev-next-list button{padding:19px 0}.ev-next-list b{font-size:14px}
-.ev-next-list small{color:#4f6576;font-size:13px}.ev-next-footer{padding:15px 0;background:transparent;font-size:12px}
-.ev-dashboard-bottom{gap:24px;margin-top:28px;border-top:1px solid #d4dfe7;padding-top:24px}
-.ev-dashboard-bottom>.ev-card{border:0;background:transparent}
-.ev-dashboard-bottom .ev-card-head{padding:0 0 14px;min-height:40px;border:0}.ev-dashboard-bottom .ev-card-body{padding:0}
-.ev-delivery-summary{padding-left:0!important}.ev-delivery-summary .ev-summary-icon{display:none}
-.ev-download-strip{border-radius:0;border:0;border-top:1px solid #d4dfe7;background:transparent;padding:20px 0;font-size:12px}
 #evWorkbench.ev-toolbar-mode{min-height:52px}
 .ev-toolstrip{padding:6px 12px;gap:8px;min-height:52px}
 #evWorkbench .cattab{font-size:13px;height:38px;padding:8px}
@@ -343,17 +305,13 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .ep-apply b{font-size:14px}.ep-save{color:#395c42}.ep-logo-box{border-style:solid;border-color:#bccbd7;background:#fff}
 @media(max-width:1200px){
  #evPlanStrip .ev-scale-status{display:none}
- .ev-overview-grid{grid-template-columns:minmax(0,1.65fr) minmax(255px,1fr)}
  #evWorkbench .cattab{font-size:12px}
 }
-@media(max-width:1000px){.ev-overview-grid{grid-template-columns:1fr}.ev-next-card .ev-card-head{padding-top:6px}.ev-next-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}.ev-live-plan{height:360px}}
 @media(max-width:700px){
  .ev-top{height:56px;padding:0 10px;gap:8px}.ev-top-title small{font-size:11px}.ev-top-title b{font-size:14px}
  #evScreen{padding:24px 18px 32px}.ev-overview-heading h1{font-size:26px}
  .ev-overview-heading>.ev-btn{width:auto;min-height:44px;height:auto;font-size:12px;gap:7px;padding:9px}
  .ev-overview-heading>.ev-btn span{display:none}
- .ev-metric span:not(.ev-metric-icon){font-size:12px}.ev-live-plan{height:270px;padding:6px}
- .ev-next-list{display:block}.ev-dashboard-bottom{padding-top:22px;margin-top:22px;gap:24px}
  #evWorkbench.ev-toolbar-mode{min-height:104px}
  .ev-toolstrip{gap:4px 8px;padding:4px 10px;min-height:104px}
  #evWorkbench .catbar{flex:1 1 auto;width:auto}
