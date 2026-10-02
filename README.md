@@ -18,6 +18,11 @@ example from Home to explore it, or import a project backup. Each site address
 has its own browser storage; use a downloaded backup to move projects between
 addresses or devices.
 
+Your projects shows a card for each saved project with its plan, counts and
+record checks. The project overview opens with a five-step stage bar
+(Markup, Design lab, Programme, Snags and Issue) and lists the record checks
+beside the next actions. See the [page redesign notes](docs/page-redesign.md).
+
 The preview adds a dashboard with an annotated plan preview and recorded next
 actions, a searchable project list, collapsible navigation, a floating equipment
 palette, a contextual settings panel and a drawing focus view. Shared typography,

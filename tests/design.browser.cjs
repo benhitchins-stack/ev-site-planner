@@ -35,11 +35,13 @@ const {chromium} = require('playwright');
     await page.goto(url+'/#example', {waitUntil:'networkidle'});
     await page.waitForFunction(()=>EVWorkspace.route()==='overview'&&pack.photos.length===1);
     await page.locator('#evDashboardPlan').evaluate(im=>im.decode());
-    assert.equal(await page.locator('.ev-metric').count(),4);
+    assert.equal(await page.locator('.ev-metric').count(),4);assert.equal(await page.locator('.ev-flow-step').count(),5);
+    assert.equal(await page.locator('.ev-check-list li').count(),await page.evaluate(()=>readiness().total));
+    assert.equal(await page.evaluate(()=>Array.isArray(pack.programme?.activities)),false,'Viewing the overview must not create programme activities');
     const source=await page.evaluate(()=>activePhoto().src);
     await page.waitForFunction(src=>document.getElementById('evDashboardPlan').src!==src,source);
     await page.screenshot({path:path.join(artifacts,'dashboard.png'),animations:'disabled'});
-    pass('Example opens a connected dashboard with an annotated plan preview and recorded next actions');
+    pass('Example opens a connected dashboard with project stages, an annotated plan preview, record checks and recorded next actions');
 
     await page.locator('[data-ev-route="markup"]').click();
     assert(await page.evaluate(()=>document.getElementById('evApp').classList.contains('ev-nav-collapsed')));
@@ -101,7 +103,7 @@ const {chromium} = require('playwright');
 
     await page.locator('.eh-nav [data-ev-route="projects"]').click();
     await page.locator('#evSearch').fill('No match');await page.getByText('No matching projects',{exact:true}).waitFor();
-    await page.locator('#evSearch').fill('Riverside');assert.equal(await page.locator('.ev-project-row').count(),1);
+    await page.locator('#evSearch').fill('Riverside');assert.equal(await page.locator('.ev-project-row').count(),1);assert.equal(await page.locator('.ev-project-row .ev-pill.blue').textContent(),'Open now');
     await page.locator('#evFilter').selectOption('domestic');assert.equal(await page.locator('.ev-project-row').count(),0);
     await page.locator('#evFilter').selectOption('all');await page.locator('#evSearch').fill('');
     await page.screenshot({path:path.join(artifacts,'projects.png'),animations:'disabled'});
