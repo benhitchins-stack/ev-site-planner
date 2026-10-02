@@ -55,7 +55,7 @@ function phasesPage(){
 }
 function phaseSummary(p,q){
  const capacity=p.capacityKw===''||p.capacityKw==null?null:Number(p.capacityKw),activity=(pack.programme?.activities||[]).find(a=>a.id===p.activityId);
- return '<h3>'+h(p.name)+'</h3><p>'+q.chargers+' chargers · '+q.ports+' ports · '+q.passive+' passive positions · '+number(q.cable)+' m measured cable · '+number(q.trench)+' m trench · '+number(q.duct)+' m duct</p><p>'+(capacity==null?'Charging capacity not recorded.':'Recorded equipment ratings '+number(q.ratedKw)+' kW; assumed capacity '+number(capacity)+' kW. '+(q.ratedKw>capacity?'Rated demand exceeds the assumption; explore load management in Charging day.':'Verify capacity and simultaneous demand before design approval.'))+(q.unknown?' '+q.unknown+' routes need measurement.':'')+'</p>'+(activity?'<p>Programme: '+h(activity.name)+' · '+h(activity.start||p.date||'date not set')+' · '+h(activity.days||'?')+' working days</p>':'');
+ return '<h3>'+h(p.name)+'</h3><p>'+q.chargers+' chargers · '+q.ports+' ports · '+q.passive+' passive positions · '+number(q.cable)+' m measured cable · '+number(q.trench)+' m trench · '+number(q.duct)+' m duct</p><p>'+(capacity==null?'Charging capacity not recorded.':'Recorded equipment ratings '+number(q.ratedKw)+' kW; assumed capacity '+number(capacity)+' kW. '+(q.ratedKw>capacity?'Rated demand exceeds the assumption; explore load management in Charging day.':'Verify capacity and simultaneous demand before design approval.'))+(q.unknown?' '+q.unknown+' routes need measurement.':'')+'</p>'+(p.spareDuctM!==''&&p.spareDuctM!=null?'<p>Spare duct allowance: '+number(p.spareDuctM)+' m (recorded assumption).</p>':'')+(activity?'<p>Programme: '+h(activity.name)+' · '+h(activity.start||p.date||'date not set')+' · '+h(activity.days||'?')+' working days</p>':'');
 }
 function revisionsPage(){
  if(!revisionId)revisionId=lab().revisions.at(-1)?.id||'';
@@ -103,7 +103,7 @@ async function preview(){
 }
 function afterRender(){renderConflict();if(['impact','phases','revisions'].includes(tab))preview().catch(e=>error(e.message));}
 function renderConflict(){EVProjectStore.renderConflict();}
-function stopReplay(){if(timer)clearInterval(timer);timer=null;}
+function stopReplay(){if(timer)clearInterval(timer);timer=null;const control=document.querySelector('[data-evp-action="replay"]');if(control)control.textContent='Play phases';}
 function replay(){
  if(timer){stopReplay();refresh();return;}
  timer=setInterval(()=>{if(document.hidden||EVWorkspace.route()!=='planning'||tab!=='phases'){stopReplay();return;}phaseIndex=(phaseIndex+1)%lab().phases.length;const slider=$('evpPhaseSlider');if(slider){slider.value=phaseIndex;slider.setAttribute('aria-valuetext',lab().phases[phaseIndex].name);$('evpPhaseSummary').innerHTML=phaseSummary(lab().phases[phaseIndex],C.quantities(C.phasePack(pack,phaseIndex)));void preview();}},1600);

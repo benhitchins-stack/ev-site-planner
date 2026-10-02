@@ -101,3 +101,9 @@ test('snapshot validation rejects missing assets and recursive revision historie
  const q=make();C.capture(q,{name:'A'});const nested=make();C.capture(nested,{name:'nested'});q.workspace.planning.revisions[0].snapshot.workspace.planning.revisions=nested.workspace.planning.revisions;Object.assign(q.workspace.planning.assets,nested.workspace.planning.assets);
  assert.throws(()=>context.validateProjectBackup(q),/Invalid project backup/);
 });
+
+test('impact detects plan captions, moved equipment and report branding changes',()=>{
+ const a=make(),b=C.clone(a);b.photos[0].caption='New survey note';b.brandLogo='data:image/png;base64,bG9nbw==';b.workspace={authorProfile:{company:'New company'}};
+ const moved=b.photos[0].items.splice(1,1)[0];b.photos.push({id:'second',name:'Second plan',items:[moved]});
+ const changes=C.differences(a,b);assert(changes.some(c=>c.kind==='plan'));assert(changes.some(c=>c.kind==='moved'&&c.target.itemId==='charger'));assert(changes.filter(c=>c.kind==='branding').length>=2);
+});

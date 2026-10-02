@@ -139,6 +139,7 @@ function differences(before,after){
  for(const [pid,p]of oldPhotos)if(!newPhotos.has(pid))changes.push({kind:'removed',label:'Plan removed: '+p.name,target:{photoId:pid},affects:['Drawings','Evidence','Reports']});
  for(const [pid,p]of newPhotos){
   const old=oldPhotos.get(pid);if(!old){changes.push({kind:'added',label:'Plan added: '+p.name,target:{photoId:pid},affects:['Drawings','Evidence','Reports']});continue;}
+  for(const key of ['name','caption','includeInPdf'])add('plan',(p.name||'Plan')+' · '+key,old[key],p[key],{photoId:pid},['Drawings','Reports']);
   add('scale',p.name+' · calibration',old.scale,p.scale,{photoId:pid},['Route lengths','Electrical calculations','Materials','Reports']);
   if(old.src!==p.src)changes.push({kind:'image',label:p.name+' · plan image changed',target:{photoId:pid},affects:['Evidence','Drawings','Measurements','Reports']});
  }
@@ -146,9 +147,12 @@ function differences(before,after){
  for(const key of new Set([...oldItems.keys(),...newItems.keys()])){
   const a=oldItems.get(key),b=newItems.get(key),r=b||a,label=r.item.ref||r.item.label||r.item.kind||r.item.type,target={photoId:r.photo.id,itemId:key};
   if(!a||!b){changes.push({kind:b?'added':'removed',label:(b?'Added: ':'Removed: ')+label,target,affects:['Drawings','Materials','Electrical calculations','Reports']});continue;}
+  if(a.photo.id!==b.photo.id)changes.push({kind:'moved',label:label+' · moved to another plan',target,affects:['Drawings','Measurements','Electrical calculations','Reports']});
   const changed=Object.keys({...a.item,...b.item}).filter(k=>stable(a.item[k]??null)!==stable(b.item[k]??null));
   if(changed.length)changes.push({kind:'changed',label:label+' · '+changed.join(', '),fields:changed,target,affects:['Drawings','Reports',...(changed.some(k=>technical.includes(k))?['Materials','Electrical calculations','Capacity assumptions']:[])]});
  }
+ if(before.brandLogo!==after.brandLogo)changes.push({kind:'branding',label:'Company logo changed',target:{},affects:['Report branding']});
+ add('branding','Author and company profile',before.workspace?.authorProfile,after.workspace?.authorProfile,{},['Report branding']);
  add('programme','Programme',before.programme,after.programme,{},['Construction programme','Programme report']);
  add('phases','Expansion phases',before.workspace?.planning?.phases,after.workspace?.planning?.phases,{},['Expansion assumptions','Site replay']);
  add('assignments','Phase assignments',before.workspace?.planning?.assignments,after.workspace?.planning?.assignments,{},['Expansion quantities','Site replay','Reports']);
