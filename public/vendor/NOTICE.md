@@ -23,3 +23,9 @@ The fonts are the SIL Open Font Licence releases of Bricolage Grotesque,
 Hanken Grotesk, Space Grotesk and IBM Plex Mono; self-hosting is permitted and the fonts
 are not sold separately. `fonts.css` declares them under their original
 family names.
+
+All first-party PDF imports and previews call `openPdfDocument`, which sets
+`isEvalSupported: false`. Keep this policy when updating PDF.js. Version
+3.11.174 predates the fix for CVE-2024-4367; disabling evaluation mitigates that
+font-code execution path. A maintained PDF.js release should still replace this
+legacy version after import, worker and report compatibility testing.

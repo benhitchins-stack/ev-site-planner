@@ -16,7 +16,7 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
   if(process.env.EVSP_CASE&&!name.toLowerCase().includes(process.env.EVSP_CASE.toLowerCase()))return;
   const context=await browser.newContext({viewport:{width:1440,height:1000},locale:'en-GB',acceptDownloads:true}),page=await context.newPage(),errors=[];page.setDefaultTimeout(20000);page.on('pageerror',e=>errors.push(e.message));
   try{if(init)await page.addInitScript(init);await page.goto(base+'/#example',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.EVWorkspace&&EVWorkspace.route()==='overview');await run(page,context);assert.deepEqual(errors,[],'No browser exceptions');results.push({name,pass:true});console.log('PASS',name);}
-  catch(e){results.push({name,pass:false,error:e.message,errors});console.error('FAIL',name,':',e.message.split('\n')[0]);await page.screenshot({path:path.join(out,'failure-'+results.length+'.png')}).catch(()=>{});}
+  catch(e){results.push({name,pass:false,error:e.message,errors});console.error('FAIL',name,':',e.message);if(errors.length)console.error('Browser errors:',JSON.stringify(errors));await page.screenshot({path:path.join(out,'failure-'+results.length+'.png')}).catch(()=>{});}
   finally{await context.close();fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));}
  }
  const markup=p=>p.locator('[data-ev-route="markup"]').click();

@@ -2777,7 +2777,7 @@ function validateProjectBackup(pk){
   const objects=(o,keys)=>keys.forEach(k=>need(o[k]==null||record(o[k])));
   const rows=(o,k)=>{if(o[k]!=null){need(Array.isArray(o[k]));o[k].forEach(v=>need(record(v)));}};
   const reserved=new Set(["__proto__","prototype","constructor"]);
-  const id=v=>need(v==null||v===""||typeof v==="string"&&/^[a-zA-Z0-9_.-]{1,128}$/.test(v)&&!reserved.has(v));
+  const id=v=>need(v==null||v===""||typeof v==="string"&&/^[a-zA-Z0-9_.-]{1,128}$/.test(v)&&!reserved.has(v)&&!Object.hasOwn(Object.prototype,v));
   const unique=(list)=>{const seen=new Set();for(const r of list||[]){id(r.id);if(r.id){need(!seen.has(r.id));seen.add(r.id);}}};
   const image=v=>need(v==null||v===""||typeof v==="string"&&/^data:image\/(?:png|jpe?g|webp|gif|avif|bmp|svg\+xml)(?:;[^,]*)?,/i.test(v)&&!/[<>"\u0000-\u001f]/.test(v));
   // Backups are data. Never accept prototype keys that can alter dictionary lookups.
@@ -10854,12 +10854,11 @@ function syncSiteChip(){
 /* free postcodes.io lookup - fails silently offline */
 function attachPostcodeLookup(inp, sug, onPick){
   let t=null, seq=0;
-  const hide=()=>{ sug.style.display="none"; sug.innerHTML=""; };
+  const hide=()=>{ ++seq; clearTimeout(t); sug.style.display="none"; sug.innerHTML=""; };
   inp.addEventListener("input", ()=>{
-    const q=inp.value.trim(); clearTimeout(t);
+    const my=++seq, q=inp.value.trim(); clearTimeout(t);
     if(q.length<2){ hide(); return; }
     t=setTimeout(()=>{
-      const my=++seq;
       fetch("https://api.postcodes.io/postcodes/"+encodeURIComponent(q)+"/autocomplete")
         .then(r=>r.json())
         .then(d=>{ if(my!==seq) return; const list=(d&&d.result)||[];
@@ -10873,10 +10872,11 @@ function attachPostcodeLookup(inp, sug, onPick){
   inp.addEventListener("blur", ()=>setTimeout(hide,250));
 }
 function postcodePicked(pc, addrEl){
-  pack.postcode=pc;
+  const project=pack;
+  project.postcode=pc;
   fetch("https://api.postcodes.io/postcodes/"+encodeURIComponent(pc))
     .then(r=>r.json())
-    .then(d=>{ const r0=d&&d.result; if(!r0) return;
+    .then(d=>{ if(pack!==project||pack.postcode!==pc)return; const r0=d&&d.result; if(!r0) return;
       if(!String(pack.address||"").trim()){
         const line=[r0.admin_ward,r0.admin_district].filter(Boolean).join(", ");
         pack.address=line; if(addrEl && document.activeElement!==addrEl) addrEl.value=line;
@@ -10924,7 +10924,7 @@ document.getElementById("btnOpen").onclick=async()=>{ if(hasMeaningfulPackConten
 document.getElementById("fileOpen").addEventListener("change", e=>{
   if(window.EVWorkspace?.importBackup){const file=e.target.files[0];e.target.value="";if(file)window.EVWorkspace.importBackup(file);return;}
   const f=e.target.files[0]; if(!f)return; const fr=new FileReader();
-  fr.onload=()=>{ try{ const d=JSON.parse(fr.result); if(!d.photos)throw 0; pack=normalisePack(d); imgKeys(); history=[]; redoStack=[]; updateUndo();
+  fr.onload=()=>{ try{ const d=JSON.parse(fr.result); validateProjectBackup(d); pack=normalisePack(d); imgKeys(); history=[]; redoStack=[]; updateUndo();
       pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
       syncSiteChip(); sideTab="pack"; setSideTab(); fitView(); draw(); window.EVWorkspace?.afterImport(); toast("Survey loaded");
     }catch(_){ toast("That doesn't look like a saved survey file"); } e.target.value=""; };
@@ -13125,7 +13125,7 @@ function vdSuggest(L,amps,csa,ph){
 }
 /* connectivity graph over anchored power runs: feeds load auto-detection + upstream impedance chaining */
 function ccGraph(){
-  const nodes={}, edges=[], items={};
+  const nodes=Object.create(null), edges=[], items=Object.create(null);
   pack.photos.forEach(p=>p.items.forEach(i=>{ items[i.id]={it:i,p}; }));
   pack.photos.forEach(p=>p.items.forEach(it=>{
     if(it.type==="route"&&["tails","swa","hituff","run"].includes(it.kind)&&Array.isArray(it.pts)&&it.pts.length>1&&optVisible(it)){
@@ -13692,6 +13692,8 @@ function openSld(){
 
 /* ============================================================ PDF SITE-PLAN IMPORT ============================================================ */
 let _pdfjsP=null;
+// Disable PDF.js font-code evaluation for both imported PDFs and generated previews.
+function openPdfDocument(lib,data){return lib.getDocument({data,isEvalSupported:false});}
 function ensurePdfJs(){
   if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
   if(_pdfjsP) return _pdfjsP;
@@ -13724,7 +13726,7 @@ async function importPdfFiles(files){
     let pdoc;
     try{
       const buf=await f.arrayBuffer();
-      pdoc=await lib.getDocument({data:buf}).promise;
+      pdoc=await openPdfDocument(lib,buf).promise;
       const base=String(f.name||"Plan").replace(/^.*[\/\\]/,"").replace(/\.[^.]+$/,"").slice(0,34)||"Plan";
       if(pdoc.numPages===1){
         const cn=await renderPdfPage(pdoc,1);
@@ -15911,10 +15913,10 @@ setTimeout(()=>{ try{
   });
 }catch(_){ } }, 2500);
 </script>
-<script src="profile.js?v=486440b3b6b5"></script>
+<script src="profile.js?v=04d5b67b2dbd"></script>
 <script src="report-fonts.js?v=db719569bbc1"></script>
 <script src="home.js?v=59f3ddfb3c99"></script>
-<script src="report-viewer.js?v=0e1b207befad"></script>
+<script src="report-viewer.js?v=3b3b3a4bc743"></script>
 <script src="workspace.js?v=d1fddc5c33f8"></script>
 <script src="delivery.js?v=6e2379250a28"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>

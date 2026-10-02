@@ -27,7 +27,7 @@ function mount(root,{canvasId=''}={}){
   if(token!==version||disposed)return;
   canvasBox.textContent='Preparing PDF…';thumbs.replaceChildren();buttons();
   const lib=await ensurePdfJs();if(token!==version||disposed)return;
-  const loaded=await lib.getDocument({data:doc.output('arraybuffer')}).promise;
+  const loaded=await openPdfDocument(lib,doc.output('arraybuffer')).promise;
   if(token!==version||disposed){await loaded.destroy();return;}
   pdf=loaded;page=Math.min(page,pdf.numPages);thumbs.innerHTML=Array.from({length:pdf.numPages},(_,i)=>'<button type="button" data-pdf-page="'+(i+1)+'" aria-label="Page '+(i+1)+'"><span>'+(i+1)+'</span></button>').join('');
   await show(page,true);void thumbnails(loaded,token);

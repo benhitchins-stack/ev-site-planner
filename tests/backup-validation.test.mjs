@@ -16,7 +16,7 @@ test('portable current and legacy backups keep ordinary text and optional fields
  assert.doesNotThrow(()=>validate(pk));
 });
 test('photo, item and anchor identifiers cannot inject HTML or alter dictionaries',()=>{
- for(const bad of ['x"><img src=x onerror=alert(1)>','__proto__','constructor','prototype','a:b']){
+ for(const bad of ['x"><img src=x onerror=alert(1)>','__proto__','constructor','prototype','toString','hasOwnProperty','a:b']){
   for(const apply of [p=>p.photos[0].id=bad,p=>p.photos[0].items[0].id=bad,p=>p.photos[0].items[0].pts[0].anchorId=bad]){
    const pk=project();apply(pk);assert.throws(()=>validate(pk),/Invalid project backup/);
   }
