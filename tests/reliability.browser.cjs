@@ -12,9 +12,9 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
  const browser=await engines[engineName].launch({headless:true,...(engineName==='chromium'?{...(process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH}:{}),args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}:{})});
  const results=[];
- async function check(name,run,init){
+ async function check(name,run,init,contextOptions={}){
   if(process.env.EVSP_CASE&&!name.toLowerCase().includes(process.env.EVSP_CASE.toLowerCase()))return;
-  const context=await browser.newContext({viewport:{width:1440,height:1000},locale:'en-GB',acceptDownloads:true}),page=await context.newPage(),errors=[];page.setDefaultTimeout(20000);page.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext({viewport:{width:1440,height:1000},locale:'en-GB',acceptDownloads:true,...contextOptions}),page=await context.newPage(),errors=[];page.setDefaultTimeout(20000);page.on('pageerror',e=>errors.push(e.message));
   try{if(init)await page.addInitScript(init);await page.goto(base+'/#example',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.EVWorkspace&&EVWorkspace.route()==='overview');await run(page,context);assert.deepEqual(errors,[],'No browser exceptions');results.push({name,pass:true});console.log('PASS',name);}
   catch(e){results.push({name,pass:false,error:e.message,errors});console.error('FAIL',name,':',e.message);if(errors.length)console.error('Browser errors:',JSON.stringify(errors));await page.screenshot({path:path.join(out,'failure-'+results.length+'.png')}).catch(()=>{});}
   finally{await context.close();fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));}
@@ -23,6 +23,64 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
  const pickUnits=p=>p.evaluate(()=>{const u=activePhoto().items.filter(i=>i.type==='unit');sel=u[0].id;selSet=new Set(u.map(i=>i.id));sideTab='props';setSideTab();return u.map(i=>i.id);});
 
  try{
+
+  await check('Project details retains its position when a touch tablet moves between fields',async p=>{
+   await p.locator('#evEditTop').tap();
+   await p.locator('[data-ev-field="name"]').tap();
+   await p.waitForTimeout(150);
+   // Mobile Safari can pan the document while its keyboard is open. Provide a
+   // real scroll offset in desktop engines; do not replace the focus handlers.
+   const before=await p.evaluate(()=>{
+    document.documentElement.style.height='auto';document.documentElement.style.overflow='auto';
+    document.body.style.height='calc(100vh + 300px)';
+    window.scrollTo(0,160);
+    window.detailsScrollCalls=[];const originalScroll=window.scrollTo.bind(window);
+    window.scrollTo=(...args)=>{detailsScrollCalls.push(args);return originalScroll(...args);};
+    return window.scrollY;
+   });
+   assert(before>100,'The keyboard-pan fixture starts away from the document top');
+   for(const [key,value] of [['jobRef','IPAD-REF-001'],['postcode','SW1A 1AA'],['address','iPad survey address']]){
+    const field=p.locator('[data-ev-field="'+key+'"]');await field.tap();await field.fill(value);
+    await p.waitForTimeout(150);
+    const state=await p.evaluate(()=>({y:scrollY,calls:detailsScrollCalls.length,field:document.activeElement.dataset.evField}));
+    assert.equal(state.calls,0,'Changing fields must not force the document back to the top');
+    assert.equal(state.y,before,'The document keeps its keyboard-pan position');
+    assert.equal(state.field,key,'The selected field retains focus');
+    assert.equal(await field.inputValue(),value);
+   }
+   // Retain the existing recovery when focus actually leaves the form.
+   await p.evaluate(()=>document.activeElement.blur());await p.waitForTimeout(150);
+   assert.equal(await p.evaluate(()=>scrollY),0);
+   assert.equal(await p.evaluate(()=>pack.jobRef),'IPAD-REF-001');
+  },null,{viewport:{width:820,height:1180},hasTouch:true});
+
+  await check('Project details preserves typing through tablet viewport changes and wizard steps',async p=>{
+   await p.locator('#evEditTop').tap();
+   const ref=p.locator('[data-ev-field="jobRef"]');
+   await p.locator('[data-ev-field="name"]').fill('iPad survey');
+   await ref.tap();await ref.fill('IPAD-002');
+   assert(await ref.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=16,'Wizard inputs avoid Safari small-text focus zoom');
+   await ref.evaluate(el=>{window.detailsReference=el;el.setSelectionRange(4,4);});
+   for(const size of [{width:820,height:420},{width:1180,height:440},{width:1180,height:820}]){
+    await p.setViewportSize(size);
+    await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    assert.deepEqual(await ref.evaluate(el=>({same:el===window.detailsReference,focused:el===document.activeElement,value:el.value,caret:el.selectionStart})),{same:true,focused:true,value:'IPAD-002',caret:4});
+   }
+   await p.keyboard.insertText('X');assert.equal(await ref.inputValue(),'IPADX-002');
+   await p.locator('[data-ev-step="1"]').first().tap();
+   const notes=p.locator('[data-ev-field="notes"]');await notes.fill('Typed scope on an iPad');
+   assert(await notes.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=16);
+   await p.locator('[data-ev-step="2"]').first().tap();
+   await p.locator('[data-ev-field="custName"]').fill('Tablet client');
+   await p.locator('[data-ev-field="workspace.contactEmail"]').fill('site@example.com');
+   await p.locator('[data-ev-close-details]').last().tap();
+   await p.evaluate(()=>EVWorkspace.persist());await p.reload({waitUntil:'networkidle'});
+   await p.waitForFunction(()=>window.EVWorkspace);await p.locator('#evEditTop').click();
+   assert.equal(await ref.inputValue(),'IPADX-002');
+   assert.equal(await p.locator('[data-ev-field="name"]').inputValue(),'iPad survey');
+   assert.deepEqual(await p.evaluate(()=>({notes:pack.notes,client:pack.custName,email:pack.workspace.contactEmail})),{notes:'Typed scope on an iPad',client:'Tablet client',email:'site@example.com'});
+  },null,{viewport:{width:820,height:1180},hasTouch:true});
+
   await check('Backup finishes an in-progress route and exports its points',async p=>{
    await markup(p);
    await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
