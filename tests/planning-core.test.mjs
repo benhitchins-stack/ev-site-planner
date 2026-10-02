@@ -98,6 +98,6 @@ test('snapshot validation rejects missing assets and recursive revision historie
  const html=readFileSync(new URL('../public/EV Site Planner.html',import.meta.url),'utf8'),context=vm.createContext({EVPlanningCore:C});
  vm.runInContext(html.slice(html.indexOf('function validateProjectBackup('),html.indexOf('function normalisePack(')),context);
  const p=make();C.capture(p,{name:'A'});const r=p.workspace.planning.revisions[0];r.snapshot.photos[0].src={$asset:'absent'};assert.throws(()=>context.validateProjectBackup(p),/missing/);
- const q=make();C.capture(q,{name:'A'});const nested=make();C.capture(nested,{name:'nested'});q.workspace.planning.revisions[0].snapshot.workspace.planning.revisions=nested.workspace.planning.revisions;
+ const q=make();C.capture(q,{name:'A'});const nested=make();C.capture(nested,{name:'nested'});q.workspace.planning.revisions[0].snapshot.workspace.planning.revisions=nested.workspace.planning.revisions;Object.assign(q.workspace.planning.assets,nested.workspace.planning.assets);
  assert.throws(()=>context.validateProjectBackup(q),/Invalid project backup/);
 });
