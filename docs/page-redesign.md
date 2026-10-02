@@ -46,3 +46,7 @@ Home, Your projects, Overview, Markup, Design lab, Programme, Snags, Issue and P
 The brand theme was re-verified with the same 177 checks. The design suite also checks that the overview stores a rendered preview, that the preview stays out of the project index, and that project cards show the stored preview after a reload. Every page was inspected again at desktop, tablet and phone widths, including the first-visit and returning Home pages.
 
 Browser automation used Chromium. Firefox, WebKit, physical iPads and Safari were not tested in this pass; CI runs the reliability and planning suites in all three engines.
+
+## Home for returning visits
+
+Added 2 October 2026 after the brand theme. When the browser already has saved projects, Home opens with a navy welcome band for the project to continue: the project open in the workspace, otherwise the last one edited. The band carries the project name, reference and client, the project type, plan count and edit date, a lime Continue project button with New project and Open backup beside it, and the rendered plan preview, or a placeholder when the project has no plan yet. Both the button and the preview open the project. Up to three other recent projects follow as preview cards, then the guides and the three planner steps sit in cards. The first-visit Home is unchanged. The returning styles are at the end of `home.css`.
