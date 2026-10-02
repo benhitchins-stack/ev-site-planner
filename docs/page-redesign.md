@@ -43,4 +43,6 @@ The design suite now also checks the five project stages, that the record checks
 
 Home, Your projects, Overview, Markup, Design lab, Programme, Snags, Issue and Profile were inspected at 1440px desktop, 1024px tablet and 390px phone widths, including the empty library and a new project with no plans. The redesigned pages were also checked for horizontal overflow at 320px.
 
+The brand theme was re-verified with the same 177 checks. The design suite also checks that the overview stores a rendered preview, that the preview stays out of the project index, and that project cards show the stored preview after a reload. Every page was inspected again at desktop, tablet and phone widths, including the first-visit and returning Home pages.
+
 Browser automation used Chromium. Firefox, WebKit, physical iPads and Safari were not tested in this pass; CI runs the reliability and planning suites in all three engines.
