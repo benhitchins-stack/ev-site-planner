@@ -34,15 +34,15 @@ const {chromium}=require('playwright');
   pass('Technical and illustrated drawing styles change rendering without changing equipment; artwork previews preserve export settings');
   await page.evaluate(()=>EVWorkspace.persist());await page.reload({waitUntil:'networkidle'});
   assert(await page.locator('.eh-returning').isVisible());assert.equal(await page.locator('.eh-hero').count(),0);
-  assert.equal(await page.locator('.eh-project img').count(),1);assert(await page.locator('.eh-recent [data-ev-action="new"]').isVisible());
+  assert.equal(await page.locator('.eh-welcome img[data-ev-preview]').count(),1);assert(await page.locator('.eh-recent [data-ev-action="new"]').isVisible());
   await page.screenshot({path:path.join(output,'home-returning-desktop.png')});
   assert.equal(await page.evaluate(()=>pack.workspace.drawing.symbols),'technical');
-  pass('Returning Home shows project thumbnails and start/open actions, and the selected drawing style survives reload');
+  pass('Returning Home shows the project to continue with its plan preview and start/open actions, and the selected drawing style survives reload');
   for(const width of [1024,390,320]){
    await page.setViewportSize({width,height:844});await page.evaluate(()=>EVWorkspace.go('home'));
    await page.screenshot({path:path.join(output,'home-'+width+'.png')});
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-   await page.locator('.eh-project').first().click();await page.locator('.ev-live-plan').click();await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   await page.locator('.eh-welcome [data-ev-project]').first().click();await page.locator('.ev-live-plan').click();await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
    await page.locator('#wbDrawingTools > summary').click();
    const rect=await page.locator('.wb-display-options').boundingBox();assert(rect.x>=0&&rect.x+rect.width<=width,JSON.stringify(rect));
    await page.screenshot({path:path.join(output,'display-'+width+'.png')});await page.keyboard.press('Escape');

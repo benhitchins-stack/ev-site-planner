@@ -44,7 +44,7 @@ const {chromium} = require('playwright');
     await page.reload({waitUntil:'networkidle'});
     await page.waitForFunction(()=>pack.address==='Fictional test address only');
     assert.equal(await page.evaluate(()=>pack.projId),firstId);
-    assert.equal(await page.locator('.eh-project').count(),1);
+    assert.equal(await page.evaluate(()=>new Set([...document.querySelectorAll('.eh-home [data-ev-project]')].map(b=>b.dataset.evProject)).size),1);
     pass('Address-only work survives reload and appears in recent projects');
 
     await page.evaluate(()=>{const b=document.querySelector('.eh-home [data-ev-action="example"]');b.click();b.click();});

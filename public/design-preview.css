@@ -488,3 +488,55 @@ body, #evApp {font-family: var(--font);}
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after {animation: none!important; transition: none!important; scroll-behavior: auto!important;}
 }
+
+/* Project pages open with the same navy header as the overview, plus a compact stage strip for moving between Markup, Design lab, Programme, Snags and Issue. */
+#evScreen .ev-page-head {display: flex; flex-direction: column; align-items: stretch; gap: 0; width: auto; min-width: 0; margin: 0 0 24px; padding: 0; color: #fff; background: var(--ev-navy) var(--ev-navy-glow); border-radius: 18px; box-shadow: 0 10px 30px #10283c26; overflow: hidden;}
+.ev-page-head-main {display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; min-width: 0; padding: 28px 32px 26px;}
+.ev-stage-strip {min-width: 0; width: 100%;}
+.ev-page-head-main>div:first-child {min-width: 0;}
+#evScreen .ev-page-head h1 {font-size: 36px; font-weight: 750; letter-spacing: -1.2px; line-height: 1.15; margin: 0 0 8px; color: #fff; overflow-wrap: anywhere;}
+#evScreen .ev-page-head p {font-size: 14px; line-height: 1.55; color: var(--ev-on-navy); margin: 0; max-width: 640px;}
+#evScreen .ev-page-head .ev-eyebrow {color: var(--ev-lime); margin-bottom: 10px;}
+.ev-page-head .ev-actions {flex: none; justify-content: flex-end;}
+#evScreen .ev-page-head .ev-btn {background: #ffffff14; border-color: #ffffff33; color: #fff; box-shadow: none;}
+#evScreen .ev-page-head .ev-btn:hover {background: #ffffff24; border-color: #ffffff66;}
+#evScreen .ev-page-head .ev-btn.primary {background: var(--ev-lime); border-color: var(--ev-lime); color: var(--ev-lime-ink);}
+#evScreen .ev-page-head .ev-btn.primary:hover {background: #e2f1b6; border-color: #e2f1b6;}
+.ev-stage-strip ol {list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); background: var(--ev-navy-2); border-top: 1px solid #ffffff14;}
+.ev-stage-strip li {min-width: 0; border-right: 1px solid #ffffff14;}
+.ev-stage-strip li:last-child {border-right: 0;}
+.ev-stage {position: relative; width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 16px 14px; background: none; border: 0; border-radius: 0; text-align: left; color: #fff; font: inherit; cursor: pointer;}
+.ev-stage:hover {background: #ffffff0d;}
+.ev-stage:focus-visible {outline-offset: -4px;}
+.ev-stage::after {content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #ffffff14;}
+.ev-stage.done::after {background: var(--ev-lime);}
+.ev-stage.active::after {background: #7fb0ff;}
+.ev-stage.attention::after {background: var(--ev-amber);}
+.ev-stage.current {background: #ffffff12;}
+.ev-stage.current::after {height: 4px;}
+.ev-stage-mark {width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex: none; background: #ffffff14; color: var(--ev-on-navy);}
+.ev-stage-mark svg {width: 14px; height: 14px;}
+.ev-stage.done .ev-stage-mark {background: var(--ev-lime); color: var(--ev-lime-ink);}
+.ev-stage.active .ev-stage-mark {background: #7fb0ff; color: #0d2a5c;}
+.ev-stage.attention .ev-stage-mark {background: var(--ev-amber); color: #4a3000;}
+.ev-stage-copy {display: flex; flex-direction: column; min-width: 0;}
+.ev-stage-copy small {font-size: 10px; font-weight: 600; letter-spacing: .3px; color: var(--ev-on-navy-dim);}
+.ev-stage-copy b {font-size: 13px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+@media (max-width: 1000px) {
+  .ev-page-head-main {padding: 24px 24px 22px;}
+  #evScreen .ev-page-head h1 {font-size: 30px; letter-spacing: -.9px;}
+  .ev-stage {padding: 10px 12px 12px; gap: 8px;}
+}
+@media (max-width: 700px) {
+  #evScreen .ev-page-head {margin-bottom: 20px; border-radius: 16px;}
+  .ev-page-head-main {flex-direction: column; gap: 14px; padding: 20px 18px 18px;}
+  #evScreen .ev-page-head h1 {font-size: 27px;}
+  #evScreen .ev-page-head p {font-size: 13px;}
+  .ev-page-head .ev-actions {width: 100%; justify-content: flex-start;}
+  .ev-stage-strip ol {display: flex; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;}
+  .ev-stage-strip ol::-webkit-scrollbar {display: none;}
+  .ev-stage-strip li {flex: none; border-right: 1px solid #ffffff14;}
+  .ev-stage {padding: 10px 14px 12px; gap: 8px; width: auto;}
+  .ev-stage-copy small {display: none;}
+  .ev-stage-mark {width: 24px; height: 24px;}
+}
