@@ -50,7 +50,7 @@ async function persist(){
 }
 autosaveNow=function(){return persist();};
 const baseAutosave=autosave;
-autosave=function(){savedState('pending','Saving…');baseAutosave();};
+autosave=function(){previewStale=true;savedState('pending','Saving…');baseAutosave();};
 saveCurrentToProjects=function(){return persist();};
 loadProject=function(id,discard=false){return changeProject(async()=>{
  if(pack.projId===id&&!discard){go('overview');return true;}
@@ -168,6 +168,7 @@ function go(next){
  if(next==='markup'){requestAnimationFrame(()=>{if(route!=='markup')return;resize();fitView();drawCanvas();});return;}
  const page={profile:()=>EVProfile.render(),home:()=>EVHome.render(),planning:()=>EVPlanning.render(),projects:projectsPage,overview:overviewPage,programme:programmePage,snags:snagsPage,issue:issuePage}[next];
  $('evScreen').innerHTML='<div class="ev-page">'+page()+'</div>';$('evScreen').scrollTop=0;
+ if(next==='projects'||next==='home'){hydratePreviews($('evScreen'));if(previewStale||!previews.has(pack.projId))refreshPreview().then(()=>{if(route===next)hydratePreviews($('evScreen'));});}
  if(next==='projects'){
   $('evSearch').value=search;$('evFilter').value=filter;
   $('evSearch').oninput=e=>{search=e.target.value;renderProjectCards();};$('evFilter').onchange=e=>{filter=e.target.value;renderProjectCards();};renderProjectCards();
@@ -193,7 +194,7 @@ function projectsPage(){
 }
 function resumeCard(){
  const s=stats(),p=activePhoto()||pack.photos[0],src=p&&(p.thumb||p.src),chargers=allItems().filter(i=>i.type==='unit'&&i.provision!=='passive').length;
- return '<section class="ev-resume" aria-labelledby="evResumeTitle"><div class="ev-resume-preview">'+(src?'<img src="'+h(src)+'" alt="">':icon('plan'))+'</div><div class="ev-resume-copy"><span class="ev-resume-label">Continue working</span><h2 id="evResumeTitle">'+h(pack.name||'Untitled project')+'</h2><p>'+h([pack.jobRef,pack.custName].filter(Boolean).join(' · ')||modeName()+' project')+'</p><ul class="ev-facts">'+[[s.plans,'plan'],[chargers,'charger'],[s.routes,'route'],[s.snags,'open snag']].map(([n,t])=>'<li><b>'+n+'</b> '+t+(n===1?'':'s')+'</li>').join('')+'</ul></div><div class="ev-resume-actions">'+btn('Open project','workspace','primary','arrow')+btn('Go to markup','markup','','pen')+'</div></section>';
+ return '<section class="ev-resume" aria-labelledby="evResumeTitle"><div class="ev-resume-preview">'+(src?'<img src="'+h(previews.get(pack.projId)||src)+'" alt="" data-ev-preview="'+h(pack.projId)+'">':icon('plan'))+'</div><div class="ev-resume-copy"><span class="ev-resume-label">Continue working</span><h2 id="evResumeTitle">'+h(pack.name||'Untitled project')+'</h2><p>'+h([pack.jobRef,pack.custName].filter(Boolean).join(' · ')||modeName()+' project')+'</p><ul class="ev-facts">'+[[s.plans,'plan'],[chargers,'charger'],[s.routes,'route'],[s.snags,'open snag']].map(([n,t])=>'<li><b>'+n+'</b> '+t+(n===1?'':'s')+'</li>').join('')+'</ul></div><div class="ev-resume-actions">'+btn('Open project','workspace','primary','arrow')+btn('Go to markup','markup','','pen')+'</div></section>';
 }
 function renderProjectCards(){
  const list=projIndex().filter(x=>(filter==='all'||x.mode===filter)&&[x.name,x.ref,x.cust].join(' ').toLowerCase().includes(search.toLowerCase())),filtered=search||filter!=='all';
@@ -201,8 +202,9 @@ function renderProjectCards(){
   const current=x.id===pack.projId&&hasWork(),facts=[count(Number(x.n)||0,'plan')];
   if(Number.isFinite(x.units))facts.push(count(x.units,'charger'));
   if(x.snags>0)facts.push(count(Number(x.snags),'open snag'));
-  return '<article class="ev-project-row'+(current?' current':'')+'"><div class="ev-project-preview">'+(x.thumb?'<img src="'+h(x.thumb)+'" alt="">':icon('plan'))+'</div><div class="ev-project-body"><div class="ev-project-tags"><span class="ev-pill">'+(x.mode==='domestic'?'Domestic':'Commercial')+'</span>'+(x.rev?'<span class="ev-pill quiet">Rev '+h(x.rev)+'</span>':'')+(current?'<span class="ev-pill blue">Open now</span>':'')+'</div><h2>'+h(x.name)+'</h2><p>'+h([x.ref,x.cust].filter(Boolean).join(' · ')||'No reference or client recorded')+'</p><ul class="ev-facts">'+facts.map(f=>'<li>'+f+'</li>').join('')+'</ul>'+(Number.isFinite(x.ready)?'<div class="ev-project-checks">'+meter(x.ready)+'<small>Record checks '+Number(x.ready)+'%</small></div>':'')+'</div><div class="ev-project-foot"><small>'+h(niceDate(x.date)?'Edited '+niceDate(x.date):'')+'</small><button class="ev-btn" data-ev-project="'+h(x.id)+'" aria-label="Open '+h(x.name)+'">Open '+icon('arrow')+'</button></div></article>';
+  return '<article class="ev-project-row'+(current?' current':'')+'"><div class="ev-project-preview">'+(previews.get(x.id)||x.thumb?'<img src="'+h(previews.get(x.id)||x.thumb)+'" alt="" data-ev-preview="'+h(x.id)+'">':icon('plan'))+'</div><div class="ev-project-body"><div class="ev-project-tags"><span class="ev-pill">'+(x.mode==='domestic'?'Domestic':'Commercial')+'</span>'+(x.rev?'<span class="ev-pill quiet">Rev '+h(x.rev)+'</span>':'')+(current?'<span class="ev-pill lime">Open now</span>':'')+'</div><h2>'+h(x.name)+'</h2><p>'+h([x.ref,x.cust].filter(Boolean).join(' · ')||'No reference or client recorded')+'</p><ul class="ev-facts">'+facts.map(f=>'<li>'+f+'</li>').join('')+'</ul>'+(Number.isFinite(x.ready)?'<div class="ev-project-checks">'+meter(x.ready)+'<small>Record checks '+Number(x.ready)+'%</small></div>':'')+'</div><div class="ev-project-foot"><small>'+h(niceDate(x.date)?'Edited '+niceDate(x.date):'')+'</small><button class="ev-btn" data-ev-project="'+h(x.id)+'" aria-label="Open '+h(x.name)+'">Open '+icon('arrow')+'</button></div></article>';
  }).join('')+'</div>':filtered?empty('No matching projects','Try a different search or project type.'):'<div class="ev-empty ev-empty-projects">'+planArt+'<b>No saved projects yet</b>Enter the site details, then add a drawing or photo.<div class="ev-actions">'+btn('Create a project','new','primary','plus')+btn('Try an example project','example','','arrow')+'</div></div>';
+ hydratePreviews($('evProjectCards'));
 }
 function flowSteps(prog){
  const s=stats(),w=ensure(),unscaled=pack.photos.filter(x=>!x.scale?.pxPerM).length,snag=snagStats();
@@ -245,10 +247,26 @@ function overviewPage(){
  '<section class="ev-card ev-downloads-card"><div class="ev-card-head"><h2>Recent downloads</h2>'+icon('file')+'</div><div class="ev-card-body">'+(w.issues.length?'<ul class="ev-download-list">'+w.issues.slice(-3).reverse().map(i=>'<li><b>'+h(i.label)+'</b><small>Rev '+h(i.rev)+' · '+h(niceDate(i.at))+'</small></li>').join('')+'</ul>':'<p>Your document downloads will appear here.</p>')+btn('Review & issue','issue','','arrow')+'</div></section>'+
  '<section class="ev-card ev-backup-card"><div class="ev-card-head"><h2>Project backup</h2>'+icon('backup')+'</div><div class="ev-card-body"><b>'+h(w.backupAt?'Downloaded '+niceDate(w.backupAt):'Keep a separate copy')+'</b><p>Your work saves in this browser. A downloaded backup lets you restore it or move to another device.</p>'+btn('Download backup','backup','','download')+'</div></section></div>';
 }
+// Rendered plan previews for project cards. They stay in IndexedDB, apart from the project index and backups.
+const previews=new Map();let previewStale=true;
+function storePreview(id,canvas){
+ try{const c=document.createElement('canvas');c.width=560;c.height=Math.max(1,Math.round(560*canvas.height/canvas.width));const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(canvas,0,0,c.width,c.height);
+  const url=c.toDataURL('image/jpeg',.78);previews.set(id,url);if(id===pack.projId)previewStale=false;idbSet('preview_'+id,url).catch(()=>{});}catch(_){}
+}
+async function refreshPreview(){
+ const p=activePhoto()||pack.photos[0],id=pack.projId;if(!p||!id||!hasWork())return;
+ try{await window.EVDelivery?.preparePlan(p);const canvas=await (window.EVWorkbench?.renderArtwork||renderPhotoToCanvas)(p,1120);if(pack.projId===id)storePreview(id,canvas);}catch(_){}
+}
+function hydratePreviews(root){
+ root?.querySelectorAll('img[data-ev-preview]').forEach(img=>{
+  const id=img.dataset.evPreview,cached=previews.get(id);if(cached){img.src=cached;return;}
+  try{idbGet('preview_'+id).then(url=>{if(typeof url==='string'&&url.startsWith('data:image/')){previews.set(id,url);if(img.isConnected)img.src=url;}}).catch(()=>{});}catch(_){}
+ });
+}
 let dashboardImageToken=0;
 async function dashboardImage(){
  const token=++dashboardImageToken,p=activePhoto()||pack.photos[0],project=pack.projId;if(!p)return;
- try{await window.EVDelivery?.preparePlan(p);const canvas=await (window.EVWorkbench?.renderArtwork||renderPhotoToCanvas)(p,1600);if(route==='overview'&&token===dashboardImageToken&&pack.projId===project&&$('evDashboardPlan'))$('evDashboardPlan').src=canvas.toDataURL('image/png');}catch(_){}
+ try{await window.EVDelivery?.preparePlan(p);const canvas=await (window.EVWorkbench?.renderArtwork||renderPhotoToCanvas)(p,1600);if(route==='overview'&&token===dashboardImageToken&&pack.projId===project&&$('evDashboardPlan'))$('evDashboardPlan').src=canvas.toDataURL('image/png');if(pack.projId===project)storePreview(project,canvas);}catch(_){}
 }
 function programmePage(){return heading('Project programme','Set activity dates, assign responsibilities and record progress.',btn('Open markup','markup','','pen'))+'<div id="evProgrammeMount"></div>';}
 function snagsPage(){if(window.EVDelivery)return heading('Snag register','Record each snag, its location, who will fix it and the target date. Add photos before and after the work.',btn('Review snag report','snag-report','','file')+btn('Add a snag on the plan','add-snag','primary','plus'))+'<div id="evSnagMount"></div>';const rows=snagList();return heading('Snag register','Findings are linked to their location on the plan. Open an item to add details and before or after photos.',btn('Add a snag on the plan','add-snag','primary','plus'))+

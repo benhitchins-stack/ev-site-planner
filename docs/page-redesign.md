@@ -21,9 +21,19 @@ Implemented 2 October 2026. The sidebar, routes and project flow are unchanged; 
 
 The record checks are the same readiness checks used in the project index. They show what has been recorded, not design approval, and the overview says so.
 
+## Brand theme
+
+Chosen from three mock-ups (refined, navy and lime, blueprint) on the real Overview and Your projects pages.
+
+- Navy and lime come from the logo. The project overview opens with a navy header that carries the project name, address and stage bar. Completed stages, the Continue working card, the open project and record-check bars use lime. Blue remains the colour for actions and links.
+- Your projects and the Home project list show a rendered preview of each plan with its markup, instead of the 120px background image. Previews are 560px JPEGs drawn from the plan the overview shows, refreshed after edits when you return to Your projects or Home. They are stored in IndexedDB under `preview_<project id>`, apart from the project index, saved records and backups, so they add nothing to `localStorage` or exported files. A project shows its old thumbnail until it is next opened. If browser storage is unavailable, cards fall back to the old thumbnail.
+- Cards have soft shadows, and project cards lift on hover. Page titles are larger, and counts use tabular figures.
+- The first-visit Home hero, Design lab and Profile tabs, and Review & issue icons use the same navy and lime.
+- Text on navy uses #fff, #b8c9d6 or #8fa9bd, and amber #ffcf73 for warnings. Each meets the WCAG AA contrast ratio for its size. Lime is used as a background or bar, never as text on white.
+
 ## Styles
 
-The page styles live in `design-preview.css`. The overview overrides from the presentation refresh were removed from `workbench.css` so one stylesheet owns each page layout.
+The page styles live in `design-preview.css`; the Home styles are at the end of `home.css`. The overview overrides from the presentation refresh were removed from `workbench.css` so one stylesheet owns each page layout.
 
 ## Verification
 
@@ -32,5 +42,7 @@ The page styles live in `design-preview.css`. The overview overrides from the pr
 The design suite now also checks the five project stages, that the record checks match the readiness checks, that viewing the overview creates no programme activities, and that the open project is marked in the library.
 
 Home, Your projects, Overview, Markup, Design lab, Programme, Snags, Issue and Profile were inspected at 1440px desktop, 1024px tablet and 390px phone widths, including the empty library and a new project with no plans. The redesigned pages were also checked for horizontal overflow at 320px.
+
+The brand theme was re-verified with the same 177 checks. The design suite also checks that the overview stores a rendered preview, that the preview stays out of the project index, and that project cards show the stored preview after a reload. Every page was inspected again at desktop, tablet and phone widths, including the first-visit and returning Home pages.
 
 Browser automation used Chromium. Firefox, WebKit, physical iPads and Safari were not tested in this pass; CI runs the reliability and planning suites in all three engines.
