@@ -9,7 +9,7 @@ const empty=(title,desc,actions='')=>'<div class="ev-empty">'+icon('plan')+'<b>'
 const card=(t,body,action='')=>'<section class="ev-card"><div class="ev-card-head"><h2>'+t+'</h2>'+action+'</div><div class="ev-card-body">'+body+'</div></section>';
 const niceDate=d=>{const date=new Date(d);return Number.isNaN(+date)?'':date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});};
 const modeName=()=>pack.mode==='domestic'?'Domestic':'Commercial';
-const routes=[['overview','Overview','home'],['markup','Markup','pen'],['programme','Programme','calendar'],['snags','Snags','flag'],['issue','Issue','send']];
+const routes=[['overview','Overview','home'],['markup','Markup','pen'],['planning','Design lab','tools'],['programme','Programme','calendar'],['snags','Snags','flag'],['issue','Issue','send']];
 let route='projects',search='',filter='all',drawerStep=0,returnFocus=null,reviewId=null,saveQueue=Promise.resolve(),saveSequence=0,activeIssue=null,previewToken=0,reviewBusy=false;
 let originalProgrammeParent=$('progBackdrop'),programmeNode=originalProgrammeParent.querySelector('.wlc');
 const ensure=()=>{if(!pack.workspace||typeof pack.workspace!=='object')pack.workspace={};const w=pack.workspace;w.schema=1;if(!Array.isArray(w.issues))w.issues=[];return w;};
@@ -39,13 +39,11 @@ async function persist(){
  saveQueue=saveQueue.catch(()=>false).then(async()=>{
   await window.__evProjectIndexReady;
   let ok=false;
-  try{await idbSet('proj_'+id,full);await idbSet('autosave',recovery);ok=true;try{localStorage.removeItem(LS_KEY);localStorage.removeItem('evsp_proj_'+id);}catch(_){} }
-  catch(_){try{localStorage.setItem('evsp_proj_'+id,JSON.stringify(full));localStorage.setItem(LS_KEY,JSON.stringify(recovery));ok=true;}catch(_){} }
-  if(ok){
-   const index=projIndex().filter(x=>x.id!==id);index.unshift(summary);ok=await saveProjIndex(index);
-   if(ok&&serial===saveSequence)savedState('saved','Saved in this browser');
+  try{await EVProjectStore.save(full,recovery,summary);ok=true;if(serial===saveSequence)savedState('saved','Saved in this browser');}
+  catch(error){
+   if(error?.code==='EVSP_CONFLICT')savedState('error','Newer version in another tab');
+   else{savedState('error','Save failed · download backup');toast('Browser storage is unavailable or full. Download a project backup to keep your work.');}
   }
-  if(!ok){savedState('error','Save failed · download backup');toast('Browser storage is unavailable or full. Download a project backup to keep your work.');}
   return ok;
  });
  return saveQueue;
@@ -54,14 +52,14 @@ autosaveNow=function(){return persist();};
 const baseAutosave=autosave;
 autosave=function(){savedState('pending','Saving…');baseAutosave();};
 saveCurrentToProjects=function(){return persist();};
-loadProject=function(id){return changeProject(async()=>{
- if(pack.projId===id){go('overview');return true;}
+loadProject=function(id,discard=false){return changeProject(async()=>{
+ if(pack.projId===id&&!discard){go('overview');return true;}
  finishDrawing();
- if(hasWork()&&!await persist()){toast('Download a backup before switching projects.');return false;}
+ if(hasWork()&&!discard&&!await persist()){toast('Download a backup before switching projects.');return false;}
  let data;try{data=await idbGet('proj_'+id);}catch(_){}
  try{const fallback=JSON.parse(localStorage.getItem('evsp_proj_'+id)||'null');if(fallback?.pack&&!fallback.slim&&(!data?.pack||(fallback.ts||0)>(data.ts||0)))data=fallback;}catch(_){}
  if(!data?.pack||data.slim){toast('A full saved copy could not be found. Open your downloaded project backup.');return false;}
- validateProjectBackup(data.pack);pack=normalisePack(data.pack);pack.projId=id;ensure();imgKeys();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;updateUndo();
+ validateProjectBackup(data.pack);pack=normalisePack(data.pack);pack.projId=id;window.__evLoadedRecord=data;EVProjectStore.adopt(data);ensure();imgKeys();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;updateUndo();
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';setSideTab();fitView();draw();await persist();go('overview');return true;
 });};
@@ -161,19 +159,22 @@ function updateChrome(){
 const baseRenderSide=renderSide;
 renderSide=function(){baseRenderSide();updateChrome();};
 function go(next){
+ if(next!=='planning')window.EVPlanning?.stopReplay();
  if(!['home','projects','profile',...routes.map(r=>r[0])].includes(next))next='overview';
  if(programmeNode.parentElement!==originalProgrammeParent){originalProgrammeParent.append(programmeNode);programmeNode.classList.remove('ev-programme');programmeNode.setAttribute('role','dialog');programmeNode.setAttribute('aria-modal','true');}
  route=next;app.classList.toggle('ev-is-home',next==='home');document.title=next==='home'?'EV Site Planner · EV installation planning':'EV Site Planner · '+(next==='profile'?'My profile':next==='projects'?'Your projects':(pack.name||'Project workspace'));$('evCanvasHost').hidden=next!=='markup';$('evScreen').hidden=next==='markup';$('evSidebar').classList.remove('open');$('evMobileNav').setAttribute('aria-expanded','false');
  app.dataset.route=next;closeNav();syncNav();
  $('evTechMenu').hidden=true;updateChrome();
  if(next==='markup'){requestAnimationFrame(()=>{if(route!=='markup')return;resize();fitView();drawCanvas();});return;}
- const page={profile:()=>EVProfile.render(),home:()=>EVHome.render(),projects:projectsPage,overview:overviewPage,programme:programmePage,snags:snagsPage,issue:issuePage}[next];
+ const page={profile:()=>EVProfile.render(),home:()=>EVHome.render(),planning:()=>EVPlanning.render(),projects:projectsPage,overview:overviewPage,programme:programmePage,snags:snagsPage,issue:issuePage}[next];
  $('evScreen').innerHTML='<div class="ev-page">'+page()+'</div>';$('evScreen').scrollTop=0;
  if(next==='projects'){
   $('evSearch').value=search;$('evFilter').value=filter;
   $('evSearch').oninput=e=>{search=e.target.value;renderProjectCards();};$('evFilter').onchange=e=>{filter=e.target.value;renderProjectCards();};renderProjectCards();
  }
  if(next==='overview')dashboardImage();
+ if(next==='planning')EVPlanning.afterRender();
+ EVProjectStore.renderConflict();
  if(next==='programme'&&window.EVDelivery){EVDelivery.mountProgramme();}
  else if(next==='programme'){programmeNode.classList.add('ev-programme');programmeNode.removeAttribute('aria-modal');programmeNode.removeAttribute('role');$('evProgrammeMount').append(programmeNode);renderProg();}
  if(next==='snags'&&window.EVDelivery)EVDelivery.mountSnags();
@@ -183,7 +184,7 @@ function heading(title,sub,actions=''){return '<div class="ev-heading"><div><div
 const planArt='<svg class="ev-hero-art" viewBox="0 0 260 175" fill="none" aria-hidden="true"><path d="M21 140 90 23l152 49-65 98Z" fill="#224258" stroke="#5e7f95"/><path d="m52 118 113 37M64 96l115 37M77 74l116 37M91 52l114 36M93 138l70-97M137 152l69-95" stroke="#567289"/><path d="m91 120 17-27 48 17 17-27" stroke="#d2eb92" stroke-width="4" stroke-linecap="round" stroke-dasharray="3 7"/><rect x="93" y="75" width="18" height="33" rx="5" fill="#e5edf3"/><rect x="97" y="80" width="10" height="12" rx="2" fill="#548aec"/><path d="M174 48v32" stroke="#9dafbd" stroke-width="7"/><rect x="165" y="27" width="19" height="36" rx="6" fill="#e5edf3"/><rect x="169" y="32" width="11" height="12" rx="2" fill="#548aec"/><circle cx="62" cy="54" r="6" fill="#d2eb92"/></svg>';
 function projectsPage(){
  const n=projIndex().length;
- return heading('Your projects','Open a saved project, start a new one or import a backup.',btn('Open backup','open','','folder')+btn('New project','new','primary','plus'))+
+ return heading('Your projects','Open a saved project, start a new one or import a backup.',btn('Recover missing projects','recover-projects','','backup')+btn('Open backup','open','','folder')+btn('New project','new','primary','plus'))+
  (hasWork()?'<div class="ev-resume"><div class="ev-resume-icon">'+icon('plan')+'</div><div><span>CONTINUE WORKING</span><h2>'+h(pack.name||'Untitled project')+'</h2><p>'+h([pack.jobRef,pack.custName].filter(Boolean).join(' · ')||modeName()+' project')+'</p></div>'+btn('Open project','workspace','primary','arrow')+'</div>':'')+
  '<div class="ev-project-library"><div class="ev-filter"><h2 class="ev-section-title">Saved projects <span class="ev-muted">'+n+'</span></h2><div class="ev-project-search"><input class="ev-input" id="evSearch" aria-label="Search projects" placeholder="Search name, reference or client"><select class="ev-select" id="evFilter" aria-label="Filter project type"><option value="all">All project types</option><option value="commercial">Commercial</option><option value="domestic">Domestic</option></select></div></div><div id="evProjectCards"></div></div><div class="ev-library-note">'+icon('backup')+'<p>Saved in this browser. Download a backup to keep a separate copy or continue on another device.</p></div>';
 }
@@ -285,7 +286,7 @@ function openPlanReview(){if(!pack.photos.length){go('markup');toast('Add a site
 function selectPlans(value){pack.photos.forEach(p=>p.includeInPdf=value);review.querySelectorAll('[data-ev-include]').forEach(e=>e.checked=value);void previewPlan();autosave();}
 function closePlanReview(){if(reviewBusy)return;previewToken++;planViewer?.destroy();planViewer=null;planDoc=null;review.hidden=true;setInert(false);autosave();returnFocus?.isConnected&&returnFocus.focus();if(route==='issue')go('issue');}
 review.addEventListener('keydown',e=>focusTrap(e,review,closePlanReview));review.addEventListener('change',e=>{if(e.target.dataset.evInclude){photoById(e.target.dataset.evInclude).includeInPdf=e.target.checked;void previewPlan();autosave();}});review.addEventListener('click',e=>{if(e.target===review||e.target.closest('[data-ev-close-review]'))closePlanReview();});
-function logIssue(label,file){ensure().issues.push({label,file:String(file),at:new Date().toISOString(),rev:pack.rev||'A'});ensure().issues=ensure().issues.slice(-100);autosave();}
+function logIssue(label,file,prepared){window.EVPlanning?.recordDocument(label,file,prepared);ensure().issues.push({label,file:String(file),at:new Date().toISOString(),rev:pack.rev||'A'});ensure().issues=ensure().issues.slice(-100);autosave();}
 async function buildPlans(){
  const selected=chosenPlans(),doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true});window.EVDelivery?.installFonts(doc);
  for(let i=0;i<selected.length;i++){
@@ -311,13 +312,14 @@ if(api){
 }
 // This version of jsPDF defines save on each instance, so wrap the constructor.
 const BasePDF=window.jspdf.jsPDF;
-function WorkspacePDF(...args){const doc=new BasePDF(...args);const save=doc.save;doc.save=function(file,opts){const label=doc.__evIssueLabel||activeIssue||(/snag/i.test(file)?'Snag report':/programme/i.test(file)?'Programme':/customer|client/i.test(file)?'Client pack':/summary/i.test(file)?'Summary pack':/calc/i.test(file)?'Cable calculations':'Engineer / technical pack');activeIssue=null;const result=save.call(this,file,opts);if(result&&typeof result.then==='function')return result.then(x=>{logIssue(label,file);return x;});logIssue(label,file);return result;};return doc;}
+function WorkspacePDF(...args){const prepared=window.EVPlanning?.documentSnapshot();const doc=new BasePDF(...args);const save=doc.save;doc.save=function(file,opts){const label=doc.__evIssueLabel||activeIssue||(/snag/i.test(file)?'Snag report':/programme/i.test(file)?'Programme':/customer|client/i.test(file)?'Client pack':/summary/i.test(file)?'Summary pack':/calc/i.test(file)?'Cable calculations':'Engineer / technical pack');activeIssue=null;const result=save.call(this,file,opts);if(result&&typeof result.then==='function')return result.then(x=>{logIssue(label,file,prepared);return x;});logIssue(label,file,prepared);return result;};return doc;}
 Object.assign(WorkspacePDF,BasePDF);WorkspacePDF.prototype=BasePDF.prototype;window.jspdf.jsPDF=WorkspacePDF;
 const baseOpenReview=openReview;
 openReview=function(mode){activeIssue=null;baseOpenReview(mode);const button=$('rxExport'),original=button.onclick;button.onclick=async(...args)=>{activeIssue=mode==='customer'?'Client pack':'Engineer pack';return original.apply(button,args);};};
 
 const actions={
  'workspace':()=>go(hasWork()?'overview':'projects'),
+ 'planning':()=>go('planning'),'recover-projects':()=>EVPlanning.recoverProjects(),
  'new':()=>newProject(),'example':()=>newProject(true),'open':()=>{if(!projectBusy)$('fileOpen').click();},'details':()=>openDetails(),'backup':backup,'markup':()=>go('markup'),'programme':()=>go('programme'),'snags':()=>go('snags'),'scale-review':()=>{const p=pack.photos.find(p=>!p.scale?.pxPerM);if(p)openPlan(p.id);else go('markup');setTool('scale');},'issue':()=>go('issue'),'showroom':()=>window.openCharger3D?.(),
  'add-files':()=>{go('markup');$('filePhoto').click();},'add-snag':()=>{if(!pack.photos.length){go('markup');toast('Add a plan or photo, then place a snag marker.');return;}go('markup');setTool('mark:snag');},
  'snag-report':()=>window.EVDelivery?.openReport('snags'),'programme-report':()=>window.EVDelivery?.openReport('programme'),'plans':openPlanReview,'engineer':()=>{if(!pack.photos.length)return actions['plans']();openReview('office');},'client':()=>{if(!pack.photos.length)return actions['plans']();openReview('customer');},'png':()=>{if(!activePhoto())return actions['plans']();$('btnPng').click();},'cdm':()=>window.evspCdmOpen?.(),'sld':()=>openSld(),'calcs':()=>openCableCheck(),'sim':()=>openSim(),'dno':()=>openDnoHelper(),'materials':()=>openBom(),'settings':()=>panel('output')
@@ -350,14 +352,15 @@ async function importBackup(file){return changeProject(async()=>{
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();fitView();draw();await persist();go('overview');toast('Project backup opened as a separate copy');return true;
 });}
-window.EVWorkspace={go,persist,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
+window.EVWorkspace={go,persist,withProject:changeProject,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
 EVReportViewer.enhanceLegacy();
 go('home');
 // Wait for saved-project recovery before following links from the website home page.
 Promise.all([window.__evRestorePromise,window.__evProjectIndexReady]).then(async()=>{
  if(window.__evUserAction)return;
+ EVProjectStore.renderConflict();
  const requested=location.hash.slice(1);
- if(['projects','profile'].includes(requested))go(requested);
+ if(['projects','profile','planning'].includes(requested))go(requested);
  else if(requested==='workspace')actions.workspace();
  else if(['new','example','showroom','3d-showroom'].includes(requested)){
   window.history.replaceState(null,'',location.pathname+location.search);

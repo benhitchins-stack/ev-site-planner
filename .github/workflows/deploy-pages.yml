@@ -33,3 +33,10 @@ jobs:
           path: public
       - id: deployment
         uses: actions/deploy-pages@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify the published release and HTTPS
+        run: node scripts/verify-live.mjs
+        env:
+          EVSP_LIVE_URL: https://ev-site-planner.co.uk/

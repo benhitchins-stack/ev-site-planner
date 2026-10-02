@@ -1,0 +1,29 @@
+/* Planning tools use the shared workspace controls and remain usable on small screens. */
+.evp-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.evp-tabs .ev-btn{white-space:normal;min-height:42px}
+.evp-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin:12px 0 20px}
+.evp-inline{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px}.evp-inline .ev-field{flex:1;min-width:220px}
+.evp-help{color:var(--dim);font-size:13px;line-height:1.65;margin:14px 0}
+.evp-message{border:1px solid #e1a2a2;background:#fff3f1;color:#852327;padding:14px 18px;border-radius:10px}
+.evp-state{display:inline-flex;align-items:center;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;text-transform:capitalize;white-space:nowrap}
+.evp-state.measured{background:#dcefe8;color:#155a45}.evp-state.assumed{background:#fff0ce;color:#825400}.evp-state.missing{background:#fce4e4;color:#9b2727}
+.evp-evidence-row{padding:16px 20px;border-top:1px solid var(--line)}.evp-evidence-row:first-child{border-top:0}
+.evp-evidence-row summary{cursor:pointer;line-height:1.6}.evp-evidence-row summary>*{margin-right:12px}.evp-evidence-row summary small{display:block;margin-top:5px;color:#925d00}
+.evp-evidence-row form{padding-top:12px}.evp-evidence-row input,.evp-evidence-row textarea{max-width:100%}
+.evp-costs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.evp-costs>div{padding:18px;background:#f0f5f8;border:1px solid var(--line);border-radius:12px}.evp-costs b,.evp-costs strong,.evp-costs small{display:block}.evp-costs strong{font-size:28px;margin:10px 0}.evp-costs small{color:var(--dim);line-height:1.5}
+.evp-snapshots article{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);padding:16px 0}.evp-snapshots article:first-child{border-top:0}.evp-snapshots small{display:block;margin-top:6px;color:var(--dim);overflow-wrap:anywhere}
+.evp-tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.evp-tags span{background:#edf3ff;color:#1c4c91;border:1px solid #d6e2f5;border-radius:6px;padding:6px 10px}
+.evp-change-list article{display:flex;align-items:flex-start;gap:12px;padding:16px 0;border-top:1px solid var(--line)}.evp-change-list article>div{flex:1;min-width:0}.evp-change-list p{margin:6px 0;color:var(--dim);font-size:13px}.evp-change-list b{overflow-wrap:anywhere}
+#evpPlanPreview{display:block;max-width:100%;height:auto;margin:18px auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+.evp-chart{width:100%;height:auto;display:block;margin:20px 0}.evp-chart text{font:12px var(--font);fill:#435867}
+.evp-phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.evp-phases fieldset{border:1px solid var(--line);border-radius:10px;min-width:0;padding:18px}.evp-phases legend{font-weight:700;padding:0 6px}.evp-phases .ev-field{margin-bottom:12px}
+#evpPhaseSlider{width:100%;accent-color:#17755d;min-height:38px}
+[data-route="planning"] .ev-card-body{line-height:1.6}
+[data-route="planning"] .ev-table input{width:100%;min-width:80px;border:1px solid var(--line2);border-radius:6px;padding:8px;background:#fff;color:var(--ink);font:inherit}
+[data-route="planning"] .ev-table select{max-width:240px;min-height:36px}
+[data-route="planning"] .ev-table th{text-align:left}
+[data-route="planning"] .ev-stats{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+[data-route="planning"] .ev-field input,[data-route="planning"] .ev-field select,[data-route="planning"] .ev-field textarea{width:100%}
+.evp-recovery{margin-top:20px}.evp-recovery li{margin:8px 0}
+.ev-conflict{padding:16px 24px;background:#fff1d8;border-bottom:2px solid #d39b35;line-height:1.5}.ev-conflict p{margin:6px 0 12px}.ev-conflict .ev-actions{flex-wrap:wrap}
+@media(max-width:700px){.evp-tabs{gap:6px}.evp-tabs .ev-btn{flex:1 1 135px;font-size:12px}.evp-form-grid{grid-template-columns:1fr}.evp-evidence-row{padding:14px}.evp-inline{display:block}.evp-inline .ev-field{min-width:0;margin-bottom:12px}.evp-change-list article{flex-wrap:wrap}.evp-change-list article>div{min-width:65%}.evp-snapshots .ev-actions{width:100%;flex-wrap:wrap}.evp-phases{grid-template-columns:1fr}.ev-conflict{padding:14px}.ev-conflict .ev-btn{white-space:normal}}

@@ -748,6 +748,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 }
 </style>
 <link rel="stylesheet" href="cdm-controls.css">
+<link rel="stylesheet" href="planning.css?v=5c53d5185e83">
 <link rel="stylesheet" href="workspace.css?v=e29080d0f652">
 <link rel="stylesheet" href="home.css?v=d6e9cff0c355">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
@@ -1836,6 +1837,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 <script>
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
+<script src="planning-core.js?v=8ed717195b6d"></script>
 <script src="cdm-controls.js?v=9da9e61316b2"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
 <script>
@@ -2787,6 +2789,7 @@ function validateProjectBackup(pk){
   rows(pk,"attachments");rows(pk,"revHistory");unique(pk.attachments);id(pk.projId);id(pk.active);image(pk.brandLogo);
   if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport","authorProfile"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","scope","notes","backupAt"]);}
   if(pk.programme){const p=pk.programme;objects(p,["days","skip"]);texts(p,["start","notes"]);rows(p,"activities");unique(p.activities);if(p.activities)p.activities.forEach(a=>{texts(a,["id","name","owner","start","status","note"]);need(a.days==null||Number.isFinite(Number(a.days)));});if(p.nonWorkingDates!=null)need(Array.isArray(p.nonWorkingDates)&&p.nonWorkingDates.every(v=>typeof v==="string"));}
+  if(pk.workspace?.planning)EVPlanningCore.validate(pk.workspace.planning);
   const photoIds=new Set(),itemIds=new Set();
   pk.photos.forEach(p=>{
     need(record(p));texts(p,["id","name","src","srcOrig","thumb","caption"]);rows(p,"items");objects(p,["scale","crop","overlay"]);id(p.id);
@@ -13718,17 +13721,17 @@ function openSld(){
 /* ============================================================ PDF SITE-PLAN IMPORT ============================================================ */
 let _pdfjsP=null;
 // Disable PDF.js font-code evaluation for both imported PDFs and generated previews.
-function openPdfDocument(lib,data){return lib.getDocument({data,isEvalSupported:false});}
+function openPdfDocument(lib,data){
+  const root=new URL("vendor/pdfjs/",document.baseURI).href;
+  return lib.getDocument({data,isEvalSupported:false,cMapUrl:root+"cmaps/",cMapPacked:true,standardFontDataUrl:root+"standard_fonts/",wasmUrl:root+"wasm/"});
+}
 function ensurePdfJs(){
-  if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
-  if(_pdfjsP) return _pdfjsP;
-  _pdfjsP=new Promise((res,rej)=>{
-    const s=document.createElement("script");
-    s.src="vendor/pdf.min.js";
-    s.onload=()=>{ try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc="vendor/pdf.worker.min.js"; res(window.pdfjsLib); }catch(e){ _pdfjsP=null; rej(e); } };
-    s.onerror=()=>{ _pdfjsP=null; rej(new Error("pdfjs load failed")); };
-    document.head.appendChild(s);
-  });
+  if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+  if(_pdfjsP)return _pdfjsP;
+  _pdfjsP=import("./vendor/pdfjs/build/pdf.mjs?v=6.3.289").then(lib=>{
+    lib.GlobalWorkerOptions.workerSrc=new URL("vendor/pdfjs/build/pdf.worker.mjs?v=6.3.289",document.baseURI).href;
+    window.pdfjsLib=lib;return lib;
+  }).catch(error=>{_pdfjsP=null;throw error;});
   return _pdfjsP;
 }
 async function renderPdfPage(pdoc,n,targetW){
@@ -15894,7 +15897,7 @@ let __restoredTs=0;
 try{
   const __saved=JSON.parse(localStorage.getItem(LS_KEY)||"null");
   if(__saved&&__saved.pack&&(hasMeaningfulPackContent(__saved.pack)||__saved.pack.projId)){
-    validateProjectBackup(__saved.pack);pack=normalisePack(__saved.pack);
+    validateProjectBackup(__saved.pack);window.__evLoadedRecord=__saved;pack=normalisePack(__saved.pack);
     if(__saved.view && typeof __saved.view.zoom==="number") view=__saved.view;
     __restoredTs=__saved.ts||1;
     pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
@@ -15917,7 +15920,7 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
   if((d.ts||0)<=__restoredTs) return;                 // localStorage copy was newer
   if(history.length||redoStack.length) return;        // user is already editing
   if(hasMeaningfulPackContent(pack)&&!__restoredTs) return;
-  validateProjectBackup(d.pack);pack=normalisePack(d.pack);
+  validateProjectBackup(d.pack);window.__evLoadedRecord=d;pack=normalisePack(d.pack);
   if(d.view && typeof d.view.zoom==="number") view=d.view;
   imgKeys(); pack.photos.forEach(p=>{ const im=new Image(); im.onload=draw; im.src=p.src; imgCache[p.id]=im; });
   syncSiteChip();
@@ -15926,24 +15929,16 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
   syncBrand(); applyMode(false); buildRail(); setSideTab(); fitView(); draw();
   if(!__restoredTs) setTimeout(()=>toast("Recovered your last project"),300);
 }).catch(()=>{}); }catch(_){ }
-/* one-off: move any old full-size project snapshots out of localStorage into IndexedDB (a slim compatibility copy stays in localStorage) */
-setTimeout(()=>{ try{
-  projIndex().forEach(x=>{
-    const raw=localStorage.getItem("evsp_proj_"+x.id); if(!raw||raw.length<200000) return;
-    const d=JSON.parse(raw); if(!d||!d.pack||d.slim) return;
-    idbGet("proj_"+x.id).then(current=>{
-      if(current?.pack&&(current.ts||0)>=(d.ts||0))return;
-      return idbSet("proj_"+x.id,d);
-    }).then(()=>{try{localStorage.removeItem("evsp_proj_"+x.id);}catch(_){}}).catch(()=>{});
-  });
-}catch(_){ } }, 2500);
+/* Legacy localStorage records remain available until an atomic project save promotes them. */
 </script>
 <script src="profile.js?v=04d5b67b2dbd"></script>
 <script src="report-fonts.js?v=db719569bbc1"></script>
 <script src="home.js?v=59f3ddfb3c99"></script>
 <script src="report-viewer.js?v=3b3b3a4bc743"></script>
-<script src="workspace.js?v=35dc994ba026"></script>
+<script src="project-store.js?v=1b27a00fa88a"></script>
+<script src="workspace.js?v=1ecb875bf1fd"></script>
 <script src="delivery.js?v=6e2379250a28"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
+<script src="planning.js?v=4ad0b670d12c"></script>
 </body>
 </html>
