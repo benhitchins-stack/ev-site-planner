@@ -166,7 +166,7 @@ function go(next){
  route=next;app.classList.toggle('ev-is-home',next==='home');document.title=next==='home'?'EV Site Planner · EV installation planning':'EV Site Planner · '+(next==='profile'?'My profile':next==='projects'?'Your projects':(pack.name||'Project workspace'));$('evCanvasHost').hidden=next!=='markup';$('evScreen').hidden=next==='markup';$('evSidebar').classList.remove('open');$('evMobileNav').setAttribute('aria-expanded','false');
  app.dataset.route=next;closeNav();syncNav();
  $('evTechMenu').hidden=true;updateChrome();
- if(next==='markup'){requestAnimationFrame(()=>{resize();fitView();draw();});return;}
+ if(next==='markup'){requestAnimationFrame(()=>{if(route!=='markup')return;resize();fitView();drawCanvas();});return;}
  const page={profile:()=>EVProfile.render(),home:()=>EVHome.render(),projects:projectsPage,overview:overviewPage,programme:programmePage,snags:snagsPage,issue:issuePage}[next];
  $('evScreen').innerHTML='<div class="ev-page">'+page()+'</div>';$('evScreen').scrollTop=0;
  if(next==='projects'){

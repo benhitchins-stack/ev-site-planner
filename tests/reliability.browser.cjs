@@ -59,6 +59,8 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    const input=p.locator('#mlen');
    for(const bad of ['-5','0','12m','Infinity']){
     await input.fill(bad);assert.equal(await input.getAttribute('aria-invalid'),'true');
+    assert.equal(await p.evaluate(()=>{const input=document.getElementById('mlen');resize();return input===document.getElementById('mlen');}),true);
+    assert.equal(await input.inputValue(),bad);
     assert.equal(await p.evaluate(()=>findItem(sel).manualLen),12.5);
     assert((await p.locator('#mlenError').textContent()).includes('greater than zero'));
    }

@@ -3304,7 +3304,8 @@ function resize(){
   dpr = Math.min(2, Math.max(1, window.devicePixelRatio||1));
   cv.width = cvwrap.clientWidth*dpr;
   cv.height = cvwrap.clientHeight*dpr;
-  draw();
+  // Resizing must not rebuild the settings panel while someone is typing.
+  drawCanvas();
 }
 window.addEventListener("resize", resize);
 // the hint bar below the photo shows/hides as tools change - keep the canvas + fit in step
@@ -3316,7 +3317,7 @@ if(window.ResizeObserver){
     if(resizeFrame)return;
     resizeFrame=requestAnimationFrame(()=>{
       resizeFrame=0;if(!cvwrap.clientWidth||!cvwrap.clientHeight)return;
-      resize();if(viewIsFit){fitView();draw();}
+      resize();if(viewIsFit){fitView();drawCanvas();}
     });
   }).observe(cvwrap);
 }
@@ -15941,7 +15942,7 @@ setTimeout(()=>{ try{
 <script src="report-fonts.js?v=db719569bbc1"></script>
 <script src="home.js?v=59f3ddfb3c99"></script>
 <script src="report-viewer.js?v=3b3b3a4bc743"></script>
-<script src="workspace.js?v=d1fddc5c33f8"></script>
+<script src="workspace.js?v=35dc994ba026"></script>
 <script src="delivery.js?v=6e2379250a28"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
 </body>
