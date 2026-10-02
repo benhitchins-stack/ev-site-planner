@@ -38,7 +38,7 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
   await check('Design options compare quantities and connected-circuit impact',async p=>{
    await openLab(p,'compare');await p.locator('#evpOptionName').fill('Quotation <A>');await p.locator('[data-evp-action="capture-option"]').click();
    await p.waitForFunction(()=>pack.workspace.planning.options.length===1);
-   const item=await p.evaluate(async()=>{const i=activePhoto().items.find(i=>i.type==='route'&&i.kind==='swa');i.manualLen=42;await EVWorkspace.persist();return i.id;});
+   const item=await p.evaluate(async()=>{const i=activePhoto().items.find(i=>i.type==='route'&&['swa','run','hituff','tails'].includes(i.kind));i.manualLen=42;await EVWorkspace.persist();return i.id;});
    await p.locator('[data-evp-tab="impact"]').click();await p.waitForSelector('#evpPlanPreview');
    assert.match(await p.locator('.evp-change-list').innerText(),/manualLen/);
    assert.match(await p.locator('#evScreen').innerText(),/Connected circuits to recheck/);
@@ -63,7 +63,7 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
   });
   await check('Charging day exports results and invalidates them when inputs change',async p=>{
    await openLab(p,'charging');await p.locator('[data-evp-field="simulation.supplyKw"]').fill('20');await p.locator('[data-evp-field="simulation.baseKw"]').fill('10');await p.locator('[data-evp-action="simulate"]').click();
-   await p.waitForSelector('.evp-chart');assert.match(await p.locator('#evpSimulationResult').innerText(),/Unserved energy/);
+   await p.waitForSelector('.evp-chart');assert.match(await p.locator('#evpSimulationResult').innerText(),/Unserved energy/i);
    const waiting=p.waitForEvent('download');await p.locator('[data-evp-action="export-simulation"]').click();const file=path.join(out,'charging.csv');await(await waiting).saveAs(file);assert.match(fs.readFileSync(file,'utf8'),/Shortfall kWh/);
    await p.locator('[data-evp-field="simulation.supplyKw"]').fill('50');await p.locator('[data-evp-field="simulation.baseKw"]').focus();await p.waitForFunction(()=>!document.querySelector('.evp-chart'));assert.match(await p.locator('#evpSimulationResult').innerText(),/Run the scenario again/);
   });

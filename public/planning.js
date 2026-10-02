@@ -77,6 +77,8 @@ function download(content,name,type='text/plain'){const url=URL.createObjectURL(
 function locate(target){
  if(target.itemId){const row=C.rows(pack).find(r=>r.item.id===target.itemId);if(row){EVWorkspace.openPlan(row.photo.id);sel=row.item.id;sideTab='props';setSideTab();$('side').classList.add('open');draw();}return;}
  if(target.photoId){EVWorkspace.openPlan(target.photoId);return;}
+ if(target.field==='ze'){EVWorkspace.go('markup');openCableCheck();$('ccze')?.focus();return;}
+ if(target.field&&target.field!=='address'){EVWorkspace.go('markup');packSec='job';sideTab='pack';setSideTab();$('side').classList.add('open');renderSide();$(target.field)?.focus();return;}
  EVWorkspace.openDetails();
 }
 function paintMark(ctx,item,scale,colour,removed=false){

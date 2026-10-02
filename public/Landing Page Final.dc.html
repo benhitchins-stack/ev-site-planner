@@ -748,7 +748,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 }
 </style>
 <link rel="stylesheet" href="cdm-controls.css">
-<link rel="stylesheet" href="planning.css?v=5c53d5185e83">
+<link rel="stylesheet" href="planning.css?v=d043f4ae134f">
 <link rel="stylesheet" href="workspace.css?v=e29080d0f652">
 <link rel="stylesheet" href="home.css?v=d6e9cff0c355">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
@@ -1837,7 +1837,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 <script>
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
-<script src="planning-core.js?v=8ed717195b6d"></script>
+<script src="planning-core.js?v=ffc6ee560a3a"></script>
 <script src="cdm-controls.js?v=9da9e61316b2"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
 <script>
@@ -13730,7 +13730,21 @@ function openPdfDocument(lib,data){
   const release=()=>released||(released=task.destroy());
   return {promise:task.promise.then(pdf=>{if(typeof pdf.destroy!=="function")Object.defineProperty(pdf,"destroy",{value:release});return pdf;}),destroy:release};
 }
+function installPdfStreamIterator(){
+  if(typeof ReadableStream==="undefined"||ReadableStream.prototype[Symbol.asyncIterator])return;
+  Object.defineProperty(ReadableStream.prototype,Symbol.asyncIterator,{configurable:true,writable:true,value:function(options={}){
+    const reader=this.getReader();let done=false,tail=Promise.resolve();
+    const finish=()=>{if(!done){done=true;reader.releaseLock();}};
+    const queue=operation=>{const result=tail.then(operation);tail=result.catch(()=>{});return result;};
+    return {
+      [Symbol.asyncIterator](){return this;},
+      next(){return queue(async()=>{if(done)return {done:true,value:undefined};try{const result=await reader.read();if(result.done)finish();return result;}catch(error){finish();throw error;}});},
+      return(value){return queue(async()=>{if(!done){try{if(!options.preventCancel)await reader.cancel(value);}finally{finish();}}return {done:true,value};});}
+    };
+  }});
+}
 function ensurePdfJs(){
+  installPdfStreamIterator();
   if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
   if(_pdfjsP)return _pdfjsP;
   _pdfjsP=import("./vendor/pdfjs/build/pdf.mjs?v=6.3.289").then(lib=>{
@@ -15941,9 +15955,9 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 <script src="home.js?v=59f3ddfb3c99"></script>
 <script src="report-viewer.js?v=3b3b3a4bc743"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=1ecb875bf1fd"></script>
+<script src="workspace.js?v=e7f0d3d3ffe4"></script>
 <script src="delivery.js?v=6e2379250a28"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
-<script src="planning.js?v=baa9f636e381"></script>
+<script src="planning.js?v=b0b39d4839d7"></script>
 </body>
 </html>

@@ -91,7 +91,7 @@ function facts(pack){
   const status=!present||!stale&&e?.status==='missing'?'missing':!stale&&e?.status==='measured'&&e.source?.trim()&&e.by?.trim()&&e.date?'measured':'assumed';
   out.push({key,label,value:present?value:'Not recorded',status,stale,source:e?.source||'',by:e?.by||'',date:e?.date||'',target,needed,present,encoded});
  };
- for(const [key,label]of [['address','Site address'],['earthing','Earthing arrangement'],['supplyRating','Supply rating'],['ze','External earth fault loop impedance']])add('site:'+key,label,pack[key],{section:'site'});
+ for(const [key,label]of [['address','Site address'],['earthing','Earthing arrangement'],['supplyRating','Supply rating'],['ze','External earth fault loop impedance']])add('site:'+key,label,pack[key],{section:'site',field:key});
  for(const photo of pack.photos||[]){
   add('scale:'+photo.id,(photo.name||'Plan')+' · scale',finite(photo.scale?.pxPerM,Number.MIN_VALUE)?Number(photo.scale.pxPerM):null,{photoId:photo.id});
   for(const item of photo.items||[]){

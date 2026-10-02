@@ -22,3 +22,13 @@ test('every first-party PDF loader uses the shared policy',()=>{
  assert.equal((source.match(/lib\.getDocument\(/g)||[]).length,1);
  assert.match(source,/openPdfDocument\(lib,buf\)/);
 });
+
+test('the PDF stream compatibility iterator releases and cancels readers correctly',async()=>{
+ let releases=0,cancels=0,read=0;
+ c.ReadableStream=class{getReader(){return {read:async()=>read++?{done:true}:{done:false,value:'chunk'},releaseLock:()=>releases++,cancel:async()=>cancels++};}};
+ c.installPdfStreamIterator();
+ const stream=new c.ReadableStream(),iterator=stream[Symbol.asyncIterator]();
+ assert.equal((await iterator.next()).value,'chunk');assert.equal((await iterator.next()).done,true);assert.equal(releases,1);assert.equal(cancels,0);
+ const early=new c.ReadableStream()[Symbol.asyncIterator]();await early.return();assert.equal(releases,2);assert.equal(cancels,1);
+ const preserved=new c.ReadableStream()[Symbol.asyncIterator]({preventCancel:true});await preserved.return();assert.equal(releases,3);assert.equal(cancels,1);
+});
