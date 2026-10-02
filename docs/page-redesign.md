@@ -21,9 +21,19 @@ Implemented 2 October 2026. The sidebar, routes and project flow are unchanged; 
 
 The record checks are the same readiness checks used in the project index. They show what has been recorded, not design approval, and the overview says so.
 
+## Brand theme
+
+Chosen from three mock-ups (refined, navy and lime, blueprint) on the real Overview and Your projects pages.
+
+- Navy and lime come from the logo. The project overview opens with a navy header that carries the project name, address and stage bar. Completed stages, the Continue working card, the open project and record-check bars use lime. Blue remains the colour for actions and links.
+- Your projects and the Home project list show a rendered preview of each plan with its markup, instead of the 120px background image. Previews are 560px JPEGs drawn from the plan the overview shows, refreshed after edits when you return to Your projects or Home. They are stored in IndexedDB under `preview_<project id>`, apart from the project index, saved records and backups, so they add nothing to `localStorage` or exported files. A project shows its old thumbnail until it is next opened. If browser storage is unavailable, cards fall back to the old thumbnail.
+- Cards have soft shadows, and project cards lift on hover. Page titles are larger, and counts use tabular figures.
+- The first-visit Home hero, Design lab and Profile tabs, and Review & issue icons use the same navy and lime.
+- Text on navy uses #fff, #b8c9d6 or #8fa9bd, and amber #ffcf73 for warnings. Each meets the WCAG AA contrast ratio for its size. Lime is used as a background or bar, never as text on white.
+
 ## Styles
 
-The page styles live in `design-preview.css`. The overview overrides from the presentation refresh were removed from `workbench.css` so one stylesheet owns each page layout.
+The page styles live in `design-preview.css`; the Home styles are at the end of `home.css`. The overview overrides from the presentation refresh were removed from `workbench.css` so one stylesheet owns each page layout.
 
 ## Verification
 

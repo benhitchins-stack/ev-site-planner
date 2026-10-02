@@ -40,6 +40,9 @@ const {chromium} = require('playwright');
     assert.equal(await page.evaluate(()=>Array.isArray(pack.programme?.activities)),false,'Viewing the overview must not create programme activities');
     const source=await page.evaluate(()=>activePhoto().src);
     await page.waitForFunction(src=>document.getElementById('evDashboardPlan').src!==src,source);
+    const preview=await page.evaluate(async()=>{for(let i=0;i<50;i++){const v=await idbGet('preview_'+pack.projId);if(typeof v==='string')return v;await new Promise(r=>setTimeout(r,100));}return '';});
+    assert(preview.startsWith('data:image/jpeg'),'The overview stores a rendered plan preview for project cards');
+    assert.equal(await page.evaluate(p=>(localStorage.getItem('evsp_projects')||'').includes(p.slice(p.length>>1,(p.length>>1)+80)),preview),false,'Previews stay out of the project index');
     await page.screenshot({path:path.join(artifacts,'dashboard.png'),animations:'disabled'});
     pass('Example opens a connected dashboard with project stages, an annotated plan preview, record checks and recorded next actions');
 
@@ -103,7 +106,8 @@ const {chromium} = require('playwright');
 
     await page.locator('.eh-nav [data-ev-route="projects"]').click();
     await page.locator('#evSearch').fill('No match');await page.getByText('No matching projects',{exact:true}).waitFor();
-    await page.locator('#evSearch').fill('Riverside');assert.equal(await page.locator('.ev-project-row').count(),1);assert.equal(await page.locator('.ev-project-row .ev-pill.blue').textContent(),'Open now');
+    await page.locator('#evSearch').fill('Riverside');assert.equal(await page.locator('.ev-project-row').count(),1);assert.equal(await page.locator('.ev-project-row .ev-pill.lime').textContent(),'Open now');
+    assert(await page.evaluate(async()=>{for(let i=0;i<50;i++){const stored=await idbGet('preview_'+pack.projId),img=document.querySelector('.ev-project-row img[data-ev-preview]');if(stored&&img?.src===stored)return true;await new Promise(r=>setTimeout(r,100));}return false;}),'Project cards show the stored plan preview after a reload');
     await page.locator('#evFilter').selectOption('domestic');assert.equal(await page.locator('.ev-project-row').count(),0);
     await page.locator('#evFilter').selectOption('all');await page.locator('#evSearch').fill('');
     await page.screenshot({path:path.join(artifacts,'projects.png'),animations:'disabled'});
