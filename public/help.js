@@ -10,6 +10,7 @@ const QSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 
 /* Short tips for planner cards, shown above the guide. */
 const TIPS={
+ 'audit':'The site audit checks an existing site against PAS 1899:2022 and the Public Charge Point Regulations 2023. This guide explains the regulations behind the checks; the planner records the audit and does not certify compliance.',
  'overview-plans':'Each photo, PDF page or drawing you add becomes a plan. Markup draws on the plan the overview shows; switch plans here or in Markup.',
  'overview-next':'Next actions are worked out from what the project still needs: details, a plan, a scale, snags to review and the programme dates.',
  'overview-checks':'Record checks show what has been recorded: scale, route lengths, supply, earthing and compliance items. They are not design approval.',

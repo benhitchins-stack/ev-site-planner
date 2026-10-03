@@ -18,6 +18,17 @@ example from Home to explore it, or import a project backup. Each site address
 has its own browser storage; use a downloaded backup to move projects between
 addresses or devices.
 
+Site audits check an existing EV site against PAS 1899:2022 and the Public
+Charge Point Regulations 2023. Start one from the Site audits section on Home,
+or open a project and choose Audit this site. The site type and public access
+decide which of the 23 checks apply; each is answered as Pass, Action needed,
+Fail or Not applicable with a note, a measurement where there is a limit and
+up to four photos, and the evidence pack PDF is reviewed and downloaded like
+the other reports. The audit lives in the project record (`pack.audit`) and
+rides inside backups; see [docs/site-audit.md](docs/site-audit.md). The check
+wording is draft v0.9 pending specialist review, and the pack supports a
+submission rather than certifying compliance.
+
 Your projects shows a card for each saved project with a preview of its
 marked-up plan, counts and record checks. The project overview opens with a
 navy header and a five-step stage bar (Markup, Design lab, Programme, Snags and
@@ -151,7 +162,7 @@ are available from the Technical menu and the Markup panel's Checks tab.
 ## Checks
 
 `npm test` runs static integration, release, CDM lifecycle, RAMS bridge,
-measurement, backup-validation, PDF-policy and calculation checks. Pull requests
+measurement, backup-validation, site audit, PDF-policy and calculation checks. Pull requests
 run these plus all browser suites. GitHub Pages waits for the same checks before
 publishing, including the Chromium, Firefox and WebKit reliability scenarios.
 
@@ -211,6 +222,7 @@ move projects between them.
 | `public/home.js`, `home.css` | Home page and recent projects |
 | `public/profile.js`, `profile.css` | Personal and company profile, qualifications and report branding |
 | `public/delivery.js` | Programme, snag records and PDF review |
+| `public/audit-core.js`, `audit.js`, `audit.css` | Site audit checks, page, photos and evidence pack |
 | `public/bay-markings.js` | Bay symbols and lettering |
 | `public/report-fonts.js` | Embedded DejaVu fonts for new reports, loaded when a PDF is prepared |
 | `public/manifest.webmanifest` | Home Screen name, colours and icons |

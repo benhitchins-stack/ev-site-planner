@@ -894,6 +894,6 @@ function enhance(root,opts){
 window.EVGuides={LEVELS,TOPICS,KINDS,GUIDES,GLOSSARY,LINKS,QUIZ,CALCS,byId,levelOf,topicLabel,guideHTML,chip,search,glossarySearch,enhance,progress,DISCLAIMER,
  version:1,
  /* The guide a page or tool opens by default. Keys are used by the planner's Help buttons. */
- pageGuide:{home:'planner-first-project',projects:'planner-backups',overview:'planner-first-project',markup:'planner-markup-tools',planning:'planner-pages',programme:'planner-pages',snags:'planner-pages',issue:'planner-pages',profile:'planner-first-project',guides:'planner-first-project'}
+ pageGuide:{home:'planner-first-project',projects:'planner-backups',overview:'planner-first-project',markup:'planner-markup-tools',planning:'planner-pages',programme:'planner-pages',snags:'planner-pages',audit:'pcpr',issue:'planner-pages',profile:'planner-first-project',guides:'planner-first-project'}
 };
 })();

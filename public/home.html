@@ -763,6 +763,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 </style>
 <link rel="stylesheet" href="cdm-controls.css">
 <link rel="stylesheet" href="planning.css?v=d043f4ae134f">
+<link rel="stylesheet" href="audit.css?v=5f828ce2fa79">
 <link rel="stylesheet" href="workspace.css?v=21dd13db7b6a">
 <link rel="stylesheet" href="home.css?v=f80227562a8f">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
@@ -1854,6 +1855,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
 <script src="planning-core.js?v=cb034ae5f3b5"></script>
+<script src="audit-core.js?v=32f77ebcea52"></script>
 <script src="cdm-controls.js?v=9da9e61316b2"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
 <script>
@@ -2801,8 +2803,10 @@ function validateProjectBackup(pk){
   const inspect=(v,depth=0)=>{need(depth<80);if(Array.isArray(v))v.forEach(x=>inspect(x,depth+1));else if(record(v))for(const [k,x] of Object.entries(v)){need(!reserved.has(k));inspect(x,depth+1);}};
   need(record(pk)&&Array.isArray(pk.photos));inspect(pk);
   texts(pk,["name","address","postcode","jobRef","notes","custName","engineerNote","brandName","brandLogo","surveyedBy","surveyDate","rev","custLetter","payLink","replyEmail","replyPhone"]);
-  objects(pk,["workspace","programme","rates","cdm","survey","punch","commissioning","sim","earthWiz","cloudGroups"]);
+  objects(pk,["workspace","programme","rates","cdm","survey","punch","commissioning","sim","earthWiz","cloudGroups","audit"]);
   rows(pk,"attachments");rows(pk,"revHistory");unique(pk.attachments);id(pk.projId);id(pk.active);image(pk.brandLogo);
+  // Site audit records carry their own rules (outcomes, photo data, chargepoint ids) in audit-core.js.
+  if(pk.audit&&typeof EVAuditCore!=="undefined"){try{EVAuditCore.validate(pk.audit);}catch(_){need(false);}}
   if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport","authorProfile"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","scope","notes","backupAt"]);}
   if(pk.programme){const p=pk.programme;objects(p,["days","skip"]);texts(p,["start","notes"]);rows(p,"activities");unique(p.activities);if(p.activities)p.activities.forEach(a=>{texts(a,["id","name","owner","start","status","note"]);need(a.days==null||Number.isFinite(Number(a.days)));});if(p.nonWorkingDates!=null)need(Array.isArray(p.nonWorkingDates)&&p.nonWorkingDates.every(v=>typeof v==="string"));}
   if(pk.workspace?.planning){
@@ -2875,6 +2879,7 @@ function normalisePack(pk){
   pk.compliance = Array.isArray(pk.compliance) ? pk.compliance.filter(k=>typeof k==="string") : [];
   pk.complianceNA = Array.isArray(pk.complianceNA) ? pk.complianceNA.filter(k=>typeof k==="string" && !pk.compliance.includes(k)) : [];
   pk.cdm=plannerNormaliseCdmPack(pk.cdm);
+  if(pk.audit!=null&&(typeof pk.audit!=="object"||Array.isArray(pk.audit))) delete pk.audit;
   { const ss=pk.snagSign; pk.snagSign=(ss&&typeof ss==="object")?{by:String(ss.by||""),accept:String(ss.accept||""),date:String(ss.date||"")}:{by:"",accept:"",date:""}; }
   pk.optionView = (["all","A","B","C"].includes(pk.optionView)) ? pk.optionView : "all";
   pk.programme = (pk.programme && typeof pk.programme==="object" && !Array.isArray(pk.programme)) ? pk.programme : {};
@@ -8492,6 +8497,8 @@ function hasMeaningfulPackContent(candidate){
   if((Array.isArray(p.infoNeeds)&&p.infoNeeds.length)||(Array.isArray(p.enablingWorks)&&p.enablingWorks.length)) return true;
   if(p.readyToProceed===true||p.mcbRequired===true) return true;
   if([p.programme,p.survey,p.earthWiz,p.sim,p.punch,p.revHistory,p.snagSign,p.commissioning].some(plannerValueHasContent)) return true;
+  // A site audit counts once its set-up or an answer is recorded; a bare audit shell does not.
+  if(p.audit&&typeof p.audit==="object"&&!Array.isArray(p.audit)){ const a=p.audit; if(Object.keys(a.answers&&typeof a.answers==="object"?a.answers:{}).length||String(a.siteType||"").trim()||String(a.operator||"").trim()||(Array.isArray(a.units)&&a.units.length>1)) return true; }
   return cdmHasMeaningfulContent(p.cdm);
 }
 function cdmRiskIsFullyControlled(risk){
@@ -14679,7 +14686,8 @@ function projStatusMeta(){
   let ready=null; try{ ready=readiness().pct; }catch(_){ }
   let snags=0; try{ snags=snagStats().open; }catch(_){ }
   let units=0; try{ units=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="unit"&&i.provision!=="passive")).length; }catch(_){ }
-  return {units, snags, ready, rev:pack.rev||"A"};
+  let audit=null; try{ if(pack.audit&&typeof EVAuditCore!=="undefined") audit=EVAuditCore.indexSummary(pack.audit); }catch(_){ }
+  return {units, snags, ready, rev:pack.rev||"A", audit};
 }
 function refreshProjIndexMeta(){
   if(!pack.projId) return;
@@ -15987,16 +15995,17 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 /* Legacy localStorage records remain available until an atomic project save promotes them. */
 </script>
 <script src="guide-art.js?v=3d083cfdf31d"></script>
-<script src="guides.js?v=fab68bfc3765"></script>
-<script src="help.js?v=ecb0a3ba5ad4"></script>
+<script src="guides.js?v=9f57eb3a15e5"></script>
+<script src="help.js?v=2433a4306647"></script>
 <script src="profile.js?v=0d622351dda2"></script>
 <link rel="ev-report-fonts" href="report-fonts.js?v=db719569bbc1">
-<script src="home.js?v=430768eebd5c"></script>
+<script src="home.js?v=2a86ae2c36c8"></script>
 <script src="report-viewer.js?v=3b3b3a4bc743"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=b24608b43174"></script>
-<script src="delivery.js?v=4e62055edf51"></script>
+<script src="workspace.js?v=08548c218f87"></script>
+<script src="delivery.js?v=7772d6b72e9e"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
 <script src="planning.js?v=8494f7ad47f2"></script>
+<script src="audit.js?v=1508ed26a60d"></script>
 </body>
 </html>
