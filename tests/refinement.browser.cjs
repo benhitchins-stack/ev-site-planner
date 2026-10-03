@@ -70,6 +70,8 @@ const {chromium}=require('playwright');
    const total=await page.locator('#rxDocumentViewer [data-pdf-page]').count();assert(total>1);
    await page.locator('#rxDocumentViewer [data-pdf-page]').last().click();await page.waitForFunction(n=>document.querySelector('#rxDocumentViewer [data-pdf-counter]').textContent==='Page '+n+' of '+n,total);
    await page.locator('#rxDocumentViewer [data-pdf-zoom]').selectOption('150');
+   assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#rxBackdrop .rx-foot button')].map(b=>b.textContent.trim())),['Close',type==='client'?'Download client pack':'Download engineer pack'],'Review footer puts Close before the named download');
+   assert.equal(await page.locator('#rxRefresh').isVisible(),false,'The legacy Refresh box is not shown in the review options');
    await page.locator('#rxSummary').fill(type==='client'?'Dear client,\n\nPlease review the proposed layout for the east entrance.':'Review the east entrance route before installation.');
    assert(await page.locator('#rxExport').isDisabled());await page.waitForFunction(()=>!document.getElementById('rxExport').disabled);
    download=page.waitForEvent('download');await page.locator('#rxExport').click();await(await download).saveAs(path.join(output,type+'-pack.pdf'));

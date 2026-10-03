@@ -43,7 +43,7 @@ test('all edited HTML inline scripts parse', () => {
 
 test('planner loads and persists the CDM module and safety bridge', () => {
   const planner = source('../public/EV Site Planner.html');
-  assert.match(planner, /href="cdm-controls\.css"/);
+  assert.match(planner, /href="cdm-controls\.css\?v=[a-f0-9]{12}"/);
   assert.match(planner, /src="cdm-controls\.js\?v=[a-f0-9]{12}"/);
   assert.match(planner, /function plannerCdmFallbackPack\(\)/);
   assert.match(planner, /cdm:plannerNewCdmPack\(\)/);

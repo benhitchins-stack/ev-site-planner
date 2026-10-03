@@ -144,7 +144,7 @@ header{display:flex;align-items:center;gap:12px;padding:calc(9px + env(safe-area
    linear-gradient(90deg,rgba(120,170,210,.12) 1px,transparent 1px) 0 0/135px 135px,
    radial-gradient(circle at 32% 18%,#12283A,#08111E 72%);overflow:hidden;}
 .cvwrap{flex:1;position:relative;min-height:0;}
-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
+#cvwrap canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;text-align:center;gap:10px;padding:28px;color:var(--stageDim);overflow:auto;overscroll-behavior:contain;}
 .empty .big{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;margin-bottom:2px;}
 .empty .big svg{width:27px;height:27px;color:var(--accent);}
@@ -556,10 +556,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .rx-foot{display:flex;align-items:center;gap:8px;padding:14px 18px;border-top:1px solid var(--line);}
 .rx-foot .hbtn{min-height:44px;padding:10px 18px;}
 @media (max-width:760px){
-  /* stack edit + preview and let the whole body scroll - keeps the footer buttons reachable on small phones */
-  .rx-body{flex-direction:column;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
-  .rx-edit{width:auto;border-right:none;border-bottom:1px solid var(--line);max-height:none;flex:none;overflow:visible;}
-  .rx-preview{flex:none;height:min(46vh,380px);min-height:240px;}
+  /* edit and preview stack at 700px and below through .ev-document-layout (workbench.css); keep the footer buttons reachable */
   .rx-foot{flex-wrap:wrap;}
 }
 
@@ -761,14 +758,14 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
   *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;scroll-behavior:auto !important;}
 }
 </style>
-<link rel="stylesheet" href="cdm-controls.css">
-<link rel="stylesheet" href="planning.css?v=d043f4ae134f">
+<link rel="stylesheet" href="cdm-controls.css?v=03d5ac71c14a">
+<link rel="stylesheet" href="planning.css?v=8c771db8e017">
 <link rel="stylesheet" href="audit.css?v=5f828ce2fa79">
-<link rel="stylesheet" href="workspace.css?v=21dd13db7b6a">
+<link rel="stylesheet" href="workspace.css?v=f1b7c0cca5ab">
 <link rel="stylesheet" href="home.css?v=f80227562a8f">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
-<link rel="stylesheet" href="design-preview.css?v=45f028dbb3de">
-<link rel="stylesheet" href="workbench.css?v=78467031a64d">
+<link rel="stylesheet" href="design-preview.css?v=eeccef33a35b">
+<link rel="stylesheet" href="workbench.css?v=104371d8a3fd">
 <link rel="stylesheet" href="guides.css?v=8f52ad1615c6">
 <link rel="stylesheet" href="help.css?v=8c7a86de7cd3">
 </head>
@@ -1025,11 +1022,16 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .pdfpg{border:2px solid var(--line);border-radius:10px;padding:6px 6px 7px;cursor:pointer;display:flex;flex-direction:column;gap:5px;align-items:center;background:#fff;position:relative;}
 .pdfpg.on{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,107,255,.18);}
 .pdfpg.on::after{content:"\2713";position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;}
-.pdfpg canvas{position:static;inset:auto;width:100%;height:auto;touch-action:auto;border:1px solid var(--line);border-radius:6px;background:#fff;display:block;}
+.pdfpg canvas{width:100%;height:auto;touch-action:auto;border:1px solid var(--line);border-radius:6px;background:#fff;display:block;}
 .pdfpg span{font-size:11px;color:var(--dim);font-weight:650;}
 /* ---- single-line diagram viewer ---- */
 #sldWrap{overflow:auto;overscroll-behavior:contain;max-height:56vh;border:1px solid var(--line);border-radius:12px;background:#fff;}
-#sldWrap canvas{position:static;inset:auto;width:100%;height:auto;touch-action:auto;display:block;}
+#sldWrap canvas{width:100%;height:auto;touch-action:auto;display:block;}
+/* charging-day simulator: legend row above the load curve */
+.sim-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 8px;font-size:12px;line-height:1.3;color:#435867;}
+.sim-legend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.sim-legend i{display:inline-block;width:14px;height:10px;border-radius:2px;}
+.sim-legend i.ln{width:18px;height:0;border-radius:0;border-top:2px dashed;}
 @media (max-width:560px){ .walk-card h2{font-size:20px;} .walk-card{padding:16px;} }
 /* ---- calm chrome: header secondary actions are quiet ghosts; Export stays the one filled action ---- */
 header .hbtn:not(.primary):not(.cust){background:transparent;border-color:transparent;box-shadow:none;}
@@ -1442,10 +1444,10 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
       </div>
     </div>
     <div class="rx-foot">
-      <button class="hbtn" id="rxCancel">Cancel</button>
       <div id="rxPhWarn" style="display:none;font-size:11.5px;font-weight:600;color:#7A4E00;background:#FFF4DC;border:1px solid #FFB950;border-radius:8px;padding:6px 10px;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
       <div style="flex:1"></div>
-      <button class="hbtn primary" id="rxExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span>Download PDF</span></button>
+      <button class="hbtn" id="rxCancel">Close</button>
+      <button class="hbtn primary" id="rxExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span>Download engineer pack</span></button>
     </div>
   </div>
 </div>
@@ -11209,7 +11211,8 @@ function simSlider(k,label,val,min,max,step){
 function renderSimShell(){
   const body=document.getElementById("simBody"); const cfg=simConfig(); const dom=cfg.dom;
   body.innerHTML='<div id="simChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>'
-   +'<canvas id="simCv" style="width:100%;height:260px;border:1px solid var(--line);border-radius:12px;background:#0E1D2A;display:block"></canvas>'
+   +'<div id="simLegend" class="sim-legend" aria-hidden="true"></div>'
+   +'<canvas id="simCv" role="img" aria-label="Charging day load curve" style="width:100%;height:260px;border:1px solid var(--line);border-radius:12px;background:#fff;display:block"></canvas>'
    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;margin-top:8px">'
    +simSlider("cars","Cars charging",cfg.cars,1,dom?4:24,1)
    +simSlider("need","Charge needed per car",cfg.need,5,100,5)
@@ -11253,7 +11256,7 @@ function updateSim(seg){
   if(seg){ document.querySelectorAll("#simDlmSeg button").forEach(b=>b.classList.toggle("on",(b.dataset.simdlm==="1")===!!cfg.dlm)); document.querySelectorAll("#simOpSeg button").forEach(b=>b.classList.toggle("on",(b.dataset.simop==="1")===!!cfg.opOnly)); }
   const lim=document.querySelector('[data-sims="limit"]'); if(lim){ lim.disabled=!cfg.dlm; lim.style.opacity=cfg.dlm?"1":".4"; }
   const note=document.getElementById("simNote");
-  if(note) note.innerHTML=(dom?"Noon \u2192 noon, so the overnight charge shows as one curve. Grey = household; blue = with charging.":"Midnight \u2192 midnight; arrivals staggered 08:00\u201316:30. Grey = site load; blue = with charging.")+" "+(cfg.dlm?("<b>DLM shares "+cfg.limit+" A</b> across active cars (6 A floor; extra cars queue)."):"<b>Uncapped</b>: every car pulls full rate on arrival.")+(cfg.opOnly?" <b>Off-peak only</b>: charging waits for the window; cars that can't fill inside it show as not full.":"");
+  if(note) note.innerHTML=(dom?"Noon \u2192 noon, so the overnight charge shows as one curve.":"Midnight \u2192 midnight; arrivals staggered 08:00\u201316:30.")+" "+(cfg.dlm?("<b>DLM shares "+cfg.limit+" A</b> across active cars (6 A floor; extra cars queue)."):"<b>Uncapped</b>: every car pulls full rate on arrival.")+(cfg.opOnly?" <b>Off-peak only</b>: charging waits for the window; cars that can't fill inside it show as not full.":"");
   const costEl=document.getElementById("simCost");
   if(costEl){
     const kwh=res.kwh, allNight=kwh*cfg.pNight/100, share=kwh?Math.round(res.kwhOp/kwh*100):0;
@@ -11268,32 +11271,46 @@ function updateSim(seg){
   }
   drawSimChart(document.getElementById("simCv"),cfg,res);
 }
+/* chart colours shared by the canvas and the legend row above it (light panel, matching the SLD and Design lab charts) */
+function simColours(){
+  const v=(n,f)=>{ try{ return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||f; }catch(_){ return f; } };
+  return { ink:"#435867", grid:"rgba(67,88,103,.2)", charge:v("--accent","#2167e8"), chargeFill:"rgba(33,103,232,.32)", base:"rgba(101,121,138,.5)", supply:v("--ev-bad","#b0392f"), dlm:"#b7791f", offpeak:"rgba(46,160,96,.1)", offpeakKey:"rgba(46,160,96,.35)" };
+}
+function simLegend(cfg,dom){
+  const k=simColours(), sw=(bg,label)=>'<span><i style="background:'+bg+'"></i>'+label+'</span>', ln=(col,label)=>'<span><i class="ln" style="border-top-color:'+col+'"></i>'+label+'</span>';
+  return sw(k.base,dom?"Household load":"Site load")+sw(k.chargeFill,"With charging")
+   +(cfg.cap?ln(k.supply,"Supply "+cfg.cap+" A"):"")
+   +(cfg.dlm?ln(k.dlm,"DLM limit "+cfg.limit+" A (chargers)"):"")
+   +(cfg.opS!==cfg.opE?sw(k.offpeakKey,"Off-peak "+(Math.round(cfg.pNight*10)/10)+"p"):"");
+}
 function drawSimChart(cv,cfg,res){
   if(!cv) return;
+  const leg=document.getElementById("simLegend"); if(leg) leg.innerHTML=simLegend(cfg,cfg.dom);
+  const k=simColours(); let font="Hanken Grotesk, sans-serif"; try{ font=getComputedStyle(cv).fontFamily||font; }catch(_){ }
   const W=cv.clientWidth||660, H=260; cv.width=W*2; cv.height=H*2;
   const c=cv.getContext("2d"); c.setTransform(2,0,0,2,0,0); c.clearRect(0,0,W,H);
-  const padL=42,padR=10,padT=18,padB=24, iw=W-padL-padR, ih=H-padT-padB;
+  const padL=44,padR=12,padT=22,padB=26, iw=W-padL-padR, ih=H-padT-padB;
   const maxY=Math.max(cfg.cap||0, res.peak, 40)*1.15;
   const X=i=>padL+iw*i/95, Y=v=>padT+ih*(1-Math.min(v,maxY)/maxY);
-  /* off-peak tariff band(s) behind everything */
+  /* off-peak tariff band(s) behind everything; the legend row names them */
   { const bands=[]; let run=null;
     for(let i=0;i<96;i++){ const op=simInOp(cfg,(res.T0+i*0.25)%24); if(op&&run==null) run=i; if(!op&&run!=null){ bands.push([run,i]); run=null; } }
     if(run!=null) bands.push([run,96]);
-    bands.forEach(([a,b],ix)=>{ const x0=padL+iw*a/96, x1=padL+iw*b/96; c.fillStyle="rgba(124,242,164,.09)"; c.fillRect(x0,padT,x1-x0,ih);
-      if(ix===0){ c.fillStyle="rgba(124,242,164,.8)"; c.font="9px 'Space Grotesk',ui-monospace,monospace"; c.textAlign="left"; c.fillText("off-peak "+(Math.round(cfg.pNight*10)/10)+"p", x0+4, padT+10); } });
+    bands.forEach(([a,b])=>{ const x0=padL+iw*a/96, x1=padL+iw*b/96; c.fillStyle=k.offpeak; c.fillRect(x0,padT,x1-x0,ih); });
   }
-  c.font="9.5px 'Space Grotesk',ui-monospace,monospace"; c.textAlign="center";
-  for(let hh=0;hh<=24;hh+=4){ const x=X(Math.min(95,hh*4)); c.strokeStyle="rgba(150,180,205,.14)"; c.beginPath(); c.moveTo(x,padT); c.lineTo(x,padT+ih); c.stroke(); c.fillStyle="#8FA3B3"; c.fillText(String((res.T0+hh)%24).padStart(2,"0")+":00", x, H-8); }
+  c.font="11px "+font; c.lineWidth=1; c.textAlign="center";
+  const hourStep=W<420?6:4;
+  for(let hh=0;hh<=24;hh+=hourStep){ const x=X(Math.min(95,hh*4)); c.strokeStyle=k.grid; c.beginPath(); c.moveTo(x,padT); c.lineTo(x,padT+ih); c.stroke(); c.fillStyle=k.ink; c.fillText(String((res.T0+hh)%24).padStart(2,"0")+":00", Math.min(W-17,x), H-8); }
   c.textAlign="right";
   const stepY=maxY>400?200:(maxY>240?100:(maxY>120?50:20));
-  for(let a=0;a<=maxY;a+=stepY){ const y=Y(a); c.fillStyle="#8FA3B3"; c.fillText(Math.round(a), padL-6, y+3); c.strokeStyle="rgba(150,180,205,.09)"; c.beginPath(); c.moveTo(padL,y); c.lineTo(W-padR,y); c.stroke(); }
+  for(let a=0;a<=maxY;a+=stepY){ const y=Y(a); c.fillStyle=k.ink; c.fillText(Math.round(a), padL-6, y+4); c.strokeStyle=k.grid; c.beginPath(); c.moveTo(padL,y); c.lineTo(W-padR,y); c.stroke(); }
   const area=(vals,fill)=>{ c.beginPath(); c.moveTo(X(0),Y(0)); for(let i=0;i<96;i++) c.lineTo(X(i),Y(vals[i])); c.lineTo(X(95),Y(0)); c.closePath(); c.fillStyle=fill; c.fill(); };
-  area(res.tot,"rgba(30,107,255,.5)");
-  area(res.base,"rgba(157,170,176,.42)");
-  c.beginPath(); for(let i=0;i<96;i++){ const x=X(i),y=Y(res.tot[i]); i?c.lineTo(x,y):c.moveTo(x,y); } c.strokeStyle="#5D9BFF"; c.lineWidth=1.6; c.stroke();
-  if(cfg.cap){ const yc=Y(cfg.cap); c.setLineDash([6,4]); c.strokeStyle="#FF5F56"; c.lineWidth=1.4; c.beginPath(); c.moveTo(padL,yc); c.lineTo(W-padR,yc); c.stroke(); c.setLineDash([]); c.fillStyle="#FF8078"; c.textAlign="left"; c.fillText("supply "+cfg.cap+" A", padL+4, yc-4); }
-  if(cfg.dlm){ const yl=Y(cfg.limit); c.setLineDash([3,4]); c.strokeStyle="#E0B341"; c.lineWidth=1.2; c.beginPath(); c.moveTo(padL,yl); c.lineTo(W-padR,yl); c.stroke(); c.setLineDash([]); c.fillStyle="#E0B341"; c.textAlign="left"; c.fillText("DLM limit "+cfg.limit+" A (chargers)", padL+4, yl-4); }
-  c.fillStyle="#9DAAB0"; c.textAlign="left"; c.fillText("amps", padL+4, padT-6);
+  area(res.tot,k.chargeFill);
+  area(res.base,k.base);
+  c.beginPath(); for(let i=0;i<96;i++){ const x=X(i),y=Y(res.tot[i]); i?c.lineTo(x,y):c.moveTo(x,y); } c.strokeStyle=k.charge; c.lineWidth=1.8; c.stroke();
+  if(cfg.cap){ const yc=Y(cfg.cap); c.setLineDash([6,4]); c.strokeStyle=k.supply; c.lineWidth=1.6; c.beginPath(); c.moveTo(padL,yc); c.lineTo(W-padR,yc); c.stroke(); c.setLineDash([]); }
+  if(cfg.dlm){ const yl=Y(cfg.limit); c.setLineDash([3,4]); c.strokeStyle=k.dlm; c.lineWidth=1.6; c.beginPath(); c.moveTo(padL,yl); c.lineTo(W-padR,yl); c.stroke(); c.setLineDash([]); }
+  c.fillStyle=k.ink; c.textAlign="left"; c.fillText("Amps", 6, padT-8);
 }
 /* ---------- earthing & protection wizard ---------- */
 let earthSel=null;
@@ -12096,8 +12113,8 @@ function genLetter(){ const t=loadTpls(); return fillTemplate(t[pack.outcome]||t
 /* ---------- review & export modal ---------- */
 let rxBlobUrl=null, rxBuildToken=0, rxDebounce=null, rxKeyHandler=null, rxMode="office", rxEmailDirty=false, rxTplEditing=false;
 const RX_COPY={
-  office:{ title:"Review &amp; export", sub:"Review the contents of the engineer pack before downloading.", sumLabel:"Cover summary", sumOpt:"optional", sumPh:"Site context, access notes or a contact for arrival (optional)", export:"Download PDF" },
-  customer:{ title:"Client copy", sub:"Review the client plan and draft email before downloading or copying.", sumLabel:"Letter to the client", sumOpt:"Draft from project details; edit before issue", sumPh:"Review the letter included in the client plan", export:"Download client PDF" }
+  office:{ title:"Review &amp; export", sub:"Review the contents of the engineer pack before downloading.", sumLabel:"Cover summary", sumOpt:"optional", sumPh:"Site context, access notes or a contact for arrival (optional)", export:"Download engineer pack" },
+  customer:{ title:"Client copy", sub:"Review the client plan and draft email before downloading or copying.", sumLabel:"Letter to the client", sumOpt:"Draft from project details; edit before issue", sumPh:"Review the letter included in the client plan", export:"Download client pack" }
 };
 function rxComputeLengths(){
   const incl = pack.photos.filter(p=>p.includeInPdf!==false);
@@ -15999,13 +16016,13 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 <script src="help.js?v=a192c7e03b65"></script>
 <script src="profile.js?v=0d622351dda2"></script>
 <link rel="ev-report-fonts" href="report-fonts.js?v=db719569bbc1">
-<script src="home.js?v=2a86ae2c36c8"></script>
-<script src="report-viewer.js?v=3b3b3a4bc743"></script>
+<script src="home.js?v=750aedf37741"></script>
+<script src="report-viewer.js?v=0a0b193d5ad0"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=08548c218f87"></script>
-<script src="delivery.js?v=7772d6b72e9e"></script>
+<script src="workspace.js?v=d712c67abaa4"></script>
+<script src="delivery.js?v=115b5c5390fb"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
 <script src="planning.js?v=8494f7ad47f2"></script>
-<script src="audit.js?v=1508ed26a60d"></script>
+<script src="audit.js?v=2d211c617363"></script>
 </body>
 </html>

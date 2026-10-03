@@ -203,7 +203,7 @@ body, #evApp {font-family: var(--font);}
 .ev-check-list li.ok svg {color: var(--ev-ok);}
 .ev-dashboard-bottom {display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 24px; margin-bottom: 8px;}
 .ev-dashboard-bottom>.ev-card {display: flex; flex-direction: column; min-width: 0;}
-.ev-dashboard-bottom .ev-card-head>svg {width: 18px; height: 18px; color: #6b8597; flex: none;}
+.ev-card-head>svg {width: 18px; height: 18px; color: #6b8597; flex: none;}
 .ev-dashboard-bottom .ev-card-body {flex: 1; display: flex; flex-direction: column; align-items: flex-start;}
 .ev-dashboard-bottom .ev-card-body>.ev-btn:last-child {margin-top: auto;}
 .ev-dashboard-bottom .ev-kv {width: 100%;}
@@ -273,6 +273,7 @@ body, #evApp {font-family: var(--font);}
 @media (max-width: 1100px) {
   .ev-overview-grid {grid-template-columns: minmax(0,1fr);}
   .ev-overview-side {grid-template-columns: repeat(2, minmax(0,1fr)); align-items: start;}
+  .ev-overview-side>.eva-overview-card {grid-column: 1 / -1;}
   .ev-live-plan {height: 380px;}
 }
 @media (min-width: 721px) and (max-width: 1100px) {
@@ -366,6 +367,15 @@ body, #evApp {font-family: var(--font);}
 .ev-scale-status {font-size: 10px; padding: 4px 8px; background: #fff3db; border: 1px solid #f0dfbd; border-radius: 4px; white-space: nowrap; color: #835d20;}
 .ev-scale-status.set {background: #eaf4ed; border-color: #d5e7db; color: #41674b;}
 #evInspectorToggle {margin-left: 5px;}
+#evPlanStrip .ev-btn {white-space: nowrap;}
+/* Laptop and landscape tablet with the inspector inline: Add files and Plan settings go icon-only so the strip stays on one line. */
+@media (min-width: 1001px) and (max-width: 1250px) {
+  #evApp.ev-inspector-open #evPlanStrip>.ev-btn[data-ev-action=add-files] {font-size: 0; gap: 0; padding: 6px; width: 36px; justify-content: center;}
+  #evApp.ev-inspector-open #evPlanStrip>.ev-btn[data-ev-action=add-files] svg {width: 17px; height: 17px;}
+  #evApp.ev-inspector-open #evInspectorToggle {font-size: 0!important; gap: 0; padding: 7px!important; width: 36px; justify-content: center;}
+  #evApp.ev-inspector-open #evInspectorToggle span {display: none;}
+  #evApp.ev-inspector-open #evPlanStrip #evActivePlan {flex: 1 1 0; min-width: 0; max-width: none;}
+}
 #root {min-height: 0;}
 #root .workrow {overflow: hidden;}
 #root .stage {background: #e6ecf1; background-image: radial-gradient(#b5c6d480 1px,transparent 1px); background-size: 18px 18px; min-width: 0;}
@@ -484,6 +494,20 @@ body, #evApp {font-family: var(--font);}
   .ep-editor {gap: 18px;}
   .ep-save {font-size: 10px;}
   .ev-heading>.ev-actions {width: 100%;}
+}
+/* Tablet widths (701-1100px): undo and the canvas tools share the first row with Technical and Focus, and the category tabs take a full second row, so all six categories (including Notes) stay visible with no hidden scroll. */
+@media (min-width: 701px) and (max-width: 1100px) {
+  #evWorkbench .ev-toolstrip {flex-wrap: wrap; row-gap: 0;}
+  #evWorkbench .ev-toolstrip::after {content: ""; order: 5; flex: 0 0 100%; height: 4px;}
+  #evWorkbench .catbar {display: contents;}
+  #evWorkbench .catbar .catdiv {display: none;}
+  .ev-undo-group {order: 1;}
+  #evWorkbench .ptools {order: 2;}
+  #evWorkbench .ev-tech {order: 3; margin-left: auto;}
+  #evWorkbench .ev-focus-btn {order: 4;}
+  #evWorkbench .cattab {order: 6;}
+  .ev-focus-mode #evWorkbench .ptools, .ev-focus-mode #evWorkbench .cattab {opacity: .65;}
+  .ev-focus-mode #evWorkbench .ptools:hover, .ev-focus-mode #evWorkbench .cattab:hover {opacity: 1;}
 }
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after {animation: none!important; transition: none!important; scroll-behavior: auto!important;}

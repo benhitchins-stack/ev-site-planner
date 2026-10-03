@@ -234,6 +234,14 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
 
   // Site audits of existing installations live inside the project record as pack.audit.
   const samplePng=async p=>Buffer.from(await p.evaluate(()=>{const c=document.createElement('canvas');c.width=48;c.height=36;const g=c.getContext('2d');g.fillStyle='#b4432c';g.fillRect(0,0,48,36);g.fillStyle='#fff';g.fillRect(10,8,28,20);return c.toDataURL('image/png').split(',')[1];}),'base64');
+  for(const width of [1024,820])await check('The client pack review keeps every editing control inside the dialog on a '+width+' px iPad',async p=>{
+   await p.locator('[data-ev-route="issue"]').click();await p.locator('[data-ev-action="client"]').click();
+   await p.waitForSelector('#rxDocumentViewer .ev-document-canvas canvas',{timeout:60000});
+   const clipped=await p.evaluate(()=>{const edge=document.querySelector('#rxBackdrop .rx').getBoundingClientRect().right;return [...document.querySelectorAll('#rxEdit input,#rxEdit textarea,#rxEdit button')].filter(e=>e.getClientRects().length&&e.getBoundingClientRect().right>edge+0.5).map(e=>e.id||e.textContent.trim());});
+   assert.deepEqual(clipped,[],'Controls cut off at the dialog edge');
+   await p.locator('#rxCancel').tap();
+  },null,{viewport:{width,height:1366},hasTouch:true});
+
   await check('A site audit records answers, measurements and photos, then survives reload and a backup round trip',async p=>{
    await p.locator('[data-ev-route="audit"]').click();await p.waitForFunction(()=>EVWorkspace.route()==='audit');
    assert.equal(await p.locator('.eva-intro').count(),1,'A project without an audit explains the three steps first');

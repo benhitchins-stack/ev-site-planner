@@ -108,7 +108,8 @@ const {chromium} = require('playwright');
       await page.locator(type==='programme'?'[data-ed-action="programme-report"]':'[data-ev-action="snag-report"]').click();
       await page.waitForSelector('#edPdfCanvas canvas',{timeout:60000});
       download=page.waitForEvent('download');await page.locator('[data-ed-action="download-report"]').click();await (await download).saveAs(path.join(artifacts,`profile-${type}.pdf`));
-      await page.getByRole('button',{name:'Done',exact:true}).click();
+      assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('.ed-report-dialog .ev-dialog-foot .ev-actions button')].map(b=>b.textContent.trim())),['Close',type==='programme'?'Download programme':'Download snag report']);
+      await page.getByRole('button',{name:'Close',exact:true}).click();
     }
     for(const kind of ['plans','programme','snags'])assert(fs.statSync(path.join(artifacts,`profile-${kind}.pdf`)).size>10000);
     pass('Branded plan, programme and snag PDF previews and downloads work');
