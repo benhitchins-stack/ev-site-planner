@@ -111,7 +111,8 @@ const {chromium} = require('playwright');
       // Gaps in the report are a warning: the confirm names them and Download anyway continues.
       if(await page.locator('#edReportChecks li').count()){await page.waitForSelector('#sheetBackdrop.show');assert.equal(await page.locator('#sheetTitle').textContent(),'Download with gaps?');await page.locator('#sheetOk').click();}
       await (await download).saveAs(path.join(artifacts,`profile-${type}.pdf`));
-      await page.getByRole('button',{name:'Done',exact:true}).click();
+      assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('.ed-report-dialog .ev-dialog-foot .ev-actions button')].map(b=>b.textContent.trim()).filter(t=>t!=='Open PDF')),['Close',type==='programme'?'Download programme':'Download snag report']);
+      await page.getByRole('button',{name:'Close',exact:true}).click();
     }
     for(const kind of ['plans','programme','snags'])assert(fs.statSync(path.join(artifacts,`profile-${kind}.pdf`)).size>10000);
     pass('Branded plan, programme and snag PDF previews and downloads work');

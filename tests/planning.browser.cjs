@@ -65,6 +65,8 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
   await check('Charging day exports results and invalidates them when inputs change',async p=>{
    await openLab(p,'charging');await p.locator('[data-evp-field="simulation.supplyKw"]').fill('20');await p.locator('[data-evp-field="simulation.baseKw"]').fill('10');await p.locator('[data-evp-action="simulate"]').click();
    await p.waitForSelector('.evp-chart');assert.match(await p.locator('#evpSimulationResult').innerText(),/Unserved energy/i);
+   assert.match(await p.locator('#evpSimulationResult').innerText(),/Verdict\s+Within supply/);assert.equal(await p.evaluate(()=>pack.workspace.planning.simulation.sources.supplyKw),'edited');
+   const start=p.locator('[data-evp-time="simulation.peakStart"]');assert.equal(await start.getAttribute('step'),'300');await start.fill('17:13');await start.dispatchEvent('change');await p.waitForFunction(()=>pack.workspace.planning.simulation.peakStart===17.25);await p.locator('[data-evp-action="simulate"]').click();await p.waitForSelector('.evp-chart');
    const waiting=p.waitForEvent('download');await p.locator('[data-evp-action="export-simulation"]').click();const file=path.join(out,'charging.csv');await(await waiting).saveAs(file);assert.match(fs.readFileSync(file,'utf8'),/Shortfall kWh/);
    await p.locator('[data-evp-field="simulation.supplyKw"]').fill('50');await p.locator('[data-evp-field="simulation.baseKw"]').focus();await p.waitForFunction(()=>!document.querySelector('.evp-chart'));assert.match(await p.locator('#evpSimulationResult').innerText(),/Run the scenario again/);
   });

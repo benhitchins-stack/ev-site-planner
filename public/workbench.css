@@ -95,7 +95,7 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .ep-form-heading{font-size:14px;padding:25px 0 17px;margin-top:23px;border-top:1px solid #e4ebf0}
 .ep-document-preview{background:#eaf0f5;border:1px solid #d9e3eb;border-radius:10px;padding:13px;margin-bottom:22px}
 #epSampleImage{min-height:210px;display:grid;place-items:center;font-size:12px;color:#526c80;overflow:hidden}
-#epSampleImage canvas{position:static!important;inset:auto!important;width:100%;height:auto;display:block;box-shadow:0 2px 8px #18304314}
+#epSampleImage canvas{width:100%;height:auto;display:block;box-shadow:0 2px 8px #18304314}
 .ep-document-preview p{font-size:12px;color:#526c80;margin:12px 0;line-height:1.6}
 .ep-document-preview>.ev-btn{width:100%;background:#fff;font-size:12px}
 .ep-preview-label{font-size:11px;letter-spacing:.7px}
@@ -111,7 +111,7 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .ev-document-thumbnails{display:grid;gap:12px}
 .ev-document-thumbnails button{border:1px solid #cedae4;border-radius:5px;padding:5px;background:#fff;min-height:66px;width:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;font-size:11px;color:#597184}
 .ev-document-thumbnails button[aria-current=page]{border:2px solid #2563eb;padding:4px;color:#1e54b8;background:#f1f6ff}
-.ev-document-thumbnails canvas{position:static!important;inset:auto!important;width:100%;height:auto;display:block}
+.ev-document-thumbnails canvas{width:100%;height:auto;display:block}
 .ev-document-stage{display:flex;flex-direction:column;min-width:0;min-height:0}
 .ev-document-nav{display:flex;align-items:center;gap:9px;flex:none;padding:10px 14px;border-bottom:1px solid #d2dee8;background:#fff;font-size:12px}
 .ev-document-nav .ev-btn{font-size:12px;min-height:36px;padding:7px 10px}
@@ -119,7 +119,8 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .ev-document-nav label{display:flex;align-items:center;gap:8px;margin-left:auto;color:#536e83;font-size:12px}
 .ev-document-nav select{height:36px;min-width:88px;border:1px solid #c5d3df;padding:7px;border-radius:6px;background:white;color:#314e65;font-family:inherit}
 .ev-document-canvas{padding:24px;overflow:auto;flex:1;min-height:0;min-width:0;display:block;font-size:13px;color:#526c80}
-.ev-document-canvas canvas{position:static!important;inset:auto!important;display:block;width:var(--pdf-zoom,100%);max-width:none!important;height:auto;margin:0 auto;box-shadow:0 3px 16px #1a354522;background:#fff}
+.ev-document-canvas canvas{display:block;width:var(--pdf-zoom,100%);max-width:none!important;height:auto;margin:0 auto;box-shadow:0 3px 16px #1a354522;background:#fff}
+.ev-document-canvas .ev-document-retry{display:flex;width:max-content;margin-top:14px}
 .ev-document-options{min-width:0;padding:20px;border-left:1px solid #d3dfe8;background:#fff;overflow:auto;font-size:13px;color:#4b667b}
 .ev-document-options h3{font-size:13px;color:#263f53;margin:0 0 14px;font-weight:650}
 .ev-document-options h3:not(:first-child){padding-top:20px;margin-top:20px;border-top:1px solid #e1e8ee}
@@ -138,7 +139,6 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .ev-document-meta dt{color:#647a8c}.ev-document-meta dd{color:#294458;overflow-wrap:anywhere}
 #rxBackdrop .rx-body{padding:0;gap:0}
 #rxBackdrop #rxEdit{width:auto;max-width:none;border-right:0;padding:20px}
-#rxBackdrop #rxRefresh{padding:9px 12px;min-height:40px;border:1px solid #c6d5e2;border-radius:7px;font-size:12px;margin-bottom:18px}
 #rxBackdrop .rx-head,#rxBackdrop .rx-foot{background:#fff;padding:17px 20px;gap:14px}
 #rxBackdrop .rx-head h4{font-family:var(--font);font-size:19px;color:#183043}
 #rxBackdrop .rx-head .sub,#rxBackdrop #rxStatus{font-size:12px;line-height:1.5;color:#586e80}
@@ -169,6 +169,7 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
  .ep-aside{position:static;display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
  .ep-preview-label,.ep-storage-note{grid-column:1/-1}
  .ev-document-layout{grid-template-columns:minmax(0,1fr) 220px}
+ #rxBackdrop .ev-document-layout{grid-template-columns:minmax(0,1fr) 260px}
  .ev-document-options{padding:16px}
  .ev-document-nav{gap:5px;padding:8px}
  .ev-document-nav label{font-size:0;gap:0}
@@ -298,7 +299,7 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .wb-display-options p{font-size:12px;line-height:1.55;color:#4f6576}.wb-display-options #wbKeyToggle{font-size:13px;min-height:40px}
 .ep-document-preview{border-radius:8px;padding:16px;background:#edf1f5}.ep-preview-label{font-size:12px;letter-spacing:.4px;text-transform:none}
 .ep-header-preview{margin-bottom:16px}.ep-header-preview>span{display:block;font-size:12px;font-weight:650;color:#3e596e;margin-bottom:8px}
-#epHeaderImage canvas{position:static!important;width:100%;height:auto;display:block;border:1px solid #ccd8e1;background:white}
+#epHeaderImage canvas{width:100%;height:auto;display:block;border:1px solid #ccd8e1;background:white}
 #epSampleImage{min-height:0}#epSampleImage canvas{box-shadow:none}.ep-document-preview>p{font-size:12px}
 .ep-preferences{margin-top:22px}.ep-preferences .ev-card-body{padding:20px}.ep-form-heading{letter-spacing:0}
 .ep-apply b{font-size:14px}.ep-save{color:#395c42}.ep-logo-box{border-style:solid;border-color:#bccbd7;background:#fff}

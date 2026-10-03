@@ -253,7 +253,7 @@ function overview(){
 function task(){const a=current();if(!a)return null;const s=C.summary(a);return s.todo?['audit',s.done?'Continue the site audit':'Start the site audit checks',s.done+' of '+s.total+' checks answered','check']:null;}
 function card(){
  const a=current(),s=a?C.summary(a):null;
- return '<section class="ev-card eva-overview-card"><div class="ev-card-head"><h2>Site audit</h2>'+(s?'<span class="ev-task-count">'+s.done+'/'+s.total+'</span>':icon('check'))+'</div><div class="ev-card-body">'+(s?meter(s.pct,s.done+' of '+s.total+' checks answered')+'<p>'+h(s.fail||s.action?count(s.fail,'fail')+' and '+count(s.action,'action')+' recorded.':s.todo?'Checks against '+STANDARDS+'.':'All checks answered.')+'</p>'+btn(s.todo?'Continue audit':'Review evidence pack',s.todo?'audit':'audit-pack','','arrow'):'<p>Check an existing site against '+STANDARDS+' and make an evidence pack.</p>'+btn('Audit this site','audit','','check'))+'</div></section>';
+ return '<section class="ev-card eva-overview-card"><div class="ev-card-head"><h2>Site audit</h2>'+(s?'<span class="ev-task-count">'+s.done+'/'+s.total+'</span>':'<span class="ev-pill">Not started</span>')+'</div><div class="ev-card-body">'+(s?meter(s.pct,s.done+' of '+s.total+' checks answered')+'<p>'+h(s.fail||s.action?count(s.fail,'fail')+' and '+count(s.action,'action')+' recorded.':s.todo?'Checks against '+STANDARDS+'.':'All checks answered.')+'</p>'+btn(s.todo?'Continue audit':'Review evidence pack',s.todo?'audit':'audit-pack','','arrow'):'<p>Check an existing site against '+STANDARDS+' and make an evidence pack.</p>'+btn('Audit this site','audit','','check'))+'</div></section>';
 }
 
 /* ---------- evidence pack PDF ---------- */

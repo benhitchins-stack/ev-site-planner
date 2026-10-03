@@ -15,7 +15,7 @@ const {chromium}=require('playwright');
   const context=await browser.newContext({viewport:{width:1440,height:1040},locale:'en-GB',acceptDownloads:true});page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(r.url());});
 
   await page.goto(url+'/',{waitUntil:'networkidle'});
-  assert(await page.locator('.eh-hero').isVisible());await page.screenshot({path:path.join(output,'home-first-visit.png')});
+  assert(await page.locator('.eh-hero').isVisible());assert.match(await page.locator('#ehTitle').textContent(),/your EV site plans/);await page.screenshot({path:path.join(output,'home-first-visit.png')});
   await page.locator('[data-ev-action="example"]').first().click();await page.waitForFunction(()=>EVWorkspace.route()==='overview');
   await page.waitForFunction(()=>document.getElementById('evDashboardPlan')?.src.startsWith('data:image/png'));
   assert(await page.locator('#evEditTop').isHidden());assert.equal(await page.locator('.ev-build').count(),0);
@@ -38,7 +38,7 @@ const {chromium}=require('playwright');
   await page.screenshot({path:path.join(output,'home-returning-desktop.png')});
   assert.equal(await page.evaluate(()=>pack.workspace.drawing.symbols),'technical');
   pass('Returning Home shows the project to continue with its plan preview and start/open actions, and the selected drawing style survives reload');
-  for(const width of [1024,390,320]){
+  for(const width of [1024,768,390,320]){
    await page.setViewportSize({width,height:844});await page.evaluate(()=>EVWorkspace.go('home'));
    await page.screenshot({path:path.join(output,'home-'+width+'.png')});
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -46,10 +46,30 @@ const {chromium}=require('playwright');
    await page.locator('#wbDrawingTools > summary').click();
    const rect=await page.locator('.wb-display-options').boundingBox();assert(rect.x>=0&&rect.x+rect.width<=width,JSON.stringify(rect));
    await page.screenshot({path:path.join(output,'display-'+width+'.png')});await page.keyboard.press('Escape');
-   const top=await page.locator('#cv').boundingBox();assert(top.y<(width>700?170:230),String(top.y));
+   const top=await page.locator('#cv').boundingBox();assert(top.y<(width>1100?170:width>700?225:230),String(top.y));
+   if(width>700)assert.deepEqual(await page.evaluate(()=>{const strip=document.querySelector('.ev-toolstrip').getBoundingClientRect();return [...document.querySelectorAll('#catbar .cattab')].filter(t=>{const r=t.getBoundingClientRect();return !(r.width>0&&r.left>=strip.left&&r.right<=Math.min(strip.right,innerWidth));}).map(t=>t.textContent.trim());}),[],'All markup categories, including Notes, are visible without scrolling');
    await page.locator('#evInspectorToggle').click();
+   if(width>1000)assert(await page.evaluate(()=>[...document.querySelectorAll('#evPlanStrip .ev-btn')].every(b=>b.getBoundingClientRect().height<=44)),'Plan strip buttons stay on one line with the inspector open');
    if(width<=700){const short=await page.locator('#side').boundingBox();await page.locator('#evInspectorExpand').click();const tall=await page.locator('#side').boundingBox();assert(tall.height>short.height+80,JSON.stringify({width,short,tall}));assert(tall.y>top.y+35,JSON.stringify({width,top,short,tall}));await page.locator('#evInspectorExpand').click();}
    await page.screenshot({path:path.join(output,'inspector-'+width+'.png')});await page.locator('#evInspectorClose').click();
+   // Cable calculations on a plan of trenches lists the routes by what is sized, with a way forward, and no calc sheet to download.
+   await page.evaluate(()=>openCableCheck());await page.waitForSelector('#ccBackdrop.show');
+   const cc=await page.locator('#ccBody').innerText();assert.match(cc,/Sized in calculations/);assert.match(cc,/Not sized: groundworks, containment and other cable/);assert.doesNotMatch(cc,/No cable runs drawn yet/);
+   assert.equal(await page.locator('#ccBody [data-addswa]').count(),2);assert(await page.locator('#ccPdf').isDisabled());assert(await page.locator('#ccBody [data-ccdraw]').isVisible());
+   assert(await page.locator('#ccSupply .ccseg button.assumed').isVisible(),'Unrecorded earthing shows PME as assumed, not unselected');
+   await page.screenshot({path:path.join(output,'cable-calcs-'+width+'.png')});await page.locator('#ccClose').click();
+   // Every simulator shortcut opens Design lab > Charging day and runs it; the fallback supply is never shown as a green pass.
+   await page.evaluate(()=>openSim());await page.waitForSelector('#evpSimulationResult .evp-chart');
+   assert.equal(await page.evaluate(()=>EVWorkspace.route()),'planning');assert.equal(await page.locator('[data-evp-tab="charging"]').getAttribute('aria-current'),'page');
+   const lab=await page.evaluate(()=>{const svg=document.querySelector('.evp-chart'),box=document.getElementById('evpSimulationResult').getBoundingClientRect(),r=svg.getBoundingClientRect(),texts=[...svg.querySelectorAll('text')].map(t=>parseFloat(getComputedStyle(t).fontSize)*r.width/svg.viewBox.baseVal.width);return{inside:r.left>=box.left-1&&r.right<=box.right+1,minText:Math.min(...texts),legend:document.querySelector('.evp-legend').textContent,verdict:[...document.querySelectorAll('.evp-verdict.neutral')].map(e=>e.textContent).join(' | '),green:!!document.querySelector('.evp-verdict.ok'),pill:!!document.querySelector('#evpSrc-supplyKw .evp-evidence.assumed')};});
+   assert(lab.inside&&lab.minText>=11,JSON.stringify(lab));assert.match(lab.legend,/Other site demand.*With charging.*Assumed supply/);assert.match(lab.verdict,/Within assumed supply/);assert(!lab.green&&lab.pill,JSON.stringify(lab));
+   await page.screenshot({path:path.join(output,'charging-day-'+width+'.png')});
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   // The older amps dialog is no longer linked, but while its code remains its chart stays inside the dialog and marks the fallback supply.
+   await page.evaluate(()=>{EVWorkspace.go('markup');openLegacySim();});await page.waitForSelector('#simBackdrop.show #simCv');
+   const sim=await page.evaluate(()=>{const c=document.getElementById('simCv').getBoundingClientRect(),d=document.querySelector('#simBackdrop .wlc').getBoundingClientRect();return{inside:c.left>=d.left&&c.right<=d.right&&c.top>=d.top&&c.width>200,position:getComputedStyle(document.getElementById('simCv')).position,legend:document.getElementById('simLegend').textContent,chips:document.getElementById('simChips').textContent};});
+   assert(sim.inside&&sim.position==='static',JSON.stringify(sim));assert.match(sim.legend,/Assumed supply \d+ A/);assert.match(sim.chips,/\(assumed\).*within assumed supply/);
+   await page.screenshot({path:path.join(output,'simulator-'+width+'.png')});await page.locator('#simClose').click();
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   }
   pass('Drawing controls, Display menu and adjustable inspector fit tablet, 390px and 320px viewports');

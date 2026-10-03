@@ -128,6 +128,7 @@ header{display:flex;align-items:center;gap:12px;padding:calc(9px + env(safe-area
 .palx svg{width:15px;height:15px;}
 .tgroup{display:flex;align-items:center;gap:8px;font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--faint);font-weight:800;padding:15px 2px 8px;user-select:none;}
 .tgroup::after{content:"";flex:1;height:1px;background:var(--line2);}
+.tgnote{font-size:11.5px;line-height:1.4;color:var(--dim);margin:-2px 2px 8px;}
 .pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;}
 .tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:9px 5px 8px;border-radius:11px;border:1px solid var(--line);background:var(--panel2);color:var(--dim);transition:.12s;position:relative;min-height:64px;box-shadow:0 1px 2px rgba(16,24,40,.04);}
 .tool.on{background:var(--accent);color:var(--accentInk);border-color:var(--accent);box-shadow:0 1px 3px rgba(30,107,255,.35);}
@@ -144,7 +145,7 @@ header{display:flex;align-items:center;gap:12px;padding:calc(9px + env(safe-area
    linear-gradient(90deg,rgba(120,170,210,.12) 1px,transparent 1px) 0 0/135px 135px,
    radial-gradient(circle at 32% 18%,#12283A,#08111E 72%);overflow:hidden;}
 .cvwrap{flex:1;position:relative;min-height:0;}
-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
+#cvwrap canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;text-align:center;gap:10px;padding:28px;color:var(--stageDim);overflow:auto;overscroll-behavior:contain;}
 .empty .big{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;margin-bottom:2px;}
 .empty .big svg{width:27px;height:27px;color:var(--accent);}
@@ -562,10 +563,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .rx-foot{display:flex;align-items:center;gap:8px;padding:14px 18px;border-top:1px solid var(--line);}
 .rx-foot .hbtn{min-height:44px;padding:10px 18px;}
 @media (max-width:760px){
-  /* stack edit + preview and let the whole body scroll - keeps the footer buttons reachable on small phones */
-  .rx-body{flex-direction:column;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
-  .rx-edit{width:auto;border-right:none;border-bottom:1px solid var(--line);max-height:none;flex:none;overflow:visible;}
-  .rx-preview{flex:none;height:min(46vh,380px);min-height:240px;}
+  /* edit and preview stack at 700px and below through .ev-document-layout (workbench.css); keep the footer buttons reachable */
   .rx-foot{flex-wrap:wrap;}
 }
 
@@ -767,14 +765,14 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
   *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;scroll-behavior:auto !important;}
 }
 </style>
-<link rel="stylesheet" href="cdm-controls.css">
-<link rel="stylesheet" href="planning.css?v=f10019b7ce59">
+<link rel="stylesheet" href="cdm-controls.css?v=03d5ac71c14a">
+<link rel="stylesheet" href="planning.css?v=96426de4a2d4">
 <link rel="stylesheet" href="audit.css?v=5f828ce2fa79">
-<link rel="stylesheet" href="workspace.css?v=e545970d631e">
+<link rel="stylesheet" href="workspace.css?v=66145883475d">
 <link rel="stylesheet" href="home.css?v=f80227562a8f">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
-<link rel="stylesheet" href="design-preview.css?v=2155c1c5902d">
-<link rel="stylesheet" href="workbench.css?v=622e399a9a62">
+<link rel="stylesheet" href="design-preview.css?v=34a1b7c86509">
+<link rel="stylesheet" href="workbench.css?v=5da81644e577">
 <link rel="stylesheet" href="guides.css?v=825f8695c210">
 <link rel="stylesheet" href="help.css?v=e3e92be1193a">
 </head>
@@ -993,6 +991,17 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .walk-nav button:disabled{opacity:.35;}
 /* ---- cable check ---- */
 .ccsum{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+/* cable calculations with no sized runs: list the plan's routes by what is and is not sized */
+.ccempty p{font-size:13px;line-height:1.5;color:var(--ink);margin:0 0 6px;}
+.ccempty h3,.ccmore summary{font-size:12px;font-weight:750;color:var(--ink);margin:12px 0 6px;}
+.ccmore summary{cursor:pointer;min-height:32px;display:flex;align-items:center;}
+.ccnone{font-size:12px;color:var(--dim);padding:8px 12px;border:1px dashed var(--line2);border-radius:10px;}
+.ccnote{font-size:12px;line-height:1.5;color:var(--dim);margin:0 0 8px;}
+.ccother{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;margin-bottom:6px;}
+.ccother>div{flex:1;min-width:160px;}.ccother b{display:block;font-size:13px;color:var(--ink);}.ccother small{display:block;font-size:11.5px;color:var(--dim);margin-top:2px;}
+.ccother .ccbtn{height:auto;min-height:32px;padding:5px 12px;white-space:normal;text-align:left;}
+.ccacts{display:flex;justify-content:flex-start;margin-top:12px;}
+#ccPdf:disabled{opacity:.5;cursor:not-allowed;}
 .ccsum span{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:14px;border:1px solid var(--line);color:var(--dim);background:var(--panel);}
 .ccsum span i{width:8px;height:8px;border-radius:50%;flex:none;}
 .ccrow{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:7px;background:#fff;}
@@ -1015,6 +1024,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .ccseg button{height:26px;padding:0 9px;font-size:11px;font-weight:700;background:#fff;color:var(--dim);border-right:1px solid var(--line);border-radius:0;}
 .ccseg button:last-child{border-right:none;}
 .ccseg button.on{background:var(--accent);color:#fff;}
+/* earthing not recorded: the calculations run on PME, so that choice is shown as assumed rather than left blank */
+.ccseg button.assumed{background:#fff7e3;color:#825400;outline:1.5px dashed #c9971f;outline-offset:-3px;}
 .ccck{display:flex;gap:4px;flex-wrap:wrap;}
 .ccck span{font-size:10px;font-weight:750;padding:2.5px 8px;border-radius:10px;letter-spacing:.2px;}
 .ccck .ok{background:#E7F3EB;color:#1E6A39;}
@@ -1031,11 +1042,16 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .pdfpg{border:2px solid var(--line);border-radius:10px;padding:6px 6px 7px;cursor:pointer;display:flex;flex-direction:column;gap:5px;align-items:center;background:#fff;position:relative;}
 .pdfpg.on{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,107,255,.18);}
 .pdfpg.on::after{content:"\2713";position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;}
-.pdfpg canvas{position:static;inset:auto;width:100%;height:auto;touch-action:auto;border:1px solid var(--line);border-radius:6px;background:#fff;display:block;}
+.pdfpg canvas{width:100%;height:auto;touch-action:auto;border:1px solid var(--line);border-radius:6px;background:#fff;display:block;}
 .pdfpg span{font-size:11px;color:var(--dim);font-weight:650;}
 /* ---- single-line diagram viewer ---- */
 #sldWrap{overflow:auto;overscroll-behavior:contain;max-height:56vh;border:1px solid var(--line);border-radius:12px;background:#fff;}
-#sldWrap canvas{position:static;inset:auto;width:100%;height:auto;touch-action:auto;display:block;}
+#sldWrap canvas{width:100%;height:auto;touch-action:auto;display:block;}
+/* charging-day simulator: legend row above the load curve */
+.sim-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 8px;font-size:12px;line-height:1.3;color:#435867;}
+.sim-legend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.sim-legend i{display:inline-block;width:14px;height:10px;border-radius:2px;}
+.sim-legend i.ln{width:18px;height:0;border-radius:0;border-top:2px dashed;}
 @media (max-width:560px){ .walk-card h2{font-size:20px;} .walk-card{padding:16px;} }
 /* ---- calm chrome: header secondary actions are quiet ghosts; Export stays the one filled action ---- */
 header .hbtn:not(.primary):not(.cust){background:transparent;border-color:transparent;box-shadow:none;}
@@ -1183,7 +1199,7 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
 
 <div class="wlc-backdrop" id="simBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:760px">
-    <div class="wlc-head"><h2>Charging-day simulator<button type="button" class="ev-help-q" data-ev-help="dlm-plain" aria-label="Help: Load management" title="Load management">?</button></h2><p id="simSub">A day on this supply: background load plus car charging, in 15-minute steps. Drag the sliders; the curve, peak and finish time update live.</p></div>
+    <div class="wlc-head"><h2>Charging-day simulator<button type="button" class="ev-help-q" data-ev-help="dlm-plain" aria-label="Help: Load management" title="Load management">?</button></h2><p id="simSub">A day on the recorded or assumed supply: background load plus car charging, in 15-minute steps. Drag the sliders; the curve, peak and finish time update live.</p></div>
     <div id="simBody"></div>
     <div class="wlc-foot"><button class="hbtn" id="simClose">Close</button><div style="flex:1"></div><div style="font-size:10.5px;color:var(--faint)">Modelled at 230 V per phase · DLM floor 6 A · no diversity on charging</div></div>
   </div>
@@ -1450,9 +1466,9 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
       </div>
     </div>
     <div class="rx-foot">
-      <button class="hbtn" id="rxCancel">Cancel</button>
       <div style="flex:1"></div>
-      <button class="hbtn primary" id="rxExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span>Download PDF</span></button>
+      <button class="hbtn" id="rxCancel">Close</button>
+      <button class="hbtn primary" id="rxExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span>Download engineer pack</span></button>
     </div>
   </div>
 </div>
@@ -1861,7 +1877,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 <script>
 const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork only */
 </script>
-<script src="planning-core.js?v=cb034ae5f3b5"></script>
+<script src="planning-core.js?v=ea6a66f0faa3"></script>
 <script src="audit-core.js?v=32f77ebcea52"></script>
 <script src="cdm-controls.js?v=13bd9a78c313"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
@@ -2215,7 +2231,9 @@ function readiness(){
   checks.push(["Chargers placed", units.length>0]);
   checks.push(["Site name / address set", !!pack.name]);
   checks.push(["Scale set on every plan", ph.length>0 && ph.every(p=>p.scale&&p.scale.pxPerM)]);
-  if(routes.length) checks.push(["Every run has a length", ph.every(p=>p.items.filter(i=>i.type==="route"&&!SITE_ROUTE_KINDS.includes(i.kind)&&i.kind!=="__area").every(i=>routeLen(i,p)!=null))]);
+  if(routes.length) checks.push(["Every route has a length", ph.every(p=>p.items.filter(i=>i.type==="route"&&!SITE_ROUTE_KINDS.includes(i.kind)&&i.kind!=="__area").every(i=>routeLen(i,p)!=null))]);
+  /* trenches and ducts are groundworks: only SWA, Hi-Tuff and cable runs are sized, so a plan of trenches alone does not pass this */
+  if(routes.length){ let sized=false; try{ const rows=cableCheckData(); sized=rows.length>0&&rows.every(r=>r.st==="ok"||r.st==="warn"); }catch(_){ } checks.push(["Cable runs sized", sized, "calcs"]); }
   checks.push([pack.mode==="domestic"?"Main fuse recorded":"Supply rating recorded", !!(pack.mode==="domestic"?pack.mainFuse:(pack.supplyRating||pack.mainFuse))]);
   checks.push(["Earthing recorded", !!pack.earthing]);
   checks.push(["Compliance checklist started", ((pack.compliance||[]).length+(pack.complianceNA||[]).length)>0]);
@@ -2395,13 +2413,17 @@ function simSockets(){
 function simConfig(){
   const dom=pack.mode==="domestic";
   const sock=simSockets();
-  const cap=(dom?ampsFromSupply(pack.mainFuse):(ampsFromSupply(pack.supplyRating)||ampsFromSupply(pack.mainFuse)))||(dom?80:200);
+  const recorded=dom?ampsFromSupply(pack.mainFuse):(ampsFromSupply(pack.supplyRating)||ampsFromSupply(pack.mainFuse));
+  const fallback=dom?80:200, cap=recorded||fallback;
   let dlmDef=60;
   { const b=pack.photos.flatMap(p=>p.items.filter(i=>i.type==="arrayboard"))[0]; const cg=Object.values(pack.cloudGroups||{})[0];
     if(cg&&cg.limit) dlmDef=cg.limit; else if(b&&b.rating) dlmDef=b.rating; else dlmDef=Math.max(20,Math.round(cap*0.6)); }
   const s=(pack.sim&&typeof pack.sim==="object")?pack.sim:{};
   const cars=Math.max(1,Math.min(40, s.cars!=null?s.cars:(sock.length||(dom?1:4))));
-  return { dom, cap: s.cap!=null?s.cap:cap, cars,
+  /* where the supply cap came from: typed into this dialog, recorded in the site details, or the built-in fallback (never shown as a pass) */
+  const typed=s.cap!=null&&(s.capTyped||(!recorded&&+s.cap!==fallback));
+  const capSrc=typed?"typed":(recorded?"recorded":"fallback");
+  return { dom, cap: typed?+s.cap:cap, capSrc, cars,
     base: s.base!=null?s.base:(dom?4:Math.round(cap*0.35)),
     need: s.need!=null?s.need:(dom?40:30),
     dlm: s.dlm!=null?!!s.dlm:(sock.length>1||!dom),
@@ -7662,7 +7684,7 @@ function buildRail(){
     notes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 20l1.2-4.2L16.6 4.4a2.05 2.05 0 0 1 2.9 2.9L8.2 18.8z"/></svg>',
   };
   const T=(t,l,i)=>({k:t,h:tool_btn(t,l,i)});
-  const G=(label,tools)=>({label,tools:tools.filter(Boolean)});
+  const G=(label,tools,note)=>({label,tools:tools.filter(Boolean),note});
   const rt=(k)=>{ const d=ROUTE_DEFS[k]; return d?T("route:"+k, d.name, swb(d.color)):null; };
   const st=(k)=>{ const d=SITE_DEFS[k]; if(!d||(d.mode&&d.mode!==mode)) return null; return T("site:"+k, d.name, sic[k]||sic.tree); };
   const units=[]; for(const k in UNIT_DEFS){ if(k==="twin_ped") continue; if(UNIT_DEFS[k].mode && UNIT_DEFS[k].mode!==mode) continue; units.push(T("unit:"+k, UNIT_DEFS[k].short, unitMini(k))); }
@@ -7685,7 +7707,7 @@ function buildRail(){
         G("Protection devices",prot),
       ]},
       {id:"cabling",tab:"Cabling",full:"Cabling & containment",icon:cico.cabling,groups:[
-        G("Cables",[rt("run"),rt("swa"),rt("tails"),rt("earthcable"),rt("data")]),
+        G("Cables",[rt("run"),rt("swa"),rt("tails"),rt("earthcable"),rt("data")],"Run and SWA are sized in Cable calculations."),
         G("Containment",[rt("tray"),rt("mt2"),rt("basket"),rt("gully")]),
         G("Groundworks",[rt("trench"),T("mark:chamber","Insp. chamber",pinMini("IC","#8B5E34"))]),
       ]},
@@ -7715,7 +7737,7 @@ function buildRail(){
         G("Protection devices",prot),
       ]},
       {id:"cabling",tab:"Cabling",full:"Cabling & containment",icon:cico.cabling,groups:[
-        G("Cables",[rt("run"),rt("swa"),rt("hituff"),rt("tails"),rt("earthcable"),rt("data")]),
+        G("Cables",[rt("run"),rt("swa"),rt("hituff"),rt("tails"),rt("earthcable"),rt("data")],"Run, SWA and Hi-Tuff are sized in Cable calculations."),
         G("Containment",[rt("mt2"),rt("gully")]),
         G("Groundworks & ducting",[rt("duct"),rt("trench"),T("mark:chamber","Insp. chamber",pinMini("IC","#8B5E34"))]),
       ]},
@@ -7738,7 +7760,7 @@ function buildRail(){
   catbar.innerHTML=`<div class="ptools">`+edit.map(([t,l,i])=>`<button class="ptool" data-tool="${t}" title="${l}" aria-label="${l}">${i}</button>`).join("")+`</div>`
     +`<div class="catdiv"></div>`
     +cats.map(c=>`<button class="cattab" data-cat="${c.id}" title="${c.full}">${c.icon}<span>${c.tab}</span>${CHEV}<span class="cdot"></span></button>`).join("");
-  rail.innerHTML=`<div class="palscroll">`+cats.map(c=>`<div class="palsec" data-cat="${c.id}"><div class="palhead"><b>${c.full}</b><button class="palx" type="button" data-palclose title="Hide panel" aria-label="Hide panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>${c.groups.map(g=>`<div class="tgroup">${g.label}</div><div class="pgrid">${g.tools.map(t=>t.h).join("")}</div>`).join("")}</div>`).join("")+`</div>`;
+  rail.innerHTML=`<div class="palscroll">`+cats.map(c=>`<div class="palsec" data-cat="${c.id}"><div class="palhead"><b>${c.full}</b><button class="palx" type="button" data-palclose title="Hide panel" aria-label="Hide panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>${c.groups.map(g=>`<div class="tgroup">${g.label}</div>${g.note?`<div class="tgnote">${g.note}</div>`:""}<div class="pgrid">${g.tools.map(t=>t.h).join("")}</div>`).join("")}</div>`).join("")+`</div>`;
 
   catbar.querySelectorAll(".ptool").forEach(b=>{ b.onclick=()=>setTool(b.dataset.tool); });
   catbar.querySelectorAll(".cattab").forEach(b=>{ b.onclick=()=>{ const c=b.dataset.cat; if(palOpen&&palCat===c){ palOpen=false; } else { palCat=c; palOpen=true; } syncPalette(); }; });
@@ -9093,7 +9115,7 @@ function packPanel(){
     <div class="lab" style="margin-top:2px"><span style="color:var(--faint);font-size:10.5px">0</span><span style="color:var(--faint);font-size:10.5px">${lc.cap?lc.cap+' A supply':''}</span></div>
     <div class="sub" style="color:var(--dim);font-size:11px;line-height:1.45;margin-top:5px">${lc.msg}</div>
     ${(lc.cap&&lc.tot>lc.cap&&pack.mode!=="domestic")?`<button class="pbtn" id="fixArray" style="margin-top:8px;width:100%">⚡ Tag all AC chargers → DLM group A</button>`:''}
-    <button class="pbtn" id="openSim" style="margin-top:8px;width:100%">Charging-day simulator</button>
+    <button class="pbtn" id="openSim" style="margin-top:8px;width:100%">Model the charging day in Design lab</button>
   </div>`; })()}`;
   const cardCables=`${(()=>{ const rows=cableCheckData(); if(!rows.length) return ''; const n=s=>rows.filter(r=>r.st===s).length; const fail=n("fail"), warn=n("warn"), nolen=n("nolen"), tbc=n("tbc"), ok=n("ok"); const col=fail?"var(--warn)":(warn||nolen||tbc)?"#CE9E2E":"#4BA069"; const bits=[]; if(ok)bits.push(ok+" pass"); if(warn)bits.push(warn+" near limit"); if(fail)bits.push(fail+" failing"); if(nolen)bits.push(nolen+" incomplete"); if(tbc)bits.push(tbc+" type TBC"); return `<div class="card tally">
     <h3><span class="dot" style="background:${col}"></span>Cable calculations · ${rows.length} run${rows.length===1?'':'s'}${hintBtn('vd')}</h3>${hintBox('vd')}
@@ -9417,7 +9439,7 @@ function evalProject(){
     else{ s="ready"; why=["Load check and every sized run pass"+(warn?" · "+warn+" near a limit, worth a look":"")]; }
     S("verify",s,why,fail+nolen+tbc+(over?1:0)+(needEarth?1:0));
     if(fail) I("crit","verify",fail+" cable run"+(fail===1?"":"s")+" failing the checks","Capacity, volt drop, Zs or CPC is failing. Open the calculator and clear the failing checks before ordering cable.","fn:cablecheck");
-    if(over) I("crit","verify","Connected load over the supply rating","The connected charger load exceeds the supply. Group chargers under load management or review charger count and power.","stage:verify|flash:openSim");
+    if(over) I("crit","verify","Connected load over the supply rating","The connected charger load exceeds the supply. Group chargers under load management or review charger count and power.","fn:sim");
     if(tbc) I("adv","verify",tbc+" cable type"+(tbc===1?"":"s")+" to confirm","Pick the cable family and size on each run so the checks can complete.","fn:cablecheck");
     if(lc.units&&!lc.cap) I("adv","verify","Load check has no supply rating to test against","Set the main fuse"+(dom?"":" and supply rating")+" in the Survey stage to give the load check a capacity.","stage:survey|focus:mainFuse");
   }catch(_){ S("verify","none",[],0); }
@@ -9693,7 +9715,7 @@ function propsPanel(){
     const k=draftRoute.kind, d=ROUTE_DEFS[k]||ROUTE_DEFS.swa;
     const ptc=draftRoute.pts.length;
     const body=`<div class="prop">
-      <label>Cable type</label>
+      <label>Route type</label>
       <div class="seg grid3">${Object.keys(ROUTE_DEFS).filter(kk=>!ROUTE_DEFS[kk].mode||ROUTE_DEFS[kk].mode===(pack.mode==="domestic"?"domestic":"commercial")).map(kk=>`<button data-drk="${kk}" class="${k===kk?'on':''}">${ROUTE_DEFS[kk].short||ROUTE_DEFS[kk].name}</button>`).join("")}</div>
       <label>Run length (m)</label>
       <div class="seg ${draftRoute.kind==="tails"?'grid4':'grid5'}">${(draftRoute.kind==="tails"?[0.5,1,1.5,2,2.5,3,4,5]:[1,2,3,5,7,10,15,20,25,30]).map(v=>`<button data-dest="${v}" class="${draftRoute.manualLen===v?'on':''}">${v}m</button>`).join("")}</div>
@@ -10222,10 +10244,11 @@ function propsPanel(){
     </div>`;
   } else if(it.type==="route"){
     body=`<div class="prop">
-      <label>Cable type</label>
+      <label>Route type</label>
       <div class="seg grid3">${Object.keys(ROUTE_DEFS).filter(k=>k!=="__area"&&(k===it.kind||!ROUTE_DEFS[k].mode||ROUTE_DEFS[k].mode===(pack.mode==="domestic"?"domestic":"commercial"))).map(k=>`<button data-rk="${k}" class="${it.kind===k?'on':''}">${ROUTE_DEFS[k].short||ROUTE_DEFS[k].name}</button>`).join("")}</div>
       ${it.kind==="swa"?`<label>SWA marked as${hintBtn('swa')}</label>${hintBox('swa')}
       <div class="seg"><button data-swarole="" class="${!it.swaRole?'on':''}">SWA</button><button data-swarole="submain" class="${it.swaRole==='submain'?'on':''}">Sub-main</button><button data-swarole="supply" class="${it.swaRole==='supply'?'on':''}">Supply</button></div>`:''}
+      ${(it.kind==="trench"||it.kind==="duct")?ccThreadBlock(it):''}
       ${it.kind==="run"?`<div class="sub" style="color:var(--faint);font-size:11px">Route marked without a cable spec; the type is confirmed at survey / design. Swap to a specific cable above any time.</div>`:''}
       ${it.kind==="tails"?(()=>{ const tl=routeLen(it,activePhoto()); const fuse=ampsFromSupply(pack.mainFuse||pack.supplyRating); const over3=tl!=null&&tl>3.05; const __pp=activePhoto(); const endT=[it.pts[0],it.pts[it.pts.length-1]].map(q=>{ const e=itemById(__pp,routeEndpointAnchor(q)); return e?e.type:null; }); const feedsEV=endT.includes("evdb")||endT.includes("ipevdb"); const small=(!feedsEV&&(it.tmm===16||it.tmm===10)&&fuse&&fuse>80); return `<label>Conductors</label>
       <div class="seg">${[2,3,4,5].map(n=>`<button data-cores="${n}" class="${(it.cores||2)===n?'on':''}">×${n}</button>`).join("")}</div>
@@ -10369,7 +10392,7 @@ function propsPanel(){
   }
   return `<div class="card"><h3><span class="dot"></span>${typeName(it)}</h3>${body}${(LABELABLE.includes(it.type)||it.type==="park")?`<div class="prop"><label>Label size</label>${stepper("lsc",Math.round((it.labelScale||1)*100),"%")}<div class="sub" style="color:var(--faint);font-size:11px">Scales just the label; the ${it.type==="park"?"parking bay":"item graphic"} stays the same size.</div></div>`:''}${del}</div>`;
 }
-function typeName(it){ return it.type==="site"?((SITE_DEFS[it.kind]||{}).name||"Site feature"):it.type==="stamp"?"Callout stamp":it.type==="guide"?"Guide line":it.type==="unit"?"Charger":it.type==="evdb"?"EVDB":it.type==="ipevdb"?"IP rated EVDB":it.type==="ipbox"?"IP adaptable box":it.type==="henley"?"Henley blocks":it.type==="meter"?"Meter":it.type==="metercab"?"Meter cabinet":it.type==="gascab"?"Gas meter cabinet":it.type==="earthterm"?"Earth terminal":it.type==="cutout"?"Main fuse / cut-out":it.type==="isolator"?"Isolator":it.type==="consumerunit"?"Distribution board":it.type==="panelboard"?"Panel board":it.type==="garagesplit"?"Garage splitter":it.type==="connpoint"?"Connection point":it.type==="fusesaver"?"Load limiter":it.type==="mcb"?"MCB":it.type==="rcd"?"RCD":it.type==="din"?((DIN_DEFS[it.kind]||{}).name||"Protection device"):it.type==="customer"?"Onwards to fuse board":it.type==="feeder"?"Feeder pillar":it.type==="arrayboard"?"Load management board":it.type==="bay"?"Bay marking":it.type==="park"?"Parking":it.type==="route"?"Cable run":it.type==="mark"?(it.kind==="snag"?"Snag"+(it.n?" #"+it.n:""):"Marker"):it.type==="label"?"Label":it.type==="arrow"?"Arrow":"Box"; }
+function typeName(it){ return it.type==="site"?((SITE_DEFS[it.kind]||{}).name||"Site feature"):it.type==="stamp"?"Callout stamp":it.type==="guide"?"Guide line":it.type==="unit"?"Charger":it.type==="evdb"?"EVDB":it.type==="ipevdb"?"IP rated EVDB":it.type==="ipbox"?"IP adaptable box":it.type==="henley"?"Henley blocks":it.type==="meter"?"Meter":it.type==="metercab"?"Meter cabinet":it.type==="gascab"?"Gas meter cabinet":it.type==="earthterm"?"Earth terminal":it.type==="cutout"?"Main fuse / cut-out":it.type==="isolator"?"Isolator":it.type==="consumerunit"?"Distribution board":it.type==="panelboard"?"Panel board":it.type==="garagesplit"?"Garage splitter":it.type==="connpoint"?"Connection point":it.type==="fusesaver"?"Load limiter":it.type==="mcb"?"MCB":it.type==="rcd"?"RCD":it.type==="din"?((DIN_DEFS[it.kind]||{}).name||"Protection device"):it.type==="customer"?"Onwards to fuse board":it.type==="feeder"?"Feeder pillar":it.type==="arrayboard"?"Load management board":it.type==="bay"?"Bay marking":it.type==="park"?"Parking":it.type==="route"?((ROUTE_DEFS[it.kind]||{}).name||"Route"):it.type==="mark"?(it.kind==="snag"?"Snag"+(it.n?" #"+it.n:""):"Marker"):it.type==="label"?"Label":it.type==="arrow"?"Arrow":"Box"; }
 function stepper(id,val,suf){ return `<div class="stepper"><button data-step="${esc(id)}" data-dir="-1">−</button><div class="val" id="${esc(id)}_v">${val}${suf||''}</div><button data-step="${esc(id)}" data-dir="1">+</button></div>`; }
 
 function wireSide(){
@@ -11224,8 +11247,11 @@ function buildWebPack(){
 /* ============================================================ 2026 feature pack · behaviours ============================================================ */
 const commOpenSet=new Set();
 /* ---------- charging-day simulator ---------- */
-function openSim(){ document.getElementById("simBackdrop").classList.add("show"); renderSimShell(); }
-function simSave(cfg){ pack.sim={cars:cfg.cars, cap:cfg.cap, base:cfg.base, need:cfg.need, dlm:cfg.dlm?1:0, limit:cfg.limit, opOnly:cfg.opOnly?1:0, pDay:cfg.pDay, pNight:cfg.pNight, opS:cfg.opS, opE:cfg.opE}; try{ autosave(); }catch(_){ } }
+/* Design lab > Charging day is the single charging model. Every simulator shortcut opens it; it starts from the saved settings below (pack.sim) when its own are untouched.
+   The older amps dialog stays in the file, unlinked, until its removal and data migration (review F07 stage 3). */
+function openSim(){ if(window.EVPlanning&&EVPlanning.openCharging){ EVPlanning.openCharging(); return; } openLegacySim(); }
+function openLegacySim(){ document.getElementById("simBackdrop").classList.add("show"); renderSimShell(); const box=document.querySelector("#simBackdrop .wlc"); if(box) box.scrollTop=0; }
+function simSave(cfg){ pack.sim={cars:cfg.cars, ...(cfg.capSrc==="typed"?{cap:cfg.cap, capTyped:1}:{}), base:cfg.base, need:cfg.need, dlm:cfg.dlm?1:0, limit:cfg.limit, opOnly:cfg.opOnly?1:0, pDay:cfg.pDay, pNight:cfg.pNight, opS:cfg.opS, opE:cfg.opE}; try{ autosave(); }catch(_){ } }
 function simH2T(h){ const m=Math.round(h*60)%1440; return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"); }
 function simT2H(v){ const m=/^(\d{1,2}):(\d{2})$/.exec(v||""); return m?Math.min(24,(+m[1])+(+m[2])/60):null; }
 function simSlider(k,label,val,min,max,step){
@@ -11234,7 +11260,8 @@ function simSlider(k,label,val,min,max,step){
 function renderSimShell(){
   const body=document.getElementById("simBody"); const cfg=simConfig(); const dom=cfg.dom;
   body.innerHTML='<div id="simChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>'
-   +'<canvas id="simCv" style="width:100%;height:260px;border:1px solid var(--line);border-radius:12px;background:#0E1D2A;display:block"></canvas>'
+   +'<div id="simLegend" class="sim-legend" aria-hidden="true"></div>'
+   +'<canvas id="simCv" role="img" aria-label="Charging day load curve" style="width:100%;height:260px;border:1px solid var(--line);border-radius:12px;background:#fff;display:block"></canvas>'
    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;margin-top:8px">'
    +simSlider("cars","Cars charging",cfg.cars,1,dom?4:24,1)
    +simSlider("need","Charge needed per car",cfg.need,5,100,5)
@@ -11243,42 +11270,46 @@ function renderSimShell(){
    +'</div>'
    +'<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">'
    +'<div class="seg" id="simDlmSeg" style="flex:none"><button data-simdlm="1">Load management</button><button data-simdlm="0">Uncapped</button></div>'
-   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Supply <input id="simCap" type="number" min="20" max="1200" step="5" value="'+cfg.cap+'" style="width:76px;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;font:inherit"> A</label>'
+   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Supply <input id="simCap" type="number" min="20" max="1200" step="5" value="'+cfg.cap+'" style="width:76px;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;font:inherit"> A</label><span id="simCapSrc" style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none"></span>'
    +'<div id="simNote" style="flex:1;min-width:200px;font-size:11px;color:var(--dim);line-height:1.4"></div>'
    +'</div>'
    +'<div style="display:flex;gap:10px;align-items:center;margin-top:9px;flex-wrap:wrap">'
    +'<div class="seg" id="simOpSeg" style="flex:none"><button data-simop="0">Charge on arrival</button><button data-simop="1">Off-peak window only</button></div>'
-   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Day <input id="simPDay" type="number" min="0" max="99" step="0.5" value="'+cfg.pDay+'" style="width:60px;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;font:inherit"> p/kWh</label>'
-   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Off-peak <input id="simPNight" type="number" min="0" max="99" step="0.5" value="'+cfg.pNight+'" style="width:60px;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;font:inherit"> p/kWh</label>'
-   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Window <input id="simOpS" type="time" value="'+simH2T(cfg.opS)+'" style="padding:5px 6px;border:1px solid var(--line2);border-radius:8px;font:inherit"> to <input id="simOpE" type="time" value="'+simH2T(cfg.opE)+'" style="padding:5px 6px;border:1px solid var(--line2);border-radius:8px;font:inherit"></label>'
+   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Day <input id="simPDay" type="number" min="0" max="0.99" step="0.01" value="'+(cfg.pDay/100).toFixed(2)+'" style="width:68px;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;font:inherit"> \u00a3/kWh</label>'
+   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Off-peak <input id="simPNight" type="number" min="0" max="0.99" step="0.01" value="'+(cfg.pNight/100).toFixed(2)+'" style="width:68px;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;font:inherit"> \u00a3/kWh</label>'
+   +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);flex:none;font-weight:600">Window <input id="simOpS" type="time" step="900" value="'+simH2T(cfg.opS)+'" style="padding:5px 6px;border:1px solid var(--line2);border-radius:8px;font:inherit"> to <input id="simOpE" type="time" step="900" value="'+simH2T(cfg.opE)+'" style="padding:5px 6px;border:1px solid var(--line2);border-radius:8px;font:inherit"></label>'
    +'</div>'
    +'<div id="simCost" style="margin-top:9px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:11.5px;line-height:1.5;color:var(--ink)"></div>';
   body.querySelectorAll("[data-sims]").forEach(r=>{ r.oninput=()=>{ const c2=simConfig(); c2[r.dataset.sims]=parseFloat(r.value); simSave(c2); updateSim(false); }; });
   body.querySelectorAll("[data-simdlm]").forEach(b=>b.onclick=()=>{ const c2=simConfig(); c2.dlm=b.dataset.simdlm==="1"; simSave(c2); updateSim(true); });
-  const cap=document.getElementById("simCap"); if(cap) cap.onchange=()=>{ const c2=simConfig(); c2.cap=Math.max(20,parseFloat(cap.value)||c2.cap); simSave(c2); updateSim(false); };
+  const cap=document.getElementById("simCap"); if(cap) cap.onchange=()=>{ const c2=simConfig(); c2.cap=Math.max(20,parseFloat(cap.value)||c2.cap); c2.capSrc="typed"; simSave(c2); updateSim(false); };
+  body.addEventListener("click",e=>{ if(!e.target.closest("#simRecordSupply")) return; document.getElementById("simBackdrop").classList.remove("show"); if(window.EVWorkspace&&EVWorkspace.openSettings) EVWorkspace.openSettings("job"); else { packSec="job"; sideTab="pack"; setSideTab(); } const sd=document.getElementById("side"); if(sd) sd.classList.add("open"); renderSide(); setTimeout(()=>{ const f=document.getElementById(pack.mode==="domestic"?"mainFuse":"supplyRating")||document.getElementById("supplyRating"); if(f){ f.scrollIntoView({block:"center"}); f.focus(); } },80); });
   body.querySelectorAll("[data-simop]").forEach(b=>b.onclick=()=>{ const c2=simConfig(); c2.opOnly=b.dataset.simop==="1"; simSave(c2); updateSim(true); });
-  [["simPDay","pDay"],["simPNight","pNight"]].forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.onchange=()=>{ const c2=simConfig(); const v=parseFloat(el.value); if(isFinite(v)&&v>=0) c2[k]=v; simSave(c2); updateSim(false); }; });
+  [["simPDay","pDay"],["simPNight","pNight"]].forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.onchange=()=>{ const c2=simConfig(); const v=parseFloat(el.value); if(isFinite(v)&&v>=0) c2[k]=Math.round(v*1000)/10; simSave(c2); updateSim(false); }; });
   [["simOpS","opS"],["simOpE","opE"]].forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.onchange=()=>{ const c2=simConfig(); const v=simT2H(el.value); if(v!=null) c2[k]=v; simSave(c2); updateSim(false); }; });
   updateSim(true);
 }
 function updateSim(seg){
   const cfg=simConfig(); const res=runSim(cfg); const dom=cfg.dom;
   const set=(k,v)=>{ const el=document.getElementById("simv_"+k); if(el) el.textContent=v; };
-  set("cars",cfg.cars); set("need",cfg.need+" kWh"); set("base",cfg.base+(dom?" kW":" A")); set("limit",cfg.limit+" A");
-  const over=cfg.cap&&res.peak>cfg.cap;
+  const kw=a=>Math.round(a*230/100)/10;
+  set("cars",cfg.cars); set("need",cfg.need+" kWh"); set("base",dom?cfg.base+" kW":cfg.base+" A \u00b7 "+kw(cfg.base)+" kW"); set("limit",cfg.limit+" A \u00b7 "+kw(cfg.limit)+" kW");
+  const over=cfg.cap&&res.peak>cfg.cap, assumedCap=cfg.capSrc==="fallback";
+  const src=document.getElementById("simCapSrc");
+  if(src) src.innerHTML=assumedCap?'<span class="evp-pill evp-evidence assumed">Assumed</span><button type="button" id="simRecordSupply" class="evp-link">Record supply rating</button>':(cfg.capSrc==="recorded"?"from site details":"entered here");
   const fmtClock=h=>String(Math.floor(h)).padStart(2,"0")+":"+String(Math.round((h%1)*60)%60).padStart(2,"0");
   const finTxt=res.unfinished?(res.unfinished+" car"+(res.unfinished>1?"s":"")+" not full in 24 h"):(res.finClock!=null?("all full by "+fmtClock(res.finClock)):"-");
   const chip=(t,v,c)=>'<div style="flex:1;min-width:112px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px"><div style="font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--faint);font-weight:800">'+t+'</div><div style="font-size:14.5px;font-weight:750;color:'+(c||'var(--ink)')+'">'+v+'</div></div>';
   document.getElementById("simChips").innerHTML=
-    chip("Peak demand",res.peak+" A"+(cfg.cap?" of "+cfg.cap+" A":""), over?"var(--warn)":"var(--ok)")
-   +chip("Verdict", over?("over supply "+res.exceedH+" h"):"within supply", over?"var(--warn)":"var(--ok)")
+    chip("Peak demand",res.peak+" A"+(cfg.cap?" of "+cfg.cap+" A"+(assumedCap?" (assumed)":""):"")+" \u00b7 about "+kw(res.peak)+" kW", over?"var(--warn)":(assumedCap?"var(--ink)":"var(--ok)"))
+   +chip("Verdict", over?("over supply "+res.exceedH+" h"):(assumedCap?"within assumed supply":"within supply"), over?"var(--warn)":(assumedCap?"var(--ink)":"var(--ok)"))
    +chip("Charging",finTxt, res.unfinished?"#9A7A1A":"var(--ink)")
    +chip("Uncapped headroom",(res.uncappedMax!=null?res.uncappedMax+" \u00d7 32 A socket"+(res.uncappedMax===1?"":"s"):"-"),"var(--ink)")
    +chip("Electricity cost","\u00a3"+res.cost.toFixed(2)+"/day","var(--ink)");
   if(seg){ document.querySelectorAll("#simDlmSeg button").forEach(b=>b.classList.toggle("on",(b.dataset.simdlm==="1")===!!cfg.dlm)); document.querySelectorAll("#simOpSeg button").forEach(b=>b.classList.toggle("on",(b.dataset.simop==="1")===!!cfg.opOnly)); }
   const lim=document.querySelector('[data-sims="limit"]'); if(lim){ lim.disabled=!cfg.dlm; lim.style.opacity=cfg.dlm?"1":".4"; }
   const note=document.getElementById("simNote");
-  if(note) note.innerHTML=(dom?"Noon \u2192 noon, so the overnight charge shows as one curve. Grey = household; blue = with charging.":"Midnight \u2192 midnight; arrivals staggered 08:00\u201316:30. Grey = site load; blue = with charging.")+" "+(cfg.dlm?("<b>DLM shares "+cfg.limit+" A</b> across active cars (6 A floor; extra cars queue)."):"<b>Uncapped</b>: every car pulls full rate on arrival.")+(cfg.opOnly?" <b>Off-peak only</b>: charging waits for the window; cars that can't fill inside it show as not full.":"");
+  if(note) note.innerHTML=(dom?"Noon \u2192 noon, so the overnight charge shows as one curve.":"Midnight \u2192 midnight; arrivals staggered 08:00\u201316:30.")+" "+(cfg.dlm?("<b>DLM shares "+cfg.limit+" A</b> across active cars (6 A floor; extra cars queue)."):"<b>Uncapped</b>: every car pulls full rate on arrival.")+(cfg.opOnly?" <b>Off-peak only</b>: charging waits for the window; cars that can't fill inside it show as not full.":"");
   const costEl=document.getElementById("simCost");
   if(costEl){
     const kwh=res.kwh, allNight=kwh*cfg.pNight/100, share=kwh?Math.round(res.kwhOp/kwh*100):0;
@@ -11293,32 +11324,46 @@ function updateSim(seg){
   }
   drawSimChart(document.getElementById("simCv"),cfg,res);
 }
+/* chart colours shared by the canvas and the legend row above it (light panel, matching the SLD and Design lab charts) */
+function simColours(){
+  const v=(n,f)=>{ try{ return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||f; }catch(_){ return f; } };
+  return { ink:"#435867", grid:"rgba(67,88,103,.2)", charge:v("--accent","#2167e8"), chargeFill:"rgba(33,103,232,.32)", base:"rgba(101,121,138,.5)", supply:v("--ev-bad","#b0392f"), dlm:"#b7791f", offpeak:"rgba(46,160,96,.1)", offpeakKey:"rgba(46,160,96,.35)" };
+}
+function simLegend(cfg,dom){
+  const k=simColours(), sw=(bg,label)=>'<span><i style="background:'+bg+'"></i>'+label+'</span>', ln=(col,label)=>'<span><i class="ln" style="border-top-color:'+col+'"></i>'+label+'</span>';
+  return sw(k.base,dom?"Household load":"Site load")+sw(k.chargeFill,"With charging")
+   +(cfg.cap?ln(k.supply,(cfg.capSrc==="fallback"?"Assumed supply ":"Supply ")+cfg.cap+" A"):"")
+   +(cfg.dlm?ln(k.dlm,"DLM limit "+cfg.limit+" A (chargers)"):"")
+   +(cfg.opS!==cfg.opE?sw(k.offpeakKey,"Off-peak \u00a3"+(cfg.pNight/100).toFixed(2)+"/kWh"):"");
+}
 function drawSimChart(cv,cfg,res){
   if(!cv) return;
+  const leg=document.getElementById("simLegend"); if(leg) leg.innerHTML=simLegend(cfg,cfg.dom);
+  const k=simColours(); let font="Hanken Grotesk, sans-serif"; try{ font=getComputedStyle(cv).fontFamily||font; }catch(_){ }
   const W=cv.clientWidth||660, H=260; cv.width=W*2; cv.height=H*2;
   const c=cv.getContext("2d"); c.setTransform(2,0,0,2,0,0); c.clearRect(0,0,W,H);
-  const padL=42,padR=10,padT=18,padB=24, iw=W-padL-padR, ih=H-padT-padB;
+  const padL=44,padR=12,padT=22,padB=26, iw=W-padL-padR, ih=H-padT-padB;
   const maxY=Math.max(cfg.cap||0, res.peak, 40)*1.15;
   const X=i=>padL+iw*i/95, Y=v=>padT+ih*(1-Math.min(v,maxY)/maxY);
-  /* off-peak tariff band(s) behind everything */
+  /* off-peak tariff band(s) behind everything; the legend row names them */
   { const bands=[]; let run=null;
     for(let i=0;i<96;i++){ const op=simInOp(cfg,(res.T0+i*0.25)%24); if(op&&run==null) run=i; if(!op&&run!=null){ bands.push([run,i]); run=null; } }
     if(run!=null) bands.push([run,96]);
-    bands.forEach(([a,b],ix)=>{ const x0=padL+iw*a/96, x1=padL+iw*b/96; c.fillStyle="rgba(124,242,164,.09)"; c.fillRect(x0,padT,x1-x0,ih);
-      if(ix===0){ c.fillStyle="rgba(124,242,164,.8)"; c.font="9px 'Space Grotesk',ui-monospace,monospace"; c.textAlign="left"; c.fillText("off-peak "+(Math.round(cfg.pNight*10)/10)+"p", x0+4, padT+10); } });
+    bands.forEach(([a,b])=>{ const x0=padL+iw*a/96, x1=padL+iw*b/96; c.fillStyle=k.offpeak; c.fillRect(x0,padT,x1-x0,ih); });
   }
-  c.font="9.5px 'Space Grotesk',ui-monospace,monospace"; c.textAlign="center";
-  for(let hh=0;hh<=24;hh+=4){ const x=X(Math.min(95,hh*4)); c.strokeStyle="rgba(150,180,205,.14)"; c.beginPath(); c.moveTo(x,padT); c.lineTo(x,padT+ih); c.stroke(); c.fillStyle="#8FA3B3"; c.fillText(String((res.T0+hh)%24).padStart(2,"0")+":00", x, H-8); }
+  c.font="11px "+font; c.lineWidth=1; c.textAlign="center";
+  const hourStep=W<420?6:4;
+  for(let hh=0;hh<=24;hh+=hourStep){ const x=X(Math.min(95,hh*4)); c.strokeStyle=k.grid; c.beginPath(); c.moveTo(x,padT); c.lineTo(x,padT+ih); c.stroke(); c.fillStyle=k.ink; c.fillText(String((res.T0+hh)%24).padStart(2,"0")+":00", Math.min(W-17,x), H-8); }
   c.textAlign="right";
   const stepY=maxY>400?200:(maxY>240?100:(maxY>120?50:20));
-  for(let a=0;a<=maxY;a+=stepY){ const y=Y(a); c.fillStyle="#8FA3B3"; c.fillText(Math.round(a), padL-6, y+3); c.strokeStyle="rgba(150,180,205,.09)"; c.beginPath(); c.moveTo(padL,y); c.lineTo(W-padR,y); c.stroke(); }
+  for(let a=0;a<=maxY;a+=stepY){ const y=Y(a); c.fillStyle=k.ink; c.fillText(Math.round(a), padL-6, y+4); c.strokeStyle=k.grid; c.beginPath(); c.moveTo(padL,y); c.lineTo(W-padR,y); c.stroke(); }
   const area=(vals,fill)=>{ c.beginPath(); c.moveTo(X(0),Y(0)); for(let i=0;i<96;i++) c.lineTo(X(i),Y(vals[i])); c.lineTo(X(95),Y(0)); c.closePath(); c.fillStyle=fill; c.fill(); };
-  area(res.tot,"rgba(30,107,255,.5)");
-  area(res.base,"rgba(157,170,176,.42)");
-  c.beginPath(); for(let i=0;i<96;i++){ const x=X(i),y=Y(res.tot[i]); i?c.lineTo(x,y):c.moveTo(x,y); } c.strokeStyle="#5D9BFF"; c.lineWidth=1.6; c.stroke();
-  if(cfg.cap){ const yc=Y(cfg.cap); c.setLineDash([6,4]); c.strokeStyle="#FF5F56"; c.lineWidth=1.4; c.beginPath(); c.moveTo(padL,yc); c.lineTo(W-padR,yc); c.stroke(); c.setLineDash([]); c.fillStyle="#FF8078"; c.textAlign="left"; c.fillText("supply "+cfg.cap+" A", padL+4, yc-4); }
-  if(cfg.dlm){ const yl=Y(cfg.limit); c.setLineDash([3,4]); c.strokeStyle="#E0B341"; c.lineWidth=1.2; c.beginPath(); c.moveTo(padL,yl); c.lineTo(W-padR,yl); c.stroke(); c.setLineDash([]); c.fillStyle="#E0B341"; c.textAlign="left"; c.fillText("DLM limit "+cfg.limit+" A (chargers)", padL+4, yl-4); }
-  c.fillStyle="#9DAAB0"; c.textAlign="left"; c.fillText("amps", padL+4, padT-6);
+  area(res.tot,k.chargeFill);
+  area(res.base,k.base);
+  c.beginPath(); for(let i=0;i<96;i++){ const x=X(i),y=Y(res.tot[i]); i?c.lineTo(x,y):c.moveTo(x,y); } c.strokeStyle=k.charge; c.lineWidth=1.8; c.stroke();
+  if(cfg.cap){ const yc=Y(cfg.cap); c.setLineDash([6,4]); c.strokeStyle=k.supply; c.lineWidth=1.6; c.beginPath(); c.moveTo(padL,yc); c.lineTo(W-padR,yc); c.stroke(); c.setLineDash([]); c.fillStyle=k.supply; c.textAlign="right"; c.fillText((cfg.capSrc==="fallback"?"assumed supply ":"supply ")+cfg.cap+" A", W-padR-2, Math.max(padT+10,yc-5)); }
+  if(cfg.dlm){ const yl=Y(cfg.limit); c.setLineDash([3,4]); c.strokeStyle=k.dlm; c.lineWidth=1.6; c.beginPath(); c.moveTo(padL,yl); c.lineTo(W-padR,yl); c.stroke(); c.setLineDash([]); }
+  c.fillStyle=k.ink; c.textAlign="left"; c.fillText("Amps", 6, padT-8);
 }
 /* ---------- earthing & protection wizard ---------- */
 let earthSel=null;
@@ -12134,8 +12179,8 @@ function genLetter(){ const t=loadTpls(); return fillTemplate(t[pack.outcome]||t
 /* ---------- review & export modal ---------- */
 let rxBlobUrl=null, rxBuildToken=0, rxDebounce=null, rxKeyHandler=null, rxMode="office", rxEmailDirty=false, rxTplEditing=false;
 const RX_COPY={
-  office:{ title:"Review &amp; export", sub:"Review the contents of the engineer pack before downloading.", sumLabel:"Cover summary", sumOpt:"optional", sumPh:"Site context, access notes or a contact for arrival (optional)", export:"Download PDF" },
-  customer:{ title:"Client copy", sub:"Review the client plan and draft email before downloading or copying.", sumLabel:"Letter to the client", sumOpt:"Draft from project details; edit before issue", sumPh:"Review the letter included in the client plan", export:"Download client PDF" }
+  office:{ title:"Review &amp; export", sub:"Review the contents of the engineer pack before downloading.", sumLabel:"Cover summary", sumOpt:"optional", sumPh:"Site context, access notes or a contact for arrival (optional)", export:"Download engineer pack" },
+  customer:{ title:"Client copy", sub:"Review the client plan and draft email before downloading or copying.", sumLabel:"Letter to the client", sumOpt:"Draft from project details; edit before issue", sumPh:"Review the letter included in the client plan", export:"Download client pack" }
 };
 function rxComputeLengths(){
   const incl = pack.photos.filter(p=>p.includeInPdf!==false);
@@ -13425,11 +13470,12 @@ function renderCcSupply(){
   const el=document.getElementById("ccSupply"); if(!el) return;
   const zeDef=ccZeDefault();
   el.innerHTML=`<div class="ccsupp">
-    <label>Earthing</label><div class="ccseg">${[["PME (TN-C-S)","PME"],["TN-S","TN-S"],["TT","TT"]].map(([v,l])=>`<button data-ccearth="${v}" class="${(pack.earthing||"")===v?'on':''}">${l}</button>`).join("")}</div>
+    <label>Earthing</label><div class="ccseg">${[["PME (TN-C-S)","PME"],["TN-S","TN-S"],["TT","TT"]].map(([v,l])=>{ const assumed=!pack.earthing&&v==="PME (TN-C-S)"; return `<button data-ccearth="${v}" class="${(pack.earthing||"")===v?'on':(assumed?'assumed':'')}"${assumed?' title="Assumed until the earthing arrangement is recorded"':''}>${l}${assumed?' (assumed)':''}</button>`; }).join("")}</div>
     ${pack.earthing==="TT"
       ?`<label>Electrode RA <input id="ccra" inputmode="decimal" value="${esc(pack.ra||'')}" placeholder="e.g. 120"> \u03a9</label>`
       :`<label>Ze / Zdb <input id="ccze" inputmode="decimal" value="${esc(pack.ze||'')}" placeholder="${zeDef!=null?zeDef:'0.35'}"> \u03a9</label>`}
-    <span style="font-size:10.5px;color:var(--faint);line-height:1.4;flex:1;min-width:150px">${pack.earthing==="TT"?"TT: disconnection is by the 30 mA RCD; keep the electrode at 200 \u03a9 or less.":(parseFloat(pack.ze)>0?"Using your measured value at the origin.":"No measured Ze: assuming "+(zeDef!=null?zeDef:0.35)+" \u03a9 for "+(pack.earthing||"PME")+". Enter the measured value when you have it.")}</span>
+    ${(pack.earthing!=="TT"&&!(parseFloat(pack.ze)>0))||!pack.earthing?'<span class="evp-pill evp-evidence assumed">Assumed</span>':''}
+    <span style="font-size:10.5px;color:var(--faint);line-height:1.4;flex:1;min-width:150px">${pack.earthing==="TT"?"TT: disconnection is by the 30 mA RCD; keep the electrode at 200 \u03a9 or less.":(!pack.earthing?"Earthing not recorded: the checks assume PME. Pick the arrangement when it is confirmed. ":"")+(pack.earthing==="TT"?"":(parseFloat(pack.ze)>0?"Using your measured value at the origin.":"No measured Ze: assuming "+(zeDef!=null?zeDef:0.35)+" \u03a9 for "+(pack.earthing||"PME")+". Enter the measured value when you have it."))}</span>
   </div>`;
   el.querySelectorAll("[data-ccearth]").forEach(b=>b.onclick=()=>{ pack.earthing=b.dataset.ccearth; renderCcSupply(); renderCableCheck(); renderSide(); autosave(); });
   const ze=el.querySelector("#ccze"); if(ze) ze.onchange=()=>{ pack.ze=ze.value.trim(); renderCcSupply(); renderCableCheck(); renderSide(); autosave(); };
@@ -13482,18 +13528,67 @@ function ccRow(r){
     ${det}
   </div>`;
 }
+/* routes on the plans split by what the calculations size: run, SWA and Hi-Tuff are sized; groundworks, containment and other cable are not */
+const CC_SIZED_KINDS=["swa","hituff","run"];
+function ccRouteGroups(){
+  const sized=[], other=[];
+  pack.photos.forEach(p=>p.items.forEach(it=>{
+    if(it.type!=="route"||!optVisible(it)||it.kind==="__area"||SITE_ROUTE_KINDS.includes(it.kind)) return;
+    (CC_SIZED_KINDS.includes(it.kind)?sized:other).push({p,it,L:routeLen(it,p)});
+  }));
+  return {sized, other};
+}
+function ccThreadCount(conduit){ let n=0; pack.photos.forEach(p=>p.items.forEach(i=>{ if(i.type==="route"&&i.id!==conduit.id&&Array.isArray(i.pts)&&i.pts.some(q=>q&&q.viaId===conduit.id)) n++; })); return n; }
+function ccConduitWord(it){ return it.kind==="duct"?"duct":"trench"; }
+function ccThreadBlock(it){
+  const n=ccThreadCount(it);
+  return `<label>Cables through this ${ccConduitWord(it)}</label><div class="sub" style="font-size:12px;color:var(--dim);line-height:1.45">${n?n+" cable run"+(n===1?"":"s")+" threaded through it.":"No cable threaded through it yet. Trenches and ducts are groundworks and are not sized in Cable calculations."}</div><button class="pbtn" data-addswa="${esc(it.id)}" style="margin-top:6px;width:100%">Add SWA run through this ${ccConduitWord(it)}</button>`;
+}
+const CC_NOT_SIZED_NOTE="Trenches and ducts are groundworks. Draw a cable run and tap the trench end cap to thread it through, and it is sized here.";
+function ccOtherRows(list){
+  return list.map(({p,it,L})=>{ const d=ROUTE_DEFS[it.kind]||{name:"Route"}; const thread=it.kind==="trench"||it.kind==="duct"; const n=thread?ccThreadCount(it):0;
+    return `<div class="ccother"><div><b>${esc(d.name)}${(it.note||"").trim()?" \u00b7 "+esc(it.note.trim()):""}</b><small>${esc(p.name||"Plan")}${L!=null?" \u00b7 "+L+" m":" \u00b7 no length yet"}${thread&&n?" \u00b7 "+n+" cable"+(n===1?"":"s")+" threaded":""}</small></div>${thread?`<button class="ccbtn" data-addswa="${esc(it.id)}">Add SWA run through this ${ccConduitWord(it)}</button>`:""}</div>`; }).join("");
+}
 function renderCableCheck(){
   const rows=cableCheckData();
   const body=document.getElementById("ccBody"); if(!body) return;
   const keep=body.scrollTop;
   const cnt=s=>rows.filter(r=>r.st===s).length;
   const chips=[["#267A43",cnt("ok"),"pass"],["#CE9E2E",cnt("warn"),"near limit"],["#CC382E",cnt("fail"),"failing"],["#8A98A8",cnt("nolen"),"incomplete"],["#8A98A8",cnt("tbc"),"type TBC"]].filter(c=>c[1]>0);
+  const groups=ccRouteGroups();
+  const otherHead=`Not sized: groundworks, containment and other cable`;
   body.innerHTML = (!rows.length
-    ? '<div style="color:var(--faint);font-size:13px;padding:6px 2px">No cable runs drawn yet. Draw SWA / Hi-Tuff runs (or generic cable runs) on the plans and every circuit is checked here: capacity after derating, volt drop, earth-fault loop and CPC.</div>'
-    : `<div class="ccsum">${chips.map(c=>`<span><i style="background:${c[0]}"></i>${c[1]} ${c[2]}</span>`).join("")}</div>` + rows.map(ccRow).join(""));
+    ? `<div class="ccempty"><p id="ccEmptyNote"><b>No sized cable runs yet.</b> ${groups.other.length?"The routes on the plans are listed below. ":""}SWA, Hi-Tuff and cable runs are sized here: capacity after derating, volt drop, earth-fault loop and CPC.</p>
+       <h3>Sized in calculations</h3><div class="ccnone">None drawn yet.</div>
+       ${groups.other.length?`<h3>${otherHead}</h3><p class="ccnote">${CC_NOT_SIZED_NOTE}</p>${ccOtherRows(groups.other)}`:""}
+       <div class="ccacts"><button class="hbtn primary" data-ccdraw>Draw a cable run</button></div></div>`
+    : `<div class="ccsum">${chips.map(c=>`<span><i style="background:${c[0]}"></i>${c[1]} ${c[2]}</span>`).join("")}</div>` + rows.map(ccRow).join("")
+      + (groups.other.length?`<details class="ccmore"><summary>${otherHead} (${groups.other.length})</summary><p class="ccnote">${CC_NOT_SIZED_NOTE}</p>${ccOtherRows(groups.other)}</details>`:""));
   const fb=document.getElementById("ccFixAll"); if(fb){ const anyFix=rows.some(r=>r.fc&&!r.fc.tbc&&(r.fc.suggest||r.fc.sugIn)); fb.style.display=anyFix?"":"none"; }
+  const pdf=document.getElementById("ccPdf");
+  if(pdf){ pdf.disabled=!rows.length; pdf.title=rows.length?"":"No sized cable runs yet. "+CC_NOT_SIZED_NOTE; if(rows.length) pdf.removeAttribute("aria-describedby"); else pdf.setAttribute("aria-describedby","ccEmptyNote"); }
   body.scrollTop=keep;
 }
+/* a new SWA route threaded end to end through a trench or duct: points tagged viaId stay live-linked through syncThreadedRoutes, so the length follows the conduit */
+function addSwaThrough(conduitId){
+  let p=null, cd=null;
+  for(const ph of pack.photos){ const it=ph.items.find(i=>i.id===conduitId); if(it){ p=ph; cd=it; break; } }
+  if(!p||!cd||!Array.isArray(cd.pts)||cd.pts.length<2){ toast("That trench or duct could not be found"); return null; }
+  try{ finishDrawingContext(); }catch(_){ }
+  pushHist();
+  const abs=displayPtsForRoute(cd,p).map(q=>rpt(q,p));
+  const scaled=!!(p.scale&&Number(p.scale.pxPerM)>0);
+  const id=uid();
+  p.items.push({id, type:"route", kind:"swa", pts:abs.map(q=>({x:q.x,y:q.y,viaId:cd.id})), manualLen:scaled?null:(cd.manualLen!=null?cd.manualLen:null), varMode:"auto", note:"", hideLabel:false, ductSize:null, ...(cd.option?{option:cd.option}:{})});
+  document.getElementById("ccBackdrop").classList.remove("show");
+  pack.active=p.id; sel=id; selSet=new Set([id]); setTool("select"); sideTab="props"; setSideTab();
+  const sd=document.getElementById("side"); if(sd){ sd.classList.remove("hidedesk"); sd.classList.add("open"); }
+  draw(); renderSide(); autosave();
+  const L=routeLen(p.items[p.items.length-1],p);
+  toast("SWA run added through the "+ccConduitWord(cd)+(L!=null?" \u00b7 "+L+" m":"")+". It is now sized in Cable calculations.");
+  return id;
+}
+window.addSwaThrough=addSwaThrough;
 function openCableCheck(focusId){
   if(focusId) ccOpen.add(focusId);
   renderCcSupply(); renderCableCheck();
@@ -13510,6 +13605,8 @@ function openCableCheck(focusId){
   const pv=s=>{ const i=s.indexOf(":"); return [s.slice(0,i), s.slice(i+1)]; };
   body.addEventListener("click",e=>{
     let b;
+    if(e.target.closest("[data-ccdraw]")){ bd.classList.remove("show"); try{ finishDrawingContext(); }catch(_){ } palCat="cabling"; palOpen=true; syncPalette(); setTool("route:swa"); toast("Tap the plan to draw the SWA run; tap a trench end cap to thread it through"); return; }
+    if(b=e.target.closest("[data-addswa]")){ addSwaThrough(b.dataset.addswa); return; }
     if(b=e.target.closest("[data-cca]")){ const r=findRun(b.dataset.cca); if(r){ const seq=[16,20,25,32,40,50,63]; r.it.vdAmps=seq[(seq.indexOf(r.it.vdAmps||32)+1)%seq.length]||32; refresh(); } return; }
     if(b=e.target.closest("[data-ccph]")){ const r=findRun(b.dataset.ccph); if(r){ r.it.vdPh=(r.it.vdPh===3?1:3); refresh(); } return; }
     if(b=e.target.closest("[data-ccc]")){ const r=findRun(b.dataset.ccc); if(r){ const fam=ccFamOf(r.it); const seq=fam?CC_FAMS[fam].sizes:[2.5,4,6,10,16,25]; const ix=seq.indexOf(+(r.it.vdCsa||6)); r.it.vdCsa=seq[(ix+1)%seq.length]||seq[0]; refresh(); } return; }
@@ -13524,7 +13621,7 @@ function openCableCheck(focusId){
   const fa=document.getElementById("ccFixAll");
   if(fa) fa.onclick=()=>{ const rows=cableCheckData().filter(r=>r.fc&&!r.fc.tbc&&(r.fc.suggest||r.fc.sugIn)); if(!rows.length) return; pushHist(); rows.forEach(r=>{ if(r.fc.suggest) r.it.vdCsa=r.fc.suggest; if(r.fc.sugIn) r.it.ccIn=r.fc.sugIn; }); toast(rows.length+" run"+(rows.length===1?"":"s")+" updated"); renderCableCheck(); renderSide(); autosave(); };
   const cp=document.getElementById("ccPdf");
-  if(cp) cp.onclick=()=>{ if(typeof window.jspdf==="undefined"){ toast("PDF engine unavailable \u00b7 reload and try again"); return; } try{ buildCalcPdf(); }catch(err){ console.error(err); toast("Could not build the calc sheet"); } };
+  if(cp) cp.onclick=()=>{ if(!cableCheckData().length) return; if(typeof window.jspdf==="undefined"){ toast("PDF engine unavailable \u00b7 reload and try again"); return; } try{ buildCalcPdf(); }catch(err){ console.error(err); toast("Could not build the calc sheet"); } };
 })();
 /* ---------- construction phase plan template PDF (CDM 2015, proportionate small-site format) ---------- */
 async function exportCppTemplate(){
@@ -13655,7 +13752,7 @@ function buildCalcPdf(){
   doc.save((pack.name||"pack").replace(/[^\w\-]+/g,"_")+"_cable-calcs.pdf");
 }
 { const b=document.getElementById("btnCalcPdf");
-  if(b) b.onclick=()=>{ if(typeof window.jspdf==="undefined"){ toast("PDF engine unavailable \u00b7 reload and try again"); return; } if(!cableCheckData().length){ toast("No cable runs drawn yet"); return; } try{ buildCalcPdf(); }catch(err){ console.error(err); toast("Could not build the calc sheet"); } }; }
+  if(b) b.onclick=()=>{ if(typeof window.jspdf==="undefined"){ toast("PDF engine unavailable \u00b7 reload and try again"); return; } if(!cableCheckData().length){ toast("No sized cable runs yet. Trenches and ducts are groundworks: add an SWA, Hi-Tuff or cable run to size it."); openCableCheck(); return; } try{ buildCalcPdf(); }catch(err){ console.error(err); toast("Could not build the calc sheet"); } }; }
 
 /* ============================================================ SINGLE-LINE DIAGRAM ============================================================ */
 let _sldCanvas=null;
@@ -14289,6 +14386,7 @@ window.openPhotoEditor=openPhotoEditor;
 (function(){
   const sc=document.getElementById("sideScroll"); if(!sc) return;
   sc.addEventListener("click", e=>{
+    const asw=e.target.closest("[data-addswa]"); if(asw){ addSwaThrough(asw.dataset.addswa); return; }
     const ps=e.target.closest("[data-pscheme]"); if(ps){ pack.unitScheme=ps.dataset.pscheme; buildRail(); renderSide(); draw(); autosave(); return; }
     const p3=e.target.closest("[data-p3d]"); if(p3){ pack.unit3d=p3.dataset.p3d==="1"; pack.unit3dSet=1; renderSide(); draw(); autosave(); return; }
     const pdz=e.target.closest("[data-pdesign]"); if(pdz){ pack.unitDesign=pdz.dataset.pdesign; buildRail(); renderSide(); draw(); autosave(); return; }
@@ -14920,7 +15018,7 @@ function quoteDrift(){
   if(!bd||!inp||!list) return;
   let items=[], top=[], selIx=0, q="";
   const MANUAL=[
-    {t:"Charging-day simulator",s:"A day on this supply in 15-minute steps",g:"Checks",k:"load demand curve dlm peak",run:()=>openSim()},
+    {t:"Charging day (Design lab)",s:"Chargers, supply, arrivals and tariffs in five-minute steps",g:"Checks",k:"charging simulator load demand curve dlm peak tariff queue",run:()=>openSim()},
     {t:"Earthing & protection wizard",s:"PEN, TT island and device pathway",g:"Checks",k:"earth rod pme tt open-pen rcd",run:()=>openEarthWiz()},
     {t:"3D showroom",s:"View and rotate charger and site equipment models",g:"Visualise",k:"3d model spin rotate zoom viewer showroom charger kit feeder pillar substation bollard sign lamp preview",run:()=>{ if(window.openCharger3D) window.openCharger3D(); }},
     {t:"Job programme",s:"Editable phase timeline from the markup",g:"Documents",k:"gantt schedule timeline phases days",run:()=>openProgramme()},
@@ -16070,13 +16168,13 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 <script src="help.js?v=a192c7e03b65"></script>
 <script src="profile.js?v=98262829fd40"></script>
 <link rel="ev-report-fonts" href="report-fonts.js?v=27498ae89589">
-<script src="home.js?v=2a86ae2c36c8"></script>
-<script src="report-viewer.js?v=2e43693ae9ac"></script>
+<script src="home.js?v=750aedf37741"></script>
+<script src="report-viewer.js?v=de369053574e"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=5d968ca13468"></script>
-<script src="delivery.js?v=6b0e071c3fb4"></script>
-<script src="workbench.js?v=ca34f1a9feb8"></script>
-<script src="planning.js?v=0836ed68053c"></script>
-<script src="audit.js?v=02d2399509ad"></script>
+<script src="workspace.js?v=0894a9c7c71e"></script>
+<script src="delivery.js?v=4b35fd6aebc2"></script>
+<script src="workbench.js?v=99f81f06283d"></script>
+<script src="planning.js?v=633df36444ef"></script>
+<script src="audit.js?v=fb40353c10b1"></script>
 </body>
 </html>

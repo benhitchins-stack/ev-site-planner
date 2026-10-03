@@ -96,6 +96,13 @@ const {chromium} = require('playwright');
 
     await page.locator('.ev-brand').click();await page.waitForFunction(()=>EVWorkspace.route()==='home');
     await page.locator('.eh-home [data-ev-action="example"]').click();await page.waitForFunction(()=>pack.photos.length===1&&EVWorkspace.route()==='overview');
+    assert.equal((await page.locator('.eva-overview-card .ev-card-head .ev-pill').textContent()).trim(),'Not started');
+    for(const route of ['overview','audit']){
+     await page.evaluate(r=>EVWorkspace.go(r),route);await page.waitForFunction(r=>EVWorkspace.route()===r,route);
+     const wide=await page.evaluate(()=>[...document.querySelectorAll('#evScreen svg')].filter(s=>s.getBoundingClientRect().width>64).map(s=>s.parentElement.className));
+     assert.deepEqual(wide,[],route+' shows no oversized icons');
+    }
+    pass('Card icons stay icon-sized on Overview and Site audit, and an unstarted audit says Not started');
     await page.locator('[data-ev-route="markup"]').click();
     await page.screenshot({path:path.join(artifacts,'markup-desktop.png')});
     await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview canvas');

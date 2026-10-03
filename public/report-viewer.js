@@ -12,7 +12,7 @@ function mount(root,{canvasId=''}={}){
   if(!pdf||disposed)return;page=Math.max(1,Math.min(pdf.numPages,n));const token=++renderVersion,doc=pdf;
   if(task){task.cancel();task=null;}buttons();counter.textContent='Page '+page+' of '+doc.numPages;
   try{const pg=await doc.getPage(page);if(token!==renderVersion||disposed)return;const raw=pg.getViewport({scale:1}),box=canvasBox.clientWidth-24,target=box>0?Math.min(3000,Math.max(800,box*zoom/100*(window.devicePixelRatio||1))):1500,vp=pg.getViewport({scale:target/raw.width}),cn=document.createElement('canvas');cn.width=Math.ceil(vp.width);cn.height=Math.ceil(vp.height);cn.setAttribute('role','img');cn.setAttribute('aria-label','PDF preview page '+page+' of '+doc.numPages);const render=pg.render({canvasContext:cn.getContext('2d'),viewport:vp});task=render;await render.promise;if(token!==renderVersion||disposed)return;task=null;canvasBox.replaceChildren(cn);canvasBox.scrollTop=0;}
-  catch(err){if(token===renderVersion&&!disposed&&err.name!=='RenderingCancelledException'){canvasBox.textContent='This page could not be displayed. Refresh the preview to try again.';counter.textContent='Preview unavailable';if(failOnError)throw err;}}
+  catch(err){if(token===renderVersion&&!disposed&&err.name!=='RenderingCancelledException'){canvasBox.textContent='This page could not be displayed. Choose the page again to retry.';counter.textContent='Preview unavailable';if(failOnError)throw err;}}
  }
  async function thumbnails(doc,token){
   for(let n=1;n<=doc.numPages;n++){
@@ -36,7 +36,7 @@ function mount(root,{canvasId=''}={}){
  root.addEventListener('click',onClick);
  root.querySelector('[data-pdf-zoom]').onchange=e=>{zoom=Number(e.target.value)||100;canvasBox.style.setProperty('--pdf-zoom',zoom+'%');void show(page);};
  function destroy(){disposed=true;version++;renderVersion++;root.removeEventListener('click',onClick);if(task)task.cancel();if(pdf)pdf.destroy().catch(()=>{});pdf=null;}
- buttons();return{set,show,destroy,sync:buttons,error(message){canvasBox.textContent=message;counter.textContent='Preview unavailable';}};
+ buttons();return{set,show,destroy,sync:buttons,error(message,retry){canvasBox.textContent=message;counter.textContent='Preview unavailable';if(typeof retry==='function'){const b=document.createElement('button');b.type='button';b.className='ev-btn ev-document-retry';b.textContent='Try again';b.onclick=()=>{canvasBox.textContent='Preparing PDF…';retry();};canvasBox.append(b);}}};
 }
 const font=doc=>doc.getFontList().EVSans?'EVSans':'helvetica';
 function fitted(doc,value,width){let s=String(value??'').replace(/[\u2010-\u2015]/g,'-');if(doc.getTextWidth(s)<=width)return s;while(s&&doc.getTextWidth(s+'…')>width)s=s.slice(0,-1);return s+'…';}
@@ -110,10 +110,10 @@ function enhanceLegacy(){
  const bd=document.getElementById('rxBackdrop'),body=bd.querySelector('.rx-body'),options=document.getElementById('rxEdit'),oldPreview=body.querySelector('.rx-preview');
  const viewerRoot=document.createElement('div');viewerRoot.id='rxDocumentViewer';
  // Retain the original editor, including saved customer templates and their handlers.
- const stash=document.createElement('div');stash.hidden=true;stash.append(document.getElementById('rxFrame'),document.getElementById('rxEmpty'));bd.append(stash);
- const status=document.getElementById('rxStatus'),refresh=document.getElementById('rxRefresh');
+ const stash=document.createElement('div');stash.hidden=true;stash.append(document.getElementById('rxFrame'),document.getElementById('rxEmpty'),document.getElementById('rxRefresh'));bd.append(stash);
+ const status=document.getElementById('rxStatus');
  const openBtn=document.createElement('button');openBtn.type='button';openBtn.className='hbtn ev-open-pdf';openBtn.id='rxOpenPdf';openBtn.textContent='Open PDF';openBtn.disabled=true;document.getElementById('rxExport').before(openBtn);
- const openNote=document.createElement('p');openNote.className='ev-open-pdf-note';openNote.textContent='Check the full document in the PDF viewer before sending.';bd.querySelector('.rx-foot').prepend(status);options.prepend(refresh);oldPreview.remove();body.classList.add('ev-document-layout');options.classList.add('ev-document-options');body.prepend(viewerRoot);
+ const openNote=document.createElement('p');openNote.className='ev-open-pdf-note';openNote.textContent='Check the full document in the PDF viewer before sending.';bd.querySelector('.rx-foot').prepend(status);oldPreview.remove();body.classList.add('ev-document-layout');options.classList.add('ev-document-options');body.prepend(viewerRoot);
  let viewer=null,currentDoc=null,focus=null,saving=false;
  // Before downloading and Document details sit at the top of the options column for both packs.
  const docBox=document.createElement('div');docBox.id='rxDocDetails';docBox.className='rx-sec rx-doc-details';refresh.after(openNote,docBox);
@@ -131,7 +131,7 @@ function enhanceLegacy(){
    doc.__evIssueLabel=rxMode==='customer'?'Client pack':'Engineer pack';await viewer.set(doc);
    if(token!==rxBuildToken||!bd.classList.contains('show'))return;
    currentDoc=doc;document.getElementById('rxExport').disabled=false;openBtn.disabled=false;status.textContent='Preview matches the download.';
-  }catch(err){if(token===rxBuildToken&&bd.classList.contains('show')){status.textContent='Preview could not be prepared. Try Refresh.';viewer?.error(err.message);}}
+  }catch(err){if(token===rxBuildToken&&bd.classList.contains('show')){status.textContent='Preview could not be prepared.';viewer?.error(err.message,rxUpdatePreview);}}
  };
  rxQueuePreview=function(){clearTimeout(rxDebounce);rxBuildToken++;currentDoc=null;document.getElementById('rxExport').disabled=true;openBtn.disabled=true;status.textContent='Updating preview…';rxDebounce=setTimeout(rxUpdatePreview,350);rxCheckPlaceholders();const c=document.getElementById('rxChecks');if(c)c.innerHTML=checksHtml(gaps());};
  openReview=function(mode){

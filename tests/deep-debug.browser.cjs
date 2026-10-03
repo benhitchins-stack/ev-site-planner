@@ -75,6 +75,19 @@ const {chromium}=require('playwright');
   await check('Technical dialogs isolate drawing keyboard shortcuts',async p=>{
    await markup(p);await pickUnits(p);const before=await p.evaluate(()=>JSON.stringify(activePhoto().items));await p.evaluate(()=>openCableCheck());await p.locator('#ccBackdrop.show button').first().focus();await p.keyboard.press('Delete');await p.keyboard.press('Control+z');assert.equal(await p.evaluate(()=>JSON.stringify(activePhoto().items)),before);
   });
+  await check('A trench becomes a sized, undoable SWA run from Cable calculations, and the Overview says so',async p=>{
+   assert.match(await p.locator('.ev-metrics').innerText(),/2\s*Routes · 0 cable runs/);
+   assert.match(await p.locator('.ev-check-list').innerText(),/Every route has a length[\s\S]*Cable runs sized/);
+   await p.locator('.ev-check-act[data-ev-action="calcs"]').click();await p.waitForSelector('#ccBackdrop.show');
+   const trench=await p.evaluate(()=>activePhoto().items.find(i=>i.kind==='trench').id);
+   await p.locator('#ccBody [data-addswa="'+trench+'"]').click();
+   const added=await p.evaluate(t=>{const ph=activePhoto(),it=ph.items.find(i=>i.id===sel);return{kind:it.kind,threaded:it.pts.length>1&&it.pts.every(q=>q.viaId===t),len:routeLen(it,ph),trench:routeLen(ph.items.find(i=>i.id===t),ph),rows:cableCheckData().length,dialog:document.getElementById('ccBackdrop').classList.contains('show'),side:document.getElementById('sideScroll').innerText};},trench);
+   assert.equal(added.kind,'swa');assert(added.threaded);assert.equal(added.len,added.trench);assert.equal(added.rows,1);assert.equal(added.dialog,false);assert.match(added.side,/Route type/);
+   await p.evaluate(()=>openCableCheck());assert(!(await p.locator('#ccPdf').isDisabled()));await p.locator('#ccClose').click();
+   await p.evaluate(()=>undo());assert.equal(await p.evaluate(()=>cableCheckData().length),0);
+   await p.locator('[data-ev-route="planning"]').click();const evidence=await p.locator('.evp-evidence-list').innerText();
+   assert.match(evidence,/Trench 1 · length \(m\)/);assert.match(evidence,/Plan scale\s*Set · 1 m = /);assert.doesNotMatch(evidence,/\btrench · length/);
+  });
   await check('Duplicate backup IDs are rejected without losing current work',async p=>{
    const before=await p.evaluate(()=>JSON.stringify(serialisablePack()));const result=await p.evaluate(async()=>{const b=JSON.parse(JSON.stringify(serialisablePack()));b.photos.push({...b.photos[0]});return EVWorkspace.importBackup(new File([JSON.stringify(b)],'duplicate.json'));});assert.equal(result,false);assert.equal(await p.evaluate(()=>JSON.stringify(serialisablePack())),before);
   });

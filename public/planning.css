@@ -5,8 +5,25 @@
 .evp-inline{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px}.evp-inline .ev-field{flex:1;min-width:220px}
 .evp-help{color:var(--dim);font-size:13px;line-height:1.65;margin:14px 0}
 .evp-message{border:1px solid #e1a2a2;background:#fff3f1;color:#852327;padding:14px 18px;border-radius:10px}
-.evp-state{display:inline-flex;align-items:center;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;text-transform:capitalize;white-space:nowrap}
-.evp-state.measured{background:#dcefe8;color:#155a45}.evp-state.assumed{background:#fff0ce;color:#825400}.evp-state.missing{background:#fce4e4;color:#9b2727}
+/* Three pill sets, one meaning each: evidence quality (Survey evidence), change kind (Change impact) and review state (Technical review). Labels stay in sentence case. */
+.evp-pill{display:inline-flex;align-items:center;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap;line-height:1.3}
+.evp-evidence.measured{background:#dcefe8;color:#155a45}.evp-evidence.assumed{background:#fff0ce;color:#825400}.evp-evidence.missing{background:#fce4e4;color:#9b2727}
+.evp-kind.added{background:#dcefe8;color:#155a45}.evp-kind.changed{background:#fff0ce;color:#825400}.evp-kind.removed{background:#fff;color:#9b2727;border:1.5px dashed #c33131;padding:3px 9px}.evp-kind.other{background:#eef2f6;color:#4f6576}
+.evp-review.recorded{background:#e6edf8;color:#16314f}.evp-review.pending{background:#fff0ce;color:#825400}
+.evp-source{background:#eef2f6;color:#4f6576;font-weight:650}.evp-source.edited{background:#edf3ff;color:#1c4c91}
+.evp-cc.ok{background:#dcefe8;color:#155a45}.evp-cc.warn{background:#fff0ce;color:#825400}.evp-cc.fail{background:#fce4e4;color:#9b2727}.evp-cc.nolen,.evp-cc.tbc{background:#eef2f6;color:#4f6576}
+.evp-cc-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.evp-link{background:none;border:0;padding:4px 2px;min-height:28px;color:var(--accent);font:inherit;font-weight:650;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.evp-sim-field{display:flex;flex-direction:column;gap:6px;min-width:0}.evp-sim-field .ev-field{margin:0}
+.evp-source-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:12px;line-height:1.45;color:var(--dim)}
+.evp-time{min-width:112px}
+[data-route="planning"] .evp-arrivals th,[data-route="planning"] .evp-arrivals td{padding:10px 8px}[data-route="planning"] .evp-arrivals td:first-child input{min-width:140px}[data-route="planning"] .evp-arrivals input[type=number]{min-width:64px}
+.evp-sim-stats{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
+.ev-stat.evp-verdict b{font-size:19px;letter-spacing:-.3px}.ev-stat.evp-verdict.ok b{color:#155a45}.ev-stat.evp-verdict.ok::before{background:var(--ev-ok,#2e8b57)}.ev-stat.evp-verdict.neutral b{color:var(--ink)}.ev-stat.evp-verdict.neutral::before{background:#9aa9b6}.ev-stat.evp-verdict.bad b{color:#9b2727}.ev-stat.evp-verdict.bad::before{background:#d4574c}
+.evp-sim-cost{margin:0 0 14px;line-height:1.6}
+.evp-legend{margin:6px 0 6px}
+.evp-cost-empty p{margin:10px 0;font-size:15px;font-weight:650;color:var(--ink)}.evp-costs .evp-partial{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;color:#825400;background:#fff0ce;border-radius:20px;padding:3px 9px}
+.evp-empty p{margin:0 0 12px}.evp-empty .ev-actions{margin-bottom:14px}
 .evp-evidence-row{padding:16px 20px;border-top:1px solid var(--line)}.evp-evidence-row:first-child{border-top:0}
 .evp-evidence-row summary{cursor:pointer;line-height:1.6}.evp-evidence-row summary>*{margin-right:12px}.evp-evidence-row summary small{display:block;margin-top:5px;color:#925d00}
 .evp-evidence-row form{padding-top:12px}.evp-evidence-row input,.evp-evidence-row textarea{max-width:100%}
@@ -14,8 +31,8 @@
 .evp-snapshots article{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);padding:16px 0}.evp-snapshots article:first-child{border-top:0}.evp-snapshots small{display:block;margin-top:6px;color:var(--dim);overflow-wrap:anywhere}
 .evp-tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.evp-tags span{background:#edf3ff;color:#1c4c91;border:1px solid #d6e2f5;border-radius:6px;padding:6px 10px}
 .evp-change-list article{display:flex;align-items:flex-start;gap:12px;padding:16px 0;border-top:1px solid var(--line)}.evp-change-list article>div{flex:1;min-width:0}.evp-change-list p{margin:6px 0;color:var(--dim);font-size:13px}.evp-change-list b{overflow-wrap:anywhere}
-#evpPlanPreview{position:static;inset:auto;z-index:auto;pointer-events:none;display:block;max-width:100%;height:auto;margin:18px auto;background:#fff;border:1px solid var(--line);border-radius:10px}
-.evp-chart{width:100%;height:auto;display:block;margin:20px 0}.evp-chart text{font:12px var(--font);fill:#435867}
+#evpPlanPreview{z-index:auto;pointer-events:none;display:block;max-width:100%;height:auto;margin:18px auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+.evp-chart{display:block;max-width:100%;height:auto;margin:6px 0 16px;background:#fff}.evp-chart text{font:12px var(--font);fill:#435867}.evp-chart .evp-chart-strong{font-weight:650;fill:#7d2a22}
 .evp-phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.evp-phases fieldset{border:1px solid var(--line);border-radius:10px;min-width:0;padding:18px}.evp-phases legend{font-weight:700;padding:0 6px}.evp-phases .ev-field{margin-bottom:12px}
 #evpPhaseSlider{width:100%;accent-color:#17755d;min-height:38px}
 [data-route="planning"] .ev-card-body{line-height:1.6}
@@ -27,6 +44,7 @@
 .evp-recovery{margin-top:20px}.evp-recovery li{margin:8px 0}
 .ev-conflict{padding:16px 24px;background:#fff1d8;border-bottom:2px solid #d39b35;line-height:1.5}.ev-conflict p{margin:6px 0 12px}.ev-conflict .ev-actions{flex-wrap:wrap}
 @media(max-width:700px){.evp-tabs{gap:6px}.evp-tabs .ev-btn{flex:1 1 135px;font-size:12px}.evp-form-grid{grid-template-columns:1fr}.evp-evidence-row{padding:14px}.evp-inline{display:block}.evp-inline .ev-field{min-width:0;margin-bottom:12px}.evp-change-list article{flex-wrap:wrap}.evp-change-list article>div{min-width:65%}.evp-snapshots .ev-actions{width:100%;flex-wrap:wrap}.evp-phases{grid-template-columns:1fr}.ev-conflict{padding:14px}.ev-conflict .ev-btn{white-space:normal}}
+@media(max-width:600px){.evp-arrivals thead{display:none}.evp-arrivals,.evp-arrivals tbody,.evp-arrivals tr,.evp-arrivals td{display:block;width:100%}.evp-arrivals tr{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}.evp-arrivals td{padding:6px 0!important;border:0!important}.evp-arrivals td::before{content:attr(data-label);display:block;font-size:12px;font-weight:600;color:var(--dim);margin-bottom:4px}.evp-arrivals td:first-child,.evp-arrivals td:last-child{grid-column:1/-1}.evp-arrivals .evp-time,.evp-arrivals input{min-width:0}}
 /* Phones: the phase assignment table becomes one row per item (name, plan, phase picker, Open) so nothing is cut off at the card edge. */
 @media(max-width:700px){
 [data-route="planning"] .ev-table:has([data-evp-assignment]) thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

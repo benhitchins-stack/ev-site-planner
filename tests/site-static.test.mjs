@@ -87,3 +87,11 @@ test('the PDF report fonts are not downloaded when a page opens', () => {
   for (const name of pages) assert.doesNotMatch(readFileSync(resolve(publicDir, name), 'utf8'), /<script[^>]*\bsrc="report-fonts\.js/, name);
   assert.match(readFileSync(resolve(publicDir, 'index.html'), 'utf8'), /<link rel="ev-report-fonts" href="report-fonts\.js\?v=[0-9a-f]{12}">/);
 });
+
+test('the drawing surface rule is scoped to the plan canvas so dialog charts and previews stay in their dialogs', () => {
+  const planner = readFileSync(resolve(publicDir, 'EV Site Planner.html'), 'utf8');
+  assert.doesNotMatch(planner, /\ncanvas\{position:absolute/);
+  assert.match(planner, /\n#cvwrap canvas\{position:absolute;inset:0;width:100%;height:100%;touch-action:none;\}/);
+  for (const name of ['workbench.css', 'workspace.css', 'planning.css'])
+    assert.doesNotMatch(readFileSync(resolve(publicDir, name), 'utf8'), /canvas[^{}]*\{[^}]*position:static!important/, name);
+});
