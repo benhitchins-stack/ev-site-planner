@@ -23,7 +23,7 @@ const TIPS={
  'lab-compare':'Save the current design as an option, change the drawing, then compare quantities and cost between options.',
  'lab-charging':'A charging-day scenario estimates how a set of cars would share the chargers and the supply over a day.',
  'lab-phases':'Phases let you plan the installation in stages and replay how the site grows.',
- 'lab-revisions':'A revision is an immutable snapshot for the record; the review register is for an independent technical check.',
+ 'lab-revisions':'A revision is a snapshot that cannot be changed, kept for the record; the review register is for an independent technical check.',
  'programme-timeline':'Activities are drawn against the working calendar. Weekends and the non-working dates you enter are skipped.',
  'programme-activities':'Each activity has an owner, dates, progress and notes. Add suggestions from markup to start from what is drawn.',
  'programme-calendar':'Non-working dates and programme notes print on the programme PDF.',

@@ -5,7 +5,7 @@
 'use strict';
 
 const LEVELS=[
- {id:'start',n:1,label:'Start here',short:'Basics',who:'For anyone new to EV charging: site owners, council officers, customers and people joining the trade.',blurb:'What a charger does, what the words mean, why the electricity supply matters and what happens on a survey. No prior knowledge needed.'},
+ {id:'start',n:1,label:'Start here',short:'Basics',who:'For anyone new to EV charging: site owners, council officers, customers and people joining the trade.',blurb:'What a charger does, what the words mean, why the electricity supply matters and what happens on a survey. You do not need any electrical background.'},
  {id:'plan',n:2,label:'Planning a site',short:'Planning',who:'For project managers, estimators and installers scoping a job.',blurb:'Choosing chargers, checking the supply, laying out bays, talking to the network operator and getting the paperwork in order.'},
  {id:'install',n:3,label:'Installing',short:'Installing',who:'For installers and apprentices on site.',blurb:'Protective devices, cables, bases and ducts, earthing, load management set-up, commissioning and the photo record.'},
  {id:'advanced',n:4,label:'Advanced design',short:'Advanced',who:'For experienced electricians and designers.',blurb:'Maximum demand, RCD types and DC fault detection, open-PEN options, volt drop, three-phase balance, surge and arc fault protection, and the regulations behind them.'}
@@ -221,7 +221,7 @@ const GUIDES=[
  +'<table class="g-table"><thead><tr><th>Document</th><th>What it is</th><th>Why it matters</th></tr></thead><tbody>'
  +'<tr><td>'+D('bs7671','BS 7671')+'</td><td>The Wiring Regulations</td><td>How every circuit is designed, installed and tested. Section 722 is the EV chapter.</td></tr>'
  +'<tr><td>'+D('cop','IET Code of Practice')+'</td><td>Practical guidance for EV installations</td><td>Turns the regulations into site practice: cable depths, earthing choices, accessibility.</td></tr>'
- +'<tr><td>'+D('smart','Smart Charge Points Regulations 2021')+'</td><td>Law for home and workplace chargers</td><td>Units must be smart and secure out of the box.</td></tr>'
+ +'<tr><td>'+D('smart','Smart Charge Points Regulations 2021')+'</td><td>Law for home and workplace chargers</td><td>Units must be smart and secure as supplied.</td></tr>'
  +'<tr><td>'+D('pcpr','Public Charge Point Regulations 2023')+'</td><td>Law for public chargers</td><td>Clear pricing, contactless payment, a helpline, open data and reliability.</td></tr>'
  +'<tr><td>'+D('pas1899','PAS 1899:2022')+'</td><td>Accessible charging standard</td><td>Bay sizes, approach routes and reachable controls for disabled drivers.</td></tr>'
  +'<tr><td>'+D('parts','Approved Document S')+'</td><td>Building Regulations (England)</td><td>New homes and buildings with parking must include chargepoints or cable routes.</td></tr>'
