@@ -224,6 +224,7 @@ async function buildSnags(options){
  return k.footer();
 }
 function reportChecks(type,options){
+ if(type==='audit')return window.EVAudit?.gaps(options)||[];
  const gaps=[];if(!pack.name)gaps.push('Project name is missing.');if(!pack.jobRef)gaps.push('Project reference is missing.');
  if(type==='programme'){const s=programmeSummary();if(s.undated)gaps.push(s.undated+' activities have no dates.');const n=s.active.filter(r=>!r.owner?.trim()).length;if(n)gaps.push(n+' activities have no owner.');}
  else{const r=reportSettings(),rows=snagList().filter(x=>options.scope==='all'||(x.it.st==='fixed'?'fixed':'open')===options.scope);if(!r.date)gaps.push('Inspection date is missing.');if(!r.preparedBy&&!pack.surveyedBy)gaps.push('Prepared by is missing.');const n=rows.filter(x=>!x.it.who?.trim()).length;if(n)gaps.push(n+' findings have no assigned owner.');const evidence=rows.filter(x=>x.it.st==='fixed'&&(!x.it.checkedBy||!x.it.ph2)).length;if(evidence)gaps.push(evidence+' fixed findings have no checker or after photo.');const safety=rows.filter(x=>x.it.sev==='safety'&&x.it.st!=='fixed').length;if(safety)gaps.unshift(safety+' safety findings remain open.');}
@@ -233,8 +234,9 @@ async function openReport(type){
  if(busy)return;
  if(type==='snags'&&!snagList().length){EVWorkspace.go('snags');toast('Add a snag before creating its report.');return;}
  if(type==='programme'&&!programmeSummary().active.length){EVWorkspace.go('programme');toast('Add an activity before creating the programme.');return;}
- openDialog('report',type==='programme'?'Review programme':'Review snag report',(pack.name||'Untitled project')+' · Rev '+(pack.rev||'A'),
-  '<div class="ev-document-layout"><div id="edReportViewer"></div><aside class="ev-document-options ed-report-controls"><h3>Report contents</h3>'+(type==='snags'?'<label class="ev-field">Findings<select id="edReportScope"><option value="all">All findings</option><option value="open">Open findings only</option><option value="fixed">Fixed findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include before / after photos</label><label class="ed-check"><input id="edReportPlans" type="checkbox"> Include location plans</label>':'<p>Activities, responsibilities, dates, progress and the programme timeline.</p>')+'<h3>Document details</h3><dl class="ev-document-meta"><dt>Prepared by</dt><dd>'+esc(pack.surveyedBy||'Not recorded')+'</dd><dt>Company</dt><dd>'+esc(pack.brandName||'Not recorded')+'</dd><dt>Revision</dt><dd>'+esc(pack.rev||'A')+'</dd></dl><div id="edReportChecks"></div><p>Close this review to edit project details or report records.</p></aside></div>',button('Download PDF','download-report','primary'),true);
+ if(type==='audit'&&!(pack.audit&&window.EVAudit)){EVWorkspace.go('audit');toast('Start the site audit before making its pack.');return;}
+ openDialog('report',type==='programme'?'Review programme':type==='audit'?'Review evidence pack':'Review snag report',(pack.name||'Untitled project')+' · Rev '+(pack.rev||'A'),
+  '<div class="ev-document-layout"><div id="edReportViewer"></div><aside class="ev-document-options ed-report-controls"><h3>Report contents</h3>'+(type==='snags'?'<label class="ev-field">Findings<select id="edReportScope"><option value="all">All findings</option><option value="open">Open findings only</option><option value="fixed">Fixed findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include before / after photos</label><label class="ed-check"><input id="edReportPlans" type="checkbox"> Include location plans</label>':type==='audit'?'<label class="ev-field">Contents<select id="edReportScope"><option value="all">Full pack: findings and the full checklist</option><option value="findings">Findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include evidence photos</label>'+(pack.photos.length?'<label class="ed-check"><input id="edReportPlans" type="checkbox"> Include the site plans</label>':'')+'<p>Site details, a summary, every fail and action with its photos, the full checklist and the checks that do not apply. The pack supports a submission and does not certify compliance.</p>':'<p>Activities, responsibilities, dates, progress and the programme timeline.</p>')+'<h3>Document details</h3><dl class="ev-document-meta"><dt>Prepared by</dt><dd>'+esc(pack.surveyedBy||'Not recorded')+'</dd><dt>Company</dt><dd>'+esc(pack.brandName||'Not recorded')+'</dd><dt>Revision</dt><dd>'+esc(pack.rev||'A')+'</dd></dl><div id="edReportChecks"></div><p>Close this review to edit project details or report records.</p></aside></div>',button('Download PDF','download-report','primary'),true);
  session.reportType=type;session.page=1;session.doc=null;reportViewer=EVReportViewer.mount($('edReportViewer'),{canvasId:'edPdfCanvas'});$('edMessage').textContent='The preview matches the PDF download.';
  modal.querySelector('.ev-dialog-foot [data-ed-action="close"]').classList.remove('primary');
  for(const id of ['edReportScope','edReportPhotos','edReportPlans'])if($(id))$(id).onchange=()=>prepareReport();
@@ -246,9 +248,9 @@ async function prepareReport(){
  const options={scope:$('edReportScope')?.value||'all',photos:$('edReportPhotos')?.checked!==false,plans:$('edReportPlans')?.checked===true};
  const gaps=reportChecks(session.reportType,options);$('edReportChecks').innerHTML='<h3>Before downloading</h3>'+(gaps.length?'<ul>'+gaps.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'<p class="ed-help">Project details and responsibilities are recorded.</p>');
  try{
-  const doc=session.reportType==='programme'?await buildProgramme():await buildSnags(options);doc.__evIssueLabel=session.reportType==='programme'?'Programme':'Snag report';
+  const doc=session.reportType==='programme'?await buildProgramme():session.reportType==='audit'?await window.EVAudit.buildPack(options):await buildSnags(options);doc.__evIssueLabel=session.reportType==='programme'?'Programme':session.reportType==='audit'?'Evidence pack':'Snag report';
   await reportViewer.set(doc);
-  session.doc=doc;session.page=1;session.filename=(pack.name||'EV-project').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,90)+'_'+(session.reportType==='programme'?'programme':'snag-report')+'_rev-'+String(pack.rev||'A').replace(/[^a-zA-Z0-9_-]/g,'_')+'.pdf';
+  session.doc=doc;session.page=1;session.filename=(pack.name||'EV-project').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,90)+'_'+(session.reportType==='programme'?'programme':session.reportType==='audit'?'evidence-pack':'snag-report')+'_rev-'+String(pack.rev||'A').replace(/[^a-zA-Z0-9_-]/g,'_')+'.pdf';
 
  }catch(err){session.doc=null;$('edPdfCanvas').innerHTML='<div class="ev-empty"><b>PDF could not be prepared</b>'+esc(err.message)+'</div>';}
  finally{busy=false;modal.removeAttribute('aria-busy');modal.querySelectorAll('button,input,select').forEach(x=>x.disabled=false);reportButtons();}
@@ -297,5 +299,5 @@ document.addEventListener('keydown',e=>{
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();}
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();}
 });
-window.EVDelivery={mountProgramme,mountSnags,openSnag,openReport,preparePlan,installFonts,reportFonts,schedule,programmeSummary,version:'delivery-r2'};
+window.EVDelivery={mountProgramme,mountSnags,openSnag,openReport,preparePlan,installFonts,reportFonts,pdfKit,schedule,programmeSummary,version:'delivery-r2'};
 })();

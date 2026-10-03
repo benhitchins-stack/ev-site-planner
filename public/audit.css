@@ -1,0 +1,87 @@
+/* Site audit page: set-up, chargepoints, check rows with outcome buttons, evidence photos and the pack card. Shares the workspace controls. */
+@media(min-width:701px){.ev-stage-strip.eva-stages ol,.ev-flow.eva-flow ol{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.eva-stats .ev-stat b small{font-size:14px;font-weight:600;color:var(--dim);letter-spacing:0;margin-left:2px}
+.eva-stats .ev-stat .ev-meter{margin:10px 0 0}
+.eva-help{font-size:12px;line-height:1.65;color:var(--dim);margin:0 0 14px}
+.eva-setup .ev-field>span,.eva-record .ev-field>span{display:block}
+.eva-seg{display:flex;flex-wrap:wrap;gap:6px}
+.eva-seg button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:44px;padding:9px 13px;border:1px solid var(--line2);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:12px;font-weight:600;text-align:left;cursor:pointer}
+.eva-seg button small{font-size:10px;font-weight:500;color:var(--dim)}
+.eva-seg button:hover{border-color:#90abc9;background:#f7faff}
+.eva-seg button.on{background:var(--ev-navy);border-color:var(--ev-navy);color:#fff}
+.eva-seg button.on small{color:#c8d6e2}
+.eva-unit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end;padding:14px 0;border-top:1px solid var(--line)}
+.eva-unit:first-child{border-top:0;padding-top:0}
+.eva-unit .ev-form{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.eva-units .ev-actions{margin-top:14px}
+.eva-group .ev-card-head h2{margin:0}
+.eva-group-sub{display:block;font-size:11px;color:var(--dim);margin-top:4px}
+.eva-check{padding:14px 20px;border-top:1px solid var(--line)}
+.eva-check-head{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px 16px;align-items:center}
+.eva-check-title{min-width:0}
+.eva-check-title b{display:block;font-size:14px;font-weight:650;line-height:1.4;margin:3px 0 2px}
+.eva-check-title small{display:block;font-size:12px;color:var(--dim);line-height:1.5;overflow-wrap:anywhere}
+.eva-check.fail .eva-check-title small,.eva-check.action .eva-check-title small{color:#7a4a12}
+.eva-ref{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#4b6578}
+.eva-sev{display:inline-block;padding:1px 6px;border-radius:4px;background:#edf2f7;color:#536c81;letter-spacing:.4px}
+.eva-sev.red{background:#fbe9e5;color:#ab362b}.eva-sev.amber{background:#fff2dc;color:#98611c}
+.eva-outcome{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;min-width:300px}
+.eva-outcome button{min-height:40px;padding:6px 8px;border:1px solid var(--line2);border-radius:7px;background:#fff;color:var(--ink);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.eva-outcome button:hover{border-color:#90abc9;background:#f7faff}
+.eva-outcome button.on{box-shadow:inset 0 0 0 1px currentColor;font-weight:700}
+.eva-outcome button.pass.on{background:#eef6dc;border-color:#6f9f25;color:#2f5a1a}
+.eva-outcome button.action.on{background:#fff2dc;border-color:#d39b35;color:#7a4a12}
+.eva-outcome button.fail.on{background:#fbe9e5;border-color:#c4463a;color:#8c2a20}
+.eva-outcome button.na.on{background:#e9eef3;border-color:#536c81;color:#2d4256}
+.eva-toggle{white-space:nowrap}
+.eva-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px 24px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.eva-why{font-size:13px;line-height:1.65;color:var(--ink);margin:0 0 12px}
+.eva-cite{display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px 12px;margin:0;font-size:12px;line-height:1.55}
+.eva-cite dt{color:var(--dim)}.eva-cite dd{margin:0;overflow-wrap:anywhere}.eva-cite dd small{display:block;color:var(--dim)}
+.eva-verify{color:#7a4a12}
+.eva-record{display:grid;gap:12px;align-content:start}
+.eva-record .ev-field{max-width:none;min-width:0}
+.eva-record .ev-field textarea{min-height:76px}
+.eva-photos{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.eva-thumb{width:76px;height:76px;padding:0;border:1px solid var(--line2);border-radius:8px;overflow:hidden;background:#f3f5f8;cursor:pointer}
+.eva-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.eva-add{cursor:pointer}
+.eva-msg{margin:6px 0 0;font-size:11px;color:var(--dim)}
+.eva-msg:empty{display:none}
+.eva-picker{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:#f8fafc}
+.eva-picker b{display:block;font-size:12px;margin-bottom:8px}
+.eva-picker div{display:flex;flex-wrap:wrap;gap:8px}
+.eva-picker button{display:flex;flex-direction:column;align-items:center;gap:4px;width:96px;padding:6px;border:1px solid var(--line2);border-radius:8px;background:#fff;font:inherit;font-size:10px;color:var(--ink);cursor:pointer}
+.eva-picker img{width:80px;height:60px;object-fit:cover;border-radius:4px}
+.eva-picker button span{max-width:84px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.eva-excluded-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.eva-excluded-list li{display:grid;gap:3px;font-size:12px;line-height:1.5}
+.eva-excluded-list b{font-weight:650}.eva-excluded-list span{color:var(--dim)}
+.eva-gaps{margin:0 0 16px;padding-left:18px;font-size:12px;line-height:1.7;color:#876224}
+.eva-ready{font-size:12px;color:#3b632d;margin:0 0 16px}
+.eva-disclaimer{font-size:11px;line-height:1.65;color:var(--dim);margin:8px 0 24px}
+.eva-intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:20px}
+.eva-intro-grid>div svg{width:22px;height:22px;color:#346da7;margin-bottom:8px}
+.eva-intro-grid b{display:block;font-size:14px;margin-bottom:4px}
+.eva-intro-grid p{font-size:12px;line-height:1.65;color:var(--dim);margin:0}
+.eva-intro .ev-actions{margin-bottom:8px}
+.eva-lightbox{z-index:170}
+.eva-lightbox-dialog{width:900px}
+.eva-lightbox-body{padding:16px;background:#0f1d28;display:grid;place-items:center;min-height:0;overflow:auto}
+.eva-lightbox-body img{max-width:100%;max-height:68dvh;object-fit:contain;border-radius:6px}
+.eva-subheading{font-size:12px;font-weight:650;color:#4b6578;margin:0 0 10px}
+.eva-finding-list{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:10px}
+.eva-finding-list li{display:flex;gap:10px;align-items:flex-start;font-size:12px;line-height:1.5}
+.eva-finding-list b{display:block;font-weight:650}.eva-finding-list small{display:block;color:var(--dim);overflow-wrap:anywhere}
+.eva-progress-card .ev-card-body:first-of-type{padding-bottom:4px}
+.eva-progress-card .ev-card-body p{margin:0 0 14px;font-size:13px;line-height:1.6}
+.eva-overview-card .ev-card-body p{margin:0 0 14px;font-size:13px;line-height:1.6}
+.eva-bottom{grid-template-columns:repeat(2,minmax(0,1fr))}
+[data-route="audit"] .ev-field input,[data-route="audit"] .ev-field select,[data-route="audit"] .ev-field textarea{width:100%}
+[data-route="audit"] .ev-form .ev-field{max-width:none;min-width:0}
+.eh-audits{padding:8px 0 36px}
+.eh-audits .eh-section-head{margin-top:8px}
+.eh-audits-empty{font-size:13px;color:#50697b;line-height:1.6;margin:0}
+.eh-audit .eh-project-icon svg{width:28px;height:28px}
+@media(max-width:1000px){.eva-body{grid-template-columns:1fr}.eva-unit .ev-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.eva-check{padding:14px}.eva-check-head{grid-template-columns:1fr}.eva-outcome{min-width:0}.eva-toggle{justify-self:start}.eva-unit{grid-template-columns:1fr}.eva-unit .ev-form{grid-template-columns:1fr}.eva-intro-grid{grid-template-columns:1fr}.eva-bottom{grid-template-columns:1fr}.eva-seg button{flex:1 1 45%}.eva-cite{grid-template-columns:1fr;gap:2px 0}.eva-cite dt{margin-top:8px}.eva-lightbox-dialog{width:100%}}
