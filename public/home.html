@@ -3,8 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#122B3E">
 <title>EV Site Planner · Project Workspace</title>
+<meta name="description" content="Mark up site plans, place chargers and cable routes, and prepare plans and reports for EV charging installations. Projects save in your browser.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/app-icon-180.png">
+<meta name="apple-mobile-web-app-title" content="EV Planner">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EV Site Planner">
+<meta property="og:title" content="EV Site Planner">
+<meta property="og:description" content="Mark up site plans, place chargers and cable routes, and prepare plans and reports for EV charging installations.">
+<meta property="og:url" content="https://ev-site-planner.co.uk/">
+<meta property="og:image" content="https://ev-site-planner.co.uk/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EV Site Planner: mark up site plans, chargers and cable routes">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><radialGradient id="b" gradientUnits="userSpaceOnUse" cx="24" cy="16" r="78"><stop offset="0" stop-color="%231E3346"/><stop offset="1" stop-color="%230A141F"/></radialGradient><linearGradient id="l" gradientUnits="userSpaceOnUse" x1="40" y1="11" x2="40" y2="69"><stop offset="0" stop-color="%235D9BFF"/><stop offset="1" stop-color="%231E6BFF"/></linearGradient><clipPath id="c"><rect x="2" y="2" width="76" height="76" rx="19"/></clipPath></defs><rect x="2" y="2" width="76" height="76" rx="19" fill="url(%23b)"/><g clip-path="url(%23c)"><path d="M27.5 2V78M52.5 2V78M2 27.5H78M2 52.5H78" fill="none" stroke="%23EFE7D7" stroke-opacity=".16" stroke-width="1.5"/></g><rect x="3" y="3" width="74" height="74" rx="18" fill="none" stroke="%23FFFFFF" stroke-opacity=".08" stroke-width="1.6"/><path d="M43 11 14 45.8H40L37 69 66 34.2H40Z" fill="url(%23l)"/></svg>'>
 <style>
 @import url('vendor/fonts.css');
@@ -749,10 +763,10 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 </style>
 <link rel="stylesheet" href="cdm-controls.css">
 <link rel="stylesheet" href="planning.css?v=d043f4ae134f">
-<link rel="stylesheet" href="workspace.css?v=ec266c6b0b76">
+<link rel="stylesheet" href="workspace.css?v=21dd13db7b6a">
 <link rel="stylesheet" href="home.css?v=f80227562a8f">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
-<link rel="stylesheet" href="design-preview.css?v=2c12d694109b">
+<link rel="stylesheet" href="design-preview.css?v=45f028dbb3de">
 <link rel="stylesheet" href="workbench.css?v=78467031a64d">
 </head>
 <body>
@@ -867,10 +881,10 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
       </div>
       <p class="fine">Or drop files anywhere on this canvas &middot; iPhone HEIC photos are pulled out automatically &middot; PDF pages become plans</p>
     </div>
-    <div class="zoombar">
-      <button id="zin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
-      <button id="zfit" title="Fit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-      <button id="zout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
+    <div class="zoombar" role="group" aria-label="Zoom">
+      <button type="button" id="zin" aria-label="Zoom in" title="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button type="button" id="zfit" aria-label="Fit plan to screen" title="Fit plan to screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button type="button" id="zout" aria-label="Zoom out" title="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14"/></svg></button>
     </div>
     <button class="legendpill" id="legendPill" type="button" title="Show / hide the plan key"></button>
     </div>
@@ -12241,6 +12255,7 @@ function connectorChoice(){
 
 async function buildCustomerPdf(opts){
   opts = opts || {};
+  await window.EVDelivery?.reportFonts();
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4",compress:true,putOnlyUsedFonts:true});
   window.EVDelivery?.installFonts(doc);
@@ -12521,6 +12536,7 @@ async function buildCustomerPdf(opts){
 
 async function buildPdf(opts){
   opts = opts || {};
+  await window.EVDelivery?.reportFonts();
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4",compress:true,putOnlyUsedFonts:true});
   window.EVDelivery?.installFonts(doc);
@@ -15968,13 +15984,13 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 }).catch(()=>{}); }catch(_){ }
 /* Legacy localStorage records remain available until an atomic project save promotes them. */
 </script>
-<script src="profile.js?v=172f63c88f4a"></script>
-<script src="report-fonts.js?v=db719569bbc1"></script>
+<script src="profile.js?v=8a4016c55957"></script>
+<link rel="ev-report-fonts" href="report-fonts.js?v=db719569bbc1">
 <script src="home.js?v=90a78700f650"></script>
 <script src="report-viewer.js?v=3b3b3a4bc743"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=abf5b0584b8b"></script>
-<script src="delivery.js?v=e4668535c3a1"></script>
+<script src="workspace.js?v=435fd3de4218"></script>
+<script src="delivery.js?v=67a5664412fe"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
 <script src="planning.js?v=a5b1dcec14f7"></script>
 </body>

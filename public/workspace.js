@@ -39,7 +39,7 @@ async function persist(){
  saveQueue=saveQueue.catch(()=>false).then(async()=>{
   await window.__evProjectIndexReady;
   let ok=false;
-  try{await EVProjectStore.save(full,recovery,summary);ok=true;if(serial===saveSequence)savedState('saved','Saved in this browser');}
+  try{const committed=await EVProjectStore.save(full,recovery,summary);ok=true;savedMark={id,ts:Number(committed?.ts)||now};if(serial===saveSequence)savedState('saved','Saved in this browser');syncBackupState();keepStorage();}
   catch(error){
    if(error?.code==='EVSP_CONFLICT')savedState('error','Newer version in another tab');
    else{savedState('error','Save failed · download backup');toast('Browser storage is unavailable or full. Download a project backup to keep your work.');}
@@ -47,6 +47,39 @@ async function persist(){
   return ok;
  });
  return saveQueue;
+}
+// Backup status. A save within the grace period after a download is the backup's own save, not a later change.
+const BACKUP_GRACE=15000,freshProjects=new Set();
+let savedMark={id:'',ts:0},storageKept=null,keepAsked=false,backupSignature='';
+function lastSaved(){
+ if(savedMark.id!==pack.projId){const row=pack.projId?projIndex().find(r=>r.id===pack.projId):null;savedMark={id:pack.projId||'',ts:Number(row?.updatedAt)||0};}
+ return savedMark.ts;
+}
+function backupStatus(){const at=Date.parse(pack.workspace?.backupAt||'')||0;return {at,pending:hasWork()&&(!at||lastSaved()-at>BACKUP_GRACE)};}
+function syncBackupState(){
+ const b=$('evBackupTop');if(!b)return;const s=backupStatus(),signature=pack.projId+':'+s.at+':'+s.pending;if(signature===backupSignature)return;backupSignature=signature;
+ b.classList.toggle('ev-backup-due',s.pending);
+ b.setAttribute('aria-label',!s.pending?'Download project backup':s.at?'Download project backup. Changes since your backup on '+niceDate(s.at)+' are only in this browser.':'Download project backup. This project has not been backed up yet.');
+ b.title=!s.pending?(s.at?'Last backup '+niceDate(s.at):'Download project backup'):s.at?'Changes since your last backup on '+niceDate(s.at):'Not backed up yet';
+}
+// Ask the browser to keep saved projects when space runs low. Browsers decide; nothing changes if they decline.
+try{navigator.storage?.persisted?.().then(v=>{storageKept=v;}).catch(()=>{});}catch(_){}
+function keepStorage(){
+ if(keepAsked||storageKept||!navigator.storage?.persist)return;keepAsked=true;
+ navigator.storage.persist().then(v=>{storageKept=v;const note=$('evStorageNote');if(note&&v)note.textContent=storageNote();}).catch(()=>{});
+}
+const storageNote=()=>storageKept?'This browser has agreed to keep its saved projects rather than clear them for space.':'Browsers can clear saved data, for example Safari after about a week without a visit, so keep a recent backup.';
+const laterKey='evsp_backup_later';
+function backupLater(id){try{return JSON.parse(sessionStorage.getItem(laterKey)||'[]').includes(id);}catch(_){return false;}}
+function nudgeDue(){const s=backupStatus();return s.pending&&!freshProjects.has(pack.projId)&&!backupLater(pack.projId)&&(!s.at||Date.now()-s.at>=7*864e5);}
+function backupNudge(){
+ if(!nudgeDue())return '';const s=backupStatus();
+ return '<section class="ev-backup-nudge" aria-labelledby="evBackupNudgeTitle"><span class="ev-backup-nudge-icon">'+icon('backup')+'</span><div><h2 id="evBackupNudgeTitle">Back up this project</h2><p>'+h(s.at?'Your last backup was on '+niceDate(s.at)+'. Changes since then are saved only in this browser on this device.':'This project is saved only in this browser on this device. A backup keeps a copy you can restore if browser data is cleared.')+'</p></div><div class="ev-actions">'+btn('Download backup','backup','primary','download')+btn('Not now','backup-later','quiet')+'</div></section>';
+}
+function backupCard(){
+ const s=backupStatus(),title=!s.at?'Not backed up yet':s.pending?'Last backup '+niceDate(s.at):'Backed up '+niceDate(s.at);
+ const text=!s.at?'This project is saved only in this browser. Download a backup to keep a copy you can restore or open on another device.':s.pending?'Changes since then are saved only in this browser. Download a new backup to keep them.':'No changes since this backup. Your work also saves in this browser as you go.';
+ return '<section class="ev-card ev-backup-card'+(s.pending?' due':'')+'"><div class="ev-card-head"><h2>Project backup</h2>'+icon('backup')+'</div><div class="ev-card-body"><b>'+h(title)+'</b><p>'+h(text)+'</p><p class="ev-backup-keep" id="evStorageNote">'+h(storageNote())+'</p>'+btn('Download backup','backup',s.pending?'primary':'','download')+'</div></section>';
 }
 autosaveNow=function(){return persist();};
 const baseAutosave=autosave;
@@ -59,7 +92,7 @@ loadProject=function(id,discard=false){return changeProject(async()=>{
  let data;try{data=await idbGet('proj_'+id);}catch(_){}
  try{const fallback=JSON.parse(localStorage.getItem('evsp_proj_'+id)||'null');if(fallback?.pack&&!fallback.slim&&(!data?.pack||(fallback.ts||0)>(data.ts||0)))data=fallback;}catch(_){}
  if(!data?.pack||data.slim){toast('A full saved copy could not be found. Open your downloaded project backup.');return false;}
- validateProjectBackup(data.pack);pack=normalisePack(data.pack);pack.projId=id;window.__evLoadedRecord=data;EVProjectStore.adopt(data);ensure();imgKeys();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;updateUndo();
+ validateProjectBackup(data.pack);pack=normalisePack(data.pack);pack.projId=id;window.__evLoadedRecord=data;savedMark={id,ts:Number(data.ts)||0};EVProjectStore.adopt(data);ensure();imgKeys();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;updateUndo();
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';setSideTab();fitView();draw();await persist();go('overview');return true;
 });};
@@ -154,7 +187,7 @@ function updateChrome(){
  const p=activePhoto();
  const markup=icon('plan')+'<select aria-label="Active plan" id="evActivePlan">'+(pack.photos.length?pack.photos.map(p=>'<option value="'+h(p.id)+'" '+(p.id===pack.active?'selected':'')+'>'+h(p.name)+'</option>').join(''):'<option>No plans yet</option>')+'</select>'+btn('Add files','add-files','','plus')+'<button class="ev-btn" data-ev-action="evidence-overlay" aria-pressed="'+String(!!window.EVPlanning?.overlayActive())+'" title="M: measured, A: assumed, !: missing">Evidence'+(window.EVPlanning?.overlayActive()?' · M / A / !':'')+'</button><span class="ev-plan-meta">'+(p?p.items.length+' items':'Photos · PDF · ZIP')+'</span>'+(p?'<span class="ev-scale-status '+(p.scale?.pxPerM?'set':'')+'">'+(p.scale?.pxPerM?'Scale recorded':'Scale not set')+'</span>':'')+'<button class="ev-btn" id="evInspectorToggle" aria-label="Plan settings" aria-controls="side" aria-expanded="false">'+icon('tools')+'<span>Plan settings</span></button>';
  if(markup!==stripSignature){strip.innerHTML=markup;stripSignature=markup;$('evActivePlan').onchange=e=>openPlan(e.target.value);}
- syncInspector();
+ syncInspector();syncBackupState();
 }
 const baseRenderSide=renderSide;
 renderSide=function(){baseRenderSide();updateChrome();};
@@ -174,6 +207,8 @@ function go(next){
   $('evSearch').oninput=e=>{search=e.target.value;renderProjectCards();};$('evFilter').onchange=e=>{filter=e.target.value;renderProjectCards();};renderProjectCards();
  }
  if(next==='overview')dashboardImage();
+ // Fetch the report fonts in the background where documents are prepared.
+ if(next==='issue')window.EVDelivery?.reportFonts().catch(()=>{});
  if(next==='planning')EVPlanning.afterRender();
  EVProjectStore.renderConflict();
  if(next==='programme'&&window.EVDelivery){EVDelivery.mountProgramme();}
@@ -247,7 +282,7 @@ function overviewPage(){
  try{if(Array.isArray(pack.programme?.activities))prog=window.EVDelivery?.programmeSummary();}catch(_){}
  const programmeStart=pack.programme?.start,activities=prog?.active.length||0;
  return '<div class="ev-overview-heading"><div><div class="ev-eyebrow">'+h(modeName())+' project'+(pack.jobRef?' / '+h(pack.jobRef):'')+'</div><h1>'+h(pack.name||'Project overview')+'</h1><p>'+h([pack.address,pack.postcode].filter(Boolean).join(', ')||'Add a site address to complete your project details.')+'</p></div>'+'<button class="ev-btn" data-ev-action="details" aria-label="Edit project details">'+icon('pen')+'<span>Edit details</span></button>'+'</div>'+
- flowSteps(prog)+
+ flowSteps(prog)+backupNudge()+
  '<div class="ev-overview-grid"><section class="ev-card ev-plan-card"><div class="ev-card-head"><h2>Plans & markup</h2><span class="ev-pill">Rev '+h(pack.rev||'A')+'</span></div>'+
  (p?'<button type="button" class="ev-live-plan" data-ev-action="markup" aria-label="Open current plan in markup"><img id="evDashboardPlan" src="'+h(p.thumb||p.src)+'" alt="'+h(p.name)+' preview"></button>'+
   '<div class="ev-metrics">'+[['plan','Plans',s.plans],['cube','Charger symbols',s.units],['pen','Routes',s.routes],['flag','Open snags',s.snags]].map(([ic,t,n])=>'<div class="ev-metric"><span class="ev-metric-icon '+(ic==='flag'&&n?'amber':'')+'">'+icon(ic)+'</span><div><b>'+n+'</b><span>'+t+'</span></div></div>').join('')+'</div>'+
@@ -258,7 +293,7 @@ function overviewPage(){
  '<div class="ev-dashboard-bottom"><section class="ev-card"><div class="ev-card-head"><h2>Site and contacts</h2>'+btn('Edit','details','quiet')+'</div><div class="ev-card-body"><dl class="ev-kv">'+[['Client',pack.custName],['Project lead',pack.surveyedBy],['Site contact',[w.contactName,w.contactPhone].filter(Boolean).join(' · ')],['Project type',modeName()]].map(([t,v])=>'<dt>'+t+'</dt><dd>'+(v?h(v):'<span class="ev-muted">Not recorded</span>')+'</dd>').join('')+'</dl></div></section>'+
  '<section class="ev-card"><div class="ev-card-head"><h2>Programme</h2>'+icon('calendar')+'</div><div class="ev-card-body ev-delivery-summary"><b>'+h(programmeStart?'Starts '+niceDate(programmeStart):'Programme dates to set')+'</b><p>'+h(activities&&programmeStart?prog.complete+' of '+activities+' '+(activities===1?'activity':'activities')+' complete.':programmeStart?'Check activity dates, responsibilities and progress.':'Add activities, set dates and assign a person or team to each task.')+'</p>'+(activities&&programmeStart?meter(prog.complete/activities*100):'')+btn('Open programme','programme','','arrow')+'</div></section>'+
  '<section class="ev-card ev-downloads-card"><div class="ev-card-head"><h2>Recent downloads</h2>'+icon('file')+'</div><div class="ev-card-body">'+(w.issues.length?'<ul class="ev-download-list">'+w.issues.slice(-3).reverse().map(i=>'<li><b>'+h(i.label)+'</b><small>Rev '+h(i.rev)+' · '+h(niceDate(i.at))+'</small></li>').join('')+'</ul>':'<p>Your document downloads will appear here.</p>')+btn('Review & issue','issue','','arrow')+'</div></section>'+
- '<section class="ev-card ev-backup-card"><div class="ev-card-head"><h2>Project backup</h2>'+icon('backup')+'</div><div class="ev-card-body"><b>'+h(w.backupAt?'Downloaded '+niceDate(w.backupAt):'Keep a separate copy')+'</b><p>Your work saves in this browser. A downloaded backup lets you restore it or move to another device.</p>'+btn('Download backup','backup','','download')+'</div></section></div>';
+ backupCard()+'</div>';
 }
 // Rendered plan previews for project cards. They stay in IndexedDB, apart from the project index and backups.
 const previews=new Map();let previewStale=true;
@@ -307,7 +342,7 @@ function issuePage(){const w=ensure(),plans=pack.photos.length;
 async function newProject(example=false){return changeProject(async()=>{
  finishDrawing();
  if(hasWork()&&!await persist()){toast('Download a backup before starting a new project.');return;}
- await window.EVProfile?.ready;clearTimeout(saveT);saveT=null;pack=newPack();if(!example)window.EVProfile?.apply(pack);pack.projId=uid();ensure();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;imgKeys();updateUndo();syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();draw();
+ await window.EVProfile?.ready;clearTimeout(saveT);saveT=null;pack=newPack();if(!example)window.EVProfile?.apply(pack);pack.projId=uid();freshProjects.add(pack.projId);ensure();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;imgKeys();updateUndo();syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();draw();
  if(example){pack.name='Riverside Business Park · example';pack.jobRef='EXAMPLE-001';pack.custName='Example client';pack.address='Example site, for trying the drawing tools';pack.notes='Example layout: four EV bays, two twin chargers, a feeder pillar and a proposed cable route. Replace all assumptions with the site survey before use.';syncSiteChip();buildStarter('compact');allItems().filter(i=>i.type==='route').forEach((i,n)=>{if(n)i.labelT=.12;});draw();await persist();go('overview');}
  else{await idbDel('autosave').catch(()=>{});try{localStorage.removeItem(LS_KEY);}catch(_){}go('overview');openDetails(0);}
 });}
@@ -322,7 +357,7 @@ async function backup(){return changeProject(async()=>{
  ensure().backupAt=new Date().toISOString();
  try{downloadBlob(new Blob([JSON.stringify(serialisablePack())],{type:'application/json'}),slug(pack.name)+'.evplan.json');}
  catch(err){if(previous==null)delete ensure().backupAt;else ensure().backupAt=previous;throw err;}
- autosave();toast('Project backup downloaded');if(route==='overview')go('overview');return true;
+ autosave();syncBackupState();keepStorage();toast('Project backup downloaded');if(route==='overview')go('overview');return true;
 },'The backup could not be downloaded. Your current work is still available.');}
 $('btnSave').onclick=backup;
 function setInert(on){app.inert=on;}
@@ -358,6 +393,7 @@ function closePlanReview(){if(reviewBusy)return;previewToken++;planViewer?.destr
 review.addEventListener('keydown',e=>focusTrap(e,review,closePlanReview));review.addEventListener('change',e=>{if(e.target.dataset.evInclude){photoById(e.target.dataset.evInclude).includeInPdf=e.target.checked;void previewPlan();autosave();}});review.addEventListener('click',e=>{if(e.target===review||e.target.closest('[data-ev-close-review]'))closePlanReview();});
 function logIssue(label,file,prepared){window.EVPlanning?.recordDocument(label,file,prepared);ensure().issues.push({label,file:String(file),at:new Date().toISOString(),rev:pack.rev||'A'});ensure().issues=ensure().issues.slice(-100);autosave();}
 async function buildPlans(){
+ await window.EVDelivery?.reportFonts();
  const selected=chosenPlans(),doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true});window.EVDelivery?.installFonts(doc);
  for(let i=0;i<selected.length;i++){
   const p=selected[i];if(i)doc.addPage();await window.EVDelivery?.preparePlan(p);
@@ -390,7 +426,7 @@ openReview=function(mode){activeIssue=null;baseOpenReview(mode);const button=$('
 const actions={
  'workspace':()=>go(hasWork()?'overview':'projects'),
  'planning':()=>go('planning'),'evidence-overlay':()=>{EVPlanning.toggleOverlay();updateChrome();},'recover-projects':()=>EVPlanning.recoverProjects(),
- 'new':()=>newProject(),'example':()=>newProject(true),'open':()=>{if(!projectBusy)$('fileOpen').click();},'details':()=>openDetails(),'backup':backup,'markup':()=>go('markup'),'programme':()=>go('programme'),'snags':()=>go('snags'),'scale-review':()=>{const p=pack.photos.find(p=>!p.scale?.pxPerM);if(p)openPlan(p.id);else go('markup');setTool('scale');},'issue':()=>go('issue'),'showroom':()=>window.openCharger3D?.(),
+ 'new':()=>newProject(),'example':()=>newProject(true),'backup-later':()=>{try{const ids=JSON.parse(sessionStorage.getItem(laterKey)||'[]');sessionStorage.setItem(laterKey,JSON.stringify([...ids.filter(x=>x!==pack.projId),pack.projId].slice(-50)));}catch(_){freshProjects.add(pack.projId);}go('overview');},'open':()=>{if(!projectBusy)$('fileOpen').click();},'details':()=>openDetails(),'backup':backup,'markup':()=>go('markup'),'programme':()=>go('programme'),'snags':()=>go('snags'),'scale-review':()=>{const p=pack.photos.find(p=>!p.scale?.pxPerM);if(p)openPlan(p.id);else go('markup');setTool('scale');},'issue':()=>go('issue'),'showroom':()=>window.openCharger3D?.(),
  'add-files':()=>{go('markup');$('filePhoto').click();},'add-snag':()=>{if(!pack.photos.length){go('markup');toast('Add a plan or photo, then place a snag marker.');return;}go('markup');setTool('mark:snag');},
  'snag-report':()=>window.EVDelivery?.openReport('snags'),'programme-report':()=>window.EVDelivery?.openReport('programme'),'plans':openPlanReview,'engineer':()=>{if(!pack.photos.length)return actions['plans']();openReview('office');},'client':()=>{if(!pack.photos.length)return actions['plans']();openReview('customer');},'png':()=>{if(!activePhoto())return actions['plans']();$('btnPng').click();},'cdm':()=>window.evspCdmOpen?.(),'sld':()=>openSld(),'calcs':()=>openCableCheck(),'sim':()=>openSim(),'dno':()=>openDnoHelper(),'materials':()=>openBom(),'settings':()=>panel('output')
 };
@@ -418,7 +454,7 @@ async function importBackup(file){return changeProject(async()=>{
  finishDrawing();
  if(hasWork()&&!await persist()){toast('Download a backup before opening another project.');return false;}
  // Imports get a separate project record so an older backup cannot overwrite current work.
- clearTimeout(saveT);saveT=null;incoming.projId=uid();pack=incoming;ensure();imgKeys();history=[];redoStack=[];sel=null;selSet.clear();draftRoute=null;draftScale=null;updateUndo();
+ clearTimeout(saveT);saveT=null;incoming.projId=uid();freshProjects.add(incoming.projId);pack=incoming;ensure();imgKeys();history=[];redoStack=[];sel=null;selSet.clear();draftRoute=null;draftScale=null;updateUndo();
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();fitView();draw();await persist();go('overview');toast('Project backup opened as a separate copy');return true;
 });}

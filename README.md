@@ -88,7 +88,13 @@ profile, with no account registration or cross-device sync.
 
 Projects stay in browser storage on the device and site address being used. There
 is no application server or project upload. Download a JSON backup to keep a
-separate copy or move work to another device.
+separate copy or move work to another device. After the first save the planner
+asks the browser to keep its saved projects when space runs low; browsers decide,
+and Safari may still clear data after about a week without a visit. The backup
+button shows a dot when a project has changes since its last backup, the
+overview's backup card gives the date, and a reminder appears on the overview
+when those changes follow a backup more than a week old (or no backup at all).
+Saved projects keep their existing format and storage keys.
 
 ## Run and edit
 
@@ -180,9 +186,13 @@ The first-party scripts and styles use content-versioned URLs. All fonts and
 runtime libraries are served locally from `public/vendor/`, including PDF import,
 HEIC conversion, 3D rendering and the resource-page runtime. The HEIC converter
 loads only when a photo cannot be decoded natively; ordinary visits do not load
-its 1.35 MB script. PDF imports and previews disable font-code evaluation. This is a static site,
-not an installable offline PWA; the separately distributed portable build is a
-different deliverable.
+its 1.35 MB script. The 1.9 MB report fonts likewise download the first time a PDF
+is prepared, or in the background on the Issue page. PDF imports and previews disable font-code evaluation. This is a static site,
+not an offline PWA; the separately distributed portable build is a
+different deliverable. `public/manifest.webmanifest` lets phones and tablets add
+it to the Home Screen with its own name, icon and navy bar. On iPhone and iPad a
+Home Screen app keeps its own storage, separate from Safari, so use a backup to
+move projects between them.
 
 ## Source layout
 
@@ -196,11 +206,13 @@ different deliverable.
 | `public/profile.js`, `profile.css` | Personal and company profile, qualifications and report branding |
 | `public/delivery.js` | Programme, snag records and PDF review |
 | `public/bay-markings.js` | Bay symbols and lettering |
-| `public/report-fonts.js` | Embedded DejaVu fonts for new reports |
+| `public/report-fonts.js` | Embedded DejaVu fonts for new reports, loaded when a PDF is prepared |
+| `public/manifest.webmanifest` | Home Screen name, colours and icons |
 | `public/cdm-controls.js`, `cdm-controls.css` | Existing commercial CDM tools |
 | `public/Guide Library.dc.html`, `Learning Hub.dc.html` | Guidance and courses |
 | `public/assets/`, `vendor/` | Local images, fonts and dependencies |
 | `scripts/build-site.py` | Asset versioning and entry-page synchronisation |
+| `scripts/make-app-images.cjs` | Redraws the app icons and link preview picture with Playwright |
 | `tests/` | Static, lifecycle and optional browser checks |
 | `unreleased/public/` | Held-back source, excluded from deployment |
 

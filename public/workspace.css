@@ -23,3 +23,16 @@ body{background:#f4f6f9}#evApp{display:grid;grid-template-columns:204px minmax(0
 
 /* Keep the details wizard readable without Safari zooming when an input gains focus. */
 #evDetails .ev-field input,#evDetails .ev-field textarea,#evDetails .ev-field select{font-size:16px}
+
+/* Backup status: a quiet dot on the top bar button and a reminder on the project overview. */
+#evBackupTop{position:relative}
+#evBackupTop.ev-backup-due::after{content:"";position:absolute;top:4px;right:4px;width:9px;height:9px;border-radius:50%;background:#e0a63a;box-shadow:0 0 0 2px #fff}
+.ev-backup-nudge{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px 16px;align-items:center;margin:0 0 22px;padding:16px 18px;border:1px solid #f0d49b;border-left:4px solid #e0a63a;border-radius:12px;background:#fff8e8}
+.ev-backup-nudge-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:#ffe7b3;color:#8f5d0f}
+.ev-backup-nudge-icon svg{width:20px;height:20px}
+.ev-backup-nudge h2{margin:0;font-size:15px;font-weight:700;color:var(--ink)}
+.ev-backup-nudge p{margin:4px 0 0;font-size:13px;line-height:1.5;color:#5c4a24}
+.ev-backup-nudge .ev-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.ev-backup-card.due{border-color:#f0d49b}
+.ev-backup-card .ev-backup-keep{font-size:12px;margin-top:-8px}
+@media(max-width:700px){.ev-backup-nudge{grid-template-columns:auto minmax(0,1fr)}.ev-backup-nudge .ev-actions{grid-column:1/-1}.ev-backup-nudge .ev-actions .ev-btn{flex:1;justify-content:center}}
