@@ -245,6 +245,10 @@ records file downloads, not sending or approval. The tools assist qualified desi
 decisions and do not certify installations. This interface release does not claim
 a new engineering or regulatory audit of inherited calculations or learning content.
 
+## Design review, 3 October 2026
+
+The [design review](docs/design-review-2026-10-03.md) checks every page, dialog and PDF at desktop, iPad and phone widths and recommends nine themes of design work in three tiers: fix what looks broken, make the client documents worth sending, stop showing passes the data does not support, make Markup work on an iPad, give readiness checks one home and one vocabulary, set a behaviour baseline for dialogs and assistive technology, shorten the route to the first plan, stop style drift, and polish the guides and phone layouts. Each of the 90 verified findings gives its evidence and a recommended change.
+
 ## Reliability review, 2 October 2026
 
 The [deep review](docs/deep-review-2026-10-02.md) records fixes, remaining risks
