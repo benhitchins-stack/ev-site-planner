@@ -2,14 +2,14 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id), h=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const paths={collapse:'M4 3h16v18H4zM9 3v18m7-13-3 4 3 4',focus:'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',user:'M4 22v-3a8 8 0 0 1 16 0v3M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',home:'m3 11 9-8 9 8M5 9v12h14V9M9 21v-7h6v7',plan:'M4 3h16v18H4zM8 7h8M8 11h4M8 15h8',pen:'m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5',calendar:'M3 5h18v16H3zM7 2v6M17 2v6M3 10h18M7 14h4M13 18h4',flag:'M5 22V3M5 3h14l-3 5 3 5H5',send:'m3 3 18 9-18 9 3-9ZM6 12h15',file:'M5 3h10l4 4v14H5zM15 3v5h4M9 12h6M9 16h6',plus:'M12 5v14M5 12h14',arrow:'M4 12h16m-6-6 6 6-6 6',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',book:'M4 4h6l2 2 2-2h6v16h-6l-2 2-2-2H4zM12 6v16',learn:'m2 9 10-5 10 5-10 5ZM6 11v7c4 3 8 3 12 0v-7',cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',check:'m5 12 4 4L19 6',close:'m6 6 12 12M6 18 18 6',menu:'M4 6h16M4 12h16M4 18h16',folder:'M3 6h6l2 2h10v12H3z',tools:'m14 7 3 3 4-4a6 6 0 0 1-8 8l-7 7-3-3 7-7a6 6 0 0 1 8-8Z',photo:'M3 5h18v14H3zM3 16l6-5 5 4 3-3 4 4M8 8h1',backup:'M4 7h16v14H4zM7 3h10v4M9 12h6',alert:'m12 3 10 18H2ZM12 9v5M12 17v1',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',circle:'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z'};
+const paths={collapse:'M4 3h16v18H4zM9 3v18m7-13-3 4 3 4',focus:'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',user:'M4 22v-3a8 8 0 0 1 16 0v3M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',home:'m3 11 9-8 9 8M5 9v12h14V9M9 21v-7h6v7',plan:'M4 3h16v18H4zM8 7h8M8 11h4M8 15h8',pen:'m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5',calendar:'M3 5h18v16H3zM7 2v6M17 2v6M3 10h18M7 14h4M13 18h4',flag:'M5 22V3M5 3h14l-3 5 3 5H5',send:'m3 3 18 9-18 9 3-9ZM6 12h15',file:'M5 3h10l4 4v14H5zM15 3v5h4M9 12h6M9 16h6',plus:'M12 5v14M5 12h14',arrow:'M4 12h16m-6-6 6 6-6 6',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',book:'M4 4h6l2 2 2-2h6v16h-6l-2 2-2-2H4zM12 6v16',learn:'m2 9 10-5 10 5-10 5ZM6 11v7c4 3 8 3 12 0v-7',cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',check:'m5 12 4 4L19 6',close:'m6 6 12 12M6 18 18 6',menu:'M4 6h16M4 12h16M4 18h16',folder:'M3 6h6l2 2h10v12H3z',tools:'m14 7 3 3 4-4a6 6 0 0 1-8 8l-7 7-3-3 7-7a6 6 0 0 1 8-8Z',photo:'M3 5h18v14H3zM3 16l6-5 5 4 3-3 4 4M8 8h1',backup:'M4 7h16v14H4zM7 3h10v4M9 12h6',alert:'m12 3 10 18H2ZM12 9v5M12 17v1',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',circle:'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z',audit:'M9 3h6v4H9zM9 5H5v16h14V5h-4M8.5 14l2.5 2.5 4.5-5'};
 const icon=(k,cls='')=>'<svg class="'+cls+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[k]||paths.file)+'"/></svg>';
 const btn=(t,a,style='',ic='')=>'<button type="button" class="ev-btn '+style+'" data-ev-action="'+a+'">'+(ic?icon(ic):'')+t+'</button>';
 const empty=(title,desc,actions='')=>'<div class="ev-empty">'+icon('plan')+'<b>'+title+'</b>'+desc+(actions?'<div class="ev-actions">'+actions+'</div>':'')+'</div>';
 const card=(t,body,action='')=>'<section class="ev-card"><div class="ev-card-head"><h2>'+t+'</h2>'+action+'</div><div class="ev-card-body">'+body+'</div></section>';
 const niceDate=d=>{const date=new Date(d);return Number.isNaN(+date)?'':date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});};
 const modeName=()=>pack.mode==='domestic'?'Domestic':'Commercial';
-const routes=[['overview','Overview','home'],['markup','Markup','pen'],['planning','Design lab','tools'],['programme','Programme','calendar'],['snags','Snags','flag'],['issue','Issue','send']];
+const routes=[['overview','Overview','home'],['markup','Markup','pen'],['planning','Design lab','tools'],['programme','Programme','calendar'],['snags','Snags','flag'],['audit','Site audit','audit'],['issue','Issue','send']];
 let route='projects',search='',filter='all',drawerStep=0,returnFocus=null,reviewId=null,saveQueue=Promise.resolve(),saveSequence=0,activeIssue=null,previewToken=0,reviewBusy=false;
 let originalProgrammeParent=$('progBackdrop'),programmeNode=originalProgrammeParent.querySelector('.wlc');
 const ensure=()=>{if(!pack.workspace||typeof pack.workspace!=='object')pack.workspace={};const w=pack.workspace;w.schema=1;if(!Array.isArray(w.issues))w.issues=[];return w;};
@@ -180,7 +180,7 @@ function updateChrome(){
  if(!$('evApp'))return;
  $('evProjectTitle').textContent=route==='profile'?'My profile':route==='projects'?'Your projects':route==='overview'?'Project overview':(pack.name||'Untitled project');
  $('evBreadcrumb').textContent=route==='profile'?'EV Site Planner / Profile':route==='projects'?'EV Site Planner / Workspace':'Project / '+(routes.find(r=>r[0]===route)?.[1]||route);
- $('evModePill').textContent=modeName();$('evModePill').hidden=['projects','profile'].includes(route);$('evSaveState').hidden=route==='profile';
+ $('evModePill').textContent=window.EVAudit?.isAuditProject()?'Site audit':modeName();$('evModePill').hidden=['projects','profile'].includes(route);$('evSaveState').hidden=route==='profile';
  $('evEditTop').hidden=['projects','profile','overview'].includes(route);$('evBackupTop').hidden=route==='profile'||(route==='projects'&&!hasWork());
  $('evIssuePlans').hidden=route!=='markup';
  app.querySelectorAll('[data-ev-route]').forEach(b=>{if(b.dataset.evRoute===route)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
@@ -199,7 +199,7 @@ function go(next){
  app.dataset.route=next;closeNav();syncNav();
  $('evTechMenu').hidden=true;updateChrome();
  if(next==='markup'){requestAnimationFrame(()=>{if(route!=='markup')return;resize();fitView();drawCanvas();});return;}
- const page={profile:()=>EVProfile.render(),home:()=>EVHome.render(),planning:()=>EVPlanning.render(),projects:projectsPage,overview:overviewPage,programme:programmePage,snags:snagsPage,issue:issuePage}[next];
+ const page={profile:()=>EVProfile.render(),home:()=>EVHome.render(),planning:()=>EVPlanning.render(),projects:projectsPage,overview:()=>window.EVAudit?.isAuditProject()?EVAudit.overview():overviewPage(),programme:programmePage,snags:snagsPage,audit:()=>window.EVAudit?EVAudit.render():'',issue:issuePage}[next];
  $('evScreen').innerHTML='<div class="ev-page">'+page()+'</div>';$('evScreen').scrollTop=0;
  if(next==='projects'||next==='home'){hydratePreviews($('evScreen'));if(previewStale||!previews.has(pack.projId))refreshPreview().then(()=>{if(route===next)hydratePreviews($('evScreen'));});}
  if(next==='projects'){
@@ -208,7 +208,7 @@ function go(next){
  }
  if(next==='overview')dashboardImage();
  // Fetch the report fonts in the background where documents are prepared.
- if(next==='issue')window.EVDelivery?.reportFonts().catch(()=>{});
+ if(next==='issue'||next==='audit')window.EVDelivery?.reportFonts().catch(()=>{});
  if(next==='planning')EVPlanning.afterRender();
  EVProjectStore.renderConflict();
  if(next==='programme'&&window.EVDelivery){EVDelivery.mountProgramme();}
@@ -224,7 +224,7 @@ function projectsPage(){
  const n=projIndex().length;
  return heading('Your projects',n?count(n,'project')+' saved in this browser. Open one, start a new project or import a backup.':'Start a new project or open a project backup.',btn('Open backup','open','','folder')+btn('New project','new','primary','plus'))+
  (hasWork()?resumeCard():'')+
- '<div class="ev-project-library"><div class="ev-filter"><h2 class="ev-section-title">All projects <span class="ev-muted">'+n+'</span></h2><div class="ev-project-search"><label class="ev-search">'+icon('search')+'<input class="ev-input" id="evSearch" type="search" aria-label="Search projects" placeholder="Search name, reference or client"></label><select class="ev-select" id="evFilter" aria-label="Filter project type"><option value="all">All project types</option><option value="commercial">Commercial</option><option value="domestic">Domestic</option></select></div></div><div id="evProjectCards"></div></div>'+
+ '<div class="ev-project-library"><div class="ev-filter"><h2 class="ev-section-title">All projects <span class="ev-muted">'+n+'</span></h2><div class="ev-project-search"><label class="ev-search">'+icon('search')+'<input class="ev-input" id="evSearch" type="search" aria-label="Search projects" placeholder="Search name, reference or client"></label><select class="ev-select" id="evFilter" aria-label="Filter project type"><option value="all">All project types</option><option value="commercial">Commercial</option><option value="domestic">Domestic</option><option value="audit">Site audits</option></select></div></div><div id="evProjectCards"></div></div>'+
  '<section class="ev-storage-note">'+icon('backup')+'<div><b>Saved in this browser</b><p>Projects stay with this device and site address. Download a backup to keep a separate copy or continue on another device.</p></div>'+btn('Recover missing projects','recover-projects')+'</section>';
 }
 function resumeCard(){
@@ -232,12 +232,13 @@ function resumeCard(){
  return '<section class="ev-resume" aria-labelledby="evResumeTitle"><div class="ev-resume-preview">'+(src?'<img src="'+h(previews.get(pack.projId)||src)+'" alt="" data-ev-preview="'+h(pack.projId)+'">':icon('plan'))+'</div><div class="ev-resume-copy"><span class="ev-resume-label">Continue working</span><h2 id="evResumeTitle">'+h(pack.name||'Untitled project')+'</h2><p>'+h([pack.jobRef,pack.custName].filter(Boolean).join(' · ')||modeName()+' project')+'</p><ul class="ev-facts">'+[[s.plans,'plan'],[chargers,'charger'],[s.routes,'route'],[s.snags,'open snag']].map(([n,t])=>'<li><b>'+n+'</b> '+t+(n===1?'':'s')+'</li>').join('')+'</ul></div><div class="ev-resume-actions">'+btn('Open project','workspace','primary','arrow')+btn('Go to markup','markup','','pen')+'</div></section>';
 }
 function renderProjectCards(){
- const list=projIndex().filter(x=>(filter==='all'||x.mode===filter)&&[x.name,x.ref,x.cust].join(' ').toLowerCase().includes(search.toLowerCase())),filtered=search||filter!=='all';
+ const list=projIndex().filter(x=>(filter==='all'||(filter==='audit'?x.audit?.kind==='audit':x.mode===filter))&&[x.name,x.ref,x.cust].join(' ').toLowerCase().includes(search.toLowerCase())),filtered=search||filter!=='all';
  $('evProjectCards').innerHTML=list.length?'<div class="ev-project-grid">'+list.map(x=>{
-  const current=x.id===pack.projId&&hasWork(),facts=[count(Number(x.n)||0,'plan')];
+  const current=x.id===pack.projId&&hasWork(),facts=x.audit?.kind==='audit'&&!Number(x.n)?[]:[count(Number(x.n)||0,'plan')];
   if(Number.isFinite(x.units))facts.push(count(x.units,'charger'));
   if(x.snags>0)facts.push(count(Number(x.snags),'open snag'));
-  return '<article class="ev-project-row'+(current?' current':'')+'"><div class="ev-project-preview">'+(previews.get(x.id)||x.thumb?'<img src="'+h(previews.get(x.id)||x.thumb)+'" alt="" data-ev-preview="'+h(x.id)+'">':icon('plan'))+'</div><div class="ev-project-body"><div class="ev-project-tags"><span class="ev-pill">'+(x.mode==='domestic'?'Domestic':'Commercial')+'</span>'+(x.rev?'<span class="ev-pill quiet">Rev '+h(x.rev)+'</span>':'')+(current?'<span class="ev-pill lime">Open now</span>':'')+'</div><h2>'+h(x.name)+'</h2><p>'+h([x.ref,x.cust].filter(Boolean).join(' · ')||'No reference or client recorded')+'</p><ul class="ev-facts">'+facts.map(f=>'<li>'+f+'</li>').join('')+'</ul>'+(Number.isFinite(x.ready)?'<div class="ev-project-checks">'+meter(x.ready)+'<small>Record checks '+Number(x.ready)+'%</small></div>':'')+'</div><div class="ev-project-foot"><small>'+h(niceDate(x.date)?'Edited '+niceDate(x.date):'')+'</small><button class="ev-btn" data-ev-project="'+h(x.id)+'" aria-label="Open '+h(x.name)+'">Open '+icon('arrow')+'</button></div></article>';
+  if(x.audit&&Number.isFinite(x.audit.total))facts.push(x.audit.done+' of '+x.audit.total+' checks'+(x.audit.fail>0?', '+count(Number(x.audit.fail),'fail'):''));
+  return '<article class="ev-project-row'+(current?' current':'')+'"><div class="ev-project-preview">'+(previews.get(x.id)||x.thumb?'<img src="'+h(previews.get(x.id)||x.thumb)+'" alt="" data-ev-preview="'+h(x.id)+'">':icon('plan'))+'</div><div class="ev-project-body"><div class="ev-project-tags"><span class="ev-pill">'+(x.audit?.kind==='audit'?'Site audit':x.mode==='domestic'?'Domestic':'Commercial')+'</span>'+(x.rev?'<span class="ev-pill quiet">Rev '+h(x.rev)+'</span>':'')+(current?'<span class="ev-pill lime">Open now</span>':'')+'</div><h2>'+h(x.name)+'</h2><p>'+h([x.ref,x.cust].filter(Boolean).join(' · ')||'No reference or client recorded')+'</p><ul class="ev-facts">'+facts.map(f=>'<li>'+f+'</li>').join('')+'</ul>'+(x.audit?.kind==='audit'&&x.audit.total?'<div class="ev-project-checks">'+meter(x.audit.done/x.audit.total*100)+'<small>Audit '+Math.round(x.audit.done/x.audit.total*100)+'%</small></div>':Number.isFinite(x.ready)?'<div class="ev-project-checks">'+meter(x.ready)+'<small>Record checks '+Number(x.ready)+'%</small></div>':'')+'</div><div class="ev-project-foot"><small>'+h(niceDate(x.date)?'Edited '+niceDate(x.date):'')+'</small><button class="ev-btn" data-ev-project="'+h(x.id)+'" aria-label="Open '+h(x.name)+'">Open '+icon('arrow')+'</button></div></article>';
  }).join('')+'</div>':filtered?empty('No matching projects','Try a different search or project type.'):'<div class="ev-empty ev-empty-projects">'+planArt+'<b>No saved projects yet</b>Enter the site details, then add a drawing or photo.<div class="ev-actions">'+btn('Create a project','new','primary','plus')+btn('Try an example project','example','','arrow')+'</div></div>';
  hydratePreviews($('evProjectCards'));
 }
@@ -261,11 +262,12 @@ function flowSteps(prog){
 // Project pages share the overview's navy header. The stage strip is read-only: it summarises a programme only once the Programme page has created one.
 function programmeSnapshot(){try{if(Array.isArray(pack.programme?.activities))return window.EVDelivery?.programmeSummary()||null;}catch(_){}return null;}
 function stageStrip(current){
+ if(window.EVAudit?.isAuditProject())return EVAudit.stageStrip(current);
  let steps;try{steps=stageSteps(programmeSnapshot());}catch(_){return '';}
  return '<nav class="ev-stage-strip" aria-label="Project stages"><ol>'+steps.map(([a,t,ic,[state,d]],i)=>'<li><button type="button" class="ev-stage '+state+(a===current?' current':'')+'" data-ev-action="'+a+'"'+(a===current?' aria-current="page"':'')+' title="'+h(d)+'"><span class="ev-stage-mark">'+icon(state==='done'?'check':state==='attention'?'alert':ic)+'</span><span class="ev-stage-copy"><small>Step '+(i+1)+'<span class="ed-sr-only"> · '+stageLabel[state]+'</span></small><b>'+t+'</b></span></button></li>').join('')+'</ol></nav>';
 }
 function pageHead(title,sub,actions='',stage=''){
- const eyebrow=stage?h(modeName())+' project'+(pack.jobRef?' / '+h(pack.jobRef):''):'';
+ const eyebrow=stage?(window.EVAudit?.isAuditProject()?'Site audit':h(modeName())+' project')+(pack.jobRef?' / '+h(pack.jobRef):''):'';
  return '<header class="ev-page-head'+(stage?' has-stages':'')+'"><div class="ev-page-head-main"><div>'+(eyebrow?'<div class="ev-eyebrow">'+eyebrow+'</div>':'')+'<h1>'+title+'</h1><p>'+sub+'</p></div>'+(actions?'<div class="ev-actions">'+actions+'</div>':'')+'</div>'+(stage?stageStrip(stage):'')+'</header>';
 }
 function overviewPage(){
@@ -276,6 +278,7 @@ function overviewPage(){
  else if(pack.photos.some(x=>!x.scale?.pxPerM))tasks.push(['scale-review','Review the plan scale','Set a reference before measuring routes','pen']);
  if(s.snags)tasks.push(['snags','Review '+count(s.snags,'open snag'),'Check the snag, who will fix it and its target date','flag']);
  if(!pack.programme?.start)tasks.push(['programme','Set the programme dates','Set activity dates and assign the work','calendar']);
+ const auditTask=window.EVAudit?.task();if(auditTask)tasks.push(auditTask);
  if(!tasks.length)tasks.push(['issue','Review the project documents','Check the content before downloading','file']);
  let ready=null,prog=null;try{ready=readiness();}catch(_){}
  // The programme page creates the activity list; only summarise one that already exists.
@@ -289,7 +292,7 @@ function overviewPage(){
   '<div class="ev-plan-card-foot"><div><b>'+h(p.name)+'</b><small>'+count(p.items.length,'item')+' · '+(p.scale?.pxPerM?'Scale recorded':'Scale not set')+'</small></div>'+btn('Continue markup','markup','primary','arrow')+'</div>':empty('No plans added','Add a drawing or site photo to begin your installation plan.',btn('Add site files','add-files','primary','plus')+btn('Try an example project','example','','arrow')))+
  (pack.photos.length>1?'<div class="ev-plan-picks">'+pack.photos.map(ph=>'<button data-ev-plan="'+h(ph.id)+'"><img src="'+h(ph.thumb||ph.src)+'" alt=""><span>'+h(ph.name)+'<small>'+(ph.scale?.pxPerM?'Scale recorded':'Scale not set')+'</small></span></button>').join('')+'</div>':'')+'</section>'+
  '<div class="ev-overview-side"><section class="ev-card ev-next-card"><div class="ev-card-head"><h2>Next actions</h2><span class="ev-task-count">'+tasks.length+'</span></div><div class="ev-next-list">'+tasks.map(([a,t,d,ic])=>'<button data-ev-action="'+a+'"><span class="ev-next-icon">'+icon(ic)+'</span><span><b>'+h(t)+'</b><small>'+h(d)+'</small></span>'+icon('arrow')+'</button>').join('')+'</div></section>'+
- (ready?'<section class="ev-card ev-checks-card"><div class="ev-card-head"><h2>Record checks</h2><span class="ev-task-count">'+ready.done+'/'+ready.total+'</span></div><div class="ev-card-body">'+meter(ready.pct,ready.done+' of '+ready.total+' record checks complete')+'<ul class="ev-check-list">'+ready.checks.map(([t,ok])=>'<li class="'+(ok?'ok':'')+'">'+icon(ok?'check':'circle')+'<span>'+h(t)+'<span class="ed-sr-only">: '+(ok?'recorded':'not recorded yet')+'</span></span></li>').join('')+'</ul></div><div class="ev-next-footer">Based on the information recorded so far. Design approval must be checked separately.</div></section>':'')+'</div></div>'+
+ (ready?'<section class="ev-card ev-checks-card"><div class="ev-card-head"><h2>Record checks</h2><span class="ev-task-count">'+ready.done+'/'+ready.total+'</span></div><div class="ev-card-body">'+meter(ready.pct,ready.done+' of '+ready.total+' record checks complete')+'<ul class="ev-check-list">'+ready.checks.map(([t,ok])=>'<li class="'+(ok?'ok':'')+'">'+icon(ok?'check':'circle')+'<span>'+h(t)+'<span class="ed-sr-only">: '+(ok?'recorded':'not recorded yet')+'</span></span></li>').join('')+'</ul></div><div class="ev-next-footer">Based on the information recorded so far. Design approval must be checked separately.</div></section>':'')+(window.EVAudit?EVAudit.card():'')+'</div></div>'+
  '<div class="ev-dashboard-bottom"><section class="ev-card"><div class="ev-card-head"><h2>Site and contacts</h2>'+btn('Edit','details','quiet')+'</div><div class="ev-card-body"><dl class="ev-kv">'+[['Client',pack.custName],['Project lead',pack.surveyedBy],['Site contact',[w.contactName,w.contactPhone].filter(Boolean).join(' · ')],['Project type',modeName()]].map(([t,v])=>'<dt>'+t+'</dt><dd>'+(v?h(v):'<span class="ev-muted">Not recorded</span>')+'</dd>').join('')+'</dl></div></section>'+
  '<section class="ev-card"><div class="ev-card-head"><h2>Programme</h2>'+icon('calendar')+'</div><div class="ev-card-body ev-delivery-summary"><b>'+h(programmeStart?'Starts '+niceDate(programmeStart):'Programme dates to set')+'</b><p>'+h(activities&&programmeStart?prog.complete+' of '+activities+' '+(activities===1?'activity':'activities')+' complete.':programmeStart?'Check activity dates, responsibilities and progress.':'Add activities, set dates and assign a person or team to each task.')+'</p>'+(activities&&programmeStart?meter(prog.complete/activities*100):'')+btn('Open programme','programme','','arrow')+'</div></section>'+
  '<section class="ev-card ev-downloads-card"><div class="ev-card-head"><h2>Recent downloads</h2>'+icon('file')+'</div><div class="ev-card-body">'+(w.issues.length?'<ul class="ev-download-list">'+w.issues.slice(-3).reverse().map(i=>'<li><b>'+h(i.label)+'</b><small>Rev '+h(i.rev)+' · '+h(niceDate(i.at))+'</small></li>').join('')+'</ul>':'<p>Your document downloads will appear here.</p>')+btn('Review & issue','issue','','arrow')+'</div></section>'+
@@ -336,15 +339,19 @@ function issuePage(){const w=ensure(),plans=pack.photos.length;
   ['grid','Materials & schedules','Use the markup quantities to prepare a materials list and cable schedule.','materials','Review materials'],
   ['photo','Current plan image','Download the current annotated plan as a PNG image.','png','Download image']
  ].map(out).join('')+'</div>'+
+ (pack.audit&&typeof pack.audit==='object'?'<h2 class="ev-group-title">Site audit</h2><div class="ev-outs ev-outs-compact">'+out(['check','Evidence pack','Review the audit findings, photos and the full checklist, then download the PDF.','audit-pack','Review evidence pack'])+'</div>':'')+
  '<section class="ev-card"><div class="ev-card-head"><h2>Document download history</h2><span class="ev-note-count">Downloads recorded in this browser</span></div>'+(w.issues.length?'<div class="ev-table-wrap"><table class="ev-table"><thead><tr><th>Document</th><th>Revision</th><th>Downloaded</th><th>Filename</th></tr></thead><tbody>'+w.issues.slice().reverse().map(i=>'<tr><td>'+h(i.label)+'</td><td>'+h(i.rev)+'</td><td>'+h(niceDate(i.at))+'</td><td>'+h(i.file)+'</td></tr>').join('')+'</tbody></table></div>':empty('No documents downloaded yet','Previewing a document does not add it to this history.'))+'</section>';
 }
 
-async function newProject(example=false){return changeProject(async()=>{
+async function newProject(example=false,audit=false){return changeProject(async()=>{
  finishDrawing();
  if(hasWork()&&!await persist()){toast('Download a backup before starting a new project.');return;}
  await window.EVProfile?.ready;clearTimeout(saveT);saveT=null;pack=newPack();if(!example)window.EVProfile?.apply(pack);pack.projId=uid();freshProjects.add(pack.projId);ensure();history=[];redoStack=[];sel=null;draftRoute=null;draftScale=null;imgKeys();updateUndo();syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();draw();
  if(example){pack.name='Riverside Business Park · example';pack.jobRef='EXAMPLE-001';pack.custName='Example client';pack.address='Example site, for trying the drawing tools';pack.notes='Example layout: four EV bays, two twin chargers, a feeder pillar and a proposed cable route. Replace all assumptions with the site survey before use.';syncSiteChip();buildStarter('compact');allItems().filter(i=>i.type==='route').forEach((i,n)=>{if(n)i.labelT=.12;});draw();await persist();go('overview');}
- else{await idbDel('autosave').catch(()=>{});try{localStorage.removeItem(LS_KEY);}catch(_){}go('overview');openDetails(0);}
+ else{await idbDel('autosave').catch(()=>{});try{localStorage.removeItem(LS_KEY);}catch(_){}
+  // An audit-only project records its site details on the audit page instead of the project details dialog.
+  if(audit&&window.EVAuditCore){pack.audit=EVAuditCore.create({kind:'audit',auditor:pack.surveyedBy||''});go('audit');}
+  else{go('overview');openDetails(0);}}
 });}
 function openPlan(id){if(!photoById(id))return;finishDrawing();pack.active=id;sideTab='pack';packSec='capture';setSideTab();go('markup');fitView();draw();autosave();}
 function panel(section){go('markup');packSec=section;openInspector();}
@@ -428,6 +435,7 @@ const actions={
  'planning':()=>go('planning'),'evidence-overlay':()=>{EVPlanning.toggleOverlay();updateChrome();},'recover-projects':()=>EVPlanning.recoverProjects(),
  'new':()=>newProject(),'example':()=>newProject(true),'backup-later':()=>{try{const ids=JSON.parse(sessionStorage.getItem(laterKey)||'[]');sessionStorage.setItem(laterKey,JSON.stringify([...ids.filter(x=>x!==pack.projId),pack.projId].slice(-50)));}catch(_){freshProjects.add(pack.projId);}go('overview');},'open':()=>{if(!projectBusy)$('fileOpen').click();},'details':()=>openDetails(),'backup':backup,'markup':()=>go('markup'),'programme':()=>go('programme'),'snags':()=>go('snags'),'scale-review':()=>{const p=pack.photos.find(p=>!p.scale?.pxPerM);if(p)openPlan(p.id);else go('markup');setTool('scale');},'issue':()=>go('issue'),'showroom':()=>window.openCharger3D?.(),
  'add-files':()=>{go('markup');$('filePhoto').click();},'add-snag':()=>{if(!pack.photos.length){go('markup');toast('Add a plan or photo, then place a snag marker.');return;}go('markup');setTool('mark:snag');},
+ 'audit':()=>{if(!window.EVAudit)return;EVAudit.start();go('audit');},'audit-setup':()=>window.EVAudit?.show('setup'),'audit-evidence':()=>window.EVAudit?.show('evidence'),'audit-pack':()=>window.EVDelivery?.openReport('audit'),'new-audit':()=>newProject(false,true),
  'snag-report':()=>window.EVDelivery?.openReport('snags'),'programme-report':()=>window.EVDelivery?.openReport('programme'),'plans':openPlanReview,'engineer':()=>{if(!pack.photos.length)return actions['plans']();openReview('office');},'client':()=>{if(!pack.photos.length)return actions['plans']();openReview('customer');},'png':()=>{if(!activePhoto())return actions['plans']();$('btnPng').click();},'cdm':()=>window.evspCdmOpen?.(),'sld':()=>openSld(),'calcs':()=>openCableCheck(),'sim':()=>openSim(),'dno':()=>openDnoHelper(),'materials':()=>openBom(),'settings':()=>panel('output')
 };
 $('btnOpen').onclick=actions.open;
@@ -458,7 +466,7 @@ async function importBackup(file){return changeProject(async()=>{
  pack.photos.forEach(p=>{const im=new Image();im.onload=draw;im.src=p.src;imgCache[p.id]=im;});
  syncSiteChip();syncBrand();applyMode(false);buildRail();sideTab='pack';packSec='capture';setSideTab();fitView();draw();await persist();go('overview');toast('Project backup opened as a separate copy');return true;
 });}
-window.EVWorkspace={go,persist,pageHead,withProject:changeProject,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,version:'workspace-r2.2'};
+window.EVWorkspace={go,persist,pageHead,withProject:changeProject,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,parts:{icon,btn,backupNudge,backupCard,niceDate,meter,count,empty},version:'workspace-r2.2'};
 EVReportViewer.enhanceLegacy();
 go('home');
 // Wait for saved-project recovery before following links from the website home page.
@@ -468,7 +476,7 @@ Promise.all([window.__evRestorePromise,window.__evProjectIndexReady]).then(async
  const requested=location.hash.slice(1);
  if(['projects','profile','planning'].includes(requested))go(requested);
  else if(requested==='workspace')actions.workspace();
- else if(['new','example','showroom','3d-showroom'].includes(requested)){
+ else if(['new','example','showroom','3d-showroom','new-audit'].includes(requested)){
   window.history.replaceState(null,'',location.pathname+location.search);
   await actions[requested==='3d-showroom'?'showroom':requested]();
  }

@@ -231,6 +231,120 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    if(navigator.storage)for(const [name,value] of Object.entries(answers))Object.defineProperty(navigator.storage,name,{configurable:true,value});
    else Object.defineProperty(navigator,'storage',{configurable:true,value:answers});
   });
+
+  // Site audits of existing installations live inside the project record as pack.audit.
+  const samplePng=async p=>Buffer.from(await p.evaluate(()=>{const c=document.createElement('canvas');c.width=48;c.height=36;const g=c.getContext('2d');g.fillStyle='#b4432c';g.fillRect(0,0,48,36);g.fillStyle='#fff';g.fillRect(10,8,28,20);return c.toDataURL('image/png').split(',')[1];}),'base64');
+  await check('A site audit records answers, measurements and photos, then survives reload and a backup round trip',async p=>{
+   await p.locator('[data-ev-route="audit"]').click();await p.waitForFunction(()=>EVWorkspace.route()==='audit');
+   assert.equal(await p.locator('.eva-intro').count(),1,'A project without an audit explains the three steps first');
+   await p.getByRole('button',{name:'Audit this site',exact:true}).click();await p.locator('#evaSetup').waitFor();
+   await p.locator('[data-eva-site-type="carpark"]').click();await p.locator('[data-eva-site-type="carpark"].on').waitFor();
+   await p.locator('[data-eva-public="true"]').click();await p.locator('[data-eva-public="true"].on').waitFor();
+   assert.deepEqual(await p.evaluate(()=>[pack.audit.kind,pack.audit.siteType,pack.audit.isPublic,pack.audit.units.length]),['project','carpark',true,1]);
+   const total=await p.evaluate(()=>EVAuditCore.summary(pack.audit).total);
+   assert.equal(await p.locator('.eva-check').count(),total,'Every applicable check has a row');
+   assert.equal(await p.locator('.eva-excluded-list li').count(),await p.evaluate(()=>EVAuditCore.excluded(pack.audit).length));
+   await p.locator('[data-eva-afield="operator"]').fill('Example Charging Ltd');
+   await p.locator('[data-eva-field="name"]').fill('Riverside car park audit');
+   assert.deepEqual(await p.evaluate(()=>[pack.audit.operator,pack.name]),['Example Charging Ltd','Riverside car park audit']);
+   // A fail opens its details and asks for a note, a measurement and a photo.
+   await p.locator('[data-eva-outcome="fail"][data-eva-key="ACC-02:cp1"]').click();
+   const row=p.locator('#eva-ACC-02-cp1');await row.locator('.eva-body:not([hidden])').waitFor();
+   await row.locator('[data-eva-measure]').fill('1350');
+   await row.locator('[data-eva-note]').fill('Card reader centred at 1,350 mm');
+   await row.locator('[data-eva-upload]').setInputFiles({name:'reader.png',mimeType:'image/png',buffer:await samplePng(p)});
+   await p.locator('#eva-ACC-02-cp1 .eva-thumb').waitFor();
+   assert.match(await p.evaluate(()=>pack.audit.answers['ACC-02:cp1'].photos[0].src),/^data:image\/jpeg/);
+   assert.match(await p.locator('#eva-ACC-02-cp1 .eva-check-title small').textContent(),/1350 mm · Card reader/);
+   await p.locator('[data-eva-outcome="na"][data-eva-key="ACC-06"]').click();
+   await p.locator('#eva-ACC-06 [data-eva-note]').fill('Four bays only');
+   assert.equal(await p.evaluate(()=>pack.audit.answers['ACC-06'].reason),'Four bays only');
+   await p.locator('[data-eva-outcome="pass"][data-eva-key="PAY-01"]').click();
+   await p.waitForFunction(()=>EVAuditCore.summary(pack.audit).done===3);
+   // Undo steps back one answer and redraws the page.
+   await p.evaluate(()=>undo());
+   await p.waitForFunction(()=>EVAuditCore.state(EVAuditCore.answer(pack.audit,'PAY-01'))==='todo');
+   assert.equal(await p.evaluate(()=>pack.audit.answers['ACC-06'].outcome),'na');
+   assert.equal(await p.locator('[data-eva-outcome="pass"][data-eva-key="PAY-01"]').getAttribute('aria-pressed'),'false');
+   // The saved project list row carries the progress; the record reloads by id.
+   const id=await p.evaluate(async()=>{await EVWorkspace.persist();return pack.projId;});
+   assert.deepEqual(await p.evaluate(id=>projIndex().find(r=>r.id===id).audit,id),{kind:'project',siteType:'carpark',done:2,total,fail:1,action:0});
+   await p.goto('about:blank');await p.goto(base+'/#project='+encodeURIComponent(id),{waitUntil:'networkidle'});
+   await p.waitForFunction(id=>window.EVWorkspace&&EVWorkspace.route()==='overview'&&pack.projId===id,id);
+   assert.equal(await p.evaluate(()=>pack.audit.answers['ACC-02:cp1'].photos.length),1);
+   assert.match(await p.locator('.eva-overview-card').textContent(),/Continue audit/);
+   assert.match(await p.locator('.ev-next-list').textContent(),/Continue the site audit/);
+   // A backup carries the audit and imports as a separate copy.
+   const waiting=p.waitForEvent('download');await p.locator('#evBackupTop').click();
+   const download=await waiting,file=path.join(out,'audit-backup.evplan.json');await download.saveAs(file);
+   const exported=JSON.parse(fs.readFileSync(file,'utf8'));
+   assert.equal(exported.audit.answers['ACC-02:cp1'].measure,'1350');
+   await p.locator('#fileOpen').setInputFiles(file);
+   await p.waitForFunction(id=>pack.projId!==id&&pack.audit?.answers?.['ACC-02:cp1']?.photos.length===1,id);
+   // A damaged audit inside a backup is refused and the open project kept.
+   exported.audit.answers['ACC-02:cp1'].outcome='maybe';const broken=path.join(out,'audit-broken.evplan.json');fs.writeFileSync(broken,JSON.stringify(exported));
+   const kept=await p.evaluate(()=>pack.projId);await p.locator('#fileOpen').setInputFiles(broken);
+   await p.waitForFunction(()=>document.getElementById('toast').classList.contains('show'));
+   assert.match(await p.locator('#toast').textContent(),/doesn't look like an EV Site Planner backup/);
+   assert.equal(await p.evaluate(()=>pack.projId),kept);
+  });
+  await check('A site audit started from Home saves as an audit project, lists under Site audits and makes an evidence pack',async p=>{
+   await p.evaluate(()=>EVWorkspace.persist());
+   await p.locator('[data-ev-route="home"]').first().click();await p.waitForFunction(()=>EVWorkspace.route()==='home');
+   const section=p.locator('#ehAudits');await section.waitFor();
+   assert.match(await section.textContent(),/No site audits yet/);
+   await section.getByRole('button',{name:'New audit'}).click();
+   await p.waitForFunction(()=>EVWorkspace.route()==='audit'&&pack.audit?.kind==='audit');
+   assert.equal(await p.locator('#evModePill').textContent(),'Site audit');
+   assert.equal(await p.locator('.eva-stages .ev-stage').count(),4,'Audit projects have a four-step strip');
+   await p.locator('[data-eva-field="name"]').fill('High Street lamppost chargers');
+   await p.locator('[data-eva-site-type="lamppost"]').click();await p.locator('[data-eva-site-type="lamppost"].on').waitFor();
+   await p.locator('[data-eva-public="true"]').click();await p.locator('[data-eva-public="true"].on').waitFor();
+   await p.locator('[data-eva-add-unit]').click();await p.locator('#evaUnit-cp2').waitFor();
+   await p.locator('[data-eva-unit-field="label:cp2"]').fill('Lamppost 7');
+   assert.equal(await p.locator('#evaGroupTitle-cp2').textContent(),'Lamppost 7');
+   for(const key of await p.evaluate(()=>EVAuditCore.slots(pack.audit).filter(r=>r.unit?.id==='cp1').map(r=>r.key)))await p.locator('[data-eva-outcome="pass"][data-eva-key="'+key+'"]').click();
+   await p.locator('[data-eva-copy="cp2"]').click();
+   const unitChecks=await p.evaluate(()=>EVAuditCore.CHECKS.filter(c=>c.scope==='unit'&&c.applies.includes('lamppost')).length);
+   await p.waitForFunction(n=>EVAuditCore.summary(pack.audit).pass===n,unitChecks*2);
+   await p.locator('[data-eva-outcome="fail"][data-eva-key="PAY-01"]').click();
+   await p.locator('#eva-PAY-01 [data-eva-note]').fill('No tariff on the unit or in the app');
+   await p.locator('#eva-PAY-01 [data-eva-upload]').setInputFiles({name:'unit.png',mimeType:'image/png',buffer:await samplePng(p)});
+   await p.locator('#eva-PAY-01 .eva-thumb').waitFor();
+   // The evidence pack previews, lists what is still missing and logs its download.
+   await p.locator('.ev-page-head .ev-btn.primary[data-ev-action="audit-pack"]').click();
+   await p.locator('#edReportViewer').waitFor();
+   await p.waitForFunction(()=>{const b=document.querySelector('[data-ed-action="download-report"]');return b&&!b.disabled;},null,{timeout:120000});
+   assert.match(await p.locator('#edReportChecks').textContent(),/not answered/);
+   assert.match(await p.locator('#edTitle').textContent(),/Review evidence pack/);
+   const waiting=p.waitForEvent('download');await p.locator('[data-ed-action="download-report"]').click();
+   const download=await waiting;assert.match(download.suggestedFilename(),/High_Street_lamppost_chargers_evidence-pack_rev-A\.pdf/);
+   await p.waitForFunction(()=>pack.workspace.issues.some(i=>i.label==='Evidence pack'));
+   await p.locator('.ev-dialog-foot [data-ed-action="close"]').click();
+   await p.waitForFunction(()=>document.getElementById('edModal').hidden);
+   // The overview, Home and the project list show the audit and its progress.
+   await p.locator('[data-ev-route="overview"]').click();await p.waitForFunction(()=>EVWorkspace.route()==='overview');
+   assert.match(await p.locator('.ev-overview-heading .ev-eyebrow').textContent(),/Site audit/);
+   assert.match(await p.locator('.eva-flow').textContent(),/1 download/);
+   await p.evaluate(()=>EVWorkspace.persist());
+   await p.locator('[data-ev-route="home"]').first().click();await p.waitForFunction(()=>EVWorkspace.route()==='home');
+   assert.match(await p.locator('#ehAudits .eh-audit').first().textContent(),/High Street lamppost chargers[\s\S]*1 fail/);
+   await p.locator('.eh-footer [data-ev-route="projects"]').click();await p.waitForFunction(()=>EVWorkspace.route()==='projects');
+   await p.selectOption('#evFilter','audit');
+   assert.equal(await p.locator('.ev-project-row').count(),1);
+   assert.match(await p.locator('.ev-project-row').textContent(),/Site audit[\s\S]*Audit \d+%/);
+  });
+  await check('The audit page fits a phone screen and keeps touch-sized outcome buttons',async p=>{
+   await p.evaluate(()=>{EVAudit.start();EVWorkspace.go('audit');});await p.locator('#evaSetup').waitFor();
+   await p.locator('[data-eva-site-type="pillar"]').tap();await p.locator('[data-eva-site-type="pillar"].on').waitFor();
+   await p.locator('[data-eva-outcome="action"][data-eva-key="ACC-03:cp1"]').tap();
+   await p.locator('#eva-ACC-03-cp1 .eva-body:not([hidden])').waitFor();
+   const widths=await p.evaluate(()=>({doc:document.documentElement.scrollWidth,screen:document.getElementById('evScreen').scrollWidth,inner:innerWidth}));
+   assert.ok(widths.doc<=widths.inner&&widths.screen<=widths.inner,'No sideways scroll: '+JSON.stringify(widths));
+   const box=await p.locator('[data-eva-outcome="pass"]').first().boundingBox();
+   assert.ok(box&&box.height>=40,'Outcome buttons are at least 40 px tall for touch');
+   assert.ok((await p.locator('#eva-ACC-03-cp1 [data-eva-note]').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)))>=13);
+  },null,{viewport:{width:390,height:844},hasTouch:true});
  }finally{await browser.close();server.close();}
  console.log(results.filter(r=>r.pass).length+'/'+results.length+' reliability scenarios passed in '+engineName);
  if(results.some(r=>!r.pass))process.exitCode=1;
