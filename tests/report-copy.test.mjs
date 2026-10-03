@@ -53,3 +53,25 @@ test('updated defaults preserve saved email templates and support resetting a te
   c.saveTpl('standard',null);
   assert.match(c.genEmail(),/proposed EV installation plan/);
 });
+
+test('the client letter greets a named contact, never splits an organisation name and never prints [your name]',()=>{
+  const c=reportContext();c.pack.outcome='standard';c.pack.mode='commercial';c.pack.custName='Riverside Business Park Ltd';
+  let letter=c.genLetter();
+  assert.match(letter,/^Hello,/);assert.doesNotMatch(letter,/Hi Riverside|\[your name\]|Regards,/);
+  c.pack.workspace={clientContact:'Priya Shah'};c.pack.surveyedBy='Sam Taylor';
+  letter=c.genLetter();
+  assert.match(letter,/^Hi Priya,/);assert.match(letter,/Regards,\nSam Taylor$/);
+  c.pack.workspace={};c.pack.mode='domestic';c.pack.custName='Alex Example';c.pack.surveyedBy='';c.pack.brandName='Example Electrical';
+  letter=c.genLetter();
+  assert.match(letter,/^Hi Alex,/);assert.match(letter,/Regards,\nExample Electrical$/);
+});
+
+test('issued documents carry no release status and no placeholder values',()=>{
+  const audit=readFileSync(new URL('../public/audit.js',import.meta.url),'utf8'),delivery=readFileSync(new URL('../public/delivery.js',import.meta.url),'utf8'),viewer=readFileSync(new URL('../public/report-viewer.js',import.meta.url),'utf8');
+  for(const text of [source,audit])assert.doesNotMatch(text,/draft v0\.9|v0\.9, pending|pending specialist/);
+  assert.match(audit,/does not certify compliance/);assert.match(source,/a sizing aid, not an EIC/);
+  assert.doesNotMatch(delivery,/'Not recorded'|Finding not recorded/);
+  assert.doesNotMatch(source,/"\[your name\]"/);
+  assert.match(viewer,/Not a certificate of compliance or completion\./);
+  assert.doesNotMatch(viewer,/new Date\(\)\.toLocaleDateString\('en-GB'\)/);
+});

@@ -59,6 +59,11 @@ const {chromium}=require('playwright');
 
   await page.locator('.eh-nav [data-ev-action="workspace"]').click();await page.locator('[data-ev-route="markup"]').click();await page.locator('#evIssuePlans').click();await page.waitForSelector('#evPlanPreview canvas');
   await page.locator('#evSelectNone').click();assert(await page.locator('#evDownloadPlans').isDisabled());
+  // Document details are edited in place and the checks list what is missing; a typed company reaches the project.
+  assert.match(await page.locator('#evPlanChecks').textContent(),/Before downloading/);
+  assert.deepEqual(await page.locator('#evPlanDetails [data-doc-field="docStatus"] option').allTextContents(),['For review','For information','For approval']);
+  await page.locator('#evPlanDetails [data-doc-field="brandName"]').fill('Example Electrical');assert.equal(await page.evaluate(()=>pack.brandName),'Example Electrical');
+  await page.locator('#evPlanDetails [data-doc-field="brandName"]').fill('');
   await page.locator('#evSelectAll').click();await page.waitForFunction(()=>!document.getElementById('evDownloadPlans').disabled);
   let download=page.waitForEvent('download');await page.locator('#evDownloadPlans').click();await(await download).saveAs(path.join(output,'marked-plans.pdf'));
   await page.screenshot({path:path.join(output,'plan-review.png')});await page.locator('[data-ev-close-review]').last().click();
@@ -72,11 +77,23 @@ const {chromium}=require('playwright');
    await page.locator('#rxDocumentViewer [data-pdf-zoom]').selectOption('150');
    await page.locator('#rxSummary').fill(type==='client'?'Dear client,\n\nPlease review the proposed layout for the east entrance.':'Review the east entrance route before installation.');
    assert(await page.locator('#rxExport').isDisabled());await page.waitForFunction(()=>!document.getElementById('rxExport').disabled);
-   download=page.waitForEvent('download');await page.locator('#rxExport').click();await(await download).saveAs(path.join(output,type+'-pack.pdf'));
+   download=page.waitForEvent('download');await page.locator('#rxExport').click();
+   // The client pack warns about missing document details before it downloads; the engineer pack lists them only.
+   if(type==='client'&&await page.locator('#rxChecks li').count()){await page.waitForSelector('#sheetBackdrop.show');assert.equal(await page.locator('#sheetTitle').textContent(),'Download with gaps?');await page.locator('#sheetOk').click();}
+   await(await download).saveAs(path.join(output,type+'-pack.pdf'));
    await page.screenshot({path:path.join(output,type+'-review.png')});await page.locator('#rxClose').click();assert.equal(await page.evaluate(()=>document.getElementById('evApp').inert),false);
   }
   assert.equal(await page.evaluate(()=>pack.workspace.issues.filter(i=>/Client pack|Engineer pack/.test(i.label)).length),2);
   pass('Engineer and client packs share working thumbnails and zoom, rebuild after edits, download and release focus correctly');
+
+  // A new drawing revision starts a revision-history entry, so documents carry its issue date rather than the print date.
+  await page.evaluate(()=>EVWorkspace.openDetails(1));await page.locator('#evDetails [data-ev-field="rev"]').fill('B');await page.locator('#evDetails [data-ev-field="rev"]').press('Tab');
+  await page.waitForSelector('#evDetails [data-ev-revnote]');await page.locator('#evDetails [data-ev-revnote]').fill('Charger moved to bay 3');
+  const rev=await page.evaluate(()=>({last:pack.revHistory.at(-1),issued:EVReportBranding.issueDate(pack)}));
+  assert.equal(rev.last.rev,'B');assert.equal(rev.last.note,'Charger moved to bay 3');assert.equal(rev.issued,await page.evaluate(()=>new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})));
+  await page.evaluate(()=>{pack.revHistory.at(-1).at='2026-09-28';});assert.match(await page.evaluate(()=>EVReportBranding.issueDate(pack)),/^28 Sept? 2026$/);
+  await page.locator('[data-ev-close-details]').first().click();
+  pass('A new revision is logged with a note and documents use its issue date');
 
   await page.locator('[data-ev-route="profile"]').click();await page.locator('[data-ep-field="name"]').fill('Alex Example');await page.locator('[data-ep-field="company"]').fill('Example Electrical');
   await page.locator('[data-ep-tab="details"]').focus();await page.keyboard.press('ArrowRight');assert.equal(await page.locator('[data-ep-tab="qualifications"]').getAttribute('aria-selected'),'true');

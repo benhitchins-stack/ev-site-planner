@@ -318,6 +318,8 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    assert.match(await p.locator('#edReportChecks').textContent(),/not answered/);
    assert.match(await p.locator('#edTitle').textContent(),/Review evidence pack/);
    const waiting=p.waitForEvent('download');await p.locator('[data-ed-action="download-report"]').click();
+   // Unanswered checks are a warning: the confirm lists them and Download anyway continues.
+   await p.waitForSelector('#sheetBackdrop.show');assert.equal(await p.locator('#sheetTitle').textContent(),'Download with gaps?');assert.match(await p.locator('#sheetLabel').textContent(),/not answered/);await p.locator('#sheetOk').click();
    const download=await waiting;assert.match(download.suggestedFilename(),/High_Street_lamppost_chargers_evidence-pack_rev-A\.pdf/);
    await p.waitForFunction(()=>pack.workspace.issues.some(i=>i.label==='Evidence pack'));
    await p.locator('.ev-dialog-foot [data-ed-action="close"]').click();

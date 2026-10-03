@@ -17,7 +17,14 @@ official npm packages.
 | `fonts/hanken-grotesk-*` (Fontsource build) | 5.2.8 | SIL OFL 1.1 |
 | `fonts/space-grotesk-*` (Fontsource build) | 5.2.10 | SIL OFL 1.1 |
 | `fonts/ibm-plex-mono-*` (Fontsource build) | 5.2.7 | SIL OFL 1.1 |
-| DejaVu Sans regular and bold (embedded in `../report-fonts.js`) | 2.37 | Bitstream Vera / DejaVu, see `DejaVu-LICENCE.txt` |
+| Hanken Grotesk Regular and Bold, static TTF (embedded in `../report-fonts.js` as the report face EVSans) | 3.013 | SIL OFL 1.1, see `HankenGrotesk-OFL.txt` |
+
+The report face is built by `scripts/build-report-fonts.py` from the static
+Hanken Grotesk TTFs in the npm package `@expo-google-fonts/hanken-grotesk` 0.4.3
+(the Google Fonts build; the script checks their SHA-256 digests). jsPDF needs
+static TrueType fonts, so the variable woff2 files cannot be used for PDFs. The
+font name inside the PDF remains EVSans. It replaces DejaVu Sans, which earlier
+releases embedded.
 
 The fonts are the SIL Open Font Licence releases of Bricolage Grotesque,
 Hanken Grotesk, Space Grotesk and IBM Plex Mono; self-hosting is permitted and the fonts

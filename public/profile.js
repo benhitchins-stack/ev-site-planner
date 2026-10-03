@@ -135,12 +135,14 @@ document.addEventListener('keydown',e=>{const button=e.target.closest('[data-ep-
 function reportRows(target){
  if(!target.workspace?.authorProfile)return [];const p=normalise(target.workspace.authorProfile);
  const rows=[['Company',target.brandName],['Role',p.role],['Contact',[target.replyEmail,target.replyPhone].filter(Boolean).join(' · ')],['Website',p.website],['Business address',p.address],['Company registration',p.registration]].filter(r=>r[1]);
- if(p.includeQualifications)for(const q of p.qualifications||[])if(q.name?.trim())rows.push(['Qualification',[q.name,q.issuer,q.reference?'Ref: '+q.reference:'',q.expiry?'Expiry / renewal: '+q.expiry.split('-').reverse().join('/'):''].filter(Boolean).join('\n')]);
+ if(p.includeQualifications)for(const q of p.qualifications||[])if(q.name?.trim())rows.push(['Qualification',[q.name,q.issuer,q.reference?'Ref: '+q.reference:'',q.expiry?'Expiry / renewal: '+(window.EVReportBranding?EVReportBranding.date(q.expiry):q.expiry):''].filter(Boolean).join('\n')]);
  return rows;
 }
 function drawLogo(doc,data,x,y,w,h){
  if(!logoOK(data))return false;
  try{const image=doc.getImageProperties(data),scale=Math.min(w/image.width,h/image.height),ww=image.width*scale,hh=image.height*scale;doc.addImage(data,image.fileType,x+(w-ww)/2,y+(h-hh)/2,ww,hh,undefined,'FAST');return true;}catch(_){return false;}
 }
-window.EVProfile={render,ready,apply,reportRows,drawLogo,get:()=>clone(profile),normalise,flush:()=>queue,version:'profile-r1'};
+// Fill blank profile fields from a document review ("Save to my profile"); never overwrites what is already saved.
+function update(patch){let changed=false;for(const [key,value] of Object.entries(patch||{}))if(Object.hasOwn(fields,key)&&typeof value==='string'&&value.trim()&&!profile[key].trim()){profile[key]=value.trim().slice(0,fields[key]);changed=true;}return changed?persist():Promise.resolve(true);}
+window.EVProfile={render,ready,apply,reportRows,drawLogo,get:()=>clone(profile),normalise,update,isEmpty:()=>!hasContent(profile),flush:()=>queue,version:'profile-r1'};
 })();

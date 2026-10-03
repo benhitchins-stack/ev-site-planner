@@ -107,7 +107,10 @@ const {chromium} = require('playwright');
       await page.locator(`[data-ev-route="${type}"]`).click();
       await page.locator(type==='programme'?'[data-ed-action="programme-report"]':'[data-ev-action="snag-report"]').click();
       await page.waitForSelector('#edPdfCanvas canvas',{timeout:60000});
-      download=page.waitForEvent('download');await page.locator('[data-ed-action="download-report"]').click();await (await download).saveAs(path.join(artifacts,`profile-${type}.pdf`));
+      download=page.waitForEvent('download');await page.locator('[data-ed-action="download-report"]').click();
+      // Gaps in the report are a warning: the confirm names them and Download anyway continues.
+      if(await page.locator('#edReportChecks li').count()){await page.waitForSelector('#sheetBackdrop.show');assert.equal(await page.locator('#sheetTitle').textContent(),'Download with gaps?');await page.locator('#sheetOk').click();}
+      await (await download).saveAs(path.join(artifacts,`profile-${type}.pdf`));
       await page.getByRole('button',{name:'Done',exact:true}).click();
     }
     for(const kind of ['plans','programme','snags'])assert(fs.statSync(path.join(artifacts,`profile-${kind}.pdf`)).size>10000);

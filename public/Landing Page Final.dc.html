@@ -764,11 +764,11 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 <link rel="stylesheet" href="cdm-controls.css">
 <link rel="stylesheet" href="planning.css?v=d043f4ae134f">
 <link rel="stylesheet" href="audit.css?v=5f828ce2fa79">
-<link rel="stylesheet" href="workspace.css?v=21dd13db7b6a">
+<link rel="stylesheet" href="workspace.css?v=ed93bb1f4d30">
 <link rel="stylesheet" href="home.css?v=f80227562a8f">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
 <link rel="stylesheet" href="design-preview.css?v=45f028dbb3de">
-<link rel="stylesheet" href="workbench.css?v=78467031a64d">
+<link rel="stylesheet" href="workbench.css?v=622e399a9a62">
 <link rel="stylesheet" href="guides.css?v=8f52ad1615c6">
 <link rel="stylesheet" href="help.css?v=8c7a86de7cd3">
 </head>
@@ -1122,7 +1122,7 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
     <div class="wlc-head"><h2>Cable calculations</h2><p>Every sized run gets the single-circuit check: Ib &le; In &le; Iz with derating factors, volt drop, earth-fault loop (Zs) and CPC adiabatic. Changes save onto each run and print on the calc sheet.</p></div>
     <div id="ccSupply"></div>
     <div id="ccBody" style="max-height:46vh;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px"></div>
-    <div style="font-size:11px;color:var(--faint);line-height:1.5;margin-top:10px">Draft check to the BS 7671 method using typical manufacturer-published ratings (v0.9, pending specialist sign-off). Assumes MCB/RCBO disconnection in 0.1 s, 20 &deg;C soil, standard soil resistivity. A sizing aid, not a design certificate: verify against BS 7671 / the datasheet before construction.</div>
+    <div style="font-size:11px;color:var(--faint);line-height:1.5;margin-top:10px">Draft check to the BS 7671 method using typical manufacturer-published ratings. Assumes MCB/RCBO disconnection in 0.1 s, 20 &deg;C soil, standard soil resistivity. A sizing aid, not a design certificate: verify against BS 7671 / the datasheet before construction.</div>
     <div class="wlc-foot">
       <button class="hbtn" id="ccClose">Close</button>
       <div style="flex:1"></div>
@@ -1397,16 +1397,18 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
         <div class="rx-sec">
           <div class="rx-label" id="rxSumLabel">Cover summary <em>optional</em></div>
           <textarea id="rxSummary" placeholder="Site context, access notes or a contact for arrival (optional)"></textarea>
+          <div id="rxPhWarn" role="status" style="display:none;margin-top:8px;font-size:12px;line-height:1.5;font-weight:600;color:#7A4E00;background:#FFF4DC;border:1px solid #FFB950;border-radius:8px;padding:7px 10px;white-space:normal;overflow-wrap:anywhere"></div>
           <button class="pbtn" id="rxLetterReset" style="display:none;margin-top:6px;flex:none;padding:7px 12px;width:auto">Re-write letter from template</button>
         </div>
         <div class="rx-sec" id="rxWhoSec" style="display:none">
-          <div class="rx-label">Customer &amp; sign-off</div>
-          <input id="rxCustName" placeholder="Customer name, used for “Hi …”">
-          <input id="rxPmName" placeholder="Your name (Project Manager)" style="margin-top:6px">
-          <div class="rx-edithint">Your name is remembered on this device and appears on the cover and sign-off.</div>
+          <div class="rx-label">Client &amp; sign-off</div>
+          <input id="rxCustName" aria-label="Client or organisation" placeholder="Client or organisation">
+          <input id="rxContactName" aria-label="Client contact name, used in the greeting" placeholder="Client contact name, used in the greeting" style="margin-top:6px">
+          <input id="rxPmName" aria-label="Your name (project lead)" placeholder="Your name (project lead)" style="margin-top:6px">
+          <div class="rx-edithint">The letter opens with the contact's first name. Your name is the project lead in the project details and appears on the cover and sign-off.</div>
         </div>
         <div class="rx-sec" id="rxEmailSec" style="display:none">
-          <div class="rx-label">Email to the customer <em id="rxEmailState">draft for review</em></div>
+          <div class="rx-label">Email to the client <em id="rxEmailState">draft for review</em></div>
           <textarea id="rxEmail" style="min-height:150px"></textarea>
           <div class="rx-btnrow" id="rxEmailBtns">
             <button class="pbtn" id="rxEmailCopy" style="flex:none;padding:8px 12px">Copy email</button>
@@ -1443,7 +1445,6 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
     </div>
     <div class="rx-foot">
       <button class="hbtn" id="rxCancel">Cancel</button>
-      <div id="rxPhWarn" style="display:none;font-size:11.5px;font-weight:600;color:#7A4E00;background:#FFF4DC;border:1px solid #FFB950;border-radius:8px;padding:6px 10px;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
       <div style="flex:1"></div>
       <button class="hbtn primary" id="rxExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg><span>Download PDF</span></button>
     </div>
@@ -2802,12 +2803,12 @@ function validateProjectBackup(pk){
   // Backups are data. Never accept prototype keys that can alter dictionary lookups.
   const inspect=(v,depth=0)=>{need(depth<80);if(Array.isArray(v))v.forEach(x=>inspect(x,depth+1));else if(record(v))for(const [k,x] of Object.entries(v)){need(!reserved.has(k));inspect(x,depth+1);}};
   need(record(pk)&&Array.isArray(pk.photos));inspect(pk);
-  texts(pk,["name","address","postcode","jobRef","notes","custName","engineerNote","brandName","brandLogo","surveyedBy","surveyDate","rev","custLetter","payLink","replyEmail","replyPhone"]);
+  texts(pk,["name","address","postcode","jobRef","notes","custName","engineerNote","brandName","brandLogo","surveyedBy","surveyDate","rev","custLetter","payLink","replyEmail","replyPhone","docStatus"]);
   objects(pk,["workspace","programme","rates","cdm","survey","punch","commissioning","sim","earthWiz","cloudGroups","audit"]);
   rows(pk,"attachments");rows(pk,"revHistory");unique(pk.attachments);id(pk.projId);id(pk.active);image(pk.brandLogo);
   // Site audit records carry their own rules (outcomes, photo data, chargepoint ids) in audit-core.js.
   if(pk.audit&&typeof EVAuditCore!=="undefined"){try{EVAuditCore.validate(pk.audit);}catch(_){need(false);}}
-  if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport","authorProfile"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","scope","notes","backupAt"]);}
+  if(pk.workspace){const w=pk.workspace;objects(w,["drawing","snagReport","authorProfile"]);rows(w,"issues");texts(w,["contactName","contactRole","contactEmail","contactPhone","clientContact","scope","notes","backupAt"]);}
   if(pk.programme){const p=pk.programme;objects(p,["days","skip"]);texts(p,["start","notes"]);rows(p,"activities");unique(p.activities);if(p.activities)p.activities.forEach(a=>{texts(a,["id","name","owner","start","status","note"]);need(a.days==null||Number.isFinite(Number(a.days)));});if(p.nonWorkingDates!=null)need(Array.isArray(p.nonWorkingDates)&&p.nonWorkingDates.every(v=>typeof v==="string"));}
   if(pk.workspace?.planning){
     const lab=pk.workspace.planning;EVPlanningCore.validate(lab);
@@ -5191,7 +5192,7 @@ function drawFPInterior(c,x,y,w,h,it,opts){
     const d=FP_EQUIP[e.k]; if(!d) return;
     const ex=x+e.x*sc, ey=y+e.y*sc, ew=d.w*sc, eh=d.h*sc;
     drawFPEquip(c,e.k,ex,ey,ew,eh,e.label,opts.fs);
-    if(wayLab[i]){ c.fillStyle="#475569"; c.font=`650 ${Math.max(3.5,Math.min(eh*.16,(opts.fs||10)*.72))}px -apple-system,system-ui,sans-serif`; c.textAlign="center"; c.textBaseline="top"; c.fillText(wayLab[i],ex+ew/2,ey+eh+Math.max(1,eh*.04)); }
+    if(wayLab[i]){ c.fillStyle="#475569"; c.font=`650 ${Math.max(3.5,Math.min(eh*.16,(opts.fs||10)*.72))}px 'Hanken Grotesk',sans-serif`; c.textAlign="center"; c.textBaseline="top"; c.fillText(wayLab[i],ex+ew/2,ey+eh+Math.max(1,eh*.04)); }
     if(opts.selIdx===i){ c.strokeStyle="#1E6BFF"; c.lineWidth=1.6; c.setLineDash([5,3]); rrect(c,ex-3,ey-3,ew+6,eh+6,3); c.stroke(); c.setLineDash([]); }
   });
 }
@@ -5224,14 +5225,14 @@ function drawFeederPillar(c,vw,it,labelK,forExport){
         c.save(); c.shadowColor="rgba(0,0,0,.35)"; c.shadowBlur=6; c.shadowOffsetY=2;
         c.fillStyle="#fff"; c.beginPath(); c.arc(shx,shy,12,0,Math.PI*2); c.fill(); c.restore();
         c.strokeStyle="#1E6BFF"; c.lineWidth=1.8; c.beginPath(); c.arc(shx,shy,12,0,Math.PI*2); c.stroke();
-        c.fillStyle="#1E6BFF"; c.font="800 14px -apple-system,system-ui,sans-serif"; c.textAlign="center"; c.textBaseline="middle"; c.fillText("\u21bb",shx,shy+0.5);
+        c.fillStyle="#1E6BFF"; c.font="800 14px 'Hanken Grotesk',sans-serif"; c.textAlign="center"; c.textBaseline="middle"; c.fillText("\u21bb",shx,shy+0.5);
         const spinning=dragItem&&dragItem.mode==="unitspin"&&dragItem.id===it.id;
         if(spinning){
-          const t2=(it.yaw3d||0)+"\u00b0 \u00b7 "+(it.pitch3d||0)+"\u00b0"; c.font="700 10px -apple-system,system-ui,sans-serif";
+          const t2=(it.yaw3d||0)+"\u00b0 \u00b7 "+(it.pitch3d||0)+"\u00b0"; c.font="700 10px 'Hanken Grotesk',sans-serif";
           const tw2=c.measureText(t2).width;
           c.fillStyle="rgba(14,24,32,.85)"; rrect(c,shx-tw2/2-6,shy+16,tw2+12,16,8); c.fill();
           c.fillStyle="#fff"; c.fillText(t2,shx,shy+24.5);
-        } else { c.fillStyle="rgba(30,107,255,.92)"; c.font="650 9px -apple-system,system-ui,sans-serif"; c.fillText("spin",shx,shy+20.5); }
+        } else { c.fillStyle="rgba(30,107,255,.92)"; c.font="650 9px 'Hanken Grotesk',sans-serif"; c.fillText("spin",shx,shy+20.5); }
       }
       if(pack.showLabels!==false){ glyphLabelRot(c,cx,cy,it.rot||0,0,eqLabelLY(it,hh,labK(it,labelK)),it.label||"Feeder pillar","#0c1206","#4BA069",labK(it,labelK)); }
       return;
@@ -5288,7 +5289,7 @@ function drawFeederPillar(c,vw,it,labelK,forExport){
     c.strokeStyle="rgba(255,255,255,.22)"; c.lineWidth=Math.max(1,w*.008);
     c.beginPath(); c.moveTo(0,y+h*.10); c.lineTo(0,y+h*.86); c.stroke();
     c.fillStyle="rgba(255,255,255,.55)"; rrect(c,-w*.075,y+h*.44,w*.045,h*.10,2); c.fill();
-    c.fillStyle=grey?"rgba(24,30,26,.78)":"rgba(255,255,255,.85)"; c.font=`800 ${Math.max(5,w*.075)}px -apple-system,system-ui,sans-serif`; c.textAlign="center"; c.textBaseline="middle";
+    c.fillStyle=grey?"rgba(24,30,26,.78)":"rgba(255,255,255,.85)"; c.font=`800 ${Math.max(5,w*.075)}px 'Hanken Grotesk',sans-serif`; c.textAlign="center"; c.textBaseline="middle";
     c.fillText("FEEDER", 0, y+h*.235);
     c.fillText("PILLAR", 0, y+h*.235+Math.max(6,w*.095));
     c.fillStyle="#1E6BFF";
@@ -5434,14 +5435,16 @@ function fpeGeom(){
   const k=Math.min((cw-160)/exW,(ch-150)/exD);
   return {k, ox:cw/2, oy:ch/2, mm, pad};   // plan: origin at footprint centre
 }
-function fpeDim(c,x1,y1,x2,y2,text,off){
+/* ts scales the dimension text for the printed schedule sheet; the on-screen editor uses 1. */
+function fpeDim(c,x1,y1,x2,y2,text,off,ts){
+  ts=ts||1; off=(off||-10)*ts;
   c.strokeStyle="#8794a1"; c.fillStyle="#5b6773"; c.lineWidth=1;
   c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
   const vert=Math.abs(x2-x1)<1;
   [[x1,y1],[x2,y2]].forEach(([px,py])=>{ c.beginPath(); vert?(c.moveTo(px-4,py),c.lineTo(px+4,py)):(c.moveTo(px,py-4),c.lineTo(px,py+4)); c.stroke(); });
-  c.font="600 11px -apple-system,system-ui,sans-serif"; c.textAlign="center"; c.textBaseline="middle";
-  if(vert){ c.save(); c.translate(x1+(off||-10),(y1+y2)/2); c.rotate(-Math.PI/2); c.fillText(text,0,0); c.restore(); }
-  else c.fillText(text,(x1+x2)/2,y1+(off||-10));
+  c.font="600 "+(11*ts)+"px 'Hanken Grotesk',sans-serif"; c.textAlign="center"; c.textBaseline="middle";
+  if(vert){ c.save(); c.translate(x1+off,(y1+y2)/2); c.rotate(-Math.PI/2); c.fillText(text,0,0); c.restore(); }
+  else c.fillText(text,(x1+x2)/2,y1+off);
 }
 /* shared mm-grid painter */
 function fpGrid(c,wmm,hmm,toX,toY){
@@ -5450,7 +5453,7 @@ function fpGrid(c,wmm,hmm,toX,toY){
 }
 /* pillar interior elevation (development) at geometry g={k,ox,oy}. Used by the editor AND the PDF schedule sheet. */
 function drawFPElevation(c,g,it,opts){
-  opts=opts||{};
+  opts=opts||{}; const ts=opts.ts||1;
   const mm=fpMM(it), k=g.k, X=mmx=>g.ox+mmx*k, Y=mmy=>g.oy+mmy*k;
   if(it.sideWalls){
     [[-1,X(0)-60*k-mm.d*k],[1,X(mm.w)+60*k]].forEach(([sd,sx])=>{
@@ -5462,7 +5465,7 @@ function drawFPElevation(c,g,it,opts){
       [[.34],[.66]].forEach(([fx])=>{ c.beginPath(); c.arc(sx+mm.d*k*fx,Y(mm.h-140),Math.max(3,28*k),0,7); c.fill(); });
       c.setLineDash([6,5]); c.strokeStyle="rgba(60,90,70,.6)"; c.lineWidth=1.4;
       c.beginPath(); const fx=sd<0?X(0)-30*k:X(mm.w)+30*k; c.moveTo(fx,Y(15)); c.lineTo(fx,Y(mm.h-15)); c.stroke(); c.setLineDash([]);
-      c.fillStyle="#5b6773"; c.font="600 10.5px -apple-system,system-ui,sans-serif"; c.textAlign="center";
+      c.fillStyle="#5b6773"; c.font="600 "+(10.5*ts)+"px 'Hanken Grotesk',sans-serif"; c.textAlign="center";
       c.fillText(sd<0?"LEFT WALL · folded out":"RIGHT WALL · folded out",sx+mm.d*k/2,Y(mm.h)+16);
     });
   }
@@ -5471,17 +5474,22 @@ function drawFPElevation(c,g,it,opts){
   fpGrid(c,mm.w,mm.h,X,Y);
   drawFPInterior(c,X(20),Y(20),(mm.w-40)*k,(mm.h-150)*k===0?10:(mm.h-150)*k,it,{selIdx:opts.selIdx,fs:Math.max(8,13*k*3)});
   c.fillStyle="#232e28"; rrect(c,X(15),Y(mm.h-115),(mm.w-30)*k,85*k,3); c.fill();
-  c.fillStyle="#9fb0a6"; c.font=`600 ${Math.max(9,42*k)}px -apple-system,system-ui,sans-serif`; c.textAlign="center"; c.textBaseline="middle";
-  c.fillText("GLAND ZONE · cable entries from below",X(mm.w/2),Y(mm.h-72));
+  // The caption fits the gland strip: one line when it fits, otherwise two shorter lines.
+  { const stripW=(mm.w-30)*k*.9, stripH=85*k; let fz=Math.max(9,42*k), lines=["GLAND ZONE · cable entries from below"];
+    c.fillStyle="#9fb0a6"; c.textAlign="center"; c.textBaseline="middle";
+    const widest=()=>{ c.font="600 "+fz+"px 'Hanken Grotesk',sans-serif"; return Math.max(...lines.map(l=>c.measureText(l).width)); };
+    if(widest()>stripW){ lines=["GLAND ZONE","cable entries from below"]; fz=Math.min(fz,stripH*.36); if(widest()>stripW) fz=Math.max(5,fz*stripW/widest()); }
+    c.font="600 "+fz+"px 'Hanken Grotesk',sans-serif";
+    lines.forEach((l,i)=>c.fillText(l,X(mm.w/2),Y(mm.h-72)+(i-(lines.length-1)/2)*fz*1.15)); }
   (it.fpDucts||[]).forEach(dd=>{ const dx=X(mm.w/2+dd.x), r=Math.max(3,(dd.d/2)*k);
     c.fillStyle="rgba(232,238,244,.9)"; c.beginPath(); c.arc(dx,Y(mm.h-30),r,0,7); c.fill();
     c.strokeStyle="#A4743C"; c.lineWidth=2; c.beginPath(); c.arc(dx,Y(mm.h-30),r,0,7); c.stroke(); });
-  fpeDim(c,X(0),Y(-34),X(mm.w),Y(-34),mm.w+" mm");
-  fpeDim(c,X(-52),Y(0),X(-52),Y(mm.h),mm.h+" mm");
+  fpeDim(c,X(0),Y(-34),X(mm.w),Y(-34),mm.w+" mm",0,ts);
+  fpeDim(c,X(-52),Y(0),X(-52),Y(mm.h),mm.h+" mm",0,ts);
 }
 /* pillar plan / footprint at geometry g={k,ox,oy} (origin = footprint centre). Editor + PDF sheet. */
 function drawFPPlan(c,g,it,opts){
-  opts=opts||{};
+  opts=opts||{}; const ts=opts.ts||1;
   const mm=fpMM(it), pad=fpPadMM(it), k=g.k, X=mmx=>g.ox+mmx*k, Y=mmy=>g.oy+mmy*k;
   if(it.pad!==false){
     c.fillStyle="#cfd4d9"; rrect(c,X(-pad.w/2),Y(-pad.d/2),pad.w*k,pad.d*k,4); c.fill();
@@ -5492,7 +5500,7 @@ function drawFPPlan(c,g,it,opts){
   c.fillStyle="#eef1f4"; rrect(c,X(-mm.w/2+30),Y(-mm.d/2+30),(mm.w-60)*k,(mm.d-60)*k,2); c.fill();
   fpGrid(c,mm.w-60,mm.d-60,mmx=>X(-mm.w/2+30+mmx),mmy=>Y(-mm.d/2+30+mmy));
   c.fillStyle="#D9C49C"; c.fillRect(X(-mm.w/2+30),Y(-mm.d/2+30),(mm.w-60)*k,Math.max(2,25*k));
-  c.fillStyle="#8a6d2f"; c.font="600 10px -apple-system,system-ui,sans-serif"; c.textAlign="left"; c.textBaseline="middle";
+  c.fillStyle="#8a6d2f"; c.font="600 "+(10*ts)+"px 'Hanken Grotesk',sans-serif"; c.textAlign="left"; c.textBaseline="middle";
   c.fillText("ply backboard",X(-mm.w/2+40),Y(-mm.d/2+30)+Math.max(2,25*k)/2);
   c.strokeStyle="#1d2f25"; c.lineWidth=Math.max(2,10*k);
   c.beginPath(); c.moveTo(X(-mm.w/2),Y(mm.d/2)); c.lineTo(X(mm.w/2),Y(mm.d/2)); c.stroke();
@@ -5506,13 +5514,13 @@ function drawFPPlan(c,g,it,opts){
     c.beginPath(); c.arc(hingeL.x,hingeL.y,mm.w*k,-Math.PI/2,0); c.stroke();
   }
   c.setLineDash([]);
-  c.fillStyle="#5b6773"; c.font="700 11px -apple-system,system-ui,sans-serif"; c.textAlign="center"; c.textBaseline="alphabetic";
-  c.fillText("FRONT · door"+(dbl?"s":""),X(0),Y(mm.d/2)+18);
+  c.fillStyle="#5b6773"; c.font="700 "+(11*ts)+"px 'Hanken Grotesk',sans-serif"; c.textAlign="center"; c.textBaseline="alphabetic";
+  c.fillText("FRONT · door"+(dbl?"s":""),X(0),Y(mm.d/2)+18*ts);
   (it.fpDucts||[]).forEach((dd,i)=>{
     const r=Math.max(4,(dd.d/2)*k);
     c.fillStyle="#e8eef4"; c.beginPath(); c.arc(X(dd.x),Y(dd.y),r,0,7); c.fill();
     c.strokeStyle="#A4743C"; c.lineWidth=Math.max(2,r*.34); c.beginPath(); c.arc(X(dd.x),Y(dd.y),r,0,7); c.stroke();
-    c.fillStyle="#7a5122"; c.font=`700 ${Math.max(8,r*.6)}px -apple-system,system-ui,sans-serif`; c.textAlign="center"; c.textBaseline="middle";
+    c.fillStyle="#7a5122"; c.font=`700 ${Math.max(8,r*.6)}px 'Hanken Grotesk',sans-serif`; c.textAlign="center"; c.textBaseline="middle";
     c.fillText("⌀"+dd.d,X(dd.x),Y(dd.y));
     if(opts.selDuct===i){ c.strokeStyle="#1E6BFF"; c.lineWidth=1.6; c.setLineDash([5,3]); c.beginPath(); c.arc(X(dd.x),Y(dd.y),r+5,0,7); c.stroke(); c.setLineDash([]); }
   });
@@ -5522,13 +5530,13 @@ function drawFPPlan(c,g,it,opts){
     c.fillStyle="rgba(220,252,231,.92)"; c.beginPath(); c.arc(X(rd.x),Y(rd.y),r,0,7); c.fill();
     c.beginPath(); c.arc(X(rd.x),Y(rd.y),r,0,7); c.stroke();
     c.beginPath(); c.moveTo(X(rd.x)-r*1.35,Y(rd.y)); c.lineTo(X(rd.x)+r*1.35,Y(rd.y)); c.moveTo(X(rd.x),Y(rd.y)-r*1.35); c.lineTo(X(rd.x),Y(rd.y)+r*1.35); c.lineWidth=Math.max(1,r*.12); c.stroke();
-    c.fillStyle="#15803d"; c.font=`800 ${Math.max(7,r*.72)}px -apple-system,system-ui,sans-serif`; c.textAlign="center"; c.textBaseline="middle";
+    c.fillStyle="#15803d"; c.font=`800 ${Math.max(7,r*.72)}px 'Hanken Grotesk',sans-serif`; c.textAlign="center"; c.textBaseline="middle";
     c.fillText("ER",X(rd.x),Y(rd.y));
     if(opts.selRod===i){ c.strokeStyle="#1E6BFF"; c.lineWidth=1.6; c.setLineDash([5,3]); c.beginPath(); c.arc(X(rd.x),Y(rd.y),r+6,0,7); c.stroke(); c.setLineDash([]); }
   });
-  fpeDim(c,X(-mm.w/2),Y(-pad.d/2)-26,X(mm.w/2),Y(-pad.d/2)-26,mm.w+" mm shell");
-  fpeDim(c,X(-pad.w/2)-26,Y(-mm.d/2),X(-pad.w/2)-26,Y(mm.d/2),mm.d+" mm");
-  if(it.pad!==false){ fpeDim(c,X(-pad.w/2),Y(pad.d/2)+30,X(pad.w/2),Y(pad.d/2)+30,pad.w+" mm plinth",14); }
+  fpeDim(c,X(-mm.w/2),Y(-pad.d/2)-26*ts,X(mm.w/2),Y(-pad.d/2)-26*ts,mm.w+" mm shell",0,ts);
+  fpeDim(c,X(-pad.w/2)-26*ts,Y(-mm.d/2),X(-pad.w/2)-26*ts,Y(mm.d/2),mm.d+" mm",0,ts);
+  if(it.pad!==false){ fpeDim(c,X(-pad.w/2),Y(pad.d/2)+30*ts,X(pad.w/2),Y(pad.d/2)+30*ts,pad.w+" mm plinth",14,ts); }
 }
 /* A4-ready schedule sheet for one pillar: elevation left, plan right. */
 function renderFPSheet(it){
@@ -5537,13 +5545,15 @@ function renderFPSheet(it){
   c.fillStyle="#fff"; c.fillRect(0,0,W,H);
   const mm=fpMM(it), pad=fpPadMM(it);
   const eww=it.sideWalls?mm.w+2*mm.d+120:mm.w;
-  const kE=Math.min((W*.44-140)/eww,(H-240)/mm.h);
-  drawFPElevation(c,{k:kE, ox:W*.25-(mm.w/2)*kE, oy:130+((H-240)-mm.h*kE)/2},it,{});
+  // TOP leaves room between the headings and the larger printed dimension text.
+  const TS=2.4, TOP=175, AV=H-TOP-90;
+  const kE=Math.min((W*.44-140)/eww,AV/mm.h);
+  drawFPElevation(c,{k:kE, ox:W*.25-(mm.w/2)*kE, oy:TOP+(AV-mm.h*kE)/2},it,{ts:TS});
   let exW=pad.w, exD=pad.d;
   (it.fpRods||[]).forEach(rd=>{ exW=Math.max(exW,Math.abs(rd.x)*2+160); exD=Math.max(exD,Math.abs(rd.y)*2+160); });
-  const kP=Math.min((W*.42-140)/exW,(H-280)/exD);
-  drawFPPlan(c,{k:kP, ox:W*.75, oy:130+(H-240)/2},it,{});
-  c.fillStyle="#152A39"; c.font="800 30px -apple-system,system-ui,sans-serif"; c.textAlign="center"; c.textBaseline="alphabetic";
+  const kP=Math.min((W*.42-140)/exW,(AV-60)/exD);
+  drawFPPlan(c,{k:kP, ox:W*.75, oy:TOP+AV/2},it,{ts:TS});
+  c.fillStyle="#152A39"; c.font="800 30px 'Hanken Grotesk',sans-serif"; c.textAlign="center"; c.textBaseline="alphabetic";
   c.fillText("INSIDE · ELEVATION", W*.25, 66);
   c.fillText("PLAN · FOOTPRINT", W*.75, 66);
   c.strokeStyle="#DDE4EA"; c.lineWidth=2; c.beginPath(); c.moveTo(W/2,40); c.lineTo(W/2,H-40); c.stroke();
@@ -7192,7 +7202,7 @@ function drawTitleBlock(c, p){
     ...(pack.brandName ? [[String(pack.brandName), 700, 12.5, "#16232E"]] : []),
     [String(pack.name||"Untitled project"), 600, 11, "#16232E"],
     [String(p.name||"Plan")+((p.scale&&p.scale.pxPerM)?"  \u00b7  scaled":"  \u00b7  not to scale"), 500, 10, "#54677A"],
-    [(pack.jobRef?"Case "+pack.jobRef+"  \u00b7  ":"")+"Rev "+(pack.rev||"A")+"  \u00b7  "+new Date().toLocaleDateString("en-GB")+(pack.surveyedBy?"  \u00b7  "+pack.surveyedBy:""), 500, 9.5, "#54677A"]
+    [(pack.jobRef?"Ref "+pack.jobRef+"  \u00b7  ":"")+"Rev "+(pack.rev||"A")+"  \u00b7  "+issueDateText()+(pack.surveyedBy?"  \u00b7  "+pack.surveyedBy:""), 500, 9.5, "#54677A"]
   ];
   c.save();
   let bw=0; rows.forEach(r=>{ c.font=r[1]+" "+(r[2]*k)+"px "+FONT; bw=Math.max(bw,c.measureText(r[0]).width); });
@@ -7205,6 +7215,34 @@ function drawTitleBlock(c, p){
   c.textAlign="left"; c.textBaseline="top";
   rows.forEach((r,i)=>{ c.font=r[1]+" "+(r[2]*k)+"px "+FONT; c.fillStyle=r[3]; c.fillText(r[0], bx+10*k, by+7*k+i*lh); });
   c.restore();
+}
+/* One swatch per plan-key row, drawn to resemble the symbol on the plan. Shared by the on-plan key and the export key.
+   x is the left edge of a 24-unit swatch, ry its vertical centre, k the scale. */
+function paintKeySwatch(c, r, x, ry, k){
+  const FONT="-apple-system,system-ui,sans-serif";
+    if(r.route){ paintRoute(c, [[x,ry],[x+24*k,ry]], r.kind, Math.max(5,ROUTE_DEFS[r.kind].width*0.8*k), Math.max(0.7,0.9*k)); }
+    else if(r.evdb){ c.fillStyle="#d9dde1"; rrect(c,x+3*k,ry-8*k,18*k,16*k,3*k); c.fill(); c.strokeStyle="#38bdf8"; c.lineWidth=1*k; rrect(c,x+3*k,ry-8*k,18*k,16*k,3*k); c.stroke(); c.fillStyle="#0c1206"; c.font=`800 ${6.5*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText("DB",x+12*k,ry+0.5); }
+    else if(r.ipevdb){ c.fillStyle="#cbd5e1"; rrect(c,x+2*k,ry-9*k,21*k,18*k,4*k); c.fill(); c.strokeStyle="#38bdf8"; c.lineWidth=1*k; rrect(c,x+2*k,ry-9*k,21*k,18*k,4*k); c.stroke(); c.fillStyle="#0c1206"; c.font=`800 ${5.7*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText("IP",x+12.5*k,ry-2*k); c.fillText("DB",x+12.5*k,ry+4.5*k); }
+    else if(r.ipbox){ c.fillStyle="#cfd6dd"; rrect(c,x+3*k,ry-8*k,18*k,16*k,3*k); c.fill(); c.strokeStyle="#7f8a96"; c.lineWidth=1*k; rrect(c,x+3*k,ry-8*k,18*k,16*k,3*k); c.stroke(); c.fillStyle="#5b6672"; [[6.5,-5.2],[17.5,-5.2],[6.5,5.2],[17.5,5.2]].forEach(([dx2,dy2])=>{ c.beginPath(); c.arc(x+dx2*k,ry+dy2*k,1.3*k,0,7); c.fill(); }); }
+    else if(r.henley){ c.fillStyle="#f8fafc"; rrect(c,x+2*k,ry-7*k,20*k,14*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,x+2*k,ry-7*k,20*k,14*k,3*k); c.stroke(); c.fillStyle="#8b5e34"; c.fillRect(x+4*k,ry-3*k,6*k,3.2*k); c.fillStyle="#3b82f6"; c.fillRect(x+14*k,ry-3*k,6*k,3.2*k); }
+    else if(r.meter){ c.fillStyle="#e2e8f0"; rrect(c,x+6*k,ry-9*k,13*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,x+6*k,ry-9*k,13*k,18*k,3*k); c.stroke(); c.fillStyle="#111827"; c.fillRect(x+8*k,ry-2*k,9*k,4*k); }
+    else if(r.metercab){ c.fillStyle="#e8eef3"; rrect(c,x+3*k,ry-9*k,18*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,x+3*k,ry-9*k,18*k,18*k,3*k); c.stroke(); c.fillStyle="#16232E"; c.beginPath(); c.moveTo(x+13*k,ry-6*k); c.lineTo(x+9*k,ry+0.5*k); c.lineTo(x+11.6*k,ry+0.5*k); c.lineTo(x+10*k,ry+6*k); c.lineTo(x+14.5*k,ry-1*k); c.lineTo(x+11.8*k,ry-1*k); c.closePath(); c.fill(); }
+    else if(r.gascab){ c.fillStyle="#e8eef3"; rrect(c,x+3*k,ry-9*k,18*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,x+3*k,ry-9*k,18*k,18*k,3*k); c.stroke(); c.fillStyle="#f59e0b"; c.beginPath(); c.moveTo(x+12*k,ry-5.5*k); c.quadraticCurveTo(x+16*k,ry-1*k,x+12*k,ry+5*k); c.quadraticCurveTo(x+8*k,ry-1*k,x+12*k,ry-5.5*k); c.fill(); }
+    else if(r.earthterm){ c.fillStyle="#f8fafc"; rrect(c,x+2*k,ry-6*k,20*k,12*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,x+2*k,ry-6*k,20*k,12*k,3*k); c.stroke(); c.fillStyle="#facc15"; c.fillRect(x+6*k,ry-2*k,12*k,4*k); }
+    else if(r.cutout){ c.fillStyle="#cbd5e1"; rrect(c,x+6*k,ry-9*k,13*k,18*k,3*k); c.fill(); c.strokeStyle="#6b7280"; c.lineWidth=1*k; rrect(c,x+6*k,ry-9*k,13*k,18*k,3*k); c.stroke(); c.fillStyle="#111827"; rrect(c,x+8*k,ry-4*k,9*k,8*k,1.5*k); c.fill(); }
+    else if(r.isolator){ c.fillStyle="#e2e8f0"; rrect(c,x+4*k,ry-9*k,17*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,x+4*k,ry-9*k,17*k,18*k,3*k); c.stroke(); c.fillStyle="#dc2626"; rrect(c,x+8*k,ry-2*k,9*k,6*k,2*k); c.fill(); c.fillStyle="#111827"; c.font=`800 ${4.5*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText("MS",x+12.5*k,ry-5*k); }
+    else if(r.cunit){ c.fillStyle="#eef2f6"; rrect(c,x+1*k,ry-7*k,22*k,14*k,2.5*k); c.fill(); c.strokeStyle="#7c8794"; c.lineWidth=1*k; rrect(c,x+1*k,ry-7*k,22*k,14*k,2.5*k); c.stroke(); c.fillStyle="#dc2626"; rrect(c,x+2.5*k,ry-4*k,3.5*k,8*k,1*k); c.fill(); c.fillStyle="#94a3b8"; [0,1,2,3].forEach(j=>{ c.fillRect(x+(8+j*3.4)*k,ry-3*k,2*k,6*k); }); }
+    else if(r.mcbrow){ c.fillStyle="#f8fafc"; rrect(c,x+7*k,ry-9*k,11*k,18*k,2*k); c.fill(); c.strokeStyle="#9aa4af"; c.lineWidth=1*k; rrect(c,x+7*k,ry-9*k,11*k,18*k,2*k); c.stroke(); c.fillStyle="#2563eb"; c.fillRect(x+9.4*k,ry+1.5*k,6.2*k,5*k); }
+    else if(r.rcdrow){ c.fillStyle="#eef2f6"; rrect(c,x+3*k,ry-9*k,18*k,18*k,2.5*k); c.fill(); c.strokeStyle="#9aa4af"; c.lineWidth=1*k; rrect(c,x+3*k,ry-9*k,18*k,18*k,2.5*k); c.stroke(); c.fillStyle="#475569"; c.fillRect(x+5.5*k,ry+1.5*k,5*k,5*k); c.fillStyle="#ea580c"; c.beginPath(); c.arc(x+15.5*k,ry+4*k,2*k,0,7); c.fill(); }
+    else if(r.dinrow){ const dd2=DIN_DEFS[r.dinrow]||DIN_DEFS.rcbo; const mw=dd2.mod===2?18:11; const xo=dd2.mod===2?3:7; c.fillStyle="#f8fafc"; rrect(c,x+xo*k,ry-9*k,mw*k,18*k,2*k); c.fill(); c.strokeStyle="#9aa4af"; c.lineWidth=1*k; rrect(c,x+xo*k,ry-9*k,mw*k,18*k,2*k); c.stroke(); c.fillStyle=dd2.color; c.fillRect(x+(xo+2.4)*k,ry+1.5*k,(mw-4.8)*k,5*k); }
+    else if(r.feederrow){ c.fillStyle="#3d5f4b"; rrect(c,x+6*k,ry-9*k,13*k,18*k,2.5*k); c.fill(); c.strokeStyle="#1d2f25"; c.lineWidth=1*k; rrect(c,x+6*k,ry-9*k,13*k,18*k,2.5*k); c.stroke(); c.fillStyle="#9aa3ab"; c.fillRect(x+7*k,ry+7*k,11*k,1.6*k); }
+    else if(r.arrayrow){ c.fillStyle="#eef2f6"; rrect(c,x+1*k,ry-7*k,22*k,14*k,2.5*k); c.fill(); c.strokeStyle="#38bdf8"; c.lineWidth=1*k; rrect(c,x+1*k,ry-7*k,22*k,14*k,2.5*k); c.stroke(); c.fillStyle="#94a3b8"; [0,1,2,3].forEach(j=>{ c.fillRect(x+(5+j*3.6)*k,ry-3*k,2*k,6*k); }); }
+    else if(r.bayrow){ c.strokeStyle="rgba(248,250,252,.95)"; c.lineWidth=1.4*k; c.strokeRect(x+4*k,ry-8*k,15*k,16*k); c.fillStyle="rgba(76,175,80,.85)"; c.fillRect(x+5*k,ry+5*k,13*k,2.2*k); }
+    else if(r.unitrow){ c.save(); c.translate(x+12*k,ry); drawTechnicalCharger(c,{variant:r.variant||"",pad:false},13*k,17*k); c.restore(); }
+    else if(r.site==="bollard"){ c.fillStyle="#4A5560"; c.beginPath(); c.arc(x+12*k,ry,7*k,0,7); c.fill(); c.strokeStyle="#F4EFE5"; c.lineWidth=1.2*k; c.beginPath(); c.arc(x+12*k,ry,4.3*k,0,7); c.stroke(); }
+    else if(r.site==="sign"){ c.fillStyle="#9AA3AB"; c.fillRect(x+11*k,ry-1*k,2*k,9*k); c.fillStyle="#3B6FB4"; rrect(c,x+4*k,ry-8*k,16*k,9*k,1.5*k); c.fill(); c.strokeStyle="#F4EFE5"; c.lineWidth=1*k; rrect(c,x+4*k,ry-8*k,16*k,9*k,1.5*k); c.stroke(); }
+    else if(r.connpoint){ c.fillStyle="#1E6BFF"; rrect(c,x+2*k,ry-8*k,18*k,16*k,4*k); c.fill(); c.strokeStyle="#16232E"; c.lineWidth=1*k; rrect(c,x+2*k,ry-8*k,18*k,16*k,4*k); c.stroke(); c.fillStyle="#16232E"; c.beginPath(); c.moveTo(x+12*k,ry-5*k); c.lineTo(x+7.5*k,ry+1*k); c.lineTo(x+10.5*k,ry+1*k); c.lineTo(x+9*k,ry+5*k); c.lineTo(x+13.5*k,ry-1*k); c.lineTo(x+10.5*k,ry-1*k); c.closePath(); c.fill(); }
+    else { c.fillStyle=r.color; c.beginPath(); c.arc(x+11*k,ry,9*k,0,7); c.fill(); c.fillStyle=labelInk(r.color); c.font=`800 ${8.5*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText(r.letter,x+11*k,ry+0.5); }
 }
 /* on-plan legend + title overlay - drawn on screen and into PNG/PDF exports */
 function drawLegend(c, vw, p, labelK, forExport, rowsOnly=false){
@@ -7269,7 +7307,8 @@ function drawLegend(c, vw, p, labelK, forExport, rowsOnly=false){
   {
     const byKind={};
     unitsOnPlan.forEach(u=>{ const key=unitDisplayName(u)+" · "+(u.kw||"7")+" kW"+(u.provision==="passive"?" · passive":""); byKind[key]=(byKind[key]||0)+1; });
-    Object.entries(byKind).forEach(([nm,n])=>rows.push({unitrow:true,name:(n>1?n+" × ":"")+nm}));
+    const variants={}; unitsOnPlan.forEach(u=>{ const key=unitDisplayName(u)+" · "+(u.kw||"7")+" kW"+(u.provision==="passive"?" · passive":""); if(!variants[key]) variants[key]=u.variant; });
+    Object.entries(byKind).forEach(([nm,n])=>rows.push({unitrow:true,variant:variants[nm],name:(n>1?n+" × ":"")+nm}));
   }
   if(hasLoadLimiter) rows.push({fusesaver:true,name:"Load limiter"});
   if(mcbItems.length) rows.push({mcbrow:true,name:"MCB · "+[...new Set(mcbItems.map(i=>(i.curve||"C")+(i.rating??40)))].join(", ")});
@@ -7286,7 +7325,7 @@ function drawLegend(c, vw, p, labelK, forExport, rowsOnly=false){
   if(hasCustomer) rows.push({customer:true,name:"Onwards to customer house / fuse board"});
   connPts.forEach(cp=>rows.push({connpoint:true,name:"Connection point: "+(cp.loc||"Main consumer unit / fuse board")}));
   usedM.forEach(kk=>{ if(kk==="north") return; const d=MARK_DEFS[kk]; if(d) rows.push({color:d.color,letter:d.letter,name:d.name}); });
-  [...new Set(p.items.filter(i=>i.type==="site").map(i=>i.kind))].forEach(kk=>{ const d=SITE_DEFS[kk]; if(d) rows.push({color:d.col,letter:d.leg,name:d.name+" \u00b7 site context"}); });
+  [...new Set(p.items.filter(i=>i.type==="site").map(i=>i.kind))].forEach(kk=>{ const d=SITE_DEFS[kk]; if(d) rows.push({color:d.col,letter:d.leg,site:kk,name:d.name+" \u00b7 site context"}); });
   if(p.items.some(i=>i.type==="stamp")) rows.push({color:"#E8A13C",letter:"!",name:"Callout \u00b7 site prep action"});
   if(rowsOnly) return rows;
   if(!rows.length) return;
@@ -7308,27 +7347,7 @@ function drawLegend(c, vw, p, labelK, forExport, rowsOnly=false){
   c.save(); c.globalAlpha=.88; c.fillStyle="#04222E"; rrect(c,bx,by,boxW,boxH,8*k); c.fill(); c.restore();
   c.strokeStyle="#1E6BFF"; c.lineWidth=1.4*k; rrect(c,bx,by,boxW,boxH,8*k); c.stroke();
   rows.forEach((r,i)=>{ const ry=by+pad+row*(i%perCol)+row/2; c.save(); c.translate(Math.floor(i/perCol)*(colW+colGap),0);
-    if(r.route){ paintRoute(c, [[bx+pad,ry],[bx+pad+24*k,ry]], r.kind, Math.max(5,ROUTE_DEFS[r.kind].width*0.8*k), Math.max(0.7,0.9*k)); }
-    else if(r.evdb){ c.fillStyle="#d9dde1"; rrect(c,bx+pad+3*k,ry-8*k,18*k,16*k,3*k); c.fill(); c.strokeStyle="#38bdf8"; c.lineWidth=1*k; rrect(c,bx+pad+3*k,ry-8*k,18*k,16*k,3*k); c.stroke(); c.fillStyle="#0c1206"; c.font=`800 ${6.5*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText("DB",bx+pad+12*k,ry+0.5); }
-    else if(r.ipevdb){ c.fillStyle="#cbd5e1"; rrect(c,bx+pad+2*k,ry-9*k,21*k,18*k,4*k); c.fill(); c.strokeStyle="#38bdf8"; c.lineWidth=1*k; rrect(c,bx+pad+2*k,ry-9*k,21*k,18*k,4*k); c.stroke(); c.fillStyle="#0c1206"; c.font=`800 ${5.7*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText("IP",bx+pad+12.5*k,ry-2*k); c.fillText("DB",bx+pad+12.5*k,ry+4.5*k); }
-    else if(r.ipbox){ c.fillStyle="#cfd6dd"; rrect(c,bx+pad+3*k,ry-8*k,18*k,16*k,3*k); c.fill(); c.strokeStyle="#7f8a96"; c.lineWidth=1*k; rrect(c,bx+pad+3*k,ry-8*k,18*k,16*k,3*k); c.stroke(); c.fillStyle="#5b6672"; [[6.5,-5.2],[17.5,-5.2],[6.5,5.2],[17.5,5.2]].forEach(([dx2,dy2])=>{ c.beginPath(); c.arc(bx+pad+dx2*k,ry+dy2*k,1.3*k,0,7); c.fill(); }); }
-    else if(r.henley){ c.fillStyle="#f8fafc"; rrect(c,bx+pad+2*k,ry-7*k,20*k,14*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,bx+pad+2*k,ry-7*k,20*k,14*k,3*k); c.stroke(); c.fillStyle="#8b5e34"; c.fillRect(bx+pad+4*k,ry-3*k,6*k,3.2*k); c.fillStyle="#3b82f6"; c.fillRect(bx+pad+14*k,ry-3*k,6*k,3.2*k); }
-    else if(r.meter){ c.fillStyle="#e2e8f0"; rrect(c,bx+pad+6*k,ry-9*k,13*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,bx+pad+6*k,ry-9*k,13*k,18*k,3*k); c.stroke(); c.fillStyle="#111827"; c.fillRect(bx+pad+8*k,ry-2*k,9*k,4*k); }
-    else if(r.metercab){ c.fillStyle="#e8eef3"; rrect(c,bx+pad+3*k,ry-9*k,18*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,bx+pad+3*k,ry-9*k,18*k,18*k,3*k); c.stroke(); c.fillStyle="#16232E"; c.beginPath(); c.moveTo(bx+pad+13*k,ry-6*k); c.lineTo(bx+pad+9*k,ry+0.5*k); c.lineTo(bx+pad+11.6*k,ry+0.5*k); c.lineTo(bx+pad+10*k,ry+6*k); c.lineTo(bx+pad+14.5*k,ry-1*k); c.lineTo(bx+pad+11.8*k,ry-1*k); c.closePath(); c.fill(); }
-    else if(r.gascab){ c.fillStyle="#e8eef3"; rrect(c,bx+pad+3*k,ry-9*k,18*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,bx+pad+3*k,ry-9*k,18*k,18*k,3*k); c.stroke(); c.fillStyle="#f59e0b"; c.beginPath(); c.moveTo(bx+pad+12*k,ry-5.5*k); c.quadraticCurveTo(bx+pad+16*k,ry-1*k,bx+pad+12*k,ry+5*k); c.quadraticCurveTo(bx+pad+8*k,ry-1*k,bx+pad+12*k,ry-5.5*k); c.fill(); }
-    else if(r.earthterm){ c.fillStyle="#f8fafc"; rrect(c,bx+pad+2*k,ry-6*k,20*k,12*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,bx+pad+2*k,ry-6*k,20*k,12*k,3*k); c.stroke(); c.fillStyle="#facc15"; c.fillRect(bx+pad+6*k,ry-2*k,12*k,4*k); }
-    else if(r.cutout){ c.fillStyle="#cbd5e1"; rrect(c,bx+pad+6*k,ry-9*k,13*k,18*k,3*k); c.fill(); c.strokeStyle="#6b7280"; c.lineWidth=1*k; rrect(c,bx+pad+6*k,ry-9*k,13*k,18*k,3*k); c.stroke(); c.fillStyle="#111827"; rrect(c,bx+pad+8*k,ry-4*k,9*k,8*k,1.5*k); c.fill(); }
-    else if(r.isolator){ c.fillStyle="#e2e8f0"; rrect(c,bx+pad+4*k,ry-9*k,17*k,18*k,3*k); c.fill(); c.strokeStyle="#94a3b8"; c.lineWidth=1*k; rrect(c,bx+pad+4*k,ry-9*k,17*k,18*k,3*k); c.stroke(); c.fillStyle="#dc2626"; rrect(c,bx+pad+8*k,ry-2*k,9*k,6*k,2*k); c.fill(); c.fillStyle="#111827"; c.font=`800 ${4.5*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText("MS",bx+pad+12.5*k,ry-5*k); }
-    else if(r.cunit){ c.fillStyle="#eef2f6"; rrect(c,bx+pad+1*k,ry-7*k,22*k,14*k,2.5*k); c.fill(); c.strokeStyle="#7c8794"; c.lineWidth=1*k; rrect(c,bx+pad+1*k,ry-7*k,22*k,14*k,2.5*k); c.stroke(); c.fillStyle="#dc2626"; rrect(c,bx+pad+2.5*k,ry-4*k,3.5*k,8*k,1*k); c.fill(); c.fillStyle="#94a3b8"; [0,1,2,3].forEach(j=>{ c.fillRect(bx+pad+(8+j*3.4)*k,ry-3*k,2*k,6*k); }); }
-    else if(r.mcbrow){ c.fillStyle="#f8fafc"; rrect(c,bx+pad+7*k,ry-9*k,11*k,18*k,2*k); c.fill(); c.strokeStyle="#9aa4af"; c.lineWidth=1*k; rrect(c,bx+pad+7*k,ry-9*k,11*k,18*k,2*k); c.stroke(); c.fillStyle="#2563eb"; c.fillRect(bx+pad+9.4*k,ry+1.5*k,6.2*k,5*k); }
-    else if(r.rcdrow){ c.fillStyle="#eef2f6"; rrect(c,bx+pad+3*k,ry-9*k,18*k,18*k,2.5*k); c.fill(); c.strokeStyle="#9aa4af"; c.lineWidth=1*k; rrect(c,bx+pad+3*k,ry-9*k,18*k,18*k,2.5*k); c.stroke(); c.fillStyle="#475569"; c.fillRect(bx+pad+5.5*k,ry+1.5*k,5*k,5*k); c.fillStyle="#ea580c"; c.beginPath(); c.arc(bx+pad+15.5*k,ry+4*k,2*k,0,7); c.fill(); }
-    else if(r.dinrow){ const dd2=DIN_DEFS[r.dinrow]||DIN_DEFS.rcbo; const mw=dd2.mod===2?18:11; const xo=dd2.mod===2?3:7; c.fillStyle="#f8fafc"; rrect(c,bx+pad+xo*k,ry-9*k,mw*k,18*k,2*k); c.fill(); c.strokeStyle="#9aa4af"; c.lineWidth=1*k; rrect(c,bx+pad+xo*k,ry-9*k,mw*k,18*k,2*k); c.stroke(); c.fillStyle=dd2.color; c.fillRect(bx+pad+(xo+2.4)*k,ry+1.5*k,(mw-4.8)*k,5*k); }
-    else if(r.feederrow){ c.fillStyle="#3d5f4b"; rrect(c,bx+pad+6*k,ry-9*k,13*k,18*k,2.5*k); c.fill(); c.strokeStyle="#1d2f25"; c.lineWidth=1*k; rrect(c,bx+pad+6*k,ry-9*k,13*k,18*k,2.5*k); c.stroke(); c.fillStyle="#9aa3ab"; c.fillRect(bx+pad+7*k,ry+7*k,11*k,1.6*k); }
-    else if(r.arrayrow){ c.fillStyle="#eef2f6"; rrect(c,bx+pad+1*k,ry-7*k,22*k,14*k,2.5*k); c.fill(); c.strokeStyle="#38bdf8"; c.lineWidth=1*k; rrect(c,bx+pad+1*k,ry-7*k,22*k,14*k,2.5*k); c.stroke(); c.fillStyle="#94a3b8"; [0,1,2,3].forEach(j=>{ c.fillRect(bx+pad+(5+j*3.6)*k,ry-3*k,2*k,6*k); }); }
-    else if(r.bayrow){ c.strokeStyle="rgba(248,250,252,.95)"; c.lineWidth=1.4*k; c.strokeRect(bx+pad+4*k,ry-8*k,15*k,16*k); c.fillStyle="rgba(76,175,80,.85)"; c.fillRect(bx+pad+5*k,ry+5*k,13*k,2.2*k); }
-    else if(r.unitrow){ c.fillStyle="#16232E"; rrect(c,bx+pad+4*k,ry-8*k,16*k,16*k,4*k); c.fill(); c.strokeStyle="#1E6BFF"; c.lineWidth=1*k; rrect(c,bx+pad+4*k,ry-8*k,16*k,16*k,4*k); c.stroke(); c.fillStyle="#1E6BFF"; c.font=`800 ${7*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText("EV",bx+pad+12*k,ry+0.5); }
-    else if(r.connpoint){ c.fillStyle="#1E6BFF"; rrect(c,bx+pad+2*k,ry-8*k,18*k,16*k,4*k); c.fill(); c.strokeStyle="#16232E"; c.lineWidth=1*k; rrect(c,bx+pad+2*k,ry-8*k,18*k,16*k,4*k); c.stroke(); c.fillStyle="#16232E"; c.beginPath(); c.moveTo(bx+pad+12*k,ry-5*k); c.lineTo(bx+pad+7.5*k,ry+1*k); c.lineTo(bx+pad+10.5*k,ry+1*k); c.lineTo(bx+pad+9*k,ry+5*k); c.lineTo(bx+pad+13.5*k,ry-1*k); c.lineTo(bx+pad+10.5*k,ry-1*k); c.closePath(); c.fill(); }
-    else { c.fillStyle=r.color; c.beginPath(); c.arc(bx+pad+11*k,ry,9*k,0,7); c.fill(); c.fillStyle=labelInk(r.color); c.font=`800 ${8.5*k}px ${FONT}`; c.textAlign="center"; c.textBaseline="middle"; c.fillText(r.letter,bx+pad+11*k,ry+0.5); }
+    paintKeySwatch(c,r,bx+pad,ry,k);
     c.fillStyle="#e8eef2"; c.font=`600 ${fs}px ${FONT}`; c.textAlign="left"; c.textBaseline="middle";
     let nm=r.name; if(c.measureText(nm).width>lw){ while(nm.length>2&&c.measureText(nm+"…").width>lw) nm=nm.slice(0,-1); nm+="…"; }
     c.fillText(nm, bx+indent, ry); c.restore();
@@ -11177,7 +11196,7 @@ function buildWebPack(){
   +'ul{margin:0;padding-left:20px}li{margin:3px 0}.ok{color:#2A7841;font-weight:700}.todo{color:#9A7A1A;font-weight:700}'
   +'footer{color:#8A98A8;font-size:12px;margin-top:24px;border-top:1px solid #E1E7ED;padding-top:12px}'
   +'</style></head><body><div class="wrap">'
-  +'<header>'+logoImg+'<div><h1>'+e2(pack.name||"EV charging plan")+'</h1><p class="sub">'+brand+' \u00b7 '+(pack.mode==="domestic"?"Domestic":"Commercial")+' charging'+(pack.jobRef?" \u00b7 Case "+e2(pack.jobRef):"")+' \u00b7 '+new Date().toLocaleDateString("en-GB")+'</p></div></header>'
+  +'<header>'+logoImg+'<div><h1>'+e2(pack.name||"EV charging plan")+'</h1><p class="sub">'+brand+' \u00b7 '+(pack.mode==="domestic"?"Domestic":"Commercial")+' charging'+(pack.jobRef?" \u00b7 Ref "+e2(pack.jobRef):"")+' \u00b7 '+longDate(new Date())+'</p></div></header>'
   +'<div class="status" style="background:'+stat.c+'">'+e2(stat.t)+'</div>'
   +(scope.length?'<div class="card"><h2>Scope</h2>'+rows+(priced.length?'<div class="row"><span><b>Estimated budget (excl. VAT)</b></span><b>'+fmtGBP(tot)+'</b></div>':'')+'</div>':'')
   +photosHtml
@@ -11189,7 +11208,7 @@ function buildWebPack(){
   +(replyTo?'<div class="card"><h2>Your decision</h2><p style="margin:0 0 10px;color:#54677A;font-size:14px">Happy with this plan? Approve it, or send comments back. Either opens a pre-filled email; nothing is sent until you press Send.</p><textarea id="apprCmt" placeholder="Optional comments: positions, access, timings\u2026" style="width:100%;min-height:72px;border:1px solid #E1E7ED;border-radius:8px;padding:9px;font:inherit;box-sizing:border-box;background:#FBFCFD"></textarea><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><a id="apprYes" href="#" style="background:#267A43;color:#fff;text-decoration:none;font-weight:700;padding:11px 16px;border-radius:9px;font-size:14px">\u2713 Approve this plan</a><a id="apprNo" href="#" style="background:#16232E;color:#fff;text-decoration:none;font-weight:700;padding:11px 16px;border-radius:9px;font-size:14px">Request changes</a></div></div>':'')
   +'<footer>'+brand+' \u00b7 generated '+new Date().toLocaleString("en-GB")+' \u00b7 opens in any browser, no app needed</footer>'
   +'</div>'
-  +(replyTo?'<script>(function(){var to='+JSON.stringify(replyTo)+',ttl='+JSON.stringify(pack.name||"EV charging plan")+',ref='+JSON.stringify(pack.jobRef||"")+';function go(kind){var c=(document.getElementById("apprCmt").value||"").trim();var subj=(kind==="yes"?"APPROVED: ":"CHANGES REQUESTED: ")+ttl+(ref?" · Case "+ref:"");var body=(kind==="yes"?"I approve the EV charging plan as presented.":"Please review the following before we proceed:")+(c?"\\n\\nComments:\\n"+c:"")+"\\n\\n- sent from the shared plan pack";location.href="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);}document.getElementById("apprYes").onclick=function(e){e.preventDefault();go("yes");};document.getElementById("apprNo").onclick=function(e){e.preventDefault();go("no");};})();<\/script>':'')
+  +(replyTo?'<script>(function(){var to='+JSON.stringify(replyTo)+',ttl='+JSON.stringify(pack.name||"EV charging plan")+',ref='+JSON.stringify(pack.jobRef||"")+';function go(kind){var c=(document.getElementById("apprCmt").value||"").trim();var subj=(kind==="yes"?"APPROVED: ":"CHANGES REQUESTED: ")+ttl+(ref?" · Ref "+ref:"");var body=(kind==="yes"?"I approve the EV charging plan as presented.":"Please review the following before we proceed:")+(c?"\\n\\nComments:\\n"+c:"")+"\\n\\n- sent from the shared plan pack";location.href="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);}document.getElementById("apprYes").onclick=function(e){e.preventDefault();go("yes");};document.getElementById("apprNo").onclick=function(e){e.preventDefault();go("no");};})();<\/script>':'')
   +'</body></html>';
   const blob=new Blob([html],{type:"text/html"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
@@ -11550,7 +11569,7 @@ async function buildHandoverPdf(){
   if(pack.name){ doc.text(pack.name,M,y); y+=6.5; }
   doc.setFont("helvetica","normal"); doc.setFontSize(9.8); doc.setTextColor(...DIM);
   { const al=siteAddressLine(); if(al){ doc.text(al,M,y); y+=5.2; } }
-  { const meta=[]; if(pack.jobRef) meta.push("Case: "+pack.jobRef); if(c.eicRef) meta.push("EIC ref: "+c.eicRef); meta.push("Date: "+new Date().toLocaleDateString("en-GB")); if(pack.earthing) meta.push("Earthing: "+pack.earthing); if(pack.mainFuse) meta.push("Main fuse: "+pack.mainFuse);
+  { const meta=[]; if(pack.jobRef) meta.push("Ref: "+pack.jobRef); if(c.eicRef) meta.push("EIC ref: "+c.eicRef); meta.push("Date: "+longDate(new Date())); if(pack.earthing) meta.push("Earthing: "+pack.earthing); if(pack.mainFuse) meta.push("Main fuse: "+pack.mainFuse);
     doc.text(meta.join("   \u00b7   "),M,y); y+=8; }
   doc.setFillColor(...(cs.complete?OK:[206,158,46])); doc.roundedRect(M,y-1,PW-2*M,10,3,3,"F");
   doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(10);
@@ -11679,7 +11698,7 @@ function buildDecisionPack(){
    +'function show(o){cur=o;document.querySelectorAll("[data-og]").forEach(function(g){g.style.display=g.getAttribute("data-og")===o?"":"none";});document.querySelectorAll(".optbtn").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-opt")===o);});document.querySelectorAll("#optPick [data-pick]").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-pick")===o);});}'
    +'document.querySelectorAll(".optbtn").forEach(function(b){b.onclick=function(){show(b.getAttribute("data-opt"));};});'
    +'document.querySelectorAll("#optPick [data-pick]").forEach(function(b){b.onclick=function(e){e.preventDefault();show(b.getAttribute("data-pick"));};});'
-   +'function msg(kind){var nm=(document.getElementById("dName").value||"").trim();if(!nm){var er=document.getElementById("dErr");er.style.display="block";document.getElementById("dName").focus();return null;}var cm=(document.getElementById("dCmt").value||"").trim();var head=(kind==="yes"?"APPROVED":"CHANGES REQUESTED")+": "+TTL+(REF?" | Case "+REF:"")+(OPT.length?" | Option "+cur:"");var body=head+"\\nName: "+nm+"\\nDate: "+new Date().toLocaleDateString("en-GB")+(cm?"\\nComments: "+cm:"")+"\\n- sent from the decision pack";return {head:head,body:body};}'
+   +'function msg(kind){var nm=(document.getElementById("dName").value||"").trim();if(!nm){var er=document.getElementById("dErr");er.style.display="block";document.getElementById("dName").focus();return null;}var cm=(document.getElementById("dCmt").value||"").trim();var head=(kind==="yes"?"APPROVED":"CHANGES REQUESTED")+": "+TTL+(REF?" | Ref "+REF:"")+(OPT.length?" | Option "+cur:"");var body=head+"\\nName: "+nm+"\\nDate: "+new Date().toLocaleDateString("en-GB")+(cm?"\\nComments: "+cm:"")+"\\n- sent from the decision pack";return {head:head,body:body};}'
    +'function wire(id,fn){var el=document.getElementById(id);if(el)el.onclick=function(e){e.preventDefault();fn();};}'
    +'wire("goWa",function(){var m=msg("yes");if(m)location.href="https://wa.me/"+WA+"?text="+encodeURIComponent(m.body);});'
    +'wire("goEm",function(){var m=msg("yes");if(m)location.href="mailto:"+encodeURIComponent(TO)+"?subject="+encodeURIComponent(m.head)+"&body="+encodeURIComponent(m.body);});'
@@ -11708,7 +11727,7 @@ function buildDecisionPack(){
   +'.err{color:#FFB0A8;font-size:12px;display:none;margin-top:6px}'
   +'footer{color:#8C97A0;font-size:11.5px;margin-top:22px;border-top:1px solid #E7DFD0;padding-top:12px;line-height:1.5}'
   +'</style></head><body><div class="wrap">'
-  +'<header>'+logoImg+'<div><h1>'+e2(title)+'</h1><p class="sub">'+brand+' \u00b7 prepared '+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})+(pack.jobRef?' \u00b7 case '+e2(pack.jobRef):'')+'</p></div></header>'
+  +'<header>'+logoImg+'<div><h1>'+e2(title)+'</h1><p class="sub">'+brand+' \u00b7 prepared '+longDate(new Date())+(pack.jobRef?' \u00b7 Ref '+e2(pack.jobRef):'')+'</p></div></header>'
   +'<div class="status" style="background:'+statC+'">'+e2(statT)+'</div>'
   +'<div class="card" style="border-left:4px solid #1E6BFF"><div style="font-size:14px;line-height:1.6">'+(pack.mode==="domestic"
       ?'These are your own photos with the proposed install drawn on. Have a look'+(opts.length?', flip between the options,':'')+' and tap a decision at the bottom; it takes seconds.'
@@ -11928,6 +11947,15 @@ function logoPngDataUrl(hex, px){
 const PM_KEY="cmPmName.v1", TPL_KEY="cmEmailTpl.v1";
 function pmName(){ try{ return (localStorage.getItem(PM_KEY)||"").trim(); }catch(_){ return ""; } }
 function setPmName(v){ try{ localStorage.setItem(PM_KEY, v); }catch(_){ } }
+/* The letter is signed by the project lead. Older projects fall back to the name remembered on this
+   device, then the profile, then the company. Blank everywhere: the letter has no sign-off line. */
+/* One date style in documents (3 Oct 2026) and the issue date of the current revision. */
+/* Canvas text uses Hanken Grotesk; make sure the face is loaded so diagrams never fall back to a system font. */
+async function canvasFontsReady(){ try{ if(document.fonts){ await Promise.all(["500","600","700","800"].map(w=>document.fonts.load(w+" 20px 'Hanken Grotesk'"))); await document.fonts.ready; } }catch(_){ } }
+function longDate(v){ return window.EVReportBranding ? EVReportBranding.date(v) : new Date(v).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}); }
+function issueDateText(){ return window.EVReportBranding ? EVReportBranding.issueDate(pack) : longDate(new Date()); }
+function letterAuthor(){ let profileName=""; try{ profileName=String((window.EVProfile&&EVProfile.get().name)||"").trim(); }catch(_){ } return String(pack.surveyedBy||"").trim()||pmName()||profileName||String(pack.brandName||"").trim(); }
+function clientContact(){ return String((pack.workspace&&pack.workspace.clientContact)||"").trim(); }
 const DEFAULT_TPLS={
 standard:`Subject: EV installation plan for review
 
@@ -12063,7 +12091,11 @@ function checklistText(){
   return "Please could you send us the following:\n"+sel.map(n=>"• "+n.t+(n.d?": "+n.d.charAt(0).toLowerCase()+n.d.slice(1):"")+(n.link?"\n   "+n.link:"")).join("\n");
 }
 function fillTemplate(tpl, mode){
-  const first=(pack.custName||"").trim().split(/\s+/)[0]||"there";
+  // Greet the named contact. Without one, a homeowner is greeted by first name and an organisation with "Hello,".
+  const contact=clientContact(), author=letterAuthor();
+  const first=contact?contact.split(/\s+/)[0]:pack.mode==="domestic"?((pack.custName||"").trim().split(/\s+/)[0]||"there"):"there";
+  if(!contact&&pack.mode!=="domestic") tpl=tpl.replace(/^Hi \{firstName\},[ \t]*$/m,"Hello,");
+  if(!author) tpl=tpl.replace(/^Regards,[ \t]*\n[ \t]*\{pmName\}[ \t]*$/m,"");
   const extras=[];
   if(pack.extraCable) extras.push(pack.extraCable+" m of extra cabling");
   if(pack.extraTrunk) extras.push(pack.extraTrunk+" m of extra trunking");
@@ -12072,7 +12104,7 @@ function fillTemplate(tpl, mode){
   const checklist = mode==="email" ? checklistText() : (selectedNeeds().length?"Everything we need is listed under “What we need from you” in this plan.":"");
   const map={
     "{firstName}":first,
-    "{pmName}":pmName()||"[your name]",
+    "{pmName}":author,
     "{case}":pack.jobRef||"[case number]",
     "{connection}":(connPointName()||"your electricity meter").toLowerCase(),
     "{extras}":extras.join(", ")||"the additional works marked on your survey",
@@ -12200,10 +12232,12 @@ function openReview(mode){
     sum.oninput = ()=>{ pack.custLetter=sum.value; autosave(); rxQueuePreview(); };
     letterReset.onclick = ()=>{ pack.custLetter=""; sum.value=genLetter(); autosave(); rxQueuePreview(); toast("Letter re-written"); };
     const cn=document.getElementById("rxCustName"), pmI=document.getElementById("rxPmName");
-    cn.value=pack.custName||""; pmI.value=pmName();
+    const ccI=document.getElementById("rxContactName");
+    cn.value=pack.custName||""; ccI.value=clientContact(); pmI.value=letterAuthor();
     const refreshGen=()=>{ if(!rxTplEditing && !rxEmailDirty) emailTA.value=genEmail(); if(!custLetterSet()) sum.value=genLetter(); rxQueuePreview(); };
     cn.oninput=()=>{ pack.custName=cn.value; autosave(); refreshGen(); };
-    pmI.oninput=()=>{ setPmName(pmI.value); refreshGen(); };
+    ccI.oninput=()=>{ if(!pack.workspace||typeof pack.workspace!=="object") pack.workspace={}; pack.workspace.clientContact=ccI.value; autosave(); refreshGen(); };
+    pmI.oninput=()=>{ pack.surveyedBy=pmI.value; autosave(); refreshGen(); };
     emailTA.value=genEmail();
     emailTA.oninput=()=>{ if(!rxTplEditing){ rxEmailDirty=true; document.getElementById("rxEmailState").textContent="edited · this send only"; } rxCheckPlaceholders(); };
     document.getElementById("rxEmailCopy").onclick=()=>{
@@ -12233,10 +12267,10 @@ function openReview(mode){
   document.getElementById("rxCancel").onclick = closeReview;
   document.getElementById("rxRefresh").onclick = rxUpdatePreview;
   expBtn.onclick = async()=>{ const m=rxMode;
-    if(m==="customer"){ const ph=rxLetterText().match(RX_PH_RE)||[]; if(ph.length){ const ok=await askConfirm({title:"Placeholders left in", label:"The customer letter still contains "+ph.slice(0,2).join(", ")+(ph.length>2?", \u2026":"")+". Download anyway?", okText:"Download anyway"}); if(!ok) return; } }
+    if(m==="customer"){ const ph=rxLetterText().match(RX_PH_RE)||[]; if(ph.length){ const ok=await askConfirm({title:"Complete the client letter?", label:"The client letter still contains "+ph.slice(0,2).join(", ")+(ph.length>2?", \u2026":"")+". Download anyway?", okText:"Download anyway"}); if(!ok) return; } }
     closeReview(); toast("Preparing PDF…"); setTimeout(()=>{ (m==="customer"?buildCustomerPdf:buildPdf)(); }, 60); };
   bd.onclick = e=>{ if(e.target===bd) closeReview(); };
-  rxKeyHandler = e=>{ if(e.key==="Escape"){ e.preventDefault(); closeReview(); } };
+  rxKeyHandler = e=>{ if(e.key==="Escape"&&!document.getElementById("sheetBackdrop").classList.contains("show")){ e.preventDefault(); closeReview(); } };
   document.addEventListener("keydown", rxKeyHandler, true);
   rxUpdatePreview();
 }
@@ -12270,13 +12304,13 @@ async function buildCustomerPdf(opts){
   window.EVDelivery?.installFonts(doc);
   const expPhotos = pack.photos.filter(p=>p.includeInPdf!==false);
   const PW=210, PH=297, M=16;
-  const BEIGE=[255,255,255], NAVY=[21,42,57], LIME=[30,107,255], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237], INK=[34,48,54];
+  const PAGE=[255,255,255], NAVY=[21,42,57], ACCENT=[30,107,255], SOFT=[244,247,250], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237], INK=[34,48,54];
   const GREEN=[75,160,105], SUN=[206,158,46], SKY=[88,153,168], EARTH=[164,116,60], PLUM=[142,68,133];
-  const bg=()=>{ doc.setFillColor(...BEIGE); doc.rect(0,0,PW,PH,"F"); };
+  const bg=()=>{ doc.setFillColor(...PAGE); doc.rect(0,0,PW,PH,"F"); };
   let y=M;
   function newPage(){ doc.addPage(); bg(); window.EVReportBranding?.header(doc,{title:"EV charging plan",M}); y=46; }
   function ensureSpace(need){ if(y+need>PH-M-6){ newPage(); } }
-  function heading(txt){ ensureSpace(16); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(15); doc.text(txt,M,y); y+=2.6; doc.setFillColor(...LIME); doc.roundedRect(M,y,18,1.6,0.8,0.8,"F"); y+=8; doc.setFont("EVSans","normal"); doc.setFontSize(11); doc.setTextColor(...DIM); }
+  function heading(txt){ ensureSpace(30); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(15); doc.text(txt,M,y); y+=2.6; doc.setFillColor(...ACCENT); doc.roundedRect(M,y,18,1.6,0.8,0.8,"F"); y+=8; doc.setFont("EVSans","normal"); doc.setFontSize(11); doc.setTextColor(...DIM); }
   function drawTick(x,cy,r,col){ doc.setFillColor(...col); doc.circle(x,cy,r,"F"); doc.setDrawColor(...WHITE); doc.setLineWidth(0.7); doc.line(x-r*0.45,cy+r*0.05,x-r*0.1,cy+r*0.42); doc.line(x-r*0.1,cy+r*0.42,x+r*0.5,cy-r*0.35); doc.setLineWidth(0.2); }
   function para(txt,x,w,lh){ lh=lh||5.4; doc.splitTextToSize(txt,w).forEach(line=>{ ensureSpace(lh); doc.text(line,x,y); y+=lh; }); }
 
@@ -12292,17 +12326,31 @@ async function buildCustomerPdf(opts){
   }[OUT] || {col:NAVY, t:"Proposed installation", b:"Review the recorded scope, marked plans and outstanding decisions."};
 
   /* ---------------- COVER ---------------- */
+  // White, installer-branded page: the project, a label and value grid, who prepared it, then the recorded outcome.
   bg();
-  window.EVReportBranding?.header(doc,{title:pack.mode==="domestic"?"Home charge plan":"EV charging plan",M});
-  doc.setTextColor(...NAVY);doc.setFont("EVSans","bold");doc.setFontSize(25);
-  let cy=76;
-  doc.splitTextToSize(pack.name||"Proposed installation",PW-2*M).forEach(line=>{doc.text(line,M,cy);cy+=11;});
-  cy+=5;doc.setFont("EVSans","normal");doc.setFontSize(11);doc.setTextColor(...DIM);
-  const coverRows=[siteAddressLine(),pack.custName?"Client: "+pack.custName:"",pack.jobRef?"Reference: "+pack.jobRef:"","Revision: "+(pack.rev||"A"),"Prepared: "+new Date().toLocaleDateString("en-GB"),"Chargers: "+(unitSummaryText()||"As marked on the plans"),pmName()?"Prepared by: "+pmName():""];
-  coverRows.filter(Boolean).forEach(value=>{doc.splitTextToSize(value,PW-2*M).forEach(line=>{if(cy>225){newPage();cy=50;}doc.text(line,M,cy);cy+=6;});cy+=3;});
-  // status banner
-  const by=PH-M-40, bw=PW-2*M, bh=30;
-  doc.setFillColor(...WHITE); doc.roundedRect(M,by,bw,bh,4,4,"F");
+  window.EVReportBranding?.header(doc,{title:pack.mode==="domestic"?"Home charge plan":"EV charging plan",M,meta:false});
+  doc.setTextColor(...NAVY);doc.setFont("EVSans","bold");doc.setFontSize(24);
+  let cy=58;
+  doc.splitTextToSize(pack.name||"Proposed installation",PW-2*M).slice(0,3).forEach(line=>{doc.text(line,M,cy);cy+=10;});
+  cy+=3;
+  { const grid=[["Client",pack.custName],["Site address",siteAddressLine()],["Reference",pack.jobRef],["Revision",pack.rev||"A"],["Issue date",issueDateText()],["Chargers",unitSummaryText()||"As marked on the plans"]].filter(r=>String(r[1]||"").trim());
+    const LW=44, VW=PW-2*M-LW-4;
+    doc.setFillColor(...SOFT); doc.rect(M,cy,PW-2*M,8,"F");
+    doc.setFont("EVSans","bold"); doc.setFontSize(7.4); doc.setTextColor(...DIM); doc.text("Project details",M+2,cy+5.3); doc.text("Recorded information",M+LW+2,cy+5.3);
+    cy+=8;
+    grid.forEach(([k,v])=>{ doc.setFont("EVSans","normal"); doc.setFontSize(10); const lines=doc.splitTextToSize(String(v),VW); const rh=lines.length*4.8+5.2;
+      doc.setFont("EVSans","bold"); doc.setFontSize(9); doc.setTextColor(...NAVY); doc.text(k,M+2,cy+5.4);
+      doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...INK); lines.forEach((l,i)=>doc.text(l,M+LW+2,cy+5.4+i*4.8));
+      cy+=rh; doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.line(M,cy,PW-M,cy); });
+  }
+  { const author=letterAuthor(), company=String(pack.brandName||"").trim();
+    const who=[company, author&&author!==company?author:"", [pack.replyEmail,pack.replyPhone].filter(Boolean).join("  ·  ")].filter(Boolean);
+    if(who.length){ cy+=10; doc.setFont("EVSans","bold"); doc.setFontSize(11); doc.setTextColor(...NAVY); doc.text("Prepared by",M,cy); cy+=6.4;
+      who.forEach((t,i)=>{ doc.setFont("EVSans",i===0?"bold":"normal"); doc.setFontSize(i===0?10.5:10); doc.setTextColor(...(i===0?INK:DIM)); doc.splitTextToSize(t,PW-2*M).forEach(l=>{ doc.text(l,M,cy); cy+=5.2; }); }); }
+  }
+  // Recorded outcome: a soft card with a visible edge, placed under the details or at two-thirds of the page.
+  const by=Math.min(PH-M-6-30, Math.max(cy+12, PH*2/3)), bw=PW-2*M, bh=30;
+  doc.setFillColor(...SOFT); doc.setDrawColor(...LINE); doc.setLineWidth(0.3); doc.roundedRect(M,by,bw,bh,4,4,"FD");
   doc.setFillColor(...status.col); doc.circle(M+12,by+bh/2,4.2,"F");
   // A coloured dot identifies the recorded outcome; it does not imply approval.
   doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(13); doc.text(status.t, M+20, by+12);
@@ -12314,7 +12362,7 @@ async function buildCustomerPdf(opts){
   {
     const letter=(pack.custLetter&&pack.custLetter.trim())||genLetter();
     if(letter){
-      heading(pmName()?("A note from "+pmName()):"Project note");
+      heading(letterAuthor()?("A note from "+letterAuthor()):"Covering note");
       doc.setTextColor(...INK); doc.setFont("EVSans","normal"); doc.setFontSize(11);
       letter.split("\n").forEach(line=>{
         if(!line.trim()){ y+=2.8; return; }
@@ -12493,7 +12541,7 @@ async function buildCustomerPdf(opts){
     const stepLines=doc.splitTextToSize(s[1], PW-2*M-14);
     // Keep each step together, including the contact panel after the final step.
     ensureSpace(11+stepLines.length*5+(i===steps.length-1?24:0));
-    doc.setFillColor(...LIME); doc.circle(M+5,y+1,5,"F");
+    doc.setFillColor(...ACCENT); doc.circle(M+5,y+1,5,"F");
     doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(12); doc.text(String(i+1), M+5, y+2.4, {align:"center"});
     doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(12); doc.text(s[0], M+14, y);
     doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5);
@@ -12511,21 +12559,21 @@ async function buildCustomerPdf(opts){
     expPhotos.forEach((p,i)=>{
       newPage();
       if(i===0){
-        heading("Your survey photos");
+        heading("Your plans and photos");
         doc.setTextColor(...DIM); doc.setFont("EVSans","normal"); doc.setFontSize(10.5);
-        para("Site photos and drawings with the proposed installation marked up.", M, PW-2*M); y+=2;
+        para("Site plans and photos with the proposed installation marked up.", M, PW-2*M); y+=2;
       } else {
-        doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(13); doc.text("Your survey photos", M, y); y+=8;
+        doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(13); doc.text("Your plans and photos", M, y); y+=8;
       }
       doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11.5);
       doc.text(`${i+1}. ${p.name}`, M, y);
       doc.setTextColor(...FAINT); doc.setFont("EVSans","normal"); doc.setFontSize(8.5);
-      doc.text(`Photo ${i+1} of ${expPhotos.length}`, PW-M, y, {align:"right"});
+      doc.text(`Sheet ${i+1} of ${expPhotos.length}`, PW-M, y, {align:"right"});
       y+=4;
       const hasCap = p.caption && p.caption.trim();
       const capLines = hasCap ? doc.splitTextToSize(p.caption.trim(), PW-2*M-4) : [];
       const capH = hasCap ? capLines.length*4.8 + 6 : 0;
-      const cn=renderPhotoToCanvas(p, 2000);
+      const cn=renderPhotoToCanvas(p, 2000, {compact:true});
       const availW=PW-2*M, availH=PH-M-6-y-capH;
       let w=availW, h=w*cn.height/cn.width; if(h>availH){ h=availH; w=h*cn.width/cn.height; }
       const ix=(PW-w)/2;
@@ -12535,7 +12583,7 @@ async function buildCustomerPdf(opts){
     });
   }
 
-  window.EVReportBranding?.footer(doc,{M});
+  window.EVReportBranding?.footer(doc,{M,kind:"client"});
 
   if(opts.output==="doc"){ return doc; }
   if(opts.output==="bloburl"){ return doc.output("bloburl"); }
@@ -12551,11 +12599,11 @@ async function buildPdf(opts){
   window.EVDelivery?.installFonts(doc);
   const expPhotos = pack.photos.filter(p=>p.includeInPdf!==false);
   const PW=210, PH=297, M=14;
-  const NAVY=[21,42,57], BEIGE=[255,255,255], LIME=[30,107,255], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237];
-  const bg=()=>{ doc.setFillColor(...BEIGE); doc.rect(0,0,PW,PH,"F"); };
+  const NAVY=[21,42,57], PAGE=[255,255,255], ACCENT=[30,107,255], DIM=[92,107,112], FAINT=[138,152,168], WHITE=[255,255,255], LINE=[223,231,237];
+  const bg=()=>{ doc.setFillColor(...PAGE); doc.rect(0,0,PW,PH,"F"); };
   let y;
   function ensureSpace(need){ if(y+need>PH-M-3){ doc.addPage(); bg(); window.EVReportBranding?.header(doc,{title:"Site survey",M}); y=46; } }
-  function heading(txt){ ensureSpace(23); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11.5); doc.text(txt,M,y); y+=2.2; doc.setFillColor(...LIME); doc.rect(M,y,16,1,"F"); y+=6.5; doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); }
+  function heading(txt){ ensureSpace(23); doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.setFontSize(11.5); doc.text(txt,M,y); y+=2.2; doc.setFillColor(...ACCENT); doc.rect(M,y,16,1,"F"); y+=6.5; doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM); }
 
   bg();
   window.EVReportBranding?.header(doc,{title:pack.mode==="domestic"?"Home charge survey":"Commercial site survey",M});
@@ -12568,7 +12616,7 @@ async function buildPdf(opts){
   { const al=siteAddressLine(); if(al){ doc.splitTextToSize(al,PW-2*M).forEach(line=>{ensureSpace(5.5);doc.text(line,M,y);y+=5.5;}); } }
   if(pack.jobRef){ doc.splitTextToSize("Reference: "+pack.jobRef,PW-2*M).forEach(line=>{ensureSpace(5.5);doc.text(line,M,y);y+=5.5;}); }
   { const sd=pack.surveyDate?new Date(pack.surveyDate+"T12:00:00"):null;
-    doc.text("Date: "+((sd&&!isNaN(sd))?sd:new Date()).toLocaleDateString("en-GB"), M, y); y+=5.5; }
+    doc.text("Survey date: "+longDate(pack.surveyDate||new Date()), M, y); y+=5.5; }
   { const s=unitSummaryText(); if(s){ doc.splitTextToSize("Chargers: "+s, PW-2*M).forEach(ln=>{ doc.text(ln, M, y); y+=5.5; }); } }
   if(pack.supplyRating){ doc.text("Supply: "+pack.supplyRating, M, y); y+=5.5; }
   if(pack.capacityNote){ doc.text("Max demand: "+pack.capacityNote, M, y); y+=5.5; }
@@ -12658,7 +12706,7 @@ async function buildPdf(opts){
       ensureSpace(6);
       doc.setTextColor(...NAVY); doc.setFont("EVSans","bold"); doc.text("Rev "+String(r.rev||"").slice(0,3), M, y);
       doc.setFont("EVSans","normal"); doc.setTextColor(...DIM);
-      doc.text(String(r.at||""), M+20, y);
+      doc.text(r.at?longDate(r.at):"", M+20, y);
       if(r.by) doc.text(String(r.by).slice(0,20), M+44, y);
       doc.text(doc.splitTextToSize(String(r.note||"-"), PW-2*M-86)[0]||"-", M+86, y);
       y+=5.4;
@@ -12714,7 +12762,7 @@ async function buildPdf(opts){
     const cx1=M, cx2=M+76, cx3=PW-M;
     ensureSpace(9);
     doc.setFont("EVSans","bold"); doc.setFontSize(9); doc.setTextColor(...NAVY);
-    doc.text("Run", cx1, y); doc.text("Photo", cx2, y); doc.text("Length", cx3, y, {align:"right"});
+    doc.text("Run", cx1, y); doc.text("Plan", cx2, y); doc.text("Length", cx3, y, {align:"right"});
     y+=1.8; doc.setDrawColor(...LINE); doc.line(M,y,PW-M,y); y+=4.8;
     doc.setFont("EVSans","normal"); doc.setFontSize(10); doc.setTextColor(...DIM);
     const totals={};
@@ -12847,30 +12895,37 @@ async function buildPdf(opts){
   try{
     const sm=sldModel(p=>p.includeInPdf!==false);
     if(sm && sm.nodes.some(nn=>nn.kind==="unit"||nn.kind==="unitgroup")){
-      const cnv=drawSld(sm);
+      await canvasFontsReady();
+      const cnv=drawSld(sm,{chrome:false});
       doc.addPage("a4","landscape");
       const LW=297, LH=210;
-      doc.setFillColor(...BEIGE); doc.rect(0,0,LW,LH,"F");
+      doc.setFillColor(...PAGE); doc.rect(0,0,LW,LH,"F");
       window.EVReportBranding?.header(doc,{title:"Single-line diagram",M});
       doc.setTextColor(...DIM);doc.setFont("EVSans","normal");doc.setFontSize(8.5);
       doc.text("Derived from the markup. Dashed connections have no recorded route.",M,43);
-      const availW=LW-2*M, availH=LH-48-M;
+      // Centre the diagram in the space under the header, keeping room for the caution beneath it.
+      doc.setFontSize(9); const note=doc.splitTextToSize(SLD_NOTE, LW-2*M), noteH=note.length*4.2+4;
+      const top=48, availW=LW-2*M, availH=LH-14-top-noteH-4;
       let w=availW, h=w*cnv.height/cnv.width; if(h>availH){ h=availH; w=h*cnv.width/cnv.height; }
-      doc.addImage(cnv.toDataURL("image/png"),"PNG",(LW-w)/2, 48, w, h);
+      const iy=top+Math.max(0,(availH-h)/2);
+      doc.addImage(cnv.toDataURL("image/png"),"PNG",(LW-w)/2, iy, w, h);
+      let ny=iy+h+7; note.forEach(l=>{ doc.text(l,M,ny); ny+=4.2; });
     }
   }catch(e){ console.warn("SLD page skipped", e); }
 
   // photo pages
+  // Each plan page takes the orientation of its drawing, so a wide plan fills the page.
   expPhotos.forEach((p,i)=>{
-    doc.addPage("a4","portrait"); bg();
-    window.EVReportBranding?.header(doc,{title:`${i+1}. ${p.name}`,M});
+    const cn=renderPhotoToCanvas(p, 2000, {compact:true}), wide=cn.width>cn.height;
+    const QW=wide?297:210, QH=wide?210:297;
+    doc.addPage("a4",wide?"landscape":"portrait"); doc.setFillColor(...PAGE); doc.rect(0,0,QW,QH,"F");
+    window.EVReportBranding?.header(doc,{title:expPhotos.length>1?`Marked-up plan ${i+1} of ${expPhotos.length}`:"Marked-up plan",M});
     const hasCap = p.caption && p.caption.trim();
-    const capLines = hasCap ? doc.splitTextToSize(p.caption.trim(), PW-2*M) : [];
+    const capLines = hasCap ? doc.splitTextToSize(p.caption.trim(), QW-2*M) : [];
     const capH = hasCap ? capLines.length*4.6 + 4 : 0;
-    const cn=renderPhotoToCanvas(p, 2000);
-    const availW=PW-2*M, availH=PH-M-44-capH;
+    const availW=QW-2*M, availH=QH-14-42-3-capH;
     let w=availW, h=w*cn.height/cn.width; if(h>availH){ h=availH; w=h*cn.width/cn.height; }
-    doc.addImage(cn.toDataURL("image/jpeg",0.92),"JPEG",(PW-w)/2, 42, w, h);
+    doc.addImage(cn.toDataURL("image/jpeg",0.92),"JPEG",(QW-w)/2, 42, w, h);
     if(hasCap){
       let cy=42+h+5; doc.setFont("EVSans","normal"); doc.setFontSize(9.5); doc.setTextColor(...DIM);
       capLines.forEach(line=>{ doc.text(line, M, cy); cy+=4.6; });
@@ -12878,6 +12933,7 @@ async function buildPdf(opts){
   });
   // Feeder pillar schedule pages - one per pillar (elevation + plan + spec)
   { const fpsAll=[]; expPhotos.forEach(p=>p.items.forEach(i=>{ if(i.type==="feeder") fpsAll.push({fp:i, photo:p}); }));
+    if(fpsAll.length) await canvasFontsReady();
     fpsAll.forEach((rec,idx)=>{
       const fp=rec.fp;
       doc.addPage(); bg();
@@ -13049,7 +13105,7 @@ async function buildPdf(opts){
       }catch(_){ }
     }
   }
-  window.EVReportBranding?.footer(doc,{M});
+  window.EVReportBranding?.footer(doc,{M,kind:"engineer"});
   if(opts.output==="doc"){ return doc; }
   if(opts.output==="bloburl"){ return doc.output("bloburl"); }
   doc.save((pack.name||(pack.mode==="domestic"?"home-survey":"site-survey")).replace(/[^\w\-]+/g,"_")+".pdf");
@@ -13093,6 +13149,7 @@ function askInput(opts){
     if(opts.numeric){ inp.setAttribute("inputmode","decimal"); } else { inp.removeAttribute("inputmode"); }
     inp.value=opts.value!=null?opts.value:""; inp.placeholder=opts.placeholder||"";
     okB.textContent=opts.okText||"OK";
+    cancelB.textContent=opts.cancelText||"Cancel";
     const isConfirm=!!opts.confirm;
     const sfx=inp.parentElement; if(sfx&&sfx.classList.contains("suffix")) sfx.style.display=isConfirm?"none":"flex";
     const helpEl=document.getElementById("sheetHelp");
@@ -13114,12 +13171,13 @@ function askInput(opts){
     function finish(val){ bd.classList.remove("show"); cleanup(); resolve(val); }
     function onOk(){ finish(inp.value); }
     function onCancel(){ finish(null); }
+    function onCancelButton(){ finish(opts.cancelValue!==undefined?opts.cancelValue:null); }
     function onKey(e){ if(e.key==="Enter"){ e.preventDefault(); onOk(); } else if(e.key==="Escape"){ e.preventDefault(); onCancel(); } }
     function onInput(){ syncChips(); }
     function onBackdrop(e){ if(e.target===bd) onCancel(); }
     function onWinKey(e){ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); onCancel(); } else if(e.key==="Enter"&&document.activeElement!==inp){ e.preventDefault(); e.stopPropagation(); onOk(); } }
-    function cleanup(){ okB.removeEventListener("click",onOk); cancelB.removeEventListener("click",onCancel); inp.removeEventListener("keydown",onKey); inp.removeEventListener("input",onInput); bd.removeEventListener("click",onBackdrop); if(isConfirm) window.removeEventListener("keydown",onWinKey,true); }
-    okB.addEventListener("click",onOk); cancelB.addEventListener("click",onCancel); inp.addEventListener("keydown",onKey); inp.addEventListener("input",onInput); bd.addEventListener("click",onBackdrop);
+    function cleanup(){ okB.removeEventListener("click",onOk); cancelB.removeEventListener("click",onCancelButton); inp.removeEventListener("keydown",onKey); inp.removeEventListener("input",onInput); bd.removeEventListener("click",onBackdrop); if(isConfirm) window.removeEventListener("keydown",onWinKey,true); }
+    okB.addEventListener("click",onOk); cancelB.addEventListener("click",onCancelButton); inp.addEventListener("keydown",onKey); inp.addEventListener("input",onInput); bd.addEventListener("click",onBackdrop);
     if(isConfirm) window.addEventListener("keydown",onWinKey,true);
   });
 }
@@ -13490,7 +13548,7 @@ async function exportCppTemplate(){
   sec("Project details");
   line("Site", pack.name||"");
   line("Address", siteAddressLine());
-  if(pack.jobRef) line("Case reference", pack.jobRef);
+  if(pack.jobRef) line("Reference", pack.jobRef);
   line("Description of works", un?("Supply and installation of "+un+" EV charge point"+(un===1?"":"s")+", cabling, civils and reinstatement."):"");
   line("Planned start date", c.startDate||"");
   line("Planned finish date", c.finishDate||"");
@@ -13543,8 +13601,8 @@ function buildCalcPdf(){
   const PW=210,PH=297,M=14;
   const NAVY=[21,42,57],DIM=[92,107,112],FAINT=[138,152,168],LINE=[223,231,237],OK=[38,122,67],BAD=[204,56,46],WARN=[154,122,26],PANEL=[244,239,229];
   let y=0;
-  const footer=()=>{ doc.setFont("helvetica","normal"); doc.setFontSize(7); doc.setTextColor(...FAINT); let fy=PH-11.2; doc.splitTextToSize("Typical manufacturer-published ratings, draft v0.9 pending specialist sign-off \u00b7 assumes 0.1 s disconnection, 20\u00b0C soil, conductors at operating temperature \u00b7 a sizing aid, not an EIC.", PW-2*M).forEach(l=>{ doc.text(l, M, fy); fy+=3.5; }); };
-  const header=()=>{ doc.setFillColor(...NAVY); doc.rect(0,0,PW,24,"F"); doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Cable calculations",M,10.5); doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(190,205,215); { const lh=(pack.name||"EV install")+(pack.jobRef?"  \u00b7  "+pack.jobRef:"")+"  \u00b7  "+new Date().toLocaleDateString("en-GB"); const rh="Draft design check \u00b7 verify to BS 7671 before construction"; const avail=PW-2*M-doc.getTextWidth(rh)-6; let lt=lh; while(lt.length>4&&doc.getTextWidth(lt)>avail) lt=lt.slice(0,-4).trimEnd()+"\u2026"; doc.text(lt,M,16.5); doc.text(rh,PW-M,16.5,{align:"right"}); } y=31; };
+  const footer=()=>{ doc.setFont("helvetica","normal"); doc.setFontSize(7); doc.setTextColor(...FAINT); let fy=PH-11.2; doc.splitTextToSize("Typical manufacturer-published ratings \u00b7 assumes 0.1 s disconnection, 20\u00b0C soil, conductors at operating temperature \u00b7 a sizing aid, not an EIC.", PW-2*M).forEach(l=>{ doc.text(l, M, fy); fy+=3.5; }); };
+  const header=()=>{ doc.setFillColor(...NAVY); doc.rect(0,0,PW,24,"F"); doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Cable calculations",M,10.5); doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(190,205,215); { const lh=(pack.name||"EV install")+(pack.jobRef?"  \u00b7  Ref "+pack.jobRef:"")+"  \u00b7  "+longDate(new Date()); const rh="Draft design check \u00b7 verify to BS 7671 before construction"; const avail=PW-2*M-doc.getTextWidth(rh)-6; let lt=lh; while(lt.length>4&&doc.getTextWidth(lt)>avail) lt=lt.slice(0,-4).trimEnd()+"\u2026"; doc.text(lt,M,16.5); doc.text(rh,PW-M,16.5,{align:"right"}); } y=31; };
   const ensure=h=>{ if(y+h>PH-16){ footer(); doc.addPage(); header(); } };
   header();
   const zeDef=ccZeDefault(); const zeU=parseFloat(pack.ze);
@@ -13687,9 +13745,13 @@ function sldModel(filter){
   });
   return {nodes:nodes.filter(nd=>!nd._pruned), origin};
 }
-function drawSld(model){
+/* opts.chrome:false draws only nodes and edges, for the PDF page and the dialog, which print the title and caution as text.
+   The standalone PNG keeps the title block and caution inside the image. */
+const SLD_NOTE="Schematic arrangement only, derived from the plan markup. Solid legs are drawn cable runs; dashed legs are inferred and still to be routed. Not a protection or discrimination study.";
+function drawSld(model, opts){
+  const chrome=!(opts&&opts.chrome===false);
   const nodes=model.nodes, origin=model.origin;
-  const NW=252, NH=58, GX=118, PAD=34, TITLE=88, GAP=22;
+  const NW=252, NH=58, GX=118, PAD=34, TITLE=chrome?88:0, GAP=22;
   const inSet=new Set(nodes);
   const depth=nd=>{ let d=0,c=nd; while(c.parent){ d++; c=c.parent; } return d; };
   let maxD=0; nodes.forEach(nd=>{ maxD=Math.max(maxD,depth(nd)); });
@@ -13702,7 +13764,7 @@ function drawSld(model){
   };
   place(origin);
   const W=PAD*2+(maxD+1)*NW+maxD*GX;
-  const H=Math.max(cursor-GAP+NH*0, TITLE+PAD+NH)+PAD+30;
+  const H=Math.max(cursor-GAP+NH*0, TITLE+PAD+NH)+PAD+(chrome?30:0);
   const S=2;
   const cn=document.createElement("canvas"); cn.width=Math.round(W*S); cn.height=Math.round(H*S);
   const c=cn.getContext("2d"); c.scale(S,S);
@@ -13710,13 +13772,16 @@ function drawSld(model){
   const fit=(txt,maxW)=>{ txt=String(txt||""); if(c.measureText(txt).width<=maxW) return txt; while(txt.length>1&&c.measureText(txt+"…").width>maxW) txt=txt.slice(0,-1); return txt+"…"; };
   const rr=(x,y,w,h,r)=>{ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); };
   /* title block */
-  c.fillStyle="#16232E"; c.font="700 19px 'Bricolage Grotesque','Hanken Grotesk',sans-serif"; c.textBaseline="alphabetic";
+  c.textBaseline="alphabetic";
+  if(chrome){
+  c.fillStyle="#16232E"; c.font="700 19px 'Hanken Grotesk',sans-serif";
   c.fillText("Single-line diagram - schematic", PAD, 34);
   c.font="500 12px 'Hanken Grotesk',sans-serif"; c.fillStyle="#5C6770";
-  c.fillText(fit((pack.name||"Untitled project")+(pack.jobRef?" · Case "+pack.jobRef:"")+" · Rev "+(pack.rev||"A")+" · "+new Date().toLocaleDateString("en-GB")+(pack.surveyedBy?" · "+pack.surveyedBy:""), W-2*PAD), PAD, 54);
+  c.fillText(fit((pack.name||"Untitled project")+(pack.jobRef?" · Ref "+pack.jobRef:"")+" · Rev "+(pack.rev||"A")+" · "+issueDateText()+(pack.surveyedBy?" · "+pack.surveyedBy:""), W-2*PAD), PAD, 54);
   if(pack.brandName){ c.font="700 13px 'Hanken Grotesk',sans-serif"; c.fillStyle="#16232E"; c.textAlign="right"; c.fillText(fit(pack.brandName, 260), W-PAD, 34); c.textAlign="left"; }
   c.fillStyle="#1E6BFF"; c.fillRect(PAD, 64, 44, 3);
   c.strokeStyle="#E7DFD0"; c.lineWidth=1; c.beginPath(); c.moveTo(PAD+52,65.5); c.lineTo(W-PAD,65.5); c.stroke();
+  }
   /* edges */
   nodes.forEach(nd=>{
     if(!nd.parent||!inSet.has(nd.parent)) return;
@@ -13726,7 +13791,7 @@ function drawSld(model){
     c.beginPath(); c.moveTo(x1,y1); c.lineTo(mx,y1); c.lineTo(mx,y2); c.lineTo(x2,y2); c.stroke();
     c.setLineDash([]);
     c.fillStyle="#5C6770"; c.beginPath(); c.arc(x2,y2,2.6,0,7); c.fill();
-    if(nd.edgeLabel){ c.font="600 10.5px 'Space Grotesk','Hanken Grotesk',sans-serif"; c.fillStyle="#5C6770"; c.fillText(fit(nd.edgeLabel, NW+GX/2-10), x2, y2-NH/2-7); }
+    if(nd.edgeLabel){ c.font="600 10.5px 'Hanken Grotesk',sans-serif"; c.fillStyle="#5C6770"; c.fillText(fit(nd.edgeLabel, NW+GX/2-10), x2, y2-NH/2-7); }
   });
   /* nodes */
   nodes.forEach(nd=>{
@@ -13746,18 +13811,18 @@ function drawSld(model){
       c.fillStyle="#5C6770"; c.font="500 10.5px 'Hanken Grotesk',sans-serif"; c.fillText(fit(nd.sub,NW-24), x+14, y+41);
     }
   });
-  c.fillStyle="#8C97A0"; c.font="500 10px 'Hanken Grotesk',sans-serif";
-  c.fillText("Schematic arrangement only, derived from the plan markup · solid legs are drawn cable runs (spec · measured length) · dashed legs are inferred, still to be routed · not a protection or discrimination study.", PAD, H-12);
+  if(chrome){ c.fillStyle="#8C97A0"; c.font="500 10px 'Hanken Grotesk',sans-serif"; c.fillText(SLD_NOTE, PAD, H-12); }
   return cn;
 }
 function openSld(){
   const m=sldModel();
   if(!m.nodes.some(nd=>nd.kind==="unit"||nd.kind==="unitgroup")){ toast("Place at least one charger first - the diagram is drawn from the markup"); return; }
-  const cnv=drawSld(m);
-  _sldCanvas=cnv;
+  const cnv=drawSld(m,{chrome:false});
+  _sldCanvas=drawSld(m);
   const wrap=document.getElementById("sldWrap"); wrap.innerHTML="";
   cnv.style.width="100%"; cnv.style.height="auto";
   wrap.appendChild(cnv);
+  const note=document.createElement("p"); note.className="sld-note"; note.style.cssText="font-size:12px;line-height:1.5;color:var(--dim);margin:8px 0 0"; note.textContent=SLD_NOTE; wrap.appendChild(note);
   document.getElementById("sldBackdrop").classList.add("show");
 }
 
@@ -15997,15 +16062,15 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 <script src="guide-art.js?v=3d083cfdf31d"></script>
 <script src="guides.js?v=b9903c2037d9"></script>
 <script src="help.js?v=a192c7e03b65"></script>
-<script src="profile.js?v=0d622351dda2"></script>
-<link rel="ev-report-fonts" href="report-fonts.js?v=db719569bbc1">
+<script src="profile.js?v=98262829fd40"></script>
+<link rel="ev-report-fonts" href="report-fonts.js?v=27498ae89589">
 <script src="home.js?v=2a86ae2c36c8"></script>
-<script src="report-viewer.js?v=3b3b3a4bc743"></script>
+<script src="report-viewer.js?v=2e43693ae9ac"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=08548c218f87"></script>
-<script src="delivery.js?v=7772d6b72e9e"></script>
-<script src="workbench.js?v=4c0b3b437581"></script>
+<script src="workspace.js?v=764a4f98137b"></script>
+<script src="delivery.js?v=6b0e071c3fb4"></script>
+<script src="workbench.js?v=ca34f1a9feb8"></script>
 <script src="planning.js?v=8494f7ad47f2"></script>
-<script src="audit.js?v=1508ed26a60d"></script>
+<script src="audit.js?v=02d2399509ad"></script>
 </body>
 </html>

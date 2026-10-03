@@ -11,3 +11,16 @@ test('every vendored PDF.js file matches the verified upstream archive manifest'
  assert.equal(existsSync(new URL('../public/vendor/pdf.min.js',import.meta.url)),false);
  assert.equal(existsSync(new URL('../public/vendor/pdf.worker.min.js',import.meta.url)),false);
 });
+test('the PDF report face is the static Hanken Grotesk build with its OFL licence',()=>{
+ const source=readFileSync(new URL('../public/report-fonts.js',import.meta.url),'utf8');
+ const fonts=JSON.parse(source.slice(source.indexOf('{'),source.lastIndexOf('}')+1));
+ const digests={regular:'315cda587038b4d21cb4899df306fef5c15b34b6b9470352eba9a3dfce72f380',bold:'d4483ef2e26692ea2e491be712b21e0df9cd02c72aea8fa620dd167a337087e8'};
+ for(const [key,digest] of Object.entries(digests)){
+  const data=Buffer.from(fonts[key],'base64');
+  assert.equal(data.readUInt32BE(0),0x00010000,key+' is TrueType outlines, which jsPDF needs');
+  assert.equal(createHash('sha256').update(data).digest('hex'),digest,key);
+ }
+ assert.match(source,/Hanken Grotesk 3\.013/);assert.doesNotMatch(source,/DejaVu/);
+ assert.match(readFileSync(new URL('../public/vendor/HankenGrotesk-OFL.txt',import.meta.url),'utf8'),/SIL Open Font License, Version 1\.1/);
+ assert(source.length<400000,'report fonts stay small');
+});
