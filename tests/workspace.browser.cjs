@@ -125,6 +125,23 @@ const {chromium} = require('playwright');
     await page.fill('#glSearch','rcbo');await page.waitForSelector('.gl-card[data-open="prot"]');
     await page.locator('.gl-card[data-open="prot"]').click();await page.waitForSelector('.g-guide[data-guide-id="prot"] .g-art svg');
     await page.locator('.g-guide dfn[data-term]').first().click();await page.waitForSelector('.g-pop');
+    // A term pop-over links to that term in the glossary, not the top of the glossary.
+    const termHref=await page.locator('.g-pop a').getAttribute('href');assert.match(termHref,/^#glossary=[a-z0-9]+$/);
+    await page.locator('.g-pop a').click();await page.waitForSelector('#term-'+termHref.split('=')[1]+'.is-target');
+    assert.equal(await page.locator('.gl-az a').count()>10,true,'Glossary has a letter index');
+    // The level check names unanswered questions inline instead of an alert.
+    let alerted=false;page.once('dialog',d=>{alerted=true;d.dismiss();});
+    await page.goto(url+'/Guide%20Library.dc.html#all');await page.locator('[data-quiz-open="start"]').click();
+    await page.locator('[data-quiz-check="start"]').click();await page.waitForSelector('.gl-quiz-msg');
+    assert.match(await page.locator('.gl-quiz-msg').innerText(),/Answer questions 1, 2/);assert.equal(alerted,false);
+    // On a phone an opened guide starts under the search box, and diagrams scroll sideways at a readable size.
+    await page.setViewportSize({width:390,height:844});
+    await page.goto(url+'/Guide%20Library.dc.html#g=survey-basics');await page.waitForSelector('.g-art-scroll svg');
+    assert.equal(await page.locator('.gl-levels').isVisible(),false,'Level filters are hidden above an opened guide');
+    assert.ok(await page.locator('.g-title').evaluate(el=>el.getBoundingClientRect().top<500),'Guide title is near the top on a phone');
+    assert.ok(await page.locator('.g-art-scroll').evaluate(el=>el.scrollWidth>el.clientWidth+100),'Diagram keeps its natural width');
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No sideways page scroll');
+    await page.setViewportSize({width:1440,height:1040});
     await page.goto(url+'/Guide%20Library.dc.html#g=voltdrop');await page.waitForSelector('.g-calc-out');
     assert.match(await page.locator('.g-calc-out').first().innerText(),/Within the 5 % limit/);
     await page.goto(url+'/Guide%20Library.dc.html#glossary');await page.waitForSelector('.gl-gloss');
@@ -145,7 +162,11 @@ const {chromium} = require('playwright');
     await page.locator('.ev-page-head [data-ev-help], .ev-overview-heading [data-ev-help]').first().click();await page.waitForSelector('#evHelp:not([hidden]) .g-guide');
     await page.locator('#evHelpTour').click();await page.waitForSelector('.ev-tour:not([hidden])');
     await page.locator('.ev-tour [data-tour-step="1"]').click();await page.locator('.ev-tour [data-tour-close]').first().click();await page.waitForSelector('.ev-tour',{state:'hidden'});
-    pass('Help drawer opens from Help and ? buttons, searches the guides and runs the tour');
+    await page.evaluate(()=>openCableCheck());await page.waitForSelector('#ccBackdrop.show .wlc-head .ev-help-q');
+    await page.locator('#ccBackdrop .wlc-head .ev-help-q').click();await page.waitForSelector('#evHelp:not([hidden]) .g-guide[data-guide-id="cable"]');
+    await page.locator('#evHelpClose').click();await page.waitForSelector('#evHelp',{state:'hidden'});
+    await page.evaluate(()=>document.getElementById('ccBackdrop').classList.remove('show'));
+    pass('Help drawer opens from Help and ? buttons, searches the guides and runs the tour, including from the cable calculations dialog');
 
     assert.deepEqual(errors,[]);assert.deepEqual(failedRequests,[]);
   } catch(e) {

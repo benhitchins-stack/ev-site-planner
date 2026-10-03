@@ -53,6 +53,14 @@
 .ev-help-link:hover{text-decoration:underline;}
 .ev-help .g-guide.compact .g-body{font-size:14px;}
 .ev-help .g-art{padding:6px;}
+/* The drawer is at most 460 px wide, so diagrams keep their natural size and scroll sideways at every screen width. */
+.ev-help .g-art-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
+.ev-help .g-art-scroll svg{min-width:620px;}
+.ev-help .g-art-hint{display:block;}
+/* "?" in the navy head of the planner's technical dialogs (cable calculations, earthing, DNO, simulator, materials, CDM). */
+.wlc-head h2 .ev-help-q,.evsp-cdm-head h2 .ev-help-q{width:24px;height:24px;font-size:12.5px;margin-left:10px;vertical-align:3px;background:#ffffff14;border-color:#ffffff66;color:#fff;}
+.wlc-head h2 .ev-help-q:hover,.wlc-head h2 .ev-help-q:focus-visible,.evsp-cdm-head h2 .ev-help-q:hover,.evsp-cdm-head h2 .ev-help-q:focus-visible{background:#d4e99b;border-color:#d4e99b;color:#163322;outline:none;}
+.wlc-head h2 .ev-help-q:focus-visible,.evsp-cdm-head h2 .ev-help-q:focus-visible{box-shadow:0 0 0 3px #ffffff80;}
 @media (max-width:720px){
   .ev-help{width:100vw;box-shadow:none;}
   .ev-help-backdrop{display:block;}

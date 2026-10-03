@@ -779,7 +779,7 @@
     backdrop.id="evspCdmBackdrop";
     backdrop.className="wlc-backdrop evsp-cdm-backdrop";
     backdrop.innerHTML='<div class="wlc evsp-cdm-dialog" role="dialog" aria-modal="true" aria-labelledby="evspCdmTitle" aria-describedby="evspCdmDescription" tabindex="-1">'
-      +'<div class="evsp-cdm-head"><div class="evsp-cdm-head-copy"><h2 id="evspCdmTitle">CDM 2015 project controls</h2><p id="evspCdmDescription">Record duty holders, the F10 assessment, design risks and project documents.</p></div><button type="button" class="evsp-cdm-close" data-evsp-cdm-close aria-label="Close CDM project controls">&times;</button></div>'
+      +'<div class="evsp-cdm-head"><div class="evsp-cdm-head-copy"><h2><span id="evspCdmTitle">CDM 2015 project controls</span><button type="button" class="ev-help-q" data-ev-help="cdm" aria-label="Help: CDM responsibilities and site documents" title="CDM responsibilities and site documents">?</button></h2><p id="evspCdmDescription">Record duty holders, the F10 assessment, design risks and project documents.</p></div><button type="button" class="evsp-cdm-close" data-evsp-cdm-close aria-label="Close CDM project controls">&times;</button></div>'
       +'<nav class="evsp-cdm-tabs" role="tablist" aria-label="CDM project control sections">'
       +'<button type="button" id="evspCdmTab-overview" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="overview">Overview and duty holders</button>'
       +'<button type="button" id="evspCdmTab-risks" role="tab" aria-controls="evspCdmBody" data-evsp-cdm-tab="risks">Design risks</button>'
@@ -1025,6 +1025,7 @@
   document.addEventListener("keydown",function(event){
     const backdrop=document.getElementById("evspCdmBackdrop");
     if(!backdrop||!backdrop.classList.contains("show")) return;
+    if(event.target&&event.target.closest&&event.target.closest("#evHelp")) return; // the help drawer opened from the ? handles its own keys
     event.stopImmediatePropagation();
     if(event.key==="Escape"){ event.preventDefault(); evspCdmClose(); return; }
     const tabs=Array.from(backdrop.querySelectorAll('[role="tab"]'));

@@ -43,6 +43,28 @@ test('every planner hint and page help key opens a real guide', () => {
   }
 });
 
+test('the technical dialogs carry a ? that opens their plain-English guide', () => {
+  const { EVGuides } = loadGuides();
+  const ids = new Set(EVGuides.GUIDES.map(g => g.id));
+  const planner = read('../public/EV Site Planner.html');
+  const cdm = read('../public/cdm-controls.js');
+  for (const file of [planner, cdm]) {
+    for (const m of file.matchAll(/data-ev-help="([a-z-]+)"/g)) assert.ok(ids.has(m[1]), `static ? button ${m[1]}`);
+  }
+  const expected = { 'Cable calculations': 'cable', 'Earthing &amp; protection wizard': 'earthsys', 'DNO connection application': 'dno', 'Charging-day simulator': 'dlm-plain', 'Materials list': 'quote-pack' };
+  for (const [title, id] of Object.entries(expected)) {
+    const head = planner.match(new RegExp('<div class="wlc-head"><h2>' + title + '(<button[^>]*>\\?</button>)</h2>'));
+    assert.ok(head, `${title} has a ? in its heading`);
+    assert.match(head[1], new RegExp('class="ev-help-q" data-ev-help="' + id + '" aria-label="Help: '), `${title} opens ${id}`);
+  }
+  for (const title of ['Single-line diagram', 'Import pages from PDF', 'Job programme']) {
+    assert.doesNotMatch(planner, new RegExp('<h2[^>]*>' + title + '<button'), `${title} has no generic ?`);
+  }
+  assert.match(cdm, /<h2><span id="evspCdmTitle">CDM 2015 project controls<\/span><button type="button" class="ev-help-q" data-ev-help="cdm"/);
+  const markupHelp = EVGuides.byId['planner-markup-tools'].related;
+  for (const id of ['cable', 'earthsys', 'dno', 'cdm']) assert.ok(markupHelp.includes(id), `Markup help links to ${id}`);
+});
+
 test('guide copy keeps the house style and the design-assistance wording', () => {
   const { EVGuides } = loadGuides();
   const text = read('../public/guides.js') + read('../public/help.js') + read('../public/guide-art.js') + read('../public/guide-library.js');

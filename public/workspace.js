@@ -80,7 +80,10 @@ function backupNudge(){
  return '<section class="ev-backup-nudge" aria-labelledby="evBackupNudgeTitle"><span class="ev-backup-nudge-icon">'+icon('backup')+'</span><div><h2 id="evBackupNudgeTitle">Back up this project</h2><p>'+h(s.at?'Your last backup was on '+niceDate(s.at)+'. Changes since then are saved only in this browser on this device.':'This project is saved only in this browser on this device. A backup keeps a copy you can restore if browser data is cleared.')+'</p></div><div class="ev-actions">'+btn('Download backup','backup','primary','download')+btn('Not now','backup-later','quiet')+'</div></section>';
 }
 function backupCard(){
- const s=backupStatus(),title=!s.at?'Not backed up yet':s.pending?'Last backup '+niceDate(s.at):'Backed up '+niceDate(s.at);
+ const s=backupStatus();
+ // Nothing to lose yet: an empty project gets no storage warnings, only what will happen once there is work in it.
+ if(!s.at&&!hasWork())return '<section class="ev-card ev-backup-card"><div class="ev-card-head"><h2>Project backup'+hq('planner-backups','About backups','overview-backup')+'</h2>'+icon('backup')+'</div><div class="ev-card-body"><b>Nothing to back up yet</b><p>Your work saves in this browser as you go. Once you add a plan or project details, download a backup to keep a copy you can restore or open on another device.</p></div></section>';
+ const title=!s.at?'Not backed up yet':s.pending?'Last backup '+niceDate(s.at):'Backed up '+niceDate(s.at);
  const text=!s.at?'This project is saved only in this browser. Download a backup to keep a copy you can restore or open on another device.':s.pending?'Changes since then are saved only in this browser. Download a new backup to keep them.':'No changes since this backup. Your work also saves in this browser as you go.';
  return '<section class="ev-card ev-backup-card'+(s.pending?' due':'')+'"><div class="ev-card-head"><h2>Project backup'+hq('planner-backups','About backups','overview-backup')+'</h2>'+icon('backup')+'</div><div class="ev-card-body"><b>'+h(title)+'</b><p>'+h(text)+'</p><p class="ev-backup-keep" id="evStorageNote">'+h(storageNote())+'</p>'+btn('Download backup','backup',s.pending?'primary':'','download')+'</div></section>';
 }
@@ -217,7 +220,14 @@ function go(next){
  if(next==='programme'&&window.EVDelivery){EVDelivery.mountProgramme();}
  else if(next==='programme'){programmeNode.classList.add('ev-programme');programmeNode.removeAttribute('aria-modal');programmeNode.removeAttribute('role');$('evProgrammeMount').append(programmeNode);renderProg();}
  if(next==='snags'&&window.EVDelivery)EVDelivery.mountSnags();
+ phoneStrips($('evScreen'));
  const title=$('evScreen').querySelector('h1');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
+}
+// Phones: the stage strip and the Design lab tabs scroll sideways, so bring the current one to the middle, and say when a table has more columns off to the side.
+function phoneStrips(root){
+ if(!window.matchMedia?.('(max-width:700px)').matches)return;
+ root.querySelectorAll('.ev-stage-strip ol,.evp-tabs').forEach(strip=>{const cur=strip.querySelector('[aria-current]');if(!cur||strip.scrollWidth<=strip.clientWidth)return;const s=strip.getBoundingClientRect(),c=cur.getBoundingClientRect();strip.scrollLeft+=c.left+c.width/2-(s.left+s.width/2);});
+ root.querySelectorAll('.ev-table-wrap').forEach(wrap=>{if(wrap.scrollWidth>wrap.clientWidth+4&&!wrap.previousElementSibling?.classList.contains('ev-table-swipe'))wrap.insertAdjacentHTML('beforebegin','<p class="ev-table-swipe">Swipe sideways for more columns.</p>');});
 }
 function heading(title,sub,actions=''){const eyebrow=route==='projects'?'':h(modeName())+' PROJECT';return '<div class="ev-heading"><div>'+(eyebrow?'<div class="ev-eyebrow">'+eyebrow+'</div>':'')+'<h1>'+title+'</h1><p>'+sub+'</p></div><div class="ev-actions">'+actions+helpBtn(route==='projects'?'projects':'overview')+'</div></div>';}
 const planArt='<svg class="ev-hero-art" viewBox="0 0 260 175" fill="none" aria-hidden="true"><path d="M21 140 90 23l152 49-65 98Z" fill="#224258" stroke="#5e7f95"/><path d="m52 118 113 37M64 96l115 37M77 74l116 37M91 52l114 36M93 138l70-97M137 152l69-95" stroke="#567289"/><path d="m91 120 17-27 48 17 17-27" stroke="#d2eb92" stroke-width="4" stroke-linecap="round" stroke-dasharray="3 7"/><rect x="93" y="75" width="18" height="33" rx="5" fill="#e5edf3"/><rect x="97" y="80" width="10" height="12" rx="2" fill="#548aec"/><path d="M174 48v32" stroke="#9dafbd" stroke-width="7"/><rect x="165" y="27" width="19" height="36" rx="6" fill="#e5edf3"/><rect x="169" y="32" width="11" height="12" rx="2" fill="#548aec"/><circle cx="62" cy="54" r="6" fill="#d2eb92"/></svg>';
@@ -481,8 +491,9 @@ async function importBackup(file){return changeProject(async()=>{
 window.EVWorkspace={go,persist,pageHead,withProject:changeProject,openPlan,openDetails,openPlanReview,backup,stats,importBackup,afterImport(){ensure();syncSiteChip();syncBrand();applyMode(false);buildRail();persist();go('overview');},route:()=>route,refresh:()=>go(route),logIssue,parts:{icon,btn,backupNudge,backupCard,niceDate,meter,count,empty},version:'workspace-r2.2'};
 EVReportViewer.enhanceLegacy();
 go('home');
-// Wait for saved-project recovery before following links from the website home page.
-Promise.all([window.__evRestorePromise,window.__evProjectIndexReady]).then(async()=>{
+// Wait for saved-project recovery, and for the page's later scripts (Design lab, site audit) to load, before following links from the website home page.
+const pageScriptsReady=new Promise(r=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',r,{once:true}):r());
+Promise.all([window.__evRestorePromise,window.__evProjectIndexReady,pageScriptsReady]).then(async()=>{
  if(window.__evUserAction)return;
  EVProjectStore.renderConflict();
  const requested=location.hash.slice(1);

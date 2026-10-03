@@ -332,7 +332,6 @@ body, #evApp {font-family: var(--font);}
   .ev-stat {padding: 12px 12px 12px 16px;}
   .ev-stat b {font-size: 22px;}
   .ev-heading>.ev-actions {justify-content: flex-start;}
-  .evp-tabs {padding-right: 28px; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);}
   .ev-outs, .ev-outs-compact {grid-template-columns: minmax(0,1fr); gap: 12px;}
   .ev-out {padding: 16px;}
 }
@@ -535,7 +534,15 @@ body, #evApp {font-family: var(--font);}
   .ev-page-head .ev-actions {width: 100%; justify-content: flex-start;}
   .ev-stage-strip ol {display: flex; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;}
   .ev-stage-strip ol::-webkit-scrollbar {display: none;}
-  .ev-stage-strip li {flex: none; border-right: 1px solid #ffffff14;}
+  .ev-stage-strip li {flex: none; border-right: 1px solid #ffffff14; scroll-snap-align: start;}
+  .ev-stage-strip ol, .evp-tabs {scroll-snap-type: x proximity; overscroll-behavior-x: contain;}
+  .evp-tabs .ev-btn {scroll-snap-align: start;}
+  /* Fade whichever edge has more to scroll to, so clipped stages and tabs read as a strip that continues. */
+  .ev-stage-strip ol {-webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--ev-fade-l, 0px), #000 calc(100% - var(--ev-fade-r, 36px)), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 var(--ev-fade-l, 0px), #000 calc(100% - var(--ev-fade-r, 36px)), transparent 100%);}
+  .evp-tabs {padding-right: 0; -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--ev-fade-l, 0px), #000 calc(100% - var(--ev-fade-r, 36px)), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 var(--ev-fade-l, 0px), #000 calc(100% - var(--ev-fade-r, 36px)), transparent 100%);}
+  @supports (animation-timeline: scroll()) {
+    .ev-stage-strip ol, .evp-tabs {animation: ev-strip-fade linear both; animation-timeline: scroll(self inline);}
+  }
   .ev-stage {padding: 10px 14px 12px; gap: 8px; width: auto;}
   .ev-stage-copy small {display: none;}
   .ev-stage-mark {width: 24px; height: 24px;}
@@ -676,3 +683,8 @@ body, #evApp {font-family: var(--font);}
 #rxBackdrop .rx .pe-close:focus-visible, #peBackdrop .pe .pe-close:focus-visible, .evsp-cdm-dialog .evsp-cdm-head button:focus-visible, .evsp-cdm-dialog .evsp-cdm-tabs button:focus-visible {outline-color: var(--ev-lime);}
 #root .side .thumb.active {border-color: var(--ev-navy); box-shadow: 0 0 0 2px var(--ev-navy) inset;}
 #root .side .thumb.dropbefore {box-shadow: 0 -3px 0 var(--ev-navy);}
+
+/* Edge fades for the phone stage strip and Design lab tabs: driven by the strip's own scroll position where the browser supports it. */
+@property --ev-fade-l {syntax: '<length>'; inherits: false; initial-value: 0px;}
+@property --ev-fade-r {syntax: '<length>'; inherits: false; initial-value: 36px;}
+@keyframes ev-strip-fade {0% {--ev-fade-l: 0px; --ev-fade-r: 36px;} 8% {--ev-fade-l: 36px;} 92% {--ev-fade-r: 36px;} 100% {--ev-fade-l: 36px; --ev-fade-r: 0px;}}

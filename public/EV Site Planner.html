@@ -430,6 +430,12 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
   .thumb .x{padding:8px;}
   .thumb-action{padding:7px 12px;font-size:12px;}
   .pe-h{width:24px;height:24px;margin:-13px;border-width:3px;}
+  /* 3D showroom: colour swatches, design toggles, view buttons and close sized for a finger. Swatches wrap to two rows on a phone. */
+  .c3d-opts .c3d-schemes{gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 56px);}
+  .c3d-opts .c3d-schemes button,.c3d-opts .c3d-cust{width:30px;height:30px;}
+  .c3d-opts .c3d-designs button{min-height:40px;padding:0 12px;}
+  .c3d-stage .c3d-hud button{min-height:40px;}
+  .c3d-top .c3d-x{width:44px;height:44px;}
 }
 
 /* ── HOVER: only real pointer devices, no stuck-hover on touch ── */
@@ -762,15 +768,15 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 }
 </style>
 <link rel="stylesheet" href="cdm-controls.css">
-<link rel="stylesheet" href="planning.css?v=d043f4ae134f">
+<link rel="stylesheet" href="planning.css?v=f10019b7ce59">
 <link rel="stylesheet" href="audit.css?v=5f828ce2fa79">
-<link rel="stylesheet" href="workspace.css?v=ed93bb1f4d30">
+<link rel="stylesheet" href="workspace.css?v=e545970d631e">
 <link rel="stylesheet" href="home.css?v=f80227562a8f">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
-<link rel="stylesheet" href="design-preview.css?v=45f028dbb3de">
+<link rel="stylesheet" href="design-preview.css?v=2155c1c5902d">
 <link rel="stylesheet" href="workbench.css?v=622e399a9a62">
-<link rel="stylesheet" href="guides.css?v=8f52ad1615c6">
-<link rel="stylesheet" href="help.css?v=8c7a86de7cd3">
+<link rel="stylesheet" href="guides.css?v=825f8695c210">
+<link rel="stylesheet" href="help.css?v=e3e92be1193a">
 </head>
 <body>
 <template id="__bundler_thumbnail">
@@ -941,7 +947,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 </div>
 <div class="wlc-backdrop" id="dnoBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:540px">
-    <div class="wlc-head"><h2>DNO connection application</h2><p>The data an ENA connection application (or chargepoint notification) asks for, compiled live from this pack. Fill anything marked missing in Job details / Branding, then copy it into the online form.</p></div>
+    <div class="wlc-head"><h2>DNO connection application<button type="button" class="ev-help-q" data-ev-help="dno" aria-label="Help: DNO notification and applications" title="DNO notification and applications">?</button></h2><p>The data an ENA connection application (or chargepoint notification) asks for, compiled live from this pack. Fill anything marked missing in Job details / Branding, then copy it into the online form.</p></div>
     <div id="dnoBody" style="max-height:44vh;overflow:auto;overscroll-behavior:contain"></div>
     <div class="wlc-foot">
       <button class="hbtn" id="dnoClose">Close</button>
@@ -1119,7 +1125,7 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
 
 <div class="wlc-backdrop" id="ccBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:760px">
-    <div class="wlc-head"><h2>Cable calculations</h2><p>Every sized run gets the single-circuit check: Ib &le; In &le; Iz with derating factors, volt drop, earth-fault loop (Zs) and CPC adiabatic. Changes save onto each run and print on the calc sheet.</p></div>
+    <div class="wlc-head"><h2>Cable calculations<button type="button" class="ev-help-q" data-ev-help="cable" aria-label="Help: Cable selection and sizing" title="Cable selection and sizing">?</button></h2><p>Every sized run gets the single-circuit check: Ib &le; In &le; Iz with derating factors, volt drop, earth-fault loop (Zs) and CPC adiabatic. Changes save onto each run and print on the calc sheet.</p></div>
     <div id="ccSupply"></div>
     <div id="ccBody" style="max-height:46vh;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px"></div>
     <div style="font-size:11px;color:var(--faint);line-height:1.5;margin-top:10px">Draft check to the BS 7671 method using typical manufacturer-published ratings. Assumes MCB/RCBO disconnection in 0.1 s, 20 &deg;C soil, standard soil resistivity. A sizing aid, not a design certificate: verify against BS 7671 / the datasheet before construction.</div>
@@ -1177,21 +1183,21 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
 
 <div class="wlc-backdrop" id="simBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:760px">
-    <div class="wlc-head"><h2>Charging-day simulator</h2><p id="simSub">A day on this supply: background load plus car charging, in 15-minute steps. Drag the sliders; the curve, peak and finish time update live.</p></div>
+    <div class="wlc-head"><h2>Charging-day simulator<button type="button" class="ev-help-q" data-ev-help="dlm-plain" aria-label="Help: Load management" title="Load management">?</button></h2><p id="simSub">A day on this supply: background load plus car charging, in 15-minute steps. Drag the sliders; the curve, peak and finish time update live.</p></div>
     <div id="simBody"></div>
     <div class="wlc-foot"><button class="hbtn" id="simClose">Close</button><div style="flex:1"></div><div style="font-size:10.5px;color:var(--faint)">Modelled at 230 V per phase · DLM floor 6 A · no diversity on charging</div></div>
   </div>
 </div>
 <div class="wlc-backdrop" id="earthBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:560px">
-    <div class="wlc-head"><h2>Earthing &amp; protection wizard</h2><p>Three questions → a documented earthing decision. It fills the earthing field in Job details, ticks the matching compliance items and prints the rationale in the engineer PDF. Written to BS 7671:2018+A4:2026.</p></div>
+    <div class="wlc-head"><h2>Earthing &amp; protection wizard<button type="button" class="ev-help-q" data-ev-help="earthsys" aria-label="Help: Earthing systems" title="Earthing systems">?</button></h2><p>Three questions → a documented earthing decision. It fills the earthing field in Job details, ticks the matching compliance items and prints the rationale in the engineer PDF. Written to BS 7671:2018+A4:2026.</p></div>
     <div id="earthBody"></div>
     <div class="wlc-foot"><button class="hbtn" id="earthClose">Close</button><div style="flex:1"></div><button class="hbtn primary" id="earthApply" disabled style="opacity:.5">Apply to pack</button></div>
   </div>
 </div>
 <div class="wlc-backdrop" id="bomBackdrop">
   <div class="wlc" role="dialog" aria-modal="true" style="max-width:560px">
-    <div class="wlc-head"><h2>Materials list</h2><p>Wholesaler-ready quantities compiled from the plan, with a 10% allowance on cable and containment. Cable sizes come from the cable schedule CSV.</p></div>
+    <div class="wlc-head"><h2>Materials list<button type="button" class="ev-help-q" data-ev-help="quote-pack" aria-label="Help: Quotes and project packs" title="Quotes and project packs">?</button></h2><p>Wholesaler-ready quantities compiled from the plan, with a 10% allowance on cable and containment. Cable sizes come from the cable schedule CSV.</p></div>
     <div id="bomBody" style="max-height:44vh;overflow:auto;overscroll-behavior:contain"></div>
     <div class="wlc-foot" style="flex-wrap:wrap">
       <button class="hbtn" id="bomClose">Close</button>
@@ -1857,7 +1863,7 @@ const ASSETS = {}; /* photographic cutouts removed - illustrated brand artwork o
 </script>
 <script src="planning-core.js?v=cb034ae5f3b5"></script>
 <script src="audit-core.js?v=32f77ebcea52"></script>
-<script src="cdm-controls.js?v=9da9e61316b2"></script>
+<script src="cdm-controls.js?v=13bd9a78c313"></script>
 <script src="bay-markings.js?v=b82e8cfbe1d0"></script>
 <script>
 "use strict";
@@ -16060,17 +16066,17 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 /* Legacy localStorage records remain available until an atomic project save promotes them. */
 </script>
 <script src="guide-art.js?v=3d083cfdf31d"></script>
-<script src="guides.js?v=b9903c2037d9"></script>
+<script src="guides.js?v=dc0eb3ade21f"></script>
 <script src="help.js?v=a192c7e03b65"></script>
 <script src="profile.js?v=98262829fd40"></script>
 <link rel="ev-report-fonts" href="report-fonts.js?v=27498ae89589">
 <script src="home.js?v=2a86ae2c36c8"></script>
 <script src="report-viewer.js?v=2e43693ae9ac"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=764a4f98137b"></script>
+<script src="workspace.js?v=5d968ca13468"></script>
 <script src="delivery.js?v=6b0e071c3fb4"></script>
 <script src="workbench.js?v=ca34f1a9feb8"></script>
-<script src="planning.js?v=8494f7ad47f2"></script>
+<script src="planning.js?v=0836ed68053c"></script>
 <script src="audit.js?v=02d2399509ad"></script>
 </body>
 </html>
