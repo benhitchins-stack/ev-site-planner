@@ -80,6 +80,12 @@ The [debug audit](docs/debug-audit.md) records the fixes, coverage and limits.
 The calculation checks in `npm test` verify recorded current caps, future positions
 and arithmetic consistency across the configured cable families.
 
+The guide library runs from plain-English basics to advanced design notes in four
+levels, with diagrams, calculators, a glossary, level checks, saved guides and
+reading progress. Inside the planner, Help buttons and ? buttons open the matching
+guide in a help drawer, with search and a short tour. See
+[docs/guide-library.md](docs/guide-library.md).
+
 Browser-based survey, markup and planning tools for UK EV charge point installers.
 The site opens on an integrated home page with recent projects, backup import and
 a worked example. The project workspace brings together Overview, Markup,
@@ -221,7 +227,9 @@ move projects between them.
 | `public/report-fonts.js` | Embedded DejaVu fonts for new reports, loaded when a PDF is prepared |
 | `public/manifest.webmanifest` | Home Screen name, colours and icons |
 | `public/cdm-controls.js`, `cdm-controls.css` | Existing commercial CDM tools |
-| `public/Guide Library.dc.html`, `Learning Hub.dc.html` | Guidance and courses |
+| `public/Guide Library.dc.html`, `guide-library.js`, `guides.js`, `guide-art.js`, `guides.css` | Guide library: content, diagrams and the library page |
+| `public/help.js`, `help.css` | Help drawer, ? buttons and the planner tour |
+| `public/Learning Hub.dc.html` | Training courses |
 | `public/assets/`, `vendor/` | Local images, fonts and dependencies |
 | `scripts/build-site.py` | Asset versioning and entry-page synchronisation |
 | `scripts/make-app-images.cjs` | Redraws the app icons and link preview picture with Playwright |
