@@ -186,6 +186,51 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    assert.equal(await p.evaluate(async()=>typeof await ensureHeicDecoder()),'function');
    assert.equal(requests,2);
   });
+  await check('Report fonts download only when a document is prepared and a failed download can be retried',async p=>{
+   assert.equal(await p.evaluate(()=>!!window.EVReportFonts||performance.getEntriesByType('resource').some(x=>x.name.includes('report-fonts'))),false);
+   let requests=0;await p.route(/report-fonts\.js/,route=>{requests++;return requests===1?route.fulfill({status:503,body:'Unavailable'}):route.continue();});
+   assert.match(await p.evaluate(()=>EVDelivery.reportFonts().then(()=>'',e=>e.message)),/could not download/);
+   await p.locator('[data-ev-route="issue"]').click();
+   await p.locator('[data-ev-action="engineer"]').click();await p.waitForSelector('#rxDocumentViewer canvas');
+   assert.equal(await p.evaluate(()=>typeof EVReportFonts.regular),'string');
+   assert.equal(requests,2,'The issue page download is shared with the document that needs it');
+  });
+  await check('The backup button and overview show changes made since the last backup',async p=>{
+   const top=p.locator('#evBackupTop'),due=()=>top.evaluate(el=>el.classList.contains('ev-backup-due'));
+   await p.waitForFunction(()=>document.getElementById('evBackupTop').classList.contains('ev-backup-due'));
+   assert.match(await top.getAttribute('aria-label'),/not been backed up yet/);
+   assert.equal(await p.locator('.ev-backup-nudge').count(),0,'A project started in this visit has no reminder');
+   let waiting=p.waitForEvent('download');await top.click();await waiting;
+   await p.waitForFunction(()=>!document.getElementById('evBackupTop').classList.contains('ev-backup-due'));
+   assert.match(await p.locator('.ev-backup-card').textContent(),/Backed up/);
+   // A later visit to a project changed since a backup more than a week old.
+   const id=await p.evaluate(async()=>{await EVWorkspace.persist();pack.workspace.backupAt=new Date(Date.now()-8*864e5).toISOString();await EVWorkspace.persist();return pack.projId;});
+   await p.goto('about:blank');await p.goto(base+'/#project='+encodeURIComponent(id),{waitUntil:'networkidle'});
+   await p.waitForFunction(id=>window.EVWorkspace&&EVWorkspace.route()==='overview'&&pack.projId===id,id);
+   const nudge=p.locator('.ev-backup-nudge');await nudge.waitFor();
+   assert.match(await nudge.textContent(),/Your last backup was on/);
+   assert.equal(await due(),true);assert.match(await top.getAttribute('aria-label'),/Changes since your backup on/);
+   const record=await p.evaluate(async id=>Object.keys((await idbGet('proj_'+id)).pack.workspace).sort(),id);
+   assert.equal(record.filter(k=>/backup/i.test(k)).join(),'backupAt','Saved projects keep their existing backup field only');
+   await nudge.getByRole('button',{name:'Not now'}).click();
+   await p.waitForFunction(()=>!document.querySelector('.ev-backup-nudge'));
+   await p.locator('[data-ev-route="markup"]').click();await p.locator('[data-ev-route="overview"]').click();
+   assert.equal(await p.locator('.ev-backup-nudge').count(),0,'Not now holds for the rest of the visit');
+   assert.equal(await due(),true,'The button still shows the changes');
+   waiting=p.waitForEvent('download');await p.locator('.ev-backup-card [data-ev-action="backup"]').click();await waiting;
+   await p.waitForFunction(()=>!document.getElementById('evBackupTop').classList.contains('ev-backup-due'));
+  });
+  await check('Saved projects ask the browser once to keep them and say when it agrees',async p=>{
+   await p.evaluate(async()=>{await EVWorkspace.persist();await EVWorkspace.persist();});
+   assert.equal(await p.evaluate(()=>window.persistRequests),1);
+   await p.evaluate(()=>EVWorkspace.go('overview'));
+   assert.match(await p.locator('#evStorageNote').textContent(),/agreed to keep/);
+  },()=>{
+   // Stand in for the browser's answer so every engine takes the same path.
+   window.persistRequests=0;const answers={persisted:async()=>false,persist:async()=>{window.persistRequests++;return true;}};
+   if(navigator.storage)for(const [name,value] of Object.entries(answers))Object.defineProperty(navigator.storage,name,{configurable:true,value});
+   else Object.defineProperty(navigator,'storage',{configurable:true,value:answers});
+  });
  }finally{await browser.close();server.close();}
  console.log(results.filter(r=>r.pass).length+'/'+results.length+' reliability scenarios passed in '+engineName);
  if(results.some(r=>!r.pass))process.exitCode=1;

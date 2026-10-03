@@ -135,10 +135,27 @@ async function uploadPhoto(input){
  finally{URL.revokeObjectURL(url);busy=false;modal.removeAttribute('aria-busy');modal.querySelectorAll('button,input,textarea,select').forEach(x=>x.disabled=false);}
 }
 
+// The 1.9 MB report fonts load the first time a PDF is prepared, not on every visit.
+let reportFontsLoading=null;
+function reportFonts(){
+ if(window.EVReportFonts)return Promise.resolve(window.EVReportFonts);
+ if(!reportFontsLoading)reportFontsLoading=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');let done=false;
+  const finish=error=>{if(done)return;done=true;clearTimeout(timer);script.onload=script.onerror=null;if(error)reject(error);else resolve(window.EVReportFonts);};
+  // A slow download may still finish after the timeout; the next attempt then uses it.
+  const timer=setTimeout(()=>finish(Error('The report fonts are taking a long time to download. Check your connection and try again.')),60000);
+  script.src=document.querySelector('link[rel="ev-report-fonts"]')?.getAttribute('href')||'report-fonts.js';script.async=true;
+  script.onload=()=>finish(window.EVReportFonts?null:Error('The report fonts could not be read. Reload the page and try again.'));
+  script.onerror=()=>{script.remove();finish(Error('The report fonts could not download. Check your connection and try again.'));};
+  document.head.append(script);
+ }).catch(error=>{reportFontsLoading=null;throw error;});
+ return reportFontsLoading;
+}
 // Measured PDF layout, with bundled fonts and continued rows for long records.
 function installFonts(doc){
- doc.addFileToVFS('EVSans.ttf',EVReportFonts.regular);doc.addFont('EVSans.ttf','EVSans','normal');
- doc.addFileToVFS('EVSans-Bold.ttf',EVReportFonts.bold);doc.addFont('EVSans-Bold.ttf','EVSans','bold');
+ const fonts=window.EVReportFonts;if(!fonts)throw Error('The report fonts have not downloaded yet. Try again.');
+ doc.addFileToVFS('EVSans.ttf',fonts.regular);doc.addFont('EVSans.ttf','EVSans','normal');
+ doc.addFileToVFS('EVSans-Bold.ttf',fonts.bold);doc.addFont('EVSans-Bold.ttf','EVSans','bold');
  return doc;
 }
 function pdfKit(title,landscape=false){
@@ -172,6 +189,7 @@ function pdfKit(title,landscape=false){
 }
 async function buildProgramme(){
  const p=programme(),s=programmeSummary();if(!s.active.length)throw Error('Add or include an activity before creating the programme.');
+ await reportFonts();
  const k=pdfKit('Programme of works',true);k.details([['Programme dates',s.b?date(s.b.from)+' to '+date(s.b.to):'Not set'],['Progress',s.complete+' of '+s.active.length+' activities complete']]);
  if(p.notes){k.section('Programme notes');k.paragraph(p.notes);}
  k.section('Activities & responsibilities');
@@ -186,6 +204,7 @@ async function buildProgramme(){
 }
 async function buildSnags(options){
  const all=snagList(),rows=all.filter(({it})=>options.scope==='all'||(it.st==='fixed'?'fixed':'open')===options.scope);if(!rows.length)throw Error('There are no snags in this selection.');
+ await reportFonts();
  const settings=reportSettings(),k=pdfKit('Snag report');
  k.details([['Inspection date',parse(settings.date)?date(settings.date):'Not recorded'],['Prepared by',settings.preparedBy||pack.surveyedBy],['Report selection',options.scope==='all'?'All findings':options.scope==='open'?'Open findings only':'Fixed findings only']]);
  k.paragraph(rows.length+(rows.length===1?' finding included: ':' findings included: ')+rows.filter(x=>x.it.st!=='fixed').length+' open, '+rows.filter(x=>x.it.st==='fixed').length+' fixed.',10,true);
@@ -278,5 +297,5 @@ document.addEventListener('keydown',e=>{
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();}
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();}
 });
-window.EVDelivery={mountProgramme,mountSnags,openSnag,openReport,preparePlan,installFonts,schedule,programmeSummary,version:'delivery-r2'};
+window.EVDelivery={mountProgramme,mountSnags,openSnag,openReport,preparePlan,installFonts,reportFonts,schedule,programmeSummary,version:'delivery-r2'};
 })();

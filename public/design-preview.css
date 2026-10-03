@@ -15,12 +15,12 @@ body, #evApp {font-family: var(--font);}
 .ev-sidebar {padding: 24px 14px 16px; gap: 18px; background: var(--ev-navy); overflow-x: hidden;}
 .ev-brand {gap: 10px; padding: 0 6px 21px; font-size: 16px; line-height: 1.1; white-space: nowrap;}
 .ev-brand img {width: 35px; height: 35px;}
-.ev-brand small {font-size: 8px; letter-spacing: 1.1px; margin-top: 6px; color: #a2b5c3;}
+.ev-brand small {font-size: 9.5px; letter-spacing: .7px; margin-top: 6px; color: #a2b5c3;}
 .ev-nav-group, .ev-sidebar nav {display: grid; gap: 5px;}
 .ev-sidebar button, .ev-sidebar a.ev-nav {font-size: 14px; min-height: 43px; padding: 10px 13px; color: #c1ced8; font-weight: 500; border-radius: 8px; gap: 12px; white-space: nowrap; position: relative;}
 .ev-sidebar button[aria-current=page] {background: #284459; color: #fff; font-weight: 650;}
 .ev-sidebar button[aria-current=page]::before {content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; background: var(--ev-lime); border-radius: 0 3px 3px 0;}
-.ev-nav-caption {font-size: 10px; letter-spacing: 1.25px; color: #91a8ba; padding-left: 13px; margin-bottom: 7px;}
+.ev-nav-caption {font-size: 11px; letter-spacing: 1.1px; color: #91a8ba; padding-left: 13px; margin-bottom: 7px;}
 .ev-nav-icon {width: 18px; height: 18px;}
 .ev-sidebar .ev-sidebar-bottom {gap: 3px;}
 .ev-sidebar-bottom .ev-side-divider {margin: 12px 0 9px;}
