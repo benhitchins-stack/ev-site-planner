@@ -5,9 +5,10 @@ import vm from 'node:vm';
 
 const files = [
   '../public/EV Site Planner.html',
-  '../public/Guide Library.dc.html',
   '../unreleased/public/RAMS Builder.dc.html'
 ];
+// The guide library keeps its logic in first-party scripts rather than inline.
+const guideScripts = ['../public/guides.js', '../public/guide-art.js', '../public/guide-library.js', '../public/help.js'];
 
 function source(path) {
   return readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -34,6 +35,9 @@ test('all edited HTML inline scripts parse', () => {
         `${path} inline script ${index + 1} parses`
       );
     });
+  }
+  for (const path of guideScripts) {
+    assert.doesNotThrow(() => new vm.Script(source(path), { filename: path }), `${path} parses`);
   }
 });
 
@@ -162,7 +166,7 @@ test('RAMS builder consumes the optional snapshot without removing its release g
 
 test('guide and planner state the corrected CPP and appointment rules', () => {
   const planner = source('../public/EV Site Planner.html');
-  const guide = source('../public/Guide Library.dc.html');
+  const guide = source('../public/guides.js');
   assert.match(planner, /construction phase plan must be prepared before construction begins on every construction project/);
   assert.match(planner, /principal designer and principal contractor in writing/);
   assert.match(guide, /construction phase plan<\/b> \(CPP\) must be prepared before construction starts on every project/);

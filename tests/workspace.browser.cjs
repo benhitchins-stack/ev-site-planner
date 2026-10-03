@@ -122,8 +122,30 @@ const {chromium} = require('playwright');
     await page.locator('#c3dClose').click();
     await page.locator('.eh-resource a[href="Guide Library.dc.html"]').click();
     await page.getByText('All guides',{exact:true}).waitFor();
+    await page.fill('#glSearch','rcbo');await page.waitForSelector('.gl-card[data-open="prot"]');
+    await page.locator('.gl-card[data-open="prot"]').click();await page.waitForSelector('.g-guide[data-guide-id="prot"] .g-art svg');
+    await page.locator('.g-guide dfn[data-term]').first().click();await page.waitForSelector('.g-pop');
+    await page.goto(url+'/Guide%20Library.dc.html#g=voltdrop');await page.waitForSelector('.g-calc-out');
+    assert.match(await page.locator('.g-calc-out').first().innerText(),/Within the 5 % limit/);
+    await page.goto(url+'/Guide%20Library.dc.html#glossary');await page.waitForSelector('.gl-gloss');
+    pass('Guide library search, diagrams, glossary pop-overs and calculators work');
+
     await page.goto(url+'/Learning%20Hub.dc.html');await page.getByText('Learning Hub',{exact:true}).first().waitFor();
     pass('Showroom, guide library and training pages load');
+
+    await page.goto(url, {waitUntil:'networkidle'});await page.waitForFunction(()=>EVWorkspace.route()==='home');
+    await page.locator('.eh-home [data-ev-help="home"]').click();await page.waitForSelector('#evHelp:not([hidden]) .g-guide[data-guide-id="planner-first-project"]');
+    await page.fill('#evHelpSearch','earth rod');await page.waitForSelector('#evHelp [data-help-open="earthrod"]');
+    await page.locator('#evHelp [data-help-open="earthrod"]').click();await page.waitForSelector('#evHelp .g-guide[data-guide-id="earthrod"]');
+    await page.keyboard.press('Escape');await page.waitForSelector('#evHelp',{state:'hidden'});
+    await page.evaluate(()=>{document.querySelector('.eh-home [data-ev-project]').click();});
+    await page.waitForFunction(()=>EVWorkspace.route()==='overview');
+    await page.locator('.ev-overview-grid [data-ev-help="survey-checklist"]').click();await page.waitForSelector('#evHelp:not([hidden]) .g-guide[data-guide-id="survey-checklist"]');
+    await page.locator('#evHelpClose').click();await page.waitForSelector('#evHelp',{state:'hidden'});
+    await page.locator('.ev-page-head [data-ev-help], .ev-overview-heading [data-ev-help]').first().click();await page.waitForSelector('#evHelp:not([hidden]) .g-guide');
+    await page.locator('#evHelpTour').click();await page.waitForSelector('.ev-tour:not([hidden])');
+    await page.locator('.ev-tour [data-tour-step="1"]').click();await page.locator('.ev-tour [data-tour-close]').first().click();await page.waitForSelector('.ev-tour',{state:'hidden'});
+    pass('Help drawer opens from Help and ? buttons, searches the guides and runs the tour');
 
     assert.deepEqual(errors,[]);assert.deepEqual(failedRequests,[]);
   } catch(e) {

@@ -768,6 +768,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
 <link rel="stylesheet" href="design-preview.css?v=45f028dbb3de">
 <link rel="stylesheet" href="workbench.css?v=78467031a64d">
+<link rel="stylesheet" href="guides.css?v=8f52ad1615c6">
+<link rel="stylesheet" href="help.css?v=8c7a86de7cd3">
 </head>
 <body>
 <template id="__bundler_thumbnail">
@@ -2615,10 +2617,10 @@ const HINTS={
   c_parts:{t:"New homes and buildings with parking (and some major renovations) need chargepoints from the outset: Mode 3, \u22657 kW, universal socket, dedicated circuit. Check whether this job triggers it.", g:"regs", gl:"Installation regulations"}
 };
 function hintBtn(k){ return HINTS[k]?`<button type="button" class="hintq${openHints.has(k)?' on':''}" data-hint="${k}" title="More info">?</button>`:""; }
-function hintBox(k){ const h=HINTS[k]; if(!h||!openHints.has(k)) return ""; return `<div class="hintbox">${h.t}${h.g?` <a href="Guide Library.dc.html#g=${h.g}" target="_blank" rel="noopener">${h.gl||'Open the guide'} \u2197</a>`:''}</div>`; }
+function hintBox(k){ const h=HINTS[k]; if(!h||!openHints.has(k)) return ""; return `<div class="hintbox">${h.t}${h.g?` <a href="Guide Library.dc.html#g=${h.g}" data-ev-help="${h.g}">${h.gl||'Open the guide'} \u2197</a>`:''}</div>`; }
 /* compliance rows: the technical requirement + how-to live together behind the "?" */
 function compHintBtn(n){ const k='c_'+n.k; return `<button type="button" class="hintq${openHints.has(k)?' on':''}" data-hint="${k}" title="The requirement in full">?</button>`; }
-function compHintBox(n){ const k='c_'+n.k; if(!openHints.has(k)) return ""; const h=HINTS[k]||{}; return `<div class="hintbox"><b style="color:var(--ink)">${n.d}</b>${h.t?`<div style="margin-top:5px">${h.t}</div>`:''}${h.g?`<div style="margin-top:4px"><a href="Guide Library.dc.html#g=${h.g}" target="_blank" rel="noopener">${h.gl||'Open the guide'} \u2197</a></div>`:''}</div>`; }
+function compHintBox(n){ const k='c_'+n.k; if(!openHints.has(k)) return ""; const h=HINTS[k]||{}; return `<div class="hintbox"><b style="color:var(--ink)">${n.d}</b>${h.t?`<div style="margin-top:5px">${h.t}</div>`:''}${h.g?`<div style="margin-top:4px"><a href="Guide Library.dc.html#g=${h.g}" data-ev-help="${h.g}">${h.gl||'Open the guide'} \u2197</a></div>`:''}</div>`; }
 /* inline detail blocks on the CDM and F10 compliance rows: named roles, F10 tracker, CPP export */
 const CDM_INP="flex:1;min-width:0;height:24px;border:1px solid var(--line2);border-radius:6px;background:var(--panel);color:var(--ink);font:inherit;font-size:11px;padding:0 7px";
 function compDetail(n){
@@ -15984,14 +15986,17 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 }).catch(()=>{}); }catch(_){ }
 /* Legacy localStorage records remain available until an atomic project save promotes them. */
 </script>
-<script src="profile.js?v=8a4016c55957"></script>
+<script src="guide-art.js?v=3d083cfdf31d"></script>
+<script src="guides.js?v=fab68bfc3765"></script>
+<script src="help.js?v=ecb0a3ba5ad4"></script>
+<script src="profile.js?v=0d622351dda2"></script>
 <link rel="ev-report-fonts" href="report-fonts.js?v=db719569bbc1">
-<script src="home.js?v=90a78700f650"></script>
+<script src="home.js?v=430768eebd5c"></script>
 <script src="report-viewer.js?v=3b3b3a4bc743"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=435fd3de4218"></script>
-<script src="delivery.js?v=67a5664412fe"></script>
+<script src="workspace.js?v=b24608b43174"></script>
+<script src="delivery.js?v=4e62055edf51"></script>
 <script src="workbench.js?v=4c0b3b437581"></script>
-<script src="planning.js?v=a5b1dcec14f7"></script>
+<script src="planning.js?v=8494f7ad47f2"></script>
 </body>
 </html>
