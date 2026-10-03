@@ -113,13 +113,13 @@ const GUIDES=[
  +'<li>'+D('tethered')+'. A tethered unit has its own lead. An untethered unit has a socket and the driver brings a cable.</li>'
  +'<li>'+D('phases')+'. Most homes have one phase and top out at about 7 kW per charger. Three-phase supplies allow 11 kW and 22 kW units.</li>'
  +'</ul>'
- +'<h4>Who sets the speed</h4><p>The slowest link wins. A 22 kW charger connected to a car whose on-board converter accepts 7 kW will charge at 7 kW. A 150 kW rapid charger will slow down as the battery fills, especially past 80 %. Cold batteries also charge more slowly. So the number on the charger is a ceiling, not a promise.</p>'
- +'<h4>Why there is a dedicated circuit</h4><p>A charger is one of the biggest single loads in a building, and it can run flat out for hours. Each charger therefore gets its own circuit from the distribution board, with its own protective device, rather than sharing with sockets or lights. That is also why the size of the electricity supply matters so much: see '+G('supply-basics','why the supply decides everything')+'.</p>'
+ +'<h4>Who sets the speed</h4><p>The slowest link wins. A 22 kW charger connected to a car whose on-board converter accepts 7 kW will charge at 7 kW. A 150 kW rapid charger will slow down as the battery fills, especially past 80 %. Cold batteries also charge more slowly. So the number on the charger is a maximum, not a guaranteed rate.</p>'
+ +'<h4>Why there is a dedicated circuit</h4><p>A charger is one of the biggest single loads in a building, and it can run flat out for hours. Each charger therefore gets its own circuit from the distribution board, with its own protective device, rather than sharing with sockets or lights. That is also why the size of the electricity supply matters: see '+G('supply-basics','why the supply sets the limit')+'.</p>'
 },
 
 {id:'charging-speeds',level:'start',topic:'basics',kind:'reference',minutes:5,art:'speeds',
  title:'Slow, fast and rapid: what the kW figure means for charging time',
- summary:'How long a charge really takes at each power level, with a calculator you can try.',
+ summary:'How long a charge takes at each power level, with a calculator you can try.',
  kw:'charging speed slow fast rapid ultra rapid kw kwh hours miles range time calculator 7kw 22kw 50kw 150kw',
  readFirst:['what-is-charging'],related:['choose-chargers','supply-basics'],
  body:'<p>Charging time is simple arithmetic: the energy the battery needs (kWh) divided by the power the charger delivers (kW), plus a little for losses. A 60 kWh battery charged from 20 % to 80 % needs 36 kWh. At 7 kW that is about five and a half hours; at 50 kW about 50 minutes.</p>'
@@ -133,12 +133,12 @@ const GUIDES=[
  +'</tbody></table>'
  +'<h4>Try it</h4>'+CALC('charge-time')
  +'<p>Two things change the answer in practice. The car\'s own on-board charger caps AC charging (many cars accept 7 kW, some 11 kW, fewer 22 kW). And DC rapid charging slows down as the battery fills, so the last 20 % takes much longer than the first 20 %.</p>'
- +'<h4>Which speed does a site need?</h4><p>Match the charger to how long cars will be parked. A car that sits for eight hours needs 7 kW, not 50 kW. Fitting more power than the dwell time needs costs more to install and more to supply. '+G('choose-chargers','Choosing charger types and numbers')+' takes this further.</p>'
+ +'<h4>Speed and dwell time</h4><p>Match the charger to how long cars will be parked. A car that sits for eight hours needs 7 kW, not 50 kW. Fitting more power than the dwell time needs costs more to install and more to supply. '+G('choose-chargers','Choosing charger types and numbers')+' takes this further.</p>'
 },
 
 {id:'supply-basics',level:'start',topic:'basics',kind:'reference',minutes:5,art:'headroom',
- title:'Why the electricity supply decides everything',
- summary:'The main fuse, phases and headroom explained without jargon, and what happens when the sums do not fit.',
+ title:'Why the electricity supply sets the limit',
+ summary:'The main fuse, phases and headroom, and what happens when the sums do not fit.',
  kw:'supply main fuse cut out headroom capacity single phase three phase dno upgrade basics beginner amps',
  readFirst:['what-is-charging'],related:['md','dlm-plain','dno'],
  body:'<p>Every building has a limit on how much electricity it can draw at once, set by the <b>main fuse</b> in the '+D('cutout','cut-out')+' where the network cable comes in. Homes usually have 60, 80 or 100 '+D('amp','amps')+'. Commercial sites have an agreed capacity, often quoted in kVA. Everything already in the building (heating, kitchens, lifts, lighting) shares that limit. Chargers have to fit in what is left.</p>'
@@ -159,10 +159,10 @@ const GUIDES=[
 
 {id:'survey-basics',level:'start',topic:'basics',kind:'howto',minutes:5,art:'survey',
  title:'What happens on a site survey',
- summary:'The six things a surveyor looks at, why each one matters and what to have ready.',
+ summary:'The six things a surveyor looks at, what each one decides and what to have ready.',
  kw:'site survey what happens visit prepare photos supply meter route parking signal access beginner',
  readFirst:['supply-basics'],related:['survey-checklist','planner-first-project','where-chargers-go'],
- body:'<p>A survey is a structured look at the site before anything is designed or priced. It usually takes an hour or two. The surveyor is answering one question: what will it take to get the right chargers, safely connected, into the right places?</p>'
+ body:'<p>A survey is a structured look at the site before anything is designed or priced. It usually takes an hour or two. The surveyor is working out what it will take to get the right chargers, safely connected, into the right places.</p>'
  +ART('survey')
  +'<h4>The six things they look at</h4><ol>'
  +'<li><b>The supply.</b> The cut-out and main fuse, the meter, the earthing arrangement and whether the supply is shared ('+D('looped','looped')+'). This sets the budget for power.</li>'
@@ -217,8 +217,8 @@ const GUIDES=[
  summary:'The standards and regulations that shape every charging installation, and what each one is for.',
  kw:'rules regulations standards plain english bs 7671 iet code of practice smart regulations public charge point regulations pas 1899 part s part p cdm beginner',
  readFirst:['who-does-what'],related:['regs','pcpr','cdm'],
- body:'<p>Several documents govern EV charging in the UK. You do not need to read them to understand a project, but it helps to know what each one is for.</p>'
- +'<table class="g-table"><thead><tr><th>Document</th><th>What it is</th><th>Why it matters</th></tr></thead><tbody>'
+ body:'<p>Several documents govern EV charging in the UK. This is what each one is for.</p>'
+ +'<table class="g-table"><thead><tr><th>Document</th><th>What it is</th><th>What it covers</th></tr></thead><tbody>'
  +'<tr><td>'+D('bs7671','BS 7671')+'</td><td>The Wiring Regulations</td><td>How every circuit is designed, installed and tested. Section 722 is the EV chapter.</td></tr>'
  +'<tr><td>'+D('cop','IET Code of Practice')+'</td><td>Practical guidance for EV installations</td><td>Turns the regulations into site practice: cable depths, earthing choices, accessibility.</td></tr>'
  +'<tr><td>'+D('smart','Smart Charge Points Regulations 2021')+'</td><td>Law for home and workplace chargers</td><td>Units must be smart and secure as supplied.</td></tr>'
@@ -254,7 +254,7 @@ const GUIDES=[
 
 {id:'planner-backups',level:'start',topic:'planner',kind:'planner',minutes:3,
  title:'Saving, backups and recovery',
- summary:'Where projects are stored, why backups matter and how to move a project to another device.',
+ summary:'Where projects are stored, why you need a backup and how to move a project to another device.',
  kw:'save autosave backup restore recover storage browser safari ipad move project another device home screen app json',
  readFirst:['planner-first-project'],related:['planner-first-project'],
  body:'<p>The planner has no account and no server. Everything you draw is saved automatically in this browser, on this device, for this web address. That keeps your projects private, and it means you are responsible for keeping a copy.</p>'
@@ -294,14 +294,14 @@ const GUIDES=[
  summary:'How a group of chargers shares a limited supply, and when it is the right answer.',
  kw:'load management dlm plain english sharing supply limit group balancing wired cloud load limiter ct clamp beginner',
  readFirst:['supply-basics'],related:['array','limiter','arrtool'],
- body:'<p>Most sites cannot give every charger full power at the same time without a bigger supply. '+D('dlm','Dynamic load management')+' solves this by treating a group of chargers as one shared budget. When one car is plugged in it gets everything. As more cars arrive, each charger slows down a little so the total never goes over the limit. Cars still charge; they just share.</p>'
+ body:'<p>Most sites cannot give every charger full power at the same time without a bigger supply. '+D('dlm','Dynamic load management')+' solves this by giving a group of chargers one shared limit. When one car is plugged in it gets everything. As more cars arrive, each charger slows down a little so the total never goes over the limit. Cars still charge; they just share.</p>'
  +ART('dlm')
  +'<h4>Two ways to do it</h4><ul>'
  +'<li><b>Wired.</b> A controller or load management board watches the supply through a '+D('ct','CT clamp')+' and talks to each charger over a data cable. Fast, and it keeps working if the internet drops.</li>'
  +'<li><b>Cloud.</b> The chargers\' back office balances the group over the internet. No extra hardware or data cabling, but every unit needs a reliable connection and a safe fallback rate when it loses one.</li>'
  +'</ul>'
  +'<h4>What it is not</h4><p>A single home charger with a <b>load limiter</b> is a simpler relative: a CT clamp on the incoming supply lets the charger slow down when the house is busy, so it fits behind a small main fuse. See '+G('limiter','CT-clamp load limiting')+'.</p>'
- +'<h4>Things to know</h4><ul><li>Each charger has a minimum rate (about 6 A). Below that, cars queue until capacity frees up.</li><li>The group limit is set a little below the fuse or agreed capacity, never at it.</li><li>The sub-main and switchgear are still sized for the full group limit.</li><li>Features differ by brand: group size, mixing of 7, 11 and 22 kW units, offline behaviour and remote adjustment. Design from the manufacturer\'s current documentation.</li></ul>'
+ +'<h4>Design points</h4><ul><li>Each charger has a minimum rate (about 6 A). Below that, cars queue until capacity frees up.</li><li>The group limit is set a little below the fuse or agreed capacity, never at it.</li><li>The sub-main and switchgear are still sized for the full group limit.</li><li>Features differ by brand: group size, mixing of 7, 11 and 22 kW units, offline behaviour and remote adjustment. Design from the manufacturer\'s current documentation.</li></ul>'
  +'<p>Installer detail is in '+G('array','Set up dynamic load management')+'.</p>'
 },
 
@@ -366,7 +366,7 @@ const GUIDES=[
  +'<li><b>Wi-Fi:</b> 2.4 GHz only on most units; a dedicated 2.4 GHz SSID beats a dual-band network. Private and secured; no captive portals or guest login pages. Watch vendor limits on SSID and password length.</li>'
  +'<li><b>Ethernet:</b> where the unit has a port (not all do): shielded Cat5e or Cat6, live before install day, straight to the network; again, no portals.</li>'
  +'<li>Smart-charging regulations assume connectivity: an offline charger fails commissioning outright.</li></ul>'
- +WARN('<b>Varies by brand and model:</b> which of these interfaces a charger actually has differs between makes and models. Confirm the fitted options on the data sheet before designing the comms.')
+ +WARN('<b>Varies by brand and model:</b> not every unit has all three interfaces. Confirm the fitted options on the data sheet before designing the comms.')
 },
 
 {id:'grants-paperwork',level:'plan',topic:'process',kind:'reference',minutes:5,
@@ -558,7 +558,7 @@ const GUIDES=[
  summary:'Wired and cloud DLM, how many sockets a group limit supports, and commissioning rules.',
  kw:'dynamic load management dlm group wired cloud ocpp internet limit amps controller de-rate 6a floor queue sub-main manual adjust cap 7 11 22 kw brand model manufacturer',
  readFirst:['dlm-plain','prot'],related:['data','arrtool','limiter'],
- body:'<p>'+D('dlm','DLM')+' runs a group of chargers inside one supply limit: the system watches demand and de-rates active units in real time to control demand against the configured limit. Exactly how it behaves is set by the charger brand: typically any mix of 7, 11 and 22 kW AC units from one manufacturer\'s range can join a group, each keeps charging down to about a 6 A minimum, and below that units queue until capacity frees up. Two ways to build it:</p>'
+ body:'<p>'+D('dlm','DLM')+' runs a group of chargers inside one supply limit: the system measures demand and de-rates active units to keep the group under the configured limit. Exactly how it behaves is set by the charger brand: typically any mix of 7, 11 and 22 kW AC units from one manufacturer\'s range can join a group, each keeps charging down to about a 6 A minimum, and below that units queue until capacity frees up. Two ways to build it:</p>'
  +'<ul><li><b>Wired DLM.</b> A load management board or controller with a CT or meter on the incoming supply, and a screened data cable run to every charger (daisy-chain or star, per the manufacturer). Fastest response, and keeps balancing even if the internet goes down. Per-charger RCBOs live in the board.</li>'
  +'<li><b>Cloud DLM.</b> No data cable and no board: the back office balances the group over the internet ('+D('ocpp','OCPP')+' smart-charging profiles). Every unit needs reliable connectivity (whichever of Ethernet, Wi-Fi or 4G it supports), and most systems fall back to a safe preset rate if the connection drops; confirm the offline behaviour. Standard per-charger protection at the source board.</li></ul>'
  +'<table class="g-table"><thead><tr><th>Group limit</th><th>Max active sockets · ~6 A floor</th><th>Keeps ≥16 A each</th></tr></thead><tbody><tr><td>40 A</td><td>6</td><td>2</td></tr><tr><td>60 A</td><td>10</td><td>3</td></tr><tr><td>80 A</td><td>13</td><td>5</td></tr><tr><td>100 A</td><td>16</td><td>6</td></tr></tbody></table>'
@@ -605,7 +605,7 @@ const GUIDES=[
 
 /* ───────── Level 4 · Advanced design ───────── */
 {id:'radial',level:'advanced',topic:'power',kind:'reference',minutes:3,course:['com',1],
- title:'Dedicated radials: why there is no diversity on charging',
+ title:'Dedicated radials: no diversity on charging',
  summary:'Each charging point is a continuous full-load appliance, so the design counts every socket at full current.',
  kw:'dedicated radial diversity no shared protection evdb full load continuous 32a loop',
  readFirst:['prot'],related:['md','array','prot'],
@@ -685,8 +685,8 @@ const GUIDES=[
  summary:'Where arc fault detection is mandatory, where it is a judgement, and how to record either outcome.',
  kw:'afdd arc fault detection device a4 2026 premises hrrb hmo student care home risk assessment record decision 32a rcbo combined loose termination',
  readFirst:['prot'],related:['rcd','regs'],
- body:'<p>An '+D('afdd','AFDD')+' trips on the arc signature of a damaged cable or loose termination, faults an RCD and MCB both miss. BS 7671:2018+A4:2026 extends where arc fault protection is expected, and EV final circuits are squarely in scope for the assessment.</p>'
- +'<ul><li><b>Mandatory list first:</b> higher-risk residential buildings, HMOs, purpose-built student accommodation and care homes require AFDDs on 32 A socket circuits; an EV radial qualifies. Elsewhere the requirement is a documented judgement, not silence.</li>'
+ body:'<p>An '+D('afdd','AFDD')+' trips on the arc signature of a damaged cable or loose termination, faults an RCD and MCB both miss. BS 7671:2018+A4:2026 extends where arc fault protection is expected, and EV final circuits are in scope for the assessment.</p>'
+ +'<ul><li><b>Mandatory list first:</b> higher-risk residential buildings, HMOs, purpose-built student accommodation and care homes require AFDDs on 32 A socket circuits; an EV radial qualifies. Elsewhere the requirement is a documented judgement.</li>'
  +'<li><b>Fitting one:</b> a combined AFDD/RCBO (Type A, 30 mA) in the way feeding the charger reduces the space needed in the board; check coordination with the charger\'s RDC-DD against the manufacturer\'s device list.</li>'
  +'<li><b>Record the decision either way</b> on the EIC or design record: "assessed, required and fitted" or "assessed, not required for this premises type". Keep the decision with the inspection records.</li></ul>'
  +'<p>Check the device dimensions and cost during design so the board schedule, quotation and drawing agree.</p>'
@@ -741,7 +741,7 @@ const GUIDES=[
  readFirst:['rules-plain'],related:['base','survey-checklist','regs'],
  body:'<ul><li>'+D('cdm','CDM 2015')+' applies to construction work, including domestic installs. A proportionate <b>construction phase plan</b> (CPP) must be prepared before construction starts on every project. Where more than one contractor is involved, the commercial client must appoint a principal designer and principal contractor in writing.</li>'
  +'<li><b>Notifiable jobs</b> are those scheduled to last longer than 30 working days with more than 20 workers working simultaneously at any point, or to exceed 500 person-days. For a commercial client, the client must submit the '+D('f10','F10 notification')+' to HSE.</li>'
- +'<li><b>Welfare from day one</b> (CDM Schedule 2): toilet, washing, drinking water and somewhere to rest and eat: a welfare unit or site cabin on site, or the client\'s facilities agreed in writing, never assumed. Agree where the cabin, storage container and skip will stand, and which bays or access they take out, before mobilisation.</li>'
+ +'<li><b>Welfare from day one</b> (CDM Schedule 2): toilet, washing, drinking water and somewhere to rest and eat, provided by a welfare unit or site cabin on site, or by the client\'s facilities agreed in writing, never assumed. Agree where the cabin, storage container and skip will stand, and which bays or access they take out, before mobilisation.</li>'
  +'<li><b>'+D('rams','RAMS')+':</b> a site-specific risk assessment and method statement, issued to and accepted by the client or principal contractor before the start date. Name the actual site, tasks, plant and emergency arrangements; the documents must describe the work and hazards at this site.</li>'
  +'<li><b>Buried services:</b> utility drawings obtained (a free LSBUD enquiry covers most), the route CAT and Genny scanned and marked, hand-dig within 500 mm of marked services, and dig, isolation and hot-works permits signed before the first trench is cut.</li>'
  +'<li><b>Public protection:</b> Heras fencing around work areas, open trenches covered or fenced whenever unattended, a signed and lit pedestrian diversion, and banksman control where plant crosses footways.</li>'
