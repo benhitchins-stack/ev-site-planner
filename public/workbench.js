@@ -22,7 +22,7 @@ const itemSummary=it=>[it.type==='unit'?unitDisplayName(it):typeName(it),it.type
 // Restructure the existing fields before wireSide attaches their original handlers.
 const originalProps=propsPanel, openSections=new Map();
 function groupFor(label){
- if(/^(Label(?: \(optional\))?$|Charger$|Power$|Make & model|Cable type|Run length|Length|Caption|Text|Rating|Phase|Phases|Circuit|Name|Assigned|Finding|Severity|Status)/i.test(label))return 'details';
+ if(/^(Label(?: \(optional\))?$|Charger$|Power$|Make & model|Cable type|Route type|Cables through|Run length|Length|Caption|Text|Rating|Phase|Phases|Circuit|Name|Assigned|Finding|Severity|Status)/i.test(label))return 'details';
  if(/^(Configuration|Concrete base|Base size|Mounting|Cable entry|Lead reach)/i.test(label))return 'mounting';
  if(/^(Colour|Color|Design$|Size|Width|Height|Rotate|Rotation|3D|Drawing view|View|Show as|Label position|Label size|Align to guide|Snap point)/i.test(label))return 'appearance';
  if(/^Design option/i.test(label))return 'options';

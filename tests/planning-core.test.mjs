@@ -121,3 +121,44 @@ test('dual-gun DC equipment counts both connectors without doubling its cabinet 
  const p=make();p.photos[0].items=[{id:'rapid',type:'unit',variant:'dc_rapid',kw:'150'}];
  const q=C.quantities(p);assert.equal(q.chargers,1);assert.equal(q.ports,2);assert.equal(q.ratedKw,150);
 });
+
+test('evidence and change labels use plan references and numbered plain names, and the scale is shown in words',()=>{
+ const p=make();p.photos[0].items[1].planRef='CP-01';p.photos[0].items.push({id:'t1',type:'route',kind:'trench',manualLen:4,pts:[]},{id:'t2',type:'route',kind:'trench',manualLen:6,pts:[]});
+ const f=C.facts(p),label=id=>f.find(x=>x.key==='item:'+id).label;
+ assert.equal(label('charger'),'CP-01 · recorded rating (kW)');assert.equal(label('t1'),'Trench 1 · length (m)');assert.equal(label('t2'),'Trench 2 · length (m)');assert.equal(label('cable'),'SWA cable · length (m)');
+ const scale=f.find(x=>x.key==='scale:plan');assert.equal(scale.label,'Plan scale');assert.equal(scale.value,10);assert.equal(scale.display,'Set · 1 m = 10 px');
+ delete p.photos[0].scale;assert.equal(C.facts(p).find(x=>x.key==='scale:plan').display,'Not set');
+ const b=C.clone(p);b.photos[0].items[1].kw='22';assert.match(C.differences(p,b).find(c=>c.kind==='changed').label,/^CP-01 · kw/);
+});
+test('a new charging day starts from the markup and the recorded supply, with its sources',()=>{
+ const p=make(),s=C.ensure(p).simulation;
+ assert.equal(s.ports,2);assert.equal(s.portKw,7);assert.equal(s.supplyKw,23);assert.equal(s.baseKw,8);
+ assert.deepEqual([s.sources.ports,s.sources.portKw,s.sources.supplyKw,s.sources.baseKw],['markup','markup','site','rule']);
+ assert.equal(s.sessions[0].count,2);assert.doesNotThrow(()=>C.simulate(s));
+});
+test('without a recorded supply the charging day uses the marked fallback and follows a rating recorded later',()=>{
+ const p=make();delete p.supplyRating;const s=C.ensure(p).simulation;
+ assert.equal(s.supplyKw,46);assert.equal(s.sources.supplyKw,'assumed');assert.equal(C.supplyBasis(p).source,'assumed');
+ p.supplyRating='3ph 100 A';assert.equal(C.syncSimulation(p),true);assert.equal(s.supplyKw,23);assert.equal(s.sources.supplyKw,'site');assert.equal(s.baseKw,8);
+ s.supplyKw=30;s.sources.supplyKw='edited';p.supplyRating='200 A';C.syncSimulation(p);assert.equal(s.supplyKw,30);assert.equal(s.baseKw,10.5);
+});
+test('Markup simulator settings carry into an untouched charging day in kW and pounds per kWh',()=>{
+ const p=make();delete p.supplyRating;p.photos[0].items=[];p.sim={cars:3,cap:150,base:70,need:30,dlm:0,limit:60,opOnly:0,pDay:26,pNight:13,opS:0.5,opE:5.5};
+ p.workspace={planning:{schema:1,simulation:{ports:4,portKw:7,supplyKw:40,baseKw:8,efficiency:90,offPeak:0.18,peak:0.32,peakStart:16,peakEnd:19,sessions:[{id:'x',name:'Workplace vehicles',count:4,arrival:8,departure:17,kwh:20,maxKw:7}]}}};
+ const s=C.ensure(p).simulation;
+ assert.equal(s.ports,3);assert.equal(s.supplyKw,34.5);assert.equal(s.sources.supplyKw,'simulator');assert.equal(s.baseKw,16.1);assert.equal(s.peak,0.26);assert.equal(s.offPeak,0.13);
+ assert.equal(s.peakStart,5.5);assert.equal(s.peakEnd,0.5);assert.equal(s.chargerControl,'uncapped');assert.equal(s.sessions[0].count,3);assert.equal(s.sessions[0].kwh,30);
+ assert.deepEqual(p.sim.cars,3,'the saved Markup simulator settings are kept');
+ const edited=make();edited.workspace={planning:{schema:1,simulation:{...s,sources:undefined,supplyKw:41}}};delete edited.workspace.planning.simulation.sources;
+ assert.equal(C.ensure(edited).simulation.supplyKw,41,'an edited charging day is never replaced');
+});
+test('uncapped chargers can exceed the supply and report the hours over; load management cannot',()=>{
+ const capped=C.simulate(scenario({supplyKw:5}));assert.equal(capped.totals.overSupplyHours,0);assert(capped.totals.peakSiteKw<=5+1e-8);
+ const open=C.simulate(scenario({supplyKw:5,chargerControl:'uncapped'}));assert(Math.abs(open.totals.overSupplyHours-1)<1e-8);assert(Math.abs(open.totals.peakSiteKw-10)<1e-8);assert(Math.abs(open.totals.delivered-10)<1e-8);
+ assert.throws(()=>C.simulate(scenario({chargerControl:'sometimes'})),/load management/);
+});
+test('a Markup simulator supply that only echoed the 200 A fallback stays marked as assumed',()=>{
+ const p=make();delete p.supplyRating;p.sim={cars:2,cap:200,base:70,need:30,dlm:1,pDay:26,pNight:13,opS:0.5,opE:5.5};
+ const s=C.ensure(p).simulation;assert.equal(s.supplyKw,46);assert.equal(s.sources.supplyKw,'assumed');
+ const q=make();delete q.supplyRating;q.sim={cars:2,cap:200,capTyped:1};assert.equal(C.ensure(q).simulation.sources.supplyKw,'simulator');
+});

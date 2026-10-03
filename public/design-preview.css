@@ -201,6 +201,7 @@ body, #evApp {font-family: var(--font);}
 .ev-check-list svg {width: 16px; height: 16px; flex: none; margin-top: 1px; color: #a3b3c0;}
 .ev-check-list li.ok {color: var(--ink);}
 .ev-check-list li.ok svg {color: var(--ev-ok);}
+.ev-check-list .ev-check-act {margin: -6px 0 -6px auto; min-height: 32px; padding: 4px 2px; font-size: 12px;}
 .ev-dashboard-bottom {display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 24px; margin-bottom: 8px;}
 .ev-dashboard-bottom>.ev-card {display: flex; flex-direction: column; min-width: 0;}
 .ev-card-head>svg {width: 18px; height: 18px; color: #6b8597; flex: none;}

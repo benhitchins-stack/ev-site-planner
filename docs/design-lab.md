@@ -26,14 +26,36 @@ automatically approve calculations or reissue documents.
 
 ## Charging day
 
-Set port count/power, site power limit, other site demand, efficiency and tariffs.
+Charging day is the single charging model for a project. The Markup Technical
+menu, the Checks card, the critical-issue action and the command palette all open
+it and run the scenario. The older amps simulator dialog is no longer linked; its
+saved settings (`pack.sim`) are kept in backups and, when Charging day has never
+been edited, seed it in kW and £/kWh.
+
+A new or untouched charging day starts from the project: ports and per-port power
+from the chargers on the markup, the site power limit from the recorded supply
+rating or main fuse converted at 230 V, and other site demand as 35% of the supply
+(4 kW on a domestic job). Each value shows where it came from ("From markup",
+"From site details", "Rule of thumb", "From Markup simulator") and changes to
+"Edited" once typed over; values that still follow the project update when the
+markup or site details change. With no supply recorded the limit uses the 200 A
+(80 A domestic) fallback and is marked Assumed, with a link to record the rating;
+the verdict then reads "Within assumed supply" in neutral ink, never as a green pass.
+
+Set charger control (load management shares the supply left after other demand;
+uncapped lets each charger draw its full rate and can go over the supply), port
+count/power, site power limit, other site demand, efficiency and tariffs in £/kWh.
 Add vehicle groups with arrival, departure, requested battery energy and a
 vehicle charging limit. A departure earlier than arrival is on the next day.
-Use five-minute arrival/departure increments.
+Times use the device time picker and are rounded to five minutes; they are
+stored as decimal hours.
 
 The model allocates ports in arrival order, shares spare power subject to vehicle
 limits, and releases a port when its requested energy is delivered. Results show
-delivered energy, shortfalls, queues, grid energy and cost. The chart and
+peak site demand against the supply, a verdict (within supply, within assumed
+supply, or over supply for a number of hours), delivered energy, shortfalls,
+queues, grid energy and cost. The chart shows other site demand, the charging
+stacked on top, the supply line, peak-tariff periods and when vehicles wait. The chart and
 per-vehicle table can be exported to CSV. Changing assumptions invalidates the
 displayed result until the model is run again.
 
