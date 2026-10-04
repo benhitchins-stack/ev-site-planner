@@ -32,7 +32,8 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .wb-item-actions .pbtns{margin-top:0!important}
 .wb-item-actions .pbtn{min-height:40px}
 .wb-item-actions>.ev-btn{width:100%}
-#root .rail{display:flex;flex-direction:column;width:292px;top:10px;bottom:10px}
+/* The picker sizes to its content (short categories leave no empty column) and scrolls when a category is long. */
+#root .rail{display:flex;flex-direction:column;top:10px;bottom:auto;max-height:calc(100% - 20px)}
 #root .rail.closed{display:none}
 #wbLibraryHeader{padding:13px 14px 0;flex:none;border-bottom:1px solid var(--line)}
 .wb-library-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
@@ -43,7 +44,7 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .wb-library-tabs{display:flex;gap:7px;margin-top:10px}
 .wb-library-tabs button{flex:1;min-height:39px;border-bottom:2px solid transparent;font-size:12px;color:#586e80}
 .wb-library-tabs button[aria-selected=true]{border-color:#2563eb;color:#204d94;font-weight:650}
-#root .palscroll{overflow:auto;flex:1;padding:0 14px 18px;min-height:0}
+#root .palscroll{overflow:auto;flex:1 1 auto;padding:0 14px 18px;min-height:0}
 #root .palhead{padding:12px 0 0;position:static}
 #root .palhead b{font-size:12px;color:#536e83}
 #root .palhead .palx{display:none}
@@ -283,11 +284,11 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 #evPlanStrip{height:48px;min-height:48px;padding:0 16px;gap:10px;background:#f7f9fb;position:relative;z-index:42}
 #evPlanStrip #evActivePlan{max-width:360px;font-size:13px;padding:6px 8px;height:36px;border:1px solid #c2cfda;border-radius:6px;background:white}
 #evPlanStrip>.ev-btn{min-height:36px;font-size:12px}
-#evPlanStrip .ev-plan-meta{font-size:12px}.ev-scale-status{font-size:12px}
+#evPlanStrip .ev-plan-meta{font-size:12px}
 #root .stage{background:#e7edf2;background-image:none}
 #root .tgroup{font-size:11px;letter-spacing:.4px}.tool span{font-size:12px;line-height:1.35}
 #root .side .wb-field label{font-size:13px}.wb-section-body{gap:18px}
-.ev-inspector-head>div{flex:1}#evInspectorExpand{display:none}
+.ev-inspector-head>div{flex:1}
 #wbDrawingTools{display:block;position:relative;margin-left:auto;flex:none}
 #wbDrawingTools>summary{list-style:none;min-height:36px;font-size:12px;cursor:pointer;padding:7px 11px}
 #wbDrawingTools>summary::-webkit-details-marker{display:none}
@@ -305,7 +306,6 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 .ep-preferences{margin-top:22px}.ep-preferences .ev-card-body{padding:20px}.ep-form-heading{letter-spacing:0}
 .ep-apply b{font-size:14px}.ep-save{color:#395c42}.ep-logo-box{border-style:solid;border-color:#bccbd7;background:#fff}
 @media(max-width:1200px){
- #evPlanStrip .ev-scale-status{display:none}
  #evWorkbench .cattab{font-size:12px}
 }
 @media(max-width:700px){
@@ -332,10 +332,73 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
  .wb-display-options #wbKeyToggle{min-height:44px}
  #root .side,#root .side.open{height:45%;max-height:40dvh;border-radius:12px 12px 0 0}
  #evApp.ev-inspector-expanded #root .side{height:80%;max-height:66dvh}
- #evInspectorExpand{display:inline-flex;min-height:44px;font-size:12px;padding:8px 10px;flex:none}
  .ev-inspector-head{gap:8px;padding:8px 12px}.ev-inspector-head b{font-size:14px}
  .ep-document-preview{padding:12px}.ev-field input,.ev-field select,.ev-field textarea,#root .side .wb-field input,#root .side .wb-field select{font-size:16px!important}
 }
 #root .side{transition:none}
 #epPanel-branding .ep-header-preview{margin:24px 0 16px;padding:16px;background:#edf1f5;border:1px solid #d3dfe8;border-radius:8px}
 #epPanel-branding #epHeaderImage{font-size:12px;color:#4f6576}
+
+/* Markup on a tablet (theme 4). */
+/* Plan scale: a real button at every width. Amber until the active plan has a scale; icon-only below 1200px. */
+#evPlanStrip .ev-scale-btn{gap:6px;font-weight:600;white-space:nowrap;flex:none}
+#evPlanStrip .ev-scale-btn svg{width:16px;height:16px;flex:none}
+#evPlanStrip .ev-scale-btn.unset{background:#fff3db;border-color:#d9a548;color:#6e4a10}
+#evPlanStrip .ev-scale-btn.unset:hover{background:#ffeac2;border-color:#b9832a}
+#evPlanStrip .ev-scale-btn.set{background:#eef5d8;border-color:#b9d47e;color:#2f4a16}
+#evPlanStrip .ev-scale-btn.set:hover{background:#e3efc4}
+@media(max-width:1200px){
+ #evPlanStrip .ev-scale-btn{font-size:0;gap:0;width:36px;min-width:36px;padding:0;justify-content:center}
+ #evPlanStrip .ev-scale-btn span{display:none}
+ #evPlanStrip .ev-scale-btn svg{width:18px;height:18px}
+}
+@media(max-width:1200px) and (pointer:coarse),(max-width:700px){
+ #evPlanStrip .ev-scale-btn{width:44px;min-width:44px;height:44px}
+}
+/* Edit tools show their names where the strip has room. */
+.ptool-label{display:none}
+@media(min-width:1400px){
+ #evApp.ev-nav-collapsed #evWorkbench .ptool{width:auto;display:flex;align-items:center;gap:6px;padding:0 10px 0 8px}
+ #evApp.ev-nav-collapsed #evWorkbench .ptool-label{display:inline;font-size:12px;font-weight:600;white-space:nowrap}
+}
+/* Plan settings: four section tabs on one row, no Plans/Selected segment, and a way back from an item. */
+#root .side.wb-pack .tab{display:none}
+#root .side .snav{grid-template-columns:repeat(4,minmax(0,1fr))}
+#root .side .snav button{font-size:12px;min-height:40px;padding:8px 4px}
+#evApp #evInspectorBack{flex:none;width:36px;height:36px;display:grid;place-items:center}
+#evApp #evInspectorBack[hidden]{display:none}
+#evInspectorBack svg{width:18px;height:18px}
+#evSheetHandle{display:none}
+.wb-display-options #wbAllAppearance{font-size:13px;min-height:40px}
+/* Inspector extras. */
+#root .side .wb-note{font-size:12px;line-height:1.55;color:#586e80;margin:0}
+.wb-item-actions .wb-note{margin-top:-4px}
+.wb-rotate{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wb-rotate .pbtn{flex:1 1 120px;min-height:40px;width:auto}
+#root .side .wb-rotate-angle{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--field-ink)}
+#root .side .wb-rotate-angle input{width:84px;min-height:40px;border:1px solid var(--control-border);border-radius:7px;padding:8px 10px;background:#fff;color:var(--ink)}
+/* Equipment picker tiles: larger symbols on a faint navy backing so white units read on white tiles. */
+#root .tool .ti{width:40px;height:40px;border-radius:8px;background:#152d4012}
+#root .tool .ti-unit img{width:40px!important}
+#root .tool>svg{width:26px;height:26px}
+@media(pointer:coarse){#root .tool>span:not(.ti){font-size:13px}}
+.wb-key-rows>div .ti{flex:none;width:24px;height:30px;overflow:hidden;border-radius:4px;background:#152d4012;align-self:center}
+.wb-key-rows>div .ti img{width:24px!important}
+@media(max-width:700px){
+ /* Header: Help goes icon-only so the project name has room. */
+ #evHelpTop{width:44px;min-width:44px;padding:0;justify-content:center;gap:0}
+ #evHelpTop span{display:none}
+ #evIssuePlans{max-width:150px;white-space:normal;line-height:1.2;text-align:left}
+ /* While an item is selected the tool strip is one row, so more of the plan shows above the panel. */
+ #evApp.ev-item-selected #evWorkbench.ev-toolbar-mode,#evApp.ev-item-selected .ev-toolstrip{min-height:52px}
+ #evApp.ev-item-selected #evToolCategory{display:none}
+ /* The sheet handle cycles peek, half and full height. */
+ #root .side::before{display:none}
+ #evSheetHandle{display:flex;align-items:center;justify-content:center;flex:none;width:100%;height:44px;min-height:44px;background:var(--ev-navy);border:0;border-radius:12px 12px 0 0;cursor:pointer}
+ #evSheetHandle::before{content:'';width:42px;height:5px;border-radius:5px;background:#9fb3c4}
+ #evSheetHandle:focus-visible{outline-offset:-4px}
+ #evApp .ev-inspector-head{padding-top:0}
+ #evApp.ev-sheet-peek #root .side{height:auto;max-height:none}
+ #evApp.ev-sheet-peek #root .side>.tab,#evApp.ev-sheet-peek #sideScroll{display:none}
+}
+@media(pointer:coarse),(max-width:700px){#evApp #evInspectorBack{width:44px;height:44px}}

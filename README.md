@@ -52,7 +52,7 @@ replace a technical review of the reference material or electrical calculations.
 The latest design pass groups selected-item settings into electrical, mounting,
 appearance and design-option sections. A selected charger's label, model and
 rating remain at the top. Model search, favourites and recently placed equipment
-are available in the floating picker; Place another like this retains the chosen
+are available in the floating picker; Place another with these settings retains the chosen
 configuration. Equipment references remain stable in project backups. Compact
 on-screen labels have leader lines and avoid nearby equipment where space allows;
 full labels remain available. The plan key is separate from the drawing, and
@@ -65,6 +65,13 @@ Plans, engineer/client packs, programmes and snag reports share page thumbnails,
 zoom controls and a consistent review layout. Downloads use the previewed PDF.
 Document footers share author, company, revision and preparation-date information.
 Phone item controls open as a bottom panel with part of the drawing still visible.
+Selecting an item never zooms: when the inspector, the picker or the phone panel would
+cover it, the view pans just enough to keep it in sight and pans back on close. The
+phone panel's handle switches between header only, half and full height. The plan
+strip shows Set scale (amber) until the plan has a scale, and the header's main
+button follows the next step: add a plan, set the scale, place the first charger,
+draw the supply route, then issue plans. Chargers and other equipment rotate with
+the round handle above them; touch snaps to 15 degrees.
 
 Run `npm run test:refinement` for equipment search, favourites, configuration copies,
 label preservation, report refresh/download behaviour, profile tabs and phone

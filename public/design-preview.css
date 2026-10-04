@@ -365,12 +365,10 @@ body, #evApp {font-family: var(--font);}
 #evPlanStrip select {font-family: var(--font); font-size: 13px; max-width: 350px; min-width: 0; padding-left: 0;}
 #evPlanStrip>.ev-btn {font-size: 11px; min-height: 31px; padding: 6px 9px;}
 #evPlanStrip .ev-plan-meta {font-size: 11px; margin-left: auto; color: #586f81;}
-.ev-scale-status {font-size: 10px; padding: 4px 8px; background: #fff3db; border: 1px solid #f0dfbd; border-radius: 4px; white-space: nowrap; color: #835d20;}
-.ev-scale-status.set {background: #eaf4ed; border-color: #d5e7db; color: #41674b;}
 #evInspectorToggle {margin-left: 5px;}
 #evPlanStrip .ev-btn {white-space: nowrap;}
-/* Laptop and landscape tablet with the inspector inline: Add files and Plan settings go icon-only so the strip stays on one line. */
-@media (min-width: 1001px) and (max-width: 1250px) {
+/* Laptop with the inspector inline: Add files and Plan settings go icon-only so the strip stays on one line. Up to 1100px the inspector overlays the plan instead. */
+@media (min-width: 1101px) and (max-width: 1250px) {
   #evApp.ev-inspector-open #evPlanStrip>.ev-btn[data-ev-action=add-files] {font-size: 0; gap: 0; padding: 6px; width: 36px; justify-content: center;}
   #evApp.ev-inspector-open #evPlanStrip>.ev-btn[data-ev-action=add-files] svg {width: 17px; height: 17px;}
   #evApp.ev-inspector-open #evInspectorToggle {font-size: 0!important; gap: 0; padding: 7px!important; width: 36px; justify-content: center;}
@@ -445,10 +443,13 @@ body, #evApp {font-family: var(--font);}
   #evWorkbench .cattab {font-size: 11px; padding: 8px;}
   #evWorkbench .cattab>svg {display: none;}
 }
+/* Up to 1100px (iPads in either orientation) the inspector overlays the plan; selecting an item pans it clear of the panel. */
+@media (max-width: 1100px) {
+  #root .side {position: absolute; right: 0; top: 48px; bottom: 0; height: auto; z-index: 45; box-shadow: -8px 0 30px #17304422;}
+}
 @media (max-width: 1000px) {
   #evWorkbench .ev-focus-btn span {display: none;}
   #evWorkbench .ev-focus-btn {width: 36px; padding: 8px;}
-  #root .side {position: absolute; right: 0; top: 0; bottom: 0; height: 100%; z-index: 45; box-shadow: -8px 0 30px #17304422;}
   #evPlanStrip .ev-plan-meta {display: none;}
   #evInspectorToggle {margin-left: auto;}
 }
@@ -484,7 +485,6 @@ body, #evApp {font-family: var(--font);}
   #evPlanStrip select {max-width: 170px; flex: 1; font-size: 12px;}
   #evPlanStrip>.ev-btn[data-ev-action=add-files] {font-size: 0; gap: 0; padding: 6px; width: 30px;}
   #evPlanStrip>.ev-btn[data-ev-action=add-files] svg {width: 17px; height: 17px;}
-  .ev-scale-status {display: none;}
   #evInspectorToggle {font-size: 0!important; gap: 0; padding: 7px!important; width: 32px;}
   #evInspectorToggle span {display: none;}
   #root .side {width: min(330px,calc(100vw - 25px));}
@@ -589,7 +589,6 @@ body, #evApp {font-family: var(--font);}
 #evWorkbench button:focus-visible, #evWorkbench select:focus-visible {outline-color: var(--ev-lime);}
 #evPlanStrip {background: #f4f7fa; border-bottom: 1px solid #d9e3ec;}
 #evPlanStrip select {font-weight: 650; color: var(--ink);}
-.ev-scale-status.set {background: #eef5d8; border-color: #cfe39a; color: #2f4a16;}
 #root .zoombar {border-radius: 12px; border-color: #cddae4; box-shadow: 0 10px 30px #10283c26;}
 #evWorkbench .ev-tech-menu {color: var(--ink);}
 

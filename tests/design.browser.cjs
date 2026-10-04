@@ -57,12 +57,18 @@ const {chromium} = require('playwright');
     await page.waitForFunction(()=>document.getElementById('evApp').classList.contains('ev-inspector-open'));
     const selected=await page.evaluate(id=>{const u=activePhoto().items.find(i=>i.id===id);return{sel,x:u.x,y:u.y,zoom:view.zoom,ox:view.ox,oy:view.oy,width:cvwrap.clientWidth};},before.id);
     assert.equal(selected.sel,before.id,JSON.stringify({before,selected,hit:await page.evaluate(()=>({type:findItem(sel)?.type,kind:findItem(sel)?.kind,label:findItem(sel)?.label}))}));assert.equal(selected.x,before.x);assert.equal(selected.y,before.y);
-    assert.equal(selected.zoom,before.zoom);assert.equal(selected.ox,before.ox);assert.equal(selected.oy,before.oy);
+    // Selecting never zooms or refits; the item stays visible beside the inspector (a pan is only made when the panel would cover it).
+    assert.equal(selected.zoom,before.zoom);
+    const shown=await page.evaluate(id=>{const u=activePhoto().items.find(i=>i.id===id),r=cv.getBoundingClientRect(),side=document.getElementById('side').getBoundingClientRect();const sx=r.x+u.x*view.zoom+view.ox,sy=r.y+u.y*view.zoom+view.oy;return{sx,sy,inCanvas:sx>r.left&&sx<r.right&&sy>r.top&&sy<r.bottom,underPanel:sx>side.left&&sy>side.top};},before.id);
+    assert(shown.inCanvas&&!shown.underPanel,JSON.stringify(shown));
     assert.equal(fullWidth-selected.width,320);
+    assert.equal(await page.locator('#wbItemSummary').textContent(),await page.evaluate(id=>{const u=activePhoto().items.find(i=>i.id===id);return unitDisplayName(u)+' · '+(u.kw||'7')+' kW';},before.id));
+    assert.equal(await page.locator('#ulabel').getAttribute('placeholder'),'e.g. Visitor bay, north wall');
+    assert(await page.locator('[data-wb-turn="90"]').isVisible(),'Rotate sits in Item details with quarter-turn buttons');
     await page.locator('#ulabel').fill('Charger A - preview edit');await page.locator('#ulabel').dispatchEvent('change');
     assert.equal(await page.evaluate(id=>activePhoto().items.find(i=>i.id===id).label,before.id),'Charger A - preview edit');
     await page.screenshot({path:path.join(artifacts,'selected-item.png'),animations:'disabled'});
-    pass('Selecting an item opens its controls without moving the item or changing the camera; editing updates the original record');
+    pass('Selecting an item opens its controls without zooming and keeps it in view; editing updates the original record');
 
     await page.locator('#evInspectorClose').click();
     const drag=await page.evaluate(id=>{const u=activePhoto().items.find(i=>i.id===id),r=cv.getBoundingClientRect();return{x:u.x,y:u.y,sx:r.x+u.x*view.zoom+view.ox,sy:r.y+u.y*view.zoom+view.oy,z:view.zoom};},before.id);
@@ -88,7 +94,9 @@ const {chromium} = require('playwright');
     await page.locator('#evFocus').click();assert.equal(await page.locator('#evFocus').getAttribute('aria-pressed'),'true');assert.equal(await page.evaluate(()=>cvwrap.clientWidth),fullWidth);
     await page.locator('#evFocus').click();assert.equal(await page.locator('#evInspectorToggle').getAttribute('aria-expanded'),'true');
     await page.locator('#evInspectorClose').click();
-    await page.locator('#evTechnical').click();await page.locator('#evTechMenu [data-ev-action="settings"]').click();
+    assert.equal(await page.locator('#evTechMenu [data-ev-action="settings"]').count(),0,'Plan settings has one entry point, the strip button');
+    await page.locator('#evInspectorToggle').click();assert(await page.locator('#side .tab').isHidden(),'Plan settings shows four section tabs and no Plans/Selected segment');
+    assert.equal(await page.locator('#side .snav [data-psec]').count(),4);
     assert.equal(await page.evaluate(()=>packSec),'output');assert(await page.locator('#side').isVisible());
     await page.locator('#evInspectorClose').click();
     await page.screenshot({path:path.join(artifacts,'markup.png'),animations:'disabled'});
@@ -136,6 +144,49 @@ const {chromium} = require('playwright');
     }
     await page.screenshot({path:path.join(artifacts,'dashboard-mobile.png'),animations:'disabled'});
     pass('Dashboard, navigation, named icon controls and Markup settings work at tablet and narrow phone widths');
+
+    // Touch layouts: the inspector, rail and phone sheet must not hide the item just selected. The view pans by the least amount, never zooms, and pans back on close.
+    for(const vp of [{width:1024,height:1366},{width:390,height:844}]){
+      const touch=await browser.newContext({locale:'en-GB',viewport:vp,hasTouch:true,isMobile:vp.width<700});
+      const tp=await touch.newPage();tp.on('pageerror',e=>errors.push(e.message));
+      await tp.goto(url+'/#example',{waitUntil:'networkidle'});await tp.waitForFunction(()=>EVWorkspace.route()==='overview'&&pack.photos.length===1);
+      await tp.evaluate(()=>EVWorkspace.go('markup'));await tp.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+      // Place the target under where the panel will open: the right-hand side on a tablet, the lower half on a phone.
+      const target=await tp.evaluate(phone=>{const u=activePhoto().items.filter(i=>i.type==='unit').sort((a,b)=>b.x-a.x)[0],r=cv.getBoundingClientRect();
+        if(phone)view.oy=r.height*.8-u.y*view.zoom;else view.ox=r.width-90-u.x*view.zoom;viewIsFit=false;drawCanvas();
+        return{id:u.id,x:r.x+u.x*view.zoom+view.ox,y:r.y+u.y*view.zoom+view.oy,zoom:view.zoom,ox:view.ox,oy:view.oy};},vp.width<700);
+      await tp.touchscreen.tap(target.x,target.y);
+      await tp.waitForFunction(()=>document.getElementById('evApp').classList.contains('ev-inspector-open'));
+      const after=await tp.evaluate(id=>{const u=findItem(id),r=cv.getBoundingClientRect(),side=document.getElementById('side').getBoundingClientRect(),sx=r.x+u.x*view.zoom+view.ox,sy=r.y+u.y*view.zoom+view.oy;
+        return{sel,zoom:view.zoom,ox:view.ox,oy:view.oy,sx,sy,covered:sx>side.left&&sx<side.right&&sy>side.top&&sy<side.bottom,inCanvas:sx>r.left&&sx<r.right&&sy>r.top&&sy<r.bottom};},target.id);
+      assert.equal(after.sel,target.id);assert.equal(after.zoom,target.zoom);assert(!after.covered&&after.inCanvas,JSON.stringify({vp,target,after}));
+      await tp.screenshot({path:path.join(artifacts,'selected-'+vp.width+'.png')});
+      if(vp.width<700){
+        assert(await tp.locator('#evToolCategory').isHidden(),'The phone tool strip drops to one row while an item is selected');
+        const half=await tp.locator('#side').boundingBox();await tp.waitForTimeout(500);await tp.locator('#evSheetHandle').click();const full=await tp.locator('#side').boundingBox();
+        assert(full.height>half.height+80,JSON.stringify({half,full}));
+        await tp.locator('#evSheetHandle').click();const peek=await tp.locator('#side').boundingBox();assert(peek.height<half.height,JSON.stringify({half,peek}));
+        await tp.locator('#evSheetHandle').click();
+      }
+      await tp.locator('#evInspectorClose').click();
+      const closed=await tp.evaluate(()=>({ox:view.ox,oy:view.oy}));
+      assert(Math.abs(closed.ox-target.ox)<1&&Math.abs(closed.oy-target.oy)<1,'Closing the panel returns the view when it was not moved: '+JSON.stringify({target,closed}));
+      await touch.close();
+    }
+    pass('On a tablet and a phone the selected item is panned clear of the panel without zooming, and the view returns on close');
+
+    // A new plan without a scale: the strip shows an amber Set scale button and the hint bar offers to set it, once.
+    const png=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=640;c.height=420;const g=c.getContext('2d');g.fillStyle='#dfe7ee';g.fillRect(0,0,640,420);g.strokeStyle='#183043';g.strokeRect(40,40,560,340);return c.toDataURL('image/png').split(',')[1];});
+    await page.setViewportSize({width:1440,height:1040});await page.evaluate(()=>EVWorkspace.go('markup'));const plans=await page.evaluate(()=>pack.photos.length);
+    await page.locator('#filePhoto').setInputFiles({name:'site-photo.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});
+    await page.waitForFunction(n=>pack.photos.length===n+1&&!pendingFileImports.size,plans);
+    await page.evaluate(()=>EVWorkspace.openPlan(pack.photos.at(-1).id));await page.waitForFunction(()=>document.getElementById('hint').classList.contains('show'));
+    assert.match(await page.locator('#hint').textContent(),/Set the scale before drawing routes/);
+    assert.match(await page.locator('#evPlanStrip .ev-scale-btn.unset').textContent(),/Set scale/);
+    assert.equal(await page.locator('#evIssuePlans').textContent(),'Set the scale');
+    await page.locator('#hSetScale').click();assert.equal(await page.evaluate(()=>tool),'scale');assert.match(await page.locator('#hint').textContent(),/^Set scale · Tap both ends/);
+    await page.evaluate(()=>setTool('select'));assert.doesNotMatch(await page.locator('#hint').textContent(),/Set the scale before/);
+    pass('A new plan without a scale shows the Set scale button and a one-off reminder that starts the Set scale tool');
 
     assert(fs.statSync(path.join(artifacts,'preview-plans.pdf')).size>10000);
     assert.deepEqual(errors,[]);assert.deepEqual(failedRequests,[]);

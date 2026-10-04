@@ -50,7 +50,12 @@ const {chromium}=require('playwright');
    if(width>700)assert.deepEqual(await page.evaluate(()=>{const strip=document.querySelector('.ev-toolstrip').getBoundingClientRect();return [...document.querySelectorAll('#catbar .cattab')].filter(t=>{const r=t.getBoundingClientRect();return !(r.width>0&&r.left>=strip.left&&r.right<=Math.min(strip.right,innerWidth));}).map(t=>t.textContent.trim());}),[],'All markup categories, including Notes, are visible without scrolling');
    await page.locator('#evInspectorToggle').click();
    if(width>1000)assert(await page.evaluate(()=>[...document.querySelectorAll('#evPlanStrip .ev-btn')].every(b=>b.getBoundingClientRect().height<=44)),'Plan strip buttons stay on one line with the inspector open');
-   if(width<=700){const short=await page.locator('#side').boundingBox();await page.locator('#evInspectorExpand').click();const tall=await page.locator('#side').boundingBox();assert(tall.height>short.height+80,JSON.stringify({width,short,tall}));assert(tall.y>top.y+35,JSON.stringify({width,top,short,tall}));await page.locator('#evInspectorExpand').click();}
+   // The phone sheet handle cycles half, full and peek (header only), then back to half.
+   // Plan settings opens at full height on a phone; the handle then cycles header only, half and full.
+   if(width<=700){const tall=await page.locator('#side').boundingBox();assert(tall.y>top.y+35,JSON.stringify({width,top,tall}));await page.waitForTimeout(500);
+    await page.locator('#evSheetHandle').click();const peek=await page.locator('#side').boundingBox();assert(peek.height<tall.height-200&&await page.locator('#sideScroll').isHidden(),JSON.stringify({width,tall,peek}));
+    await page.locator('#evSheetHandle').click();const short=await page.locator('#side').boundingBox();assert(tall.height>short.height+80&&short.height>peek.height,JSON.stringify({width,short,tall,peek}));
+    await page.locator('#evSheetHandle').click();assert.equal(Math.round((await page.locator('#side').boundingBox()).height),Math.round(tall.height));}
    await page.screenshot({path:path.join(output,'inspector-'+width+'.png')});await page.locator('#evInspectorClose').click();
    // Cable calculations on a plan of trenches lists the routes by what is sized, with a way forward, and no calc sheet to download.
    await page.evaluate(()=>openCableCheck());await page.waitForSelector('#ccBackdrop.show');

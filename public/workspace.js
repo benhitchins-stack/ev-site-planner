@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id), h=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const paths={collapse:'M4 3h16v18H4zM9 3v18m7-13-3 4 3 4',focus:'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',user:'M4 22v-3a8 8 0 0 1 16 0v3M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',home:'m3 11 9-8 9 8M5 9v12h14V9M9 21v-7h6v7',plan:'M4 3h16v18H4zM8 7h8M8 11h4M8 15h8',pen:'m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5',calendar:'M3 5h18v16H3zM7 2v6M17 2v6M3 10h18M7 14h4M13 18h4',flag:'M5 22V3M5 3h14l-3 5 3 5H5',send:'m3 3 18 9-18 9 3-9ZM6 12h15',file:'M5 3h10l4 4v14H5zM15 3v5h4M9 12h6M9 16h6',plus:'M12 5v14M5 12h14',arrow:'M4 12h16m-6-6 6 6-6 6',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',book:'M4 4h6l2 2 2-2h6v16h-6l-2 2-2-2H4zM12 6v16',learn:'m2 9 10-5 10 5-10 5ZM6 11v7c4 3 8 3 12 0v-7',cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',check:'m5 12 4 4L19 6',close:'m6 6 12 12M6 18 18 6',menu:'M4 6h16M4 12h16M4 18h16',folder:'M3 6h6l2 2h10v12H3z',tools:'m14 7 3 3 4-4a6 6 0 0 1-8 8l-7 7-3-3 7-7a6 6 0 0 1 8-8Z',photo:'M3 5h18v14H3zM3 16l6-5 5 4 3-3 4 4M8 8h1',backup:'M4 7h16v14H4zM7 3h10v4M9 12h6',alert:'m12 3 10 18H2ZM12 9v5M12 17v1',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',circle:'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z',audit:'M9 3h6v4H9zM9 5H5v16h14V5h-4M8.5 14l2.5 2.5 4.5-5'};
+const paths={collapse:'M4 3h16v18H4zM9 3v18m7-13-3 4 3 4',focus:'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',user:'M4 22v-3a8 8 0 0 1 16 0v3M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0',grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',home:'m3 11 9-8 9 8M5 9v12h14V9M9 21v-7h6v7',plan:'M4 3h16v18H4zM8 7h8M8 11h4M8 15h8',pen:'m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5',calendar:'M3 5h18v16H3zM7 2v6M17 2v6M3 10h18M7 14h4M13 18h4',flag:'M5 22V3M5 3h14l-3 5 3 5H5',send:'m3 3 18 9-18 9 3-9ZM6 12h15',file:'M5 3h10l4 4v14H5zM15 3v5h4M9 12h6M9 16h6',plus:'M12 5v14M5 12h14',arrow:'M4 12h16m-6-6 6 6-6 6',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',book:'M4 4h6l2 2 2-2h6v16h-6l-2 2-2-2H4zM12 6v16',learn:'m2 9 10-5 10 5-10 5ZM6 11v7c4 3 8 3 12 0v-7',cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',check:'m5 12 4 4L19 6',close:'m6 6 12 12M6 18 18 6',menu:'M4 6h16M4 12h16M4 18h16',folder:'M3 6h6l2 2h10v12H3z',tools:'m14 7 3 3 4-4a6 6 0 0 1-8 8l-7 7-3-3 7-7a6 6 0 0 1 8-8Z',photo:'M3 5h18v14H3zM3 16l6-5 5 4 3-3 4 4M8 8h1',backup:'M4 7h16v14H4zM7 3h10v4M9 12h6',alert:'m12 3 10 18H2ZM12 9v5M12 17v1',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',circle:'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z',audit:'M9 3h6v4H9zM9 5H5v16h14V5h-4M8.5 14l2.5 2.5 4.5-5',ruler:'M3 17 17 3l4 4L7 21ZM8 16l1.6 1.6M11 13l1.6 1.6M14 10l1.6 1.6M17 7l1.6 1.6',sliders:'M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1M15 4v4M9 10v4M17 16v4'};
 const icon=(k,cls='')=>'<svg class="'+cls+'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(paths[k]||paths.file)+'"/></svg>';
 const btn=(t,a,style='',ic='')=>'<button type="button" class="ev-btn '+style+'" data-ev-action="'+a+'">'+(ic?icon(ic):'')+t+'</button>';
 const empty=(title,desc,actions='')=>'<div class="ev-empty">'+icon('plan')+'<b>'+title+'</b>'+desc+(actions?'<div class="ev-actions">'+actions+'</div>':'')+'</div>';
@@ -108,9 +108,9 @@ const workbench=document.querySelector('body>header');workbench.id='evWorkbench'
 workbench.querySelector('.hgrp').after($('catbar'));
 const originalExport=$('btnExport').parentElement;originalExport.style.display='none';
 const tech=document.createElement('div');tech.className='ev-tech';
-tech.innerHTML='<button class="ev-btn" id="evTechnical" aria-expanded="false" aria-controls="evTechMenu">'+icon('tools')+'Technical</button><div id="evTechMenu" class="ev-tech-menu" hidden>'+[['cdm','CDM project controls','Dutyholders, design risks and documents'],['sld','Single-line diagram','Supply, boards and chargers'],['calcs','Cable calculations','Review lengths, inputs and results'],['sim','Charging day','Opens in Design lab: chargers, supply and arrivals'],['dno','DNO application data','Compile the recorded site information'],['materials','Materials list','Quantities from the markup'],['settings','Plan settings','Labels, legend and export branding']].map(([key,t,d])=>'<button data-ev-action="'+key+'">'+t+'<small>'+d+'</small></button>').join('')+'</div>';
+tech.innerHTML='<button class="ev-btn" id="evTechnical" aria-expanded="false" aria-controls="evTechMenu">'+icon('tools')+'Technical</button><div id="evTechMenu" class="ev-tech-menu" hidden>'+[['cdm','CDM project controls','Dutyholders, design risks and documents'],['sld','Single-line diagram','Supply, boards and chargers'],['calcs','Cable calculations','Review lengths, inputs and results'],['sim','Charging day','Opens in Design lab: chargers, supply and arrivals'],['dno','DNO application data','Compile the recorded site information'],['materials','Materials list','Quantities from the markup']].map(([key,t,d])=>'<button data-ev-action="'+key+'">'+t+'<small>'+d+'</small></button>').join('')+'</div>';
 $('catbar').after(tech);
-tech.after(Object.assign(document.createElement('button'),{id:'evIssuePlans',className:'ev-btn primary',innerHTML:icon('send')+'Issue plans'}));$('evIssuePlans').dataset.evAction='plans';
+tech.after(Object.assign(document.createElement('button'),{id:'evIssuePlans',type:'button',className:'ev-btn primary',innerHTML:icon('send')+'<span>Issue plans</span>'}));$('evIssuePlans').dataset.evAction='plans';
 const strip=document.createElement('div');strip.id='evPlanStrip';$('root').querySelector('.workarea').prepend(strip);
 $('side').querySelector('[data-tab="pack"]').textContent='Plans & settings';$('side').querySelector('[data-tab="props"]').textContent='Selected item';
 $('btnSide').setAttribute('aria-label','Show or hide plans and item settings');
@@ -138,27 +138,40 @@ toolCategory.onchange=()=>{const category=toolCategory.value;if(!category)return
 const focusButton=document.createElement('button');focusButton.id='evFocus';focusButton.className='ev-btn ev-focus-btn';focusButton.type='button';focusButton.title='Focus on the drawing';focusButton.setAttribute('aria-label','Focus on the drawing');focusButton.setAttribute('aria-pressed','false');focusButton.innerHTML=icon('focus')+'<span>Focus</span>';toolstrip.append(focusButton);
 workbench.classList.add('ev-toolbar-mode');workbench.append(toolstrip);
 $('evEditTop').after($('evIssuePlans'));
-const inspectorHead=document.createElement('div');inspectorHead.className='ev-inspector-head';inspectorHead.innerHTML='<div><small>MARKUP</small><b id="evInspectorTitle">Plan settings</b></div><button class="ev-btn" id="evInspectorExpand" aria-expanded="false" aria-label="Expand settings panel">Expand</button><button class="ev-icon-btn" id="evInspectorClose" aria-label="Close settings panel" title="Close settings panel">'+icon('close')+'</button>';$('side').prepend(inspectorHead);
+const inspectorHead=document.createElement('div');inspectorHead.className='ev-inspector-head';inspectorHead.innerHTML='<div><small>MARKUP</small><b id="evInspectorTitle">Plan settings</b></div><button type="button" class="ev-icon-btn" id="evInspectorBack" hidden aria-label="Back to plan settings" title="Back to plan settings">'+icon('sliders')+'</button><button class="ev-icon-btn" id="evInspectorClose" aria-label="Close settings panel" title="Close settings panel">'+icon('close')+'</button>';$('side').prepend(inspectorHead);
+// Phone: a 44 px handle on the sheet cycles peek (header only), half and full height.
+const sheetHandle=document.createElement('button');sheetHandle.type='button';sheetHandle.id='evSheetHandle';sheetHandle.setAttribute('aria-label','Resize panel: half height');sheetHandle.title='Resize panel';$('side').prepend(sheetHandle);
+let sheetState='half',sheetOpenedAt=0,sheetAuto=false;
 function syncNav(){
  const narrow=innerWidth<=1120,collapsed=navChoice??(route==='markup'||narrow);app.classList.toggle('ev-nav-collapsed',collapsed);
  const b=$('evCollapseNav');b.setAttribute('aria-expanded',String(!collapsed));b.setAttribute('aria-label',collapsed?'Expand navigation':'Collapse navigation');b.title=collapsed?'Expand navigation':'Collapse navigation';
 }
 function syncInspector(){
  const key=sideTab==='props'?(sel?String(sel):draftRoute?'draft-'+draftRoute.kind:selSet.size?'multi-'+Array.from(selSet).join(','):''):'';
- if(key&&key!==lastContext){inspectorOpen=true;inspectorPinned=false;}
+ if(key&&key!==lastContext){inspectorOpen=true;inspectorPinned=false;if(sheetAuto){sheetAuto=false;setSheet('half');}}
  if(!key&&lastContext&&!inspectorPinned)inspectorOpen=false;
  lastContext=key;
- const visible=route==='markup'&&inspectorOpen&&!focusMode;
+ const visible=route==='markup'&&inspectorOpen&&!focusMode,wasVisible=app.classList.contains('ev-inspector-open');
  // Opening an inspector must not move the drawing under an active pointer.
- if(route==='markup'&&visible!==app.classList.contains('ev-inspector-open'))viewIsFit=false;
+ if(route==='markup'&&visible!==wasVisible)viewIsFit=false;
+ const itemMode=visible&&sideTab==='props'&&!!(sel||selSet.size),canvasTop=route==='markup'?cv.getBoundingClientRect().top:0;
  app.classList.toggle('ev-inspector-open',visible);app.classList.toggle('ev-focus-mode',focusMode&&route==='markup');
+ // On a phone the tool strip drops to one row while an item is selected; keep the drawing where it was on screen.
+ if(app.classList.contains('ev-item-selected')!==itemMode){app.classList.toggle('ev-item-selected',itemMode);if(route==='markup'&&canvasTop){const shift=canvasTop-cv.getBoundingClientRect().top;if(shift){view.oy+=shift;viewIsFit=false;if(revealShift)revealShift.oy+=shift;
+  // A press in progress keeps its start point in step, so a tap is not read as a drag.
+  if(downPt)downPt[1]+=shift;if(startView)startView.oy+=shift;drawCanvas();}}}
+ if(!visible&&wasVisible)restoreReveal();
+ if(visible&&!wasVisible)sheetOpenedAt=performance.now();
  $('side').classList.remove('hidedesk');$('side').classList.toggle('open',visible);
  $('evInspectorTitle').textContent=sideTab==='props'?'Selected item':'Plan settings';
+ $('evInspectorBack').hidden=sideTab!=='props';
  $('evInspectorToggle')?.setAttribute('aria-expanded',String(visible));
  $('evFocus').setAttribute('aria-pressed',String(focusMode));$('evFocus').title=focusMode?'Exit focus view':'Focus on the drawing';
 }
 function openInspector(){
  if(focusMode)toggleFocus();inspectorOpen=true;inspectorPinned=true;sideTab='pack';setSideTab();syncInspector();
+ // On a phone, Plan settings opens at full height so at least one whole card shows below the section tabs.
+ if(matchMedia('(max-width:700px)').matches&&sheetState!=='full'){setSheet('full');sheetAuto=true;}
 }
 function toggleFocus(){
  if(!focusMode){focusSnapshot={inspectorOpen,inspectorPinned,palOpen};focusMode=true;palOpen=false;syncPalette();}
@@ -166,9 +179,55 @@ function toggleFocus(){
  syncInspector();
 }
 $('evCollapseNav').onclick=()=>{navChoice=!app.classList.contains('ev-nav-collapsed');syncNav();};
-$('evInspectorExpand').onclick=()=>{const expanded=app.classList.toggle('ev-inspector-expanded');$('evInspectorExpand').setAttribute('aria-expanded',String(expanded));$('evInspectorExpand').setAttribute('aria-label',expanded?'Reduce settings panel':'Expand settings panel');$('evInspectorExpand').textContent=expanded?'Reduce':'Expand';};
+function setSheet(state){
+ sheetState=state;app.classList.toggle('ev-sheet-peek',state==='peek');app.classList.toggle('ev-inspector-expanded',state==='full');
+ sheetHandle.setAttribute('aria-label','Resize panel: '+(state==='peek'?'header only':state==='full'?'full height':'half height'));
+ // Bring the selected item into the strip above the panel once the new height has been laid out.
+ requestAnimationFrame(()=>revealSelection());
+}
+// A tap on the plan opens the sheet under the finger; ignore the click that follows that same tap.
+sheetHandle.onclick=()=>performance.now()-sheetOpenedAt<450?null:(sheetAuto=false,setSheet(sheetState==='half'?'full':sheetState==='full'?'peek':'half'));
+$('evInspectorBack').onclick=()=>openInspector();
 $('evInspectorClose').onclick=()=>{inspectorOpen=false;inspectorPinned=false;syncInspector();$('evInspectorToggle')?.focus();};
-cv.addEventListener('pointerup',()=>{if(route==='markup'&&!focusMode&&!inspectorOpen&&tool==='select'&&sideTab==='props'&&(sel||selSet.size)){inspectorOpen=true;inspectorPinned=false;renderSide();}});
+// Selecting an item never zooms or refits. When the inspector, the picker or the phone sheet would cover the item,
+// pan by the least amount that brings it into the clear area, and undo that pan on close if the view has not been moved since.
+let revealShift=null,openedOnPress=false;
+function coveredRect(){
+ const c=cv.getBoundingClientRect(),r={l:c.left,t:c.top,r:c.right,b:c.bottom};
+ if(app.classList.contains('ev-inspector-open')){const s=$('side').getBoundingClientRect();
+  if(s.width&&s.height&&s.left<c.right&&s.right>c.left&&s.top<c.bottom){if(s.left<=c.left+2&&s.right>=c.right-2)r.b=Math.min(r.b,s.top);else if(s.left>c.left)r.r=Math.min(r.r,s.left);}}
+ const rail=$('rail');if(!rail.classList.contains('closed')){const q=rail.getBoundingClientRect();if(q.width&&q.right>r.l)r.l=Math.min(q.right,r.r);}
+ const hint=$('hint');if(hint&&hint.classList.contains('show')){const q=hint.getBoundingClientRect();if(q.height&&q.top>r.t&&q.top<r.b)r.b=Math.min(r.b,q.top);}
+ return r;
+}
+function itemScreenBox(it){
+ const p=activePhoto();if(!p||!it)return null;let b=null;try{b=itemBounds(it,p);}catch(_){}if(!b||![b.x0,b.y0,b.x1,b.y1].every(Number.isFinite))return null;
+ const c=cv.getBoundingClientRect(),box={l:c.left+b.x0*view.zoom+view.ox,t:c.top+b.y0*view.zoom+view.oy,r:c.left+b.x1*view.zoom+view.ox,b:c.top+b.y1*view.zoom+view.oy};
+ // Keep the item's reference pill in view too: it is how the item is named on the plan.
+ const pill=window.EVWorkbench?.pillFor?.(it.id);
+ if(pill){box.l=Math.min(box.l,c.left+pill.x);box.t=Math.min(box.t,c.top+pill.y);box.r=Math.max(box.r,c.left+pill.x+pill.w);box.b=Math.max(box.b,c.top+pill.y+pill.h);}
+ return box;
+}
+function revealSelection(){
+ if(route!=='markup'||!sel||!app.classList.contains('ev-inspector-open'))return;
+ const box=itemScreenBox(findItem(sel)),area=coveredRect(),m=24;if(!box)return;
+ const fit=(lo,hi,a,b)=>{const room=b-a-2*m;if(hi-lo>room)return a+m-lo;return lo<a+m?a+m-lo:hi>b-m?b-m-hi:0;};
+ const dx=fit(box.l,box.r,area.l,area.r),dy=fit(box.t,box.b,area.t,area.b);if(!dx&&!dy)return;
+ view.ox+=dx;view.oy+=dy;viewIsFit=false;
+ revealShift=revealShift&&revealShift.ox===view.ox-dx&&revealShift.oy===view.oy-dy?{dx:revealShift.dx+dx,dy:revealShift.dy+dy,ox:view.ox,oy:view.oy}:{dx,dy,ox:view.ox,oy:view.oy};
+ drawCanvas();
+}
+function restoreReveal(){
+ const r=revealShift;revealShift=null;if(!r||route!=='markup')return;
+ if(Math.abs(view.ox-r.ox)<.5&&Math.abs(view.oy-r.oy)<.5){view.ox-=r.dx;view.oy-=r.dy;drawCanvas();}
+}
+cv.addEventListener('pointerdown',()=>{openedOnPress=app.classList.contains('ev-inspector-open');
+ // The floating picker closes when the plan is touched, so it never sits over the drawing being edited.
+ if(palOpen&&route==='markup'){palOpen=false;syncPalette();}},true);
+cv.addEventListener('pointerup',()=>{
+ if(route==='markup'&&!focusMode&&!inspectorOpen&&tool==='select'&&sideTab==='props'&&(sel||selSet.size)){inspectorOpen=true;inspectorPinned=false;renderSide();}
+ if(route==='markup'&&!openedOnPress&&sel&&app.classList.contains('ev-inspector-open')){openedOnPress=true;revealSelection();}
+});
 $('btnSide').onclick=openInspector;focusButton.onclick=toggleFocus;
 strip.addEventListener('click',e=>{if(e.target.closest('#evInspectorToggle'))openInspector();});
 $('rail').addEventListener('click',e=>{if(e.target.closest('[data-tool]')){palOpen=false;syncPalette();}});
@@ -188,9 +247,31 @@ function updateChrome(){
  $('evIssuePlans').hidden=route!=='markup';
  app.querySelectorAll('[data-ev-route]').forEach(b=>{if(b.dataset.evRoute===route)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const p=activePhoto();
- const markup=icon('plan')+'<select aria-label="Active plan" id="evActivePlan">'+(pack.photos.length?pack.photos.map(p=>'<option value="'+h(p.id)+'" '+(p.id===pack.active?'selected':'')+'>'+h(p.name)+'</option>').join(''):'<option>No plans yet</option>')+'</select>'+btn('Add files','add-files','','plus')+'<button class="ev-btn" data-ev-action="evidence-overlay" aria-pressed="'+String(!!window.EVPlanning?.overlayActive())+'" title="M: measured, A: assumed, !: missing">Evidence'+(window.EVPlanning?.overlayActive()?' · M / A / !':'')+'</button><span class="ev-plan-meta">'+(p?p.items.length+' items':'Photos · PDF · ZIP')+'</span>'+(p?'<span class="ev-scale-status '+(p.scale?.pxPerM?'set':'')+'">'+(p.scale?.pxPerM?'Scale recorded':'Scale not set')+'</span>':'')+'<button class="ev-btn" id="evInspectorToggle" aria-label="Plan settings" aria-controls="side" aria-expanded="false">'+icon('tools')+'<span>Plan settings</span></button>';
+ const markup=icon('plan')+'<select aria-label="Active plan" id="evActivePlan">'+(pack.photos.length?pack.photos.map(p=>'<option value="'+h(p.id)+'" '+(p.id===pack.active?'selected':'')+'>'+h(p.name)+'</option>').join(''):'<option>No plans yet</option>')+'</select>'+btn('Add files','add-files','','plus')+'<button class="ev-btn" data-ev-action="evidence-overlay" aria-pressed="'+String(!!window.EVPlanning?.overlayActive())+'" title="M: measured, A: assumed, !: missing">Evidence'+(window.EVPlanning?.overlayActive()?' · M / A / !':'')+'</button><span class="ev-plan-meta">'+(p?p.items.length+' items':'Photos · PDF · ZIP')+'</span>'+(p?scaleButton(p):'')+'<button class="ev-btn" id="evInspectorToggle" aria-label="Plan settings" aria-controls="side" aria-expanded="false">'+icon('sliders')+'<span>Plan settings</span></button>';
  if(markup!==stripSignature){strip.innerHTML=markup;stripSignature=markup;$('evActivePlan').onchange=e=>openPlan(e.target.value);}
+ if(route==='markup')syncNextStep();
  syncInspector();syncBackupState();
+}
+// The plan scale is a real control at every width: amber Set scale until the active plan has a scale, then Scaled with its references.
+function scaleButton(p){
+ const set=!!p.scale?.pxPerM;let refs='';try{const ss=set?scaleSpread(p):null;if(ss)refs=' · '+ss.n+' refs'+(ss.pct>8?' ±'+ss.pct+'%':'');}catch(_){}
+ const text=set?'Scaled'+refs:'Set scale',name=set?'Scaled'+refs+'. Add a reference or clear the scale':'Set scale. This plan has no scale yet';
+ return '<button type="button" class="ev-btn ev-scale-btn '+(set?'set':'unset')+'" data-ev-action="set-scale" aria-label="'+h(name)+'" title="'+h(set?'Add another reference or clear the scale':'Tap both ends of something you know the length of')+'">'+icon(set?'check':'ruler')+'<span>'+h(text)+'</span></button>';
+}
+// The header's single primary action follows the next step on this project.
+function nextStep(){
+ let n=null;try{n=markupNextAction();}catch(_){}
+ const map={'fn:addphotos':['add-files','plus'],'tool:scale':['set-scale','ruler'],'fn:chargers':['place-charger','plus'],'fn:cabling':['draw-route','pen']},m=n&&map[n.act];
+ return m?{label:n.title,action:m[0],icon:m[1],detail:n.detail}:{label:'Issue plans',action:'plans',icon:'send',detail:'Review the marked-up plans and download the PDF'};
+}
+function syncNextStep(){
+ const b=$('evIssuePlans'),n=nextStep(),sig=n.action+'|'+n.label;if(!b||b.dataset.sig===sig)return;
+ b.dataset.sig=sig;b.dataset.evAction=n.action;b.title=n.detail;b.innerHTML=icon(n.icon)+'<span>'+h(n.label)+'</span>';
+}
+function openPicker(category){
+ if(route!=='markup')go('markup');if(focusMode)toggleFocus();
+ inspectorOpen=false;inspectorPinned=false;syncInspector();setTool('select');palCat=category;palOpen=true;syncPalette();
+ requestAnimationFrame(()=>document.querySelector('#rail .palsec.show [data-tool]')?.focus({preventScroll:true}));
 }
 const baseRenderSide=renderSide;
 renderSide=function(){baseRenderSide();updateChrome();};
@@ -278,7 +359,8 @@ function overviewPage(){
  const missing=[!pack.name?'project name':'',!pack.address?'site address':'',!pack.surveyedBy?'project lead':''].filter(Boolean);
  if(missing.length)tasks.push(['details',missing.length===1?'Add '+missing[0]:'Add missing site details',missing.length===1?'Enter this in the project details.':missing.map(t=>t[0].toUpperCase()+t.slice(1)).join(' · '),'plan']);
  if(!s.plans)tasks.push(['add-files','Add your first plan','Upload a photo, PDF or survey ZIP','plus']);
- else if(pack.photos.some(x=>!x.scale?.pxPerM))tasks.push(['scale-review','Review the plan scale','Set a reference before measuring routes','pen']);
+ else if(pack.photos.some(x=>!x.scale?.pxPerM))tasks.push(['scale-review','Set the plan scale','Tap both ends of a known length before measuring routes','pen']);
+ if(s.plans){const next=nextStep();if(next.action==='place-charger')tasks.push(['place-charger','Place the first charger','Open Chargers & bays and tap the plan','plus']);else if(next.action==='draw-route')tasks.push(['draw-route','Draw the supply route','Open Cabling and draw the route to the charger','pen']);}
  if(s.snags)tasks.push(['snags','Review '+count(s.snags,'open snag'),'Check the snag, who will fix it and its target date','flag']);
  if(!pack.programme?.start)tasks.push(['programme','Set the programme dates','Set activity dates and assign the work','calendar']);
  const auditTask=window.EVAudit?.task();if(auditTask)tasks.push(auditTask);
@@ -356,7 +438,7 @@ async function newProject(example=false,audit=false){return changeProject(async(
   if(audit&&window.EVAuditCore){pack.audit=EVAuditCore.create({kind:'audit',auditor:pack.surveyedBy||''});go('audit');}
   else{go('overview');openDetails(0);}}
 });}
-function openPlan(id){if(!photoById(id))return;finishDrawing();pack.active=id;sideTab='pack';packSec='capture';setSideTab();go('markup');fitView();draw();autosave();}
+function openPlan(id){if(!photoById(id))return;finishDrawing();pack.active=id;sideTab='pack';packSec='capture';setSideTab();go('markup');fitView();draw();updateHint();autosave();}
 function panel(section){go('markup');packSec=section;openInspector();}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 function slug(v){return String(v||'EV-project').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,100);}
@@ -436,7 +518,9 @@ openReview=function(mode){activeIssue=null;baseOpenReview(mode);const button=$('
 const actions={
  'workspace':()=>go(hasWork()?'overview':'projects'),
  'planning':()=>go('planning'),'evidence-overlay':()=>{EVPlanning.toggleOverlay();updateChrome();},'recover-projects':()=>EVPlanning.recoverProjects(),
- 'new':()=>newProject(),'example':()=>newProject(true),'backup-later':()=>{try{const ids=JSON.parse(sessionStorage.getItem(laterKey)||'[]');sessionStorage.setItem(laterKey,JSON.stringify([...ids.filter(x=>x!==pack.projId),pack.projId].slice(-50)));}catch(_){freshProjects.add(pack.projId);}go('overview');},'open':()=>{if(!projectBusy)$('fileOpen').click();},'details':()=>openDetails(),'backup':backup,'markup':()=>go('markup'),'programme':()=>go('programme'),'snags':()=>go('snags'),'scale-review':()=>{const p=pack.photos.find(p=>!p.scale?.pxPerM);if(p)openPlan(p.id);else go('markup');setTool('scale');},'issue':()=>go('issue'),'showroom':()=>window.openCharger3D?.(),
+ 'new':()=>newProject(),'example':()=>newProject(true),'backup-later':()=>{try{const ids=JSON.parse(sessionStorage.getItem(laterKey)||'[]');sessionStorage.setItem(laterKey,JSON.stringify([...ids.filter(x=>x!==pack.projId),pack.projId].slice(-50)));}catch(_){freshProjects.add(pack.projId);}go('overview');},'open':()=>{if(!projectBusy)$('fileOpen').click();},'details':()=>openDetails(),'backup':backup,'markup':()=>go('markup'),'programme':()=>go('programme'),'snags':()=>go('snags'),'scale-review':()=>{const p=pack.photos.find(p=>!p.scale?.pxPerM);if(p)openPlan(p.id);actions['set-scale']();},
+ 'set-scale':()=>{if(route!=='markup')go('markup');if(!activePhoto()){toast('Add a plan or photo first.');return;}palOpen=false;syncPalette();setTool('scale');},
+ 'place-charger':()=>openPicker('chargers'),'draw-route':()=>openPicker('cabling'),'issue':()=>go('issue'),'showroom':()=>window.openCharger3D?.(),
  'add-files':()=>{go('markup');$('filePhoto').click();},'add-snag':()=>{if(!pack.photos.length){go('markup');toast('Add a plan or photo, then place a snag marker.');return;}go('markup');setTool('mark:snag');},
  'audit':()=>{if(!window.EVAudit)return;EVAudit.start();go('audit');},'audit-setup':()=>window.EVAudit?.show('setup'),'audit-evidence':()=>window.EVAudit?.show('evidence'),'audit-pack':()=>window.EVDelivery?.openReport('audit'),'new-audit':()=>newProject(false,true),
  'snag-report':()=>window.EVDelivery?.openReport('snags'),'programme-report':()=>window.EVDelivery?.openReport('programme'),'plans':openPlanReview,'engineer':()=>{if(!pack.photos.length)return actions['plans']();openReview('office');},'client':()=>{if(!pack.photos.length)return actions['plans']();openReview('customer');},'png':()=>{if(!activePhoto())return actions['plans']();$('btnPng').click();},'cdm':()=>window.evspCdmOpen?.(),'sld':()=>openSld(),'calcs':()=>{if(route!=='markup')go('markup');openCableCheck();},'sim':()=>openSim(),'dno':()=>openDnoHelper(),'materials':()=>openBom(),'settings':()=>panel('output')
@@ -456,7 +540,8 @@ app.addEventListener('click',async e=>{
 $('evMobileNav').onclick=()=>{const on=$('evSidebar').classList.toggle('open');$('evNavBackdrop').hidden=!on;$('evMobileNav').setAttribute('aria-expanded',String(on));};
 $('evTechnical').onclick=()=>{const menu=$('evTechMenu'),b=$('evTechnical'),r=b.getBoundingClientRect();menu.hidden=!menu.hidden;b.setAttribute('aria-expanded',String(!menu.hidden));menu.style.left=Math.max(8,Math.min(r.left,innerWidth-268))+'px';menu.style.top=r.bottom+8+'px';if(!menu.hidden)menu.querySelector('button').focus();};
 document.addEventListener('click',e=>{if(!tech.contains(e.target)){$('evTechMenu').hidden=true;$('evTechnical').setAttribute('aria-expanded','false');}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('evTechMenu').hidden=true;$('evTechnical').setAttribute('aria-expanded','false');closeNav();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('evTechMenu').hidden=true;$('evTechnical').setAttribute('aria-expanded','false');closeNav();
+ if(palOpen&&route==='markup'&&!app.inert&&!e.defaultPrevented){palOpen=false;syncPalette();const tab=document.querySelector('#catbar .cattab[data-cat="'+palCat+'"]');(tab&&tab.getClientRects().length?tab:toolCategory).focus({preventScroll:true});}}});
 const importObserver=new MutationObserver(()=>{updateChrome();});importObserver.observe($('scName'),{childList:true,subtree:true});
 async function importBackup(file){return changeProject(async()=>{
  let incoming;

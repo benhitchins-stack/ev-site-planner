@@ -17,17 +17,34 @@ function ensureReferences(){
  for(const it of items)if(!it.planRef){const pre=prefixes[it.type];let ref;do{ref=pre+'-'+String(next[pre]=(next[pre]||0)+1).padStart(2,'0');}while(used.has(ref));it.planRef=ref;used.add(ref);}
 }
 const itemTitle=it=>it.type==='unit'?unitDisplayName(it):typeName(it);
-const itemSummary=it=>[it.type==='unit'?unitDisplayName(it):typeName(it),it.type==='unit'?(it.kw||'7')+' kW':'',it.provision==='passive'?'Future position':''].filter(Boolean).join(' · ');
+const fixedDate=v=>{const d=/^\d{4}-\d{2}-\d{2}/.test(String(v||''))?new Date(String(v).slice(0,10)+'T12:00:00'):null;return d&&!Number.isNaN(+d)?d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):String(v||'');};
+// A snag's summary is its severity and status; the plan name is already in the plan selector.
+const snagSummary=it=>[(typeof SNAG_SEVS!=='undefined'&&SNAG_SEVS[it.sev||'minor']?.label)||({minor:'Minor',major:'Major',safety:'Safety'}[it.sev]||'Minor'),it.st==='fixed'?'Fixed':'Open',it.st==='fixed'&&it.fixedOn?fixedDate(it.fixedOn):''].filter(Boolean).join(' · ');
+const itemSummary=it=>it.type==='mark'&&it.kind==='snag'?snagSummary(it):[it.type==='unit'?unitDisplayName(it):typeName(it),it.type==='unit'?(it.kw||'7')+' kW':'',it.provision==='passive'?'Future position':''].filter(Boolean).join(' · ');
 
 // Restructure the existing fields before wireSide attaches their original handlers.
 const originalProps=propsPanel, openSections=new Map();
 function groupFor(label){
- if(/^(Label(?: \(optional\))?$|Charger$|Power$|Make & model|Cable type|Route type|Cables through|Run length|Length|Caption|Text|Rating|Phase|Phases|Circuit|Name|Assigned|Finding|Severity|Status)/i.test(label))return 'details';
+ if(/^(Label(?: \(optional\)| · optional)?$|Description|Charger$|Power$|Make & model|Cable type|Route type|Cables through|Run length|Length|Caption|Text|Rating|Phase|Phases|Circuit|Name|Assigned|Finding|Severity|Status|What needs putting right|To be fixed by|Before \/ after photos|Rotate|Rotation)/i.test(label))return 'details';
  if(/^(Configuration|Concrete base|Base size|Mounting|Cable entry|Lead reach)/i.test(label))return 'mounting';
- if(/^(Colour|Color|Design$|Size|Width|Height|Rotate|Rotation|3D|Drawing view|View|Show as|Label position|Label size|Align to guide|Snap point)/i.test(label))return 'appearance';
+ if(/^(Colour|Color|Design$|Size|Width|Height|3D|Drawing view|View|Show as|Label position|Label size|Align to guide|Snap point)/i.test(label))return 'appearance';
  if(/^Design option/i.test(label))return 'options';
  return 'electrical';
 }
+function enhanceRotate(fields,it){
+ const field=fields.find(n=>/^Rotat/i.test(n.querySelector('label')?.textContent.trim()||'')&&n.querySelector('.stepper [data-step$="rot"]'));if(!field)return;
+ const angle=Math.round((((Number(it.rot)||0)%360)+360)%360),thing=it.type==='unit'?'charger':it.type==='bay'?'bay':'item';
+ field.insertAdjacentHTML('beforeend','<div class="wb-rotate"><button type="button" class="pbtn" data-wb-turn="-90">Turn 90° left</button><button type="button" class="pbtn" data-wb-turn="90">Turn 90° right</button><label class="wb-rotate-angle"><span>Angle</span><input type="number" id="wbRotAngle" min="0" max="359" step="1" inputmode="numeric" value="'+angle+'" aria-label="Rotation angle in degrees"><span aria-hidden="true">°</span></label></div>'+(guideSnapOn(it)?'<p class="wb-note">To line up with a kerb or wall, drop a Guide line along it and drag the '+thing+' onto it. You can also drag the round handle above the '+thing+' on the plan.</p>':'<p class="wb-note">You can also drag the round handle above the '+thing+' on the plan.</p>'));
+}
+function setRotation(it,value){
+ const next=((Math.round(Number(value))%360)+360)%360;if(!Number.isFinite(next))return;
+ const current=Number(it.rot)||0;if(((current%360)+360)%360===next)return;
+ pushHist();
+ if(it.type==='bay'){const run=bayRun(it),delta=next-current;if(run.length>1)rotateRunAbout(run,it.x,it.y,delta);else it.rot=next;}else it.rot=next;
+ draw();renderSide();
+}
+$('side').addEventListener('click',e=>{const turn=e.target.closest('[data-wb-turn]');if(!turn)return;const it=findItem(sel);if(it)setRotation(it,(Number(it.rot)||0)+Number(turn.dataset.wbTurn));});
+$('side').addEventListener('change',e=>{if(e.target.id!=='wbRotAngle')return;const it=findItem(sel);if(it&&e.target.value!=='')setRotation(it,e.target.value);});
 propsPanel=function(){
  const html=originalProps(),it=findItem(sel);if(!it||multiActive()||draftRoute)return html;
  ensureReferences();
@@ -49,11 +66,17 @@ propsPanel=function(){
   const label=groups.details.find(n=>n.querySelector('#ulabel'));
   if(label){const option=document.createElement('div');option.className='wb-field';for(const child of [...label.children])if(child.classList.contains('seg')||child.classList.contains('sub'))option.append(child);if(option.childElementCount)groups.options.unshift(option);}
   const power=groups.details.find(n=>n.querySelector('[data-kw]'));
-  if(power)for(const note of [...power.querySelectorAll('.sub')]){const details=document.createElement('details');details.className='wb-help';details.innerHTML='<summary>Electrical notes</summary>';note.replaceWith(details);details.append(note);}
+  if(power)for(const note of [...power.querySelectorAll('.sub')]){const details=document.createElement('details');details.className='wb-help';details.innerHTML='<summary>More about power ratings</summary>';note.replaceWith(details);details.append(note);}
   const model=groups.details.find(n=>n.querySelector('#umodel'));if(model){groups.details=groups.details.filter(n=>n!==model);groups.details.unshift(model);}
  }
  const labelField=groups.details.find(n=>n.querySelector('#ulabel')||n.querySelector('input[id$="label"]'));
  if(labelField){groups.details=groups.details.filter(n=>n!==labelField);groups.details.unshift(labelField);}
+ // The reference (CP-01) is automatic and shown in the header; the field holds only the user's own description.
+ const description=root.querySelector('#ulabel');
+ if(description&&it.planRef){if(description.getAttribute('value')===it.planRef)description.setAttribute('value','');const note=document.createElement('div');note.className='wb-note';note.textContent='Prints after '+it.planRef+' on the plan, key and PDFs.';description.after(note);}
+ enhanceRotate(groups.details,it);
+ // Pins, labels, arrows and boxes have only a few fields: show them together rather than in collapsed groups.
+ if(['mark','label','arrow','box'].includes(it.type)){for(const key of ['electrical','mounting','appearance']){groups.details.push(...groups[key]);groups[key]=[];}}
  card.replaceChildren();card.classList.add('wb-inspector');
  for(const [key,title] of [['details','Item details'],['electrical','Electrical settings'],['mounting','Mounting & base'],['appearance','Appearance'],['options','Design options']]){
   if(!groups[key].length)continue;
@@ -63,7 +86,11 @@ propsPanel=function(){
   const content=document.createElement('div');content.className='wb-section-body';content.append(...groups[key]);section.append(content);card.append(section);
  }
  const controls=document.createElement('div');controls.className='wb-item-actions';controls.append(...footer);
- if(it.type==='unit')controls.insertAdjacentHTML('afterbegin','<button type="button" class="ev-btn" data-wb-repeat>Place another like this</button>');
+ if(it.type==='unit')controls.insertAdjacentHTML('afterbegin','<button type="button" class="ev-btn" data-wb-repeat>Place another with these settings</button>');
+ const dup=controls.querySelector('#duplItem'),del=controls.querySelector('#delItem');
+ if(dup){dup.title='Duplicate · Ctrl+D';dup.setAttribute('aria-keyshortcuts','Control+D');}
+ if(del){del.title='Delete · Del';del.setAttribute('aria-keyshortcuts','Delete');}
+ if(it.type==='unit'&&dup)controls.insertAdjacentHTML('beforeend','<p class="wb-note">Place another copies the settings to a spot you tap; Duplicate puts a copy beside this one.</p>');
  card.append(controls);
  for(const note of card.querySelectorAll('.sub')){
   if(note.textContent.length<190||note.querySelector('b[style*="B4231F"]')||/Future charger position|Set the photo scale/.test(note.textContent))continue;
@@ -82,6 +109,8 @@ renderSide=function(){
  if($('padwmm'))$('padwmm').setAttribute('aria-label','Base width (mm)');if($('paddmm'))$('paddmm').setAttribute('aria-label','Base depth (mm)');
  const it=sideTab==='props'&&!multiActive()&&!draftRoute?findItem(sel):null;
  $('side').classList.toggle('wb-has-item',!!it);
+ // Plan settings has its own strip button and a back link in the item header, so the Plans/Selected segment is hidden there.
+ $('side').classList.toggle('wb-pack',sideTab==='pack');
  const title=$('evInspectorTitle');if(it&&title){title.textContent=(it.planRef?it.planRef+' · ':'')+typeName(it);let sub=$('wbItemSummary');if(!sub){sub=document.createElement('span');sub.id='wbItemSummary';title.after(sub);}sub.textContent=itemSummary(it);}
  else $('wbItemSummary')?.remove();
  $('sideScroll').scrollTop=same?scroll:0;
@@ -165,7 +194,7 @@ $('side').addEventListener('click',e=>{if(e.target.closest('[data-eqview]')&&tec
 $('side').addEventListener('click',e=>{if(e.target.closest('[data-wb-repeat]')){const it=findItem(sel);if(it?.type==='unit'){const copy=JSON.parse(JSON.stringify(it));setTool('unit:'+it.variant);repeatItem=copy;$('evInspectorClose').click();toast('Tap the plan to place another '+unitDisplayName(it)+'.');}}});
 
 // Short references on screen retain the original labels and full export descriptions.
-let labelBoxes=[],referenceHits=[];
+let labelBoxes=[],referenceHits=[],pillBoxes=new Map();
 const originalScene=drawScene;
 drawScene=function(c,vw,k,forExport){ensureReferences();labelBoxes=[];if(!forExport)referenceHits=[];originalScene(c,vw,k,forExport);};
 function drawTechnicalEquipment(c,vw,it,k,forExport){
@@ -197,10 +226,13 @@ for(const name of ['drawUnit','drawPlanEquip','drawIsoEquip','drawEvdb','drawIpE
  };
 }
 function drawReferences(c){
+ // Pill boxes from the last frame tell the charger spin handle which side is free.
+ const placed=new Map();pillBoxes=placed;
  if(!labelBoxes.length)return;
- const occupied=Object.values(routeLabelHit).filter(b=>b&&Number.isFinite(b.x)),W=cvwrap.clientWidth,H=cvwrap.clientHeight;
- // Avoid equipment bounds as well as previously placed labels.
- const equipment=labelBoxes.map(({it,vw})=>{const w=Math.max(22,(it.w||40)*vw.zoom),h=it.type==='unit'?w*(eqViewOf(it)==='plan'?unitPlanRatio(it):1.8):(it.h||it.w||40)*vw.zoom,spin=it.type==='unit'&&sel===it.id&&pack.unit3d&&eqViewOf(it)==='side'?45:0;return{x:it.x*vw.zoom+vw.ox-w/2,y:it.y*vw.zoom+vw.oy-h/2,w,h:h+spin};});
+ // Route labels and the kW and charger-number badges drawn this frame are occupied, so a pill never covers a rating.
+ const occupied=[...Object.values(routeLabelHit),...(typeof badgeHit!=='undefined'?badgeHit:[])].filter(b=>b&&Number.isFinite(b.x)),W=cvwrap.clientWidth,H=cvwrap.clientHeight;
+ // Avoid equipment bounds as well as previously placed labels. Placement does not depend on the selection, so pills stay put when an item is tapped.
+ const equipment=labelBoxes.map(({it,vw})=>{const w=Math.max(22,(it.w||40)*vw.zoom),h=it.type==='unit'?w*(eqViewOf(it)==='plan'?unitPlanRatio(it):1.8):(it.h||it.w||40)*vw.zoom;return{x:it.x*vw.zoom+vw.ox-w/2,y:it.y*vw.zoom+vw.oy-h/2,w,h};});
  const overlap=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
  c.save();c.font='650 12px Hanken Grotesk, sans-serif';
  labelBoxes.forEach(({it,vw},idx)=>{
@@ -209,7 +241,7 @@ function drawReferences(c){
   const ys=it.labelPos==='top'?[box.y-h-12,box.y+box.h+12]:[box.y+box.h+12,box.y-h-12];
   const candidates=ys.flatMap(y=>[0,-w-12,w+12].map(dx=>({x:cx-w/2+dx,y,w,h}))).concat([{x:box.x+box.w+16,y:cy-h/2,w,h},{x:box.x-w-16,y:cy-h/2,w,h}]);
   for(const b of candidates){b.x=Math.max(8,Math.min(W-w-8,b.x));b.y=Math.max(8,Math.min(H-h-8,b.y));b.score=occupied.reduce((n,o)=>n+overlap(b,o)*8,0)+equipment.reduce((n,o)=>n+overlap(b,o)*4,0)+Math.hypot(b.x+w/2-cx,b.y+h/2-cy);}
-  const b=candidates.sort((a,b)=>a.score-b.score)[0];occupied.push(b);
+  const b=candidates.sort((a,b)=>a.score-b.score)[0];occupied.push(b);placed.set(it.id,b);
   if(cx<0||cx>W||cy<0||cy>H)return;referenceHits.push({...b,id:it.id,photo:pack.active});
   c.strokeStyle=selected?'#2563eb':'#8195a5';c.lineWidth=selected?1.5:1;c.beginPath();c.moveTo(cx,cy);c.lineTo(Math.max(b.x,Math.min(b.x+w,cx)),Math.max(b.y,Math.min(b.y+h,cy)));c.stroke();
   c.fillStyle=selected?'#eff5ff':'#fff';rrect(c,b.x,b.y,w,h,5);c.fill();c.strokeStyle=selected?'#2563eb':'#aebdca';c.stroke();c.fillStyle='#183043';c.textAlign='center';c.textBaseline='middle';c.fillText(text,b.x+w/2,b.y+h/2);
@@ -229,16 +261,17 @@ function updateKey(p){
  if(keyPanel.hidden)return;
  const rows=p.items.filter(optVisible).filter(i=>i.planRef||i.type==='route'&&ROUTE_DEFS[i.kind]);
  const signature=JSON.stringify(rows.map(i=>[i.id,i.planRef,i.label,i.kind,i.model,i.kw,i.provision]));if(signature===keySignature)return;keySignature=signature;
- keyPanel.innerHTML='<div class="wb-key-heading"><b>Plan key</b><button type="button" class="ev-icon-btn" data-wb-close-key aria-label="Close plan key">×</button></div><div class="wb-key-rows">'+rows.map(it=>'<div><b>'+esc(it.planRef||(ROUTE_DEFS[it.kind]?.short||'Route'))+'</b><span>'+esc(it.planRef?[it.label,itemSummary(it)].filter(Boolean).join(' · '):ROUTE_DEFS[it.kind].name)+'</span></div>').join('')+'</div>';
+ keyPanel.innerHTML='<div class="wb-key-heading"><b>Plan key</b><button type="button" class="ev-icon-btn" data-wb-close-key aria-label="Close plan key">×</button></div><div class="wb-key-rows">'+rows.map(it=>'<div>'+(it.type==='unit'&&UNIT_DEFS[it.variant]?unitMini(it.variant):'')+'<b>'+esc(it.planRef||(ROUTE_DEFS[it.kind]?.short||'Route'))+'</b><span>'+esc(it.planRef?[it.label!==it.planRef?it.label:'',itemSummary(it)].filter(Boolean).join(' · '):ROUTE_DEFS[it.kind].name)+'</span></div>').join('')+'</div>';
 }
 function addDrawingControls(){
  const strip=$('evPlanStrip');if(!strip)return;
  if($('wbDrawingTools')){$('wbLabelMode').value=compact()?'compact':'full';$('wbSymbolStyle').value=technical()?'technical':'illustrated';return;}
  const controls=document.createElement('details');controls.id='wbDrawingTools';
- controls.innerHTML='<summary class="ev-btn" aria-label="Drawing display options" title="Drawing display options">Display</summary><div class="wb-display-options"><label class="wb-label-mode"><span>Equipment labels</span><select id="wbLabelMode" aria-label="On-screen equipment labels"><option value="compact">References</option><option value="full">Full details</option></select></label><label class="wb-label-mode"><span>Equipment style</span><select id="wbSymbolStyle" aria-label="Equipment drawing style"><option value="technical">Technical symbols</option><option value="illustrated">Product illustrations</option></select></label><p>Equipment style applies to the drawing and exports. Exports retain full descriptions.</p><button type="button" class="ev-btn" id="wbKeyToggle" aria-expanded="'+!keyPanel.hidden+'" aria-controls="wbPlanKey">'+(keyPanel.hidden?'Show plan key':'Hide plan key')+'</button></div>';
+ controls.innerHTML='<summary class="ev-btn" aria-label="Drawing display options" title="Drawing display options">Display</summary><div class="wb-display-options"><label class="wb-label-mode"><span>Label text on screen</span><select id="wbLabelMode" aria-label="Label text on screen"><option value="compact">Reference only (CP-01)</option><option value="full">Full description</option></select></label><label class="wb-label-mode"><span>Equipment style</span><select id="wbSymbolStyle" aria-label="Equipment drawing style"><option value="technical">Technical symbols</option><option value="illustrated">Product illustrations</option></select></label><p>Equipment style applies to the drawing and exports. Exports keep full descriptions. To turn labels or the plan key off in exports, use Appearance.</p><button type="button" class="ev-btn" id="wbKeyToggle" aria-expanded="'+!keyPanel.hidden+'" aria-controls="wbPlanKey">'+(keyPanel.hidden?'Show plan key':'Hide plan key')+'</button><button type="button" class="ev-btn quiet" id="wbAllAppearance">All appearance settings</button></div>';
  strip.insertBefore(controls,$('evInspectorToggle'));$('wbLabelMode').value=compact()?'compact':'full';$('wbSymbolStyle').value=technical()?'technical':'illustrated';
  $('wbLabelMode').onchange=e=>{drawing().labels=e.target.value;drawCanvas();};
  $('wbSymbolStyle').onchange=e=>{drawing().symbols=e.target.value;drawCanvas();};
+ $('wbAllAppearance').onclick=()=>{controls.open=false;window.EVWorkspace?.openSettings('output');};
  $('wbKeyToggle').onclick=()=>{keyPanel.hidden=!keyPanel.hidden;keySignature='';$('wbKeyToggle').setAttribute('aria-expanded',String(!keyPanel.hidden));$('wbKeyToggle').textContent=keyPanel.hidden?'Show plan key':'Hide plan key';if(!keyPanel.hidden&&activePhoto())updateKey(activePhoto());};
 }
 document.addEventListener('click',e=>{const controls=$('wbDrawingTools');if(controls?.open&&!controls.contains(e.target))controls.open=false;});
@@ -284,5 +317,5 @@ renderPhotoToCanvas=function(p,maxW){
 };
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!keyPanel.hidden){keyPanel.hidden=true;$('wbKeyToggle')?.setAttribute('aria-expanded','false');if($('wbKeyToggle'))$('wbKeyToggle').textContent='Show plan key';}});
 installLibrary();renderSide();
-window.EVWorkbench={ensureReferences,renderArtwork,version:'workbench-r4'};
+window.EVWorkbench={ensureReferences,renderArtwork,pillFor:id=>pillBoxes.get(id)||null,version:'workbench-r5'};
 })();

@@ -762,11 +762,11 @@ header{display:flex;align-items:center;gap:12px;padding:calc(9px + env(safe-area
 <link rel="stylesheet" href="cdm-controls.css?v=03d5ac71c14a">
 <link rel="stylesheet" href="planning.css?v=52a86ac2abba">
 <link rel="stylesheet" href="audit.css?v=5f828ce2fa79">
-<link rel="stylesheet" href="workspace.css?v=f1b7c0cca5ab">
+<link rel="stylesheet" href="workspace.css?v=014c15fe0528">
 <link rel="stylesheet" href="home.css?v=f80227562a8f">
 <link rel="stylesheet" href="profile.css?v=eb44f7808522">
-<link rel="stylesheet" href="design-preview.css?v=6fdc30a3b701">
-<link rel="stylesheet" href="workbench.css?v=104371d8a3fd">
+<link rel="stylesheet" href="design-preview.css?v=7844b3e1edf7">
+<link rel="stylesheet" href="workbench.css?v=3b67f182602e">
 <link rel="stylesheet" href="guides.css?v=8f52ad1615c6">
 <link rel="stylesheet" href="help.css?v=8c7a86de7cd3">
 </head>
@@ -822,8 +822,8 @@ header{display:flex;align-items:center;gap:12px;padding:calc(9px + env(safe-area
       </div>
     </div>
     <div class="hgrp" role="group" aria-label="History">
-      <button class="hbtn" id="btnUndo" disabled style="opacity:.45" title="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7L4 12l5 5M4 12h11a5 5 0 0 1 0 10h-1"/></svg><span class="btn-label">Undo</span></button>
-      <button class="hbtn" id="btnRedo" disabled style="opacity:.45" title="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 7l5 5-5 5M20 12H9a5 5 0 0 0 0 10h1"/></svg><span class="btn-label">Redo</span></button>
+      <button class="hbtn" id="btnUndo" disabled style="opacity:.45" title="Undo · Ctrl+Z" aria-label="Undo" aria-keyshortcuts="Control+Z"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7L4 12l5 5M4 12h11a5 5 0 0 1 0 10h-1"/></svg><span class="btn-label">Undo</span></button>
+      <button class="hbtn" id="btnRedo" disabled style="opacity:.45" title="Redo · Ctrl+Shift+Z" aria-label="Redo" aria-keyshortcuts="Control+Shift+Z"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 7l5 5-5 5M20 12H9a5 5 0 0 0 0 10h1"/></svg><span class="btn-label">Redo</span></button>
     </div>
     <div style="position:relative" class="htools">
       <button class="hbtn" id="btnTools" title="Open the 3D showroom, practical guides and training courses"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="btn-label">More tools</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width:11px;height:11px"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -1057,39 +1057,12 @@ header .hgrp .hbtn + .hbtn{border-left-color:transparent;}
   .cattab:not(.on):hover{background:rgba(255,255,255,.65);}
 }
 /* ---- Pack panel section tabs ---- */
-.snav{position:sticky;top:0;z-index:6;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:-12px -12px 0;padding:10px 12px 9px;background:var(--panel);border-bottom:1px solid var(--line);}
+.snav{position:sticky;top:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:-12px -12px 0;padding:10px 12px 9px;background:var(--panel);border-bottom:1px solid var(--line);}
 .snav button{position:relative;flex:1 1 auto;min-height:30px;padding:5px 8px;border-radius:9px;border:1px solid transparent;background:transparent;font-size:11px;font-weight:700;color:var(--dim);cursor:pointer;transition:.12s;}
 .snav button.on{background:var(--accent);color:var(--accentInk);}
 .snav button:not(.on):hover{background:var(--panel2);border-color:var(--line);}
 .snav .sdot{position:absolute;top:4px;right:6px;width:6px;height:6px;border-radius:50%;box-shadow:0 0 0 2px var(--panel);}
 .snav button.on .sdot{box-shadow:0 0 0 2px var(--accent);}
-/* ---- project stage navigation ---- */
-.stagebar{display:flex;align-items:center;gap:2px;flex:none;padding:5px calc(14px + env(safe-area-inset-right,0px)) 5px calc(14px + env(safe-area-inset-left,0px));background:#FFFFFF;border-bottom:1px solid var(--line);overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:38;}
-.stagebar::-webkit-scrollbar{display:none;}
-.stagegroup{flex:none;margin:0 5px 0 8px;font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
-.stgbtn{display:flex;align-items:center;gap:7px;flex:none;padding:5px 11px;min-height:31px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--dim);font-size:12px;font-weight:650;white-space:nowrap;cursor:pointer;transition:background .12s,border-color .12s;}
-.stgbtn:focus-visible{outline:none;box-shadow:var(--focus-ring);}
-.stgbtn.on{background:rgba(30,107,255,.10);border-color:rgba(30,107,255,.32);color:var(--accentText);}
-.stgbtn>svg{width:14px;height:14px;flex:none;}
-.stgstep{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:var(--panel);border:1px solid var(--line2);color:var(--faint);font-size:9px;font-weight:800;}
-.stgbtn.on .stgstep{background:var(--accent);border-color:var(--accent);color:var(--accentInk);}
-.stgstep.done{background:#E7F6EC;border-color:#A8D9B8;color:#287544;}
-.stgstep.block{background:#FBE4E2;border-color:#F0BDB8;color:#A32820;}
-.stgnext{position:sticky;right:0;z-index:3;display:flex;align-items:center;gap:8px;flex:none;max-width:290px;margin-left:auto;padding:6px 11px;min-height:32px;border-radius:9px;border:1px solid rgba(30,107,255,.28);background:#F1F6FF;color:var(--accentText);font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:-10px 0 14px 3px #fff;}
-.stgnext span{min-width:0;overflow:hidden;text-overflow:ellipsis;}
-.stgnext svg{width:13px;height:13px;flex:none;}
-.stgdot{width:9px;height:9px;border-radius:50%;flex:none;background:transparent;border:1.6px solid #B9C2CA;box-sizing:border-box;}
-.stgdot.prog{background:var(--accent);border-color:var(--accent);}
-.stgdot.ready{background:#fff;border-color:#3B8557;border-width:2.6px;}
-.stgdot.done{background:#267A43;border-color:#267A43;}
-.stgdot.block{background:var(--warn);border-color:var(--warn);}
-.stgn{flex:none;font-size:10px;font-weight:750;line-height:1;padding:3px 6px;border-radius:9px;background:#FBF3DC;color:#7A5A10;border:1px solid #E8D9A8;}
-.stgbtn.blk .stgn{background:#FBE4E2;color:#A32820;border-color:#F0BDB8;}
-.stgsep{flex:none;width:12px;height:12px;color:var(--line2);}
-@media (hover:hover){ .stgbtn:not(.on):hover{background:var(--panel);color:var(--ink);} }
-@media (pointer:coarse){ .stgbtn{min-height:40px;padding:6px 12px;} }
-@media (max-width:900px){ .stgnext{max-width:170px;} }
-@media (max-width:700px){ .stagebar{padding:4px 8px;} .stagegroup{display:none;} .stgbtn{padding:5px 8px;font-size:11.5px;gap:6px;} .stgsep{display:none;} .stgnext{max-width:132px;margin-left:5px;} .stgnext span{max-width:88px;} }
 @media (min-width:960px){ .side.hidedesk{display:none;} }
 /* ---- stage header + overview ---- */
 .stghead{display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;}
@@ -3400,7 +3373,14 @@ function drawCanvas(){
 }
 
 /* draw onto any ctx with a given transform. labelK scales annotation glyph sizes */
+/* On-screen label registry for one frame: route labels and charger badges, so reference pills can keep clear of them.
+   Reset each screen frame so deleted or hidden routes leave no phantom boxes. */
+let badgeHit=[];
+/* At small zoom (the plan drawn narrower than 560 px) the kW badges and route labels are hidden on screen so the
+   reference pills stay readable and tappable. Exports always keep them. */
+function smallPlanView(vw,forExport){ if(forExport||vw!==view) return false; const p=activePhoto(); return !!p && p.imgW*vw.zoom<560; }
 function drawScene(c, vw, labelK, forExport){
+  if(!forExport){ routeLabelHit={}; badgeHit=[]; }
   if(!forExport) legendPillHide(); // drawLegend re-shows the Key pill if the key is collapsed
   const p = activePhoto();
   const sFn=(ix,iy)=>[ix*vw.zoom+vw.ox, iy*vw.zoom+vw.oy];
@@ -3779,7 +3759,7 @@ function drawUnitInner(c,vw,it,labelK,forExport){
     }
     c.restore(); c.setLineDash([]);
     if(pack.unit3d && uview==="side" && !window.EVDrawingStyle?.technical()){
-      const shx=cx+fsmDx, shy=cy+hEff/2+24;
+      const shp=unitSpinHandlePt(it), shx=shp[0], shy=shp[1];
       c.save();
       c.shadowColor="rgba(0,0,0,.35)"; c.shadowBlur=6; c.shadowOffsetY=2;
       c.fillStyle="#fff"; c.beginPath(); c.arc(shx,shy,12,0,Math.PI*2); c.fill();
@@ -3803,6 +3783,7 @@ function drawUnitInner(c,vw,it,labelK,forExport){
     if(units.length>1){
       const num=units.indexOf(it)+1;
       if(num>0){ const r2=12*labelK, bx=cx, by=cy-hEff/2+r2*0.4;
+        if(!forExport) badgeHit.push({x:bx-r2,y:by-r2,w:r2*2,h:r2*2});
         c.save(); c.shadowColor="rgba(0,0,0,.5)"; c.shadowBlur=5; c.shadowOffsetY=2;
         c.fillStyle="#4BA069"; c.beginPath(); c.arc(bx,by,r2,0,7); c.fill(); c.restore();
         c.strokeStyle="#fff"; c.lineWidth=2; c.beginPath(); c.arc(bx,by,r2,0,7); c.stroke();
@@ -3810,7 +3791,7 @@ function drawUnitInner(c,vw,it,labelK,forExport){
       }
     }
   }
-  if(it.kw){
+  if(it.kw && !(smallPlanView(vw,forExport) && sel!==it.id)){
     const kk=labK(it,labelK);
     const txt=it.kw+" kW"+(it.array?" · "+it.array:"");
     c.save();
@@ -3821,6 +3802,7 @@ function drawUnitInner(c,vw,it,labelK,forExport){
     c.shadowColor="transparent";
     c.fillStyle="#FFFFFF"; rrect(c,bx-bw2/2,by-bh2/2,bw2,bh2,4*kk); c.fill();
     c.strokeStyle="#8195A5"; c.lineWidth=1.1; c.stroke();
+    if(!forExport) badgeHit.push({x:bx-bw2/2,y:by-bh2/2,w:bw2,h:bh2});
     c.fillStyle="#183043"; c.textAlign="center"; c.textBaseline="middle"; c.fillText(txt,bx,by+0.5);
     c.restore();
   }
@@ -4253,7 +4235,8 @@ function equipHandlePts(it){
   const cx=it.x*view.zoom+view.ox, cy=it.y*view.zoom+view.oy;
   const d=equipDims(it); const w=d.w*view.zoom, h=d.h*view.zoom; const a=(it.rot||0)*Math.PI/180;
   const C=(lx,ly)=>[cx+lx*Math.cos(a)-ly*Math.sin(a), cy+lx*Math.sin(a)+ly*Math.cos(a)];
-  return { tl:C(-w/2,-h/2), tr:C(w/2,-h/2), bl:C(-w/2,h/2), br:C(w/2,h/2) };
+  // the rotate handle clears the charger's kW badge, which sits just above the unit
+  return { tl:C(-w/2,-h/2), tr:C(w/2,-h/2), bl:C(-w/2,h/2), br:C(w/2,h/2), t:C(0,-h/2), rot:C(0,-h/2-(it.type==="unit"&&it.kw?46:26)) };
 }
 function unitSpinHandlePt(it){
   const zm=view.zoom;
@@ -4261,11 +4244,12 @@ function unitSpinHandlePt(it){
   if(it.type==="feeder"){ const hEff=(it.w||150)*zm*fp3DAspect(it)*tiltK(it); return [it.x*zm+view.ox, it.y*zm+view.oy+hEff/2+24]; }
   if(it.type==="site"){ const hEff=(it.w||60)*zm*((SITE3D[it.kind]||{}).a||1)*tiltK(it); return [it.x*zm+view.ox, it.y*zm+view.oy+hEff/2+24]; }
   const w=it.w*zm;
-  const im=unitImage(it); const imr=(im&&im.complete&&im.naturalWidth)?im.height/im.width:1.9;
-  const hEff=w*imr*tiltK(it);
   const cx=it.x*zm+view.ox, cy=it.y*zm+view.oy;
   const dx=isFSMVariant(it.variant)?fsmImageOffsetX(it,w):0;
-  return [cx+dx, cy+hEff/2+24];
+  // Beside the unit rather than below it, so the reference pill never has to move out of its way.
+  const pill=window.EVWorkbench&&window.EVWorkbench.pillFor?window.EVWorkbench.pillFor(it.id):null;
+  const side=(pill&&pill.x+pill.w/2>cx+dx+4)?-1:1;
+  return [cx+dx+side*(w/2+26), cy];
 }
 function hitUnitSpinHandle(sx,sy){
   if(tool!=="select"||!sel||!pack.unit3d) return null;
@@ -4275,10 +4259,17 @@ function hitUnitSpinHandle(sx,sy){
   const isFP=(it.type==="feeder"&&!it.asLabel&&!it.detail&&eqViewOf(it)==="side");
   const isSite=(it.type==="site"&&SITE3D[it.kind]&&SITE3D[it.kind].spin===1&&eqViewOf(it)==="side");
   if(!isPark&&!isUnit&&!isFP&&!isSite) return null;
+  // The charger spin handle is only drawn in the illustrated style; an invisible handle must not catch a tap.
+  if(isUnit && window.EVDrawingStyle && window.EVDrawingStyle.technical()) return null;
   const H=unitSpinHandlePt(it); const R=coarse?20:13;
   return Math.hypot(sx-H[0],sy-H[1])<=R?{id:it.id}:null;
 }
 function isResizableSel(it){ return it && RESIZABLE_EQUIP.includes(it.type) && !it.asLabel; }
+function hitEquipRotate(sx,sy){
+  if(tool!=="select"||!sel) return null; const it=findItem(sel); if(!isResizableSel(it)) return null;
+  const H=equipHandlePts(it); const R=coarse?20:12;
+  return Math.hypot(sx-H.rot[0],sy-H.rot[1])<=R?{id:it.id}:null;
+}
 function hitEquipHandle(sx,sy){
   if(tool!=="select"||!sel) return null; const it=findItem(sel); if(!isResizableSel(it)) return null;
   const H=equipHandlePts(it); const R=coarse?18:11;
@@ -4291,6 +4282,17 @@ function drawEquipHandles(c,vw){
   const H=equipHandlePts(it); const hz=coarse?8:6;
   c.save(); c.fillStyle="#1E6BFF"; c.strokeStyle="#0B1322"; c.lineWidth=1.5;
   for(const k of ["tl","tr","bl","br"]){ const pt=H[k]; c.beginPath(); c.rect(pt[0]-hz,pt[1]-hz,hz*2,hz*2); c.fill(); c.stroke(); }
+  // rotate handle: a stalk and circle above the top edge, as on bays
+  c.beginPath(); c.moveTo(H.t[0],H.t[1]); c.lineTo(H.rot[0],H.rot[1]); c.stroke();
+  c.beginPath(); c.arc(H.rot[0],H.rot[1],hz+1.5,0,Math.PI*2); c.fill(); c.stroke();
+  c.fillStyle="#fff"; c.font="800 "+(coarse?12:10)+"px -apple-system,system-ui,sans-serif"; c.textAlign="center"; c.textBaseline="middle"; c.fillText("\u21bb",H.rot[0],H.rot[1]+0.5);
+  if(dragItem && dragItem.mode==="equiprotate" && dragItem.id===it.id && bayRotLive!=null){
+    const label=Math.round(bayRotLive)+"\u00b0";
+    c.font="700 12px -apple-system,system-ui,sans-serif";
+    const tw=c.measureText(label).width, bw=tw+16, bh=21, bx=H.rot[0]-bw/2, by=H.rot[1]-hz-bh-8;
+    c.fillStyle="#1E6BFF"; c.strokeStyle="#0B1322"; c.lineWidth=1.5; rrect(c,bx,by,bw,bh,6); c.fill(); c.stroke();
+    c.fillStyle="#fff"; c.fillText(label,H.rot[0],by+bh/2+0.5);
+  }
   c.restore();
 }
 /* hit-test the lead's apex drag handle (only for the selected parking bay with an auto lead) */
@@ -6793,7 +6795,7 @@ function drawRoute(c,vw,it,labelK,forExport,p,isDraft){
     }
   }
   // length label, positioned along the run (draggable)
-  if(!isDraft && pack.showRouteLen!==false && it.hideLabel!==true){
+  if(!isDraft && pack.showRouteLen!==false && it.hideLabel!==true && !(smallPlanView(vw,forExport) && sel!==it.id)){
     const len = routeLen(it,p);
     const lenTxt = len!=null ? " · "+len.toFixed(1)+" m" : "";
     let name = routeDisplayName(it);
@@ -7731,8 +7733,9 @@ function buildRail(){
   cats.forEach(c=>c.groups.forEach(g=>g.tools.forEach(t=>{ CAT_OF[t.k]=c.id; })));
   if(!cats.some(c=>c.id===palCat)) palCat=cats[0].id;
 
-  const edit=[["select","Select",ico.select],["pan","Pan",ico.pan],["scale","Set scale",icoScale],["measure","Measure",icoMeasure]];
-  catbar.innerHTML=`<div class="ptools">`+edit.map(([t,l,i])=>`<button class="ptool" data-tool="${t}" title="${l}" aria-label="${l}">${i}</button>`).join("")+`</div>`
+  // Titles carry the keyboard shortcut; wide screens also show the name beside the icon.
+  const edit=[["select","Select",ico.select,"Select · V","V"],["pan","Pan",ico.pan,"Pan · H, or hold Space","H"],["scale","Set scale",icoScale,"Set scale · tap both ends of a known length",""],["measure","Measure",icoMeasure,"Measure · tap two points",""]];
+  catbar.innerHTML=`<div class="ptools">`+edit.map(([t,l,i,tt,k])=>`<button class="ptool" data-tool="${t}" title="${tt}" aria-label="${l}"${k?` aria-keyshortcuts="${k}"`:""}>${i}<span class="ptool-label">${l}</span></button>`).join("")+`</div>`
     +`<div class="catdiv"></div>`
     +cats.map(c=>`<button class="cattab" data-cat="${c.id}" title="${c.full}">${c.icon}<span>${c.tab}</span>${CHEV}<span class="cdot"></span></button>`).join("");
   rail.innerHTML=`<div class="palscroll">`+cats.map(c=>`<div class="palsec" data-cat="${c.id}"><div class="palhead"><b>${c.full}</b><button class="palx" type="button" data-palclose title="Hide panel" aria-label="Hide panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>${c.groups.map(g=>`<div class="tgroup">${g.label}</div>${g.note?`<div class="tgnote">${g.note}</div>`:""}<div class="pgrid">${g.tools.map(t=>t.h).join("")}</div>`).join("")}</div>`).join("")+`</div>`;
@@ -7757,10 +7760,10 @@ function buildRail(){
   syncPalette();
 }
 function unitMini(k){
-  return `<span class="ti" style="overflow:hidden;border-radius:5px"><img src="${unitArtSrc(k,pack.unitScheme||"white",pack.unitDesign||"classic")}" style="width:22px;height:auto;object-fit:cover;object-position:top center;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))"></span>`;
+  return `<span class="ti ti-unit" style="overflow:hidden;border-radius:6px"><img src="${unitArtSrc(k,pack.unitScheme||"white",pack.unitDesign||"classic")}" alt="" style="width:40px;height:auto;object-fit:cover;object-position:top center;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))"></span>`;
 }
 function pinMini(t,bg){
-  return `<span class="ti"><span class="pin" style="background:${bg};color:#fff;font-size:7px;font-weight:800;display:grid;place-items:center;border-radius:50%;width:20px;height:20px;box-shadow:0 0 0 2px ${bg}55">${t}</span></span>`;
+  return `<span class="ti"><span class="pin" style="background:${bg};color:#fff;font-size:${t.length>2?9:10}px;font-weight:800;display:grid;place-items:center;border-radius:50%;width:28px;height:28px;box-shadow:0 0 0 2px ${bg}55">${t}</span></span>`;
 }
 function tool_btn(t,label,inner){
   return `<button class="tool" data-tool="${t}">${inner}<span>${label.replace(/\n/g,"<br>")}</span></button>`;
@@ -7804,7 +7807,7 @@ function updateHint(){
   let msg="", btns="";
   if(tool==="route:__area"){ msg=TOUCHY()?`Tap <b>corners</b> around the surface \u00b7 then tap <b>Close area</b>`:`Tap <b>corners</b> around the surface \u00b7 <b>double-click</b> or <b>Enter</b> to close`; btns=`<button id="hFinish">Close area</button><button class="ghost" id="hUndoPt">Undo point</button><button class="ghost" id="hCancel">Cancel</button>`; }
   if(tool==="pen"||tool==="hilite"){ msg=tool==="pen"?`<b>Draw</b> freehand; each stroke is an item you can select, move & delete`:`<b>Drag</b> to highlight; semi-transparent marker strokes`; }
-  if(tool.startsWith("route:") && tool!=="route:__area"){ const rk0=tool.split(":")[1]; const thr=["swa","run","hituff","tails","data","earthcable"].includes(rk0); msg=rk0==="tails"?(TOUCHY()?`Tap along the tails \u00b7 ends <b>snap to the terminals</b> of the cut-out, meter, Henley blocks &amp; boards \u00b7 then tap <b>Finish</b>`:`Tap along the tails \u00b7 ends <b>snap to the terminals</b> of the cut-out, meter, Henley blocks &amp; boards \u00b7 <b>double-click</b> or <b>Enter</b> to finish`):(TOUCHY()?`Tap points along the run${thr?` \u00b7 tap a <b>duct / trench end cap</b> to thread through it`:''} \u00b7 then tap <b>Finish</b>`:`Tap points along the run \u00b7 hold <b>Shift</b> for straight runs${thr?` \u00b7 tap a <b>duct / trench end cap</b> to thread through it`:''} \u00b7 <b>double-click</b> or <b>Enter</b> to finish`); btns=`<button id="hFinish">Finish</button><button class="ghost" id="hUndoPt">Undo point</button><button class="ghost" id="hCancel">Cancel</button>`; }
+  if(tool.startsWith("route:") && tool!=="route:__area"){ const rk0=tool.split(":")[1]; const thr=["swa","run","hituff","tails","data","earthcable"].includes(rk0); msg=rk0==="tails"?(TOUCHY()?`Tap along the tails \u00b7 ends <b>snap to the terminals</b> of the cut-out, meter, Henley blocks &amp; boards \u00b7 then tap <b>Finish</b>`:`Tap along the tails \u00b7 ends <b>snap to the terminals</b> of the cut-out, meter, Henley blocks &amp; boards \u00b7 <b>double-click</b>, <b>Enter</b> or <b>Esc</b> to finish`):(TOUCHY()?`Tap points along the run${thr?` \u00b7 tap a <b>duct / trench end cap</b> to thread through it`:''} \u00b7 then tap <b>Finish</b>`:`Tap points along the run \u00b7 hold <b>Shift</b> for straight runs${thr?` \u00b7 tap a <b>duct / trench end cap</b> to thread through it`:''} \u00b7 <b>double-click</b>, <b>Enter</b> or <b>Esc</b> to finish`); btns=`<button id="hFinish">Finish</button><button class="ghost" id="hUndoPt">Undo point</button><button class="ghost" id="hCancel">Cancel</button>`; }
   else if(tool.startsWith("unit:")){ msg=`Tap to place <b>${UNIT_DEFS[tool.split(':')[1]].short}</b>`; }
   else if(tool==="evdb"){ msg=`Tap to place the <b>EVDB</b>`; }
   else if(tool==="ipevdb"){ msg=`Tap to place the <b>IP rated EVDB</b>`; }
@@ -7835,16 +7838,17 @@ function updateHint(){
   else if(tool==="bay"){ msg=`Tap to place an <b>EV bay marking</b> · set size, lettering and accessible layout in the panel`; }
   else if(tool==="mark:snag"){ msg=`Tap the defect to drop a <b>numbered snag pin</b> \u00b7 severity &amp; fix status live in the panel`; }
   else if(tool.startsWith("mark:")){ msg=`Tap to place <b>${MARK_DEFS[tool.split(':')[1]].name}</b>`; }
-  else if(tool==="measure"){ msg=(draftScale&&draftScale.pts&&draftScale.pts.length===1)?`Tap the <b>other end</b> and the distance pops up`:`Tap <b>two points</b> to measure between them · nothing is drawn`; }
+  else if(tool==="measure"){ msg=`<b>Measure</b> \u00b7 `+((draftScale&&draftScale.pts&&draftScale.pts.length===1)?`Tap the <b>other end</b> and the distance pops up`:`Tap <b>two points</b> to measure between them · nothing is drawn`); }
   else if(tool==="scale"){ const __sp=activePhoto(); const __has=!!(__sp&&__sp.scale&&__sp.scale.pxPerM); const __n=__has?scaleRefs(__sp).length:0;
-    msg=(draftScale&&draftScale.pts&&draftScale.pts.length===1)?`Tap the <b>other end</b> of the known object`
+    msg=`<b>Set scale</b> \u00b7 `+((draftScale&&draftScale.pts&&draftScale.pts.length===1)?`Tap the <b>other end</b> of the known object`
       :(__has?`Scale is set${__n>1?` \u00b7 <b>${__n} references</b>`:''} \u00b7 trace <b>another known object</b> elsewhere; each reference cross-checks the scale &amp; corrects perspective near it`
-      :`Tap <b>both ends</b> of something with a known size: a parking bay (4.8 m), door (0.9 m) or fence panel (1.8 m) \u00b7 tip: a <b>1 m</b> stretch \u2248 4\u00bd bricks long or 13 courses high`);
+      :`Tap <b>both ends</b> of something with a known size: a parking bay (4.8 m), door (0.9 m) or fence panel (1.8 m) \u00b7 tip: a <b>1 m</b> stretch \u2248 4\u00bd bricks long or 13 courses high`));
     if(__has && !(draftScale&&draftScale.pts&&draftScale.pts.length===1)) btns=`<button class="ghost" id="hClearScale">Clear scale</button>`; }
   else if(tool==="label"){ msg=`Tap to drop a <b>label</b>`; }
   else if(tool==="arrow"){ msg=`<b>Drag</b> from what you're pointing at out to where the arrow sits \u00b7 hold <b>Shift</b> to snap the angle \u00b7 or tap to drop one`; }
   else if(tool==="box"){ msg=`Tap to drop a <b>box</b>`; }
   else if(tool==="guide"){ msg=`<b>Drag</b> to draw a run line · a bay's top, bottom or centre snaps onto it so a whole run stays dead straight · hold <b>Shift</b> to snap the angle`; }
+  if(!msg && tool==="select" && scaleNudge.has(pack.active)){ const np=activePhoto(); if(np && !(np.scale&&np.scale.pxPerM)){ msg=`<b>Set the scale before drawing routes</b> \u00b7 route lengths, bay sizes and quantities depend on it`; btns=`<button id="hSetScale">Set scale</button><button class="ghost" id="hScaleLater">Not now</button>`; } else scaleNudge.delete(pack.active); }
   if(msg){ h.innerHTML=`<span>${msg}</span>${btns}`; h.classList.add("show"); }
   else { h.classList.remove("show"); }
   const f=document.getElementById("hFinish"); if(f) f.onclick=()=>{ commitRoute(); setTool("select"); };
@@ -7852,6 +7856,15 @@ function updateHint(){
   const up=document.getElementById("hUndoPt"); if(up) up.onclick=()=>{ if(draftRoute&&draftRoute.pts.length){ draftRoute.pts.pop(); draw(); } };
   const hcs=document.getElementById("hClearScale"); if(hcs) hcs.onclick=()=>{ const p=activePhoto(); if(p&&p.scale){ pushHist(); delete p.scale; draftScale=null; toast("Scale cleared"); draw(); renderSide(); updateHint(); autosave(); } };
   const hod=document.getElementById("hOvDone"); if(hod) hod.onclick=()=>{ setTool("select"); renderSide(); };
+  const hss=document.getElementById("hSetScale"); if(hss) hss.onclick=()=>{ scaleNudge.delete(pack.active); setTool("scale"); };
+  const hsl=document.getElementById("hScaleLater"); if(hsl) hsl.onclick=()=>{ scaleNudge.delete(pack.active); updateHint(); };
+}
+/* Once per plan: each new photo or drawing without a scale gets a reminder in the hint bar while it is the open plan.
+   Grid and starter plans arrive scaled. */
+var scaleNudge=new Set();
+function nudgeScale(before){
+  pack.photos.forEach(p=>{ if(!before.has(p.id) && !(p.scale&&p.scale.pxPerM)) scaleNudge.add(p.id); });
+  updateHint();
 }
 function commitRoute(){
   if(draftRoute && draftRoute.pts.length>=2){
@@ -7954,6 +7967,8 @@ cv.addEventListener("pointerdown", e=>{
         }
       }
       dragItem={mode:bhh.mode,id:bhh.id,corner:bhh.corner,edge:bhh.edge,anchor,pushed:false}; draw(); return; }
+    const eqr=hitEquipRotate(sx,sy);
+    if(eqr){ sel=eqr.id; sideTab="props"; setSideTab(); dragItem={mode:"equiprotate",id:eqr.id,pushed:false,touch:e.pointerType==="touch"}; draw(); return; }
     const eqh=hitEquipHandle(sx,sy);
     if(eqh){ sel=eqh.id; sideTab="props"; setSideTab(); const eit=findItem(eqh.id); const ed=equipDims(eit); dragItem={mode:"equipresize",id:eqh.id,corner:eqh.corner,w0:ed.w,h0:ed.h,pushed:false}; draw(); return; }
     const ush=hitUnitSpinHandle(sx,sy);
@@ -8039,6 +8054,7 @@ cv.addEventListener("pointermove", e=>{
     }
     draw(); } }
   else if(dragItem.mode==="bayrotate"){ const it=findItem(dragItem.id); if(it){ if(!dragItem.pushed){pushHist();dragItem.pushed=true;} let ang=Math.atan2(ip[1]-it.y, ip[0]-it.x)*180/Math.PI + 90; if(e.shiftKey){ ang=Math.round(ang/15)*15; } else { ang=Math.round(ang); const m=Math.round(ang/90)*90; if(Math.abs(ang-m)<=2.5) ang=m; } const run=bayRun(it); const delta=ang-(it.rot||0); if(run.length>1){ rotateRunAbout(run, it.x, it.y, delta); } else { it.rot=ang; } bayRotLive=((ang%360)+360)%360; draw(); } }
+  else if(dragItem.mode==="equiprotate"){ const it=findItem(dragItem.id); if(it){ if(!dragItem.pushed){pushHist();dragItem.pushed=true;} let ang=Math.atan2(ip[1]-it.y, ip[0]-it.x)*180/Math.PI + 90; if(e.shiftKey||dragItem.touch){ ang=Math.round(ang/15)*15; } else { ang=Math.round(ang); const m=Math.round(ang/90)*90; if(Math.abs(ang-m)<=2.5) ang=m; } ang=((ang%360)+360)%360; it.rot=ang; bayRotLive=ang; draw(); } }
   else if(dragItem.mode==="unitspin"){ const it=findItem(dragItem.id); if(it){ if(!dragItem.pushed){pushHist();dragItem.pushed=true;} let ang=dragItem.startYaw+(sx-dragItem.startX)*0.8; let tilt=dragItem.startPitch+(sy-dragItem.startY)*0.8; if(e.shiftKey){ ang=Math.round(ang/45)*45; tilt=Math.round(tilt/45)*45; } it.__yawLive=ang; it.__pitchLive=tilt; it.yaw3d=((Math.round(ang)+180)%360+360)%360-180; it.pitch3d=((Math.round(tilt)+180)%360+360)%360-180; draw(); } }
   else if(dragItem.mode==="equipresize"){ const it=findItem(dragItem.id); if(it){ if(!dragItem.pushed){pushHist();dragItem.pushed=true;} const a=(it.rot||0)*Math.PI/180; const dx=ip[0]-it.x, dy=ip[1]-it.y; const lx=dx*Math.cos(a)+dy*Math.sin(a); const ly=-dx*Math.sin(a)+dy*Math.cos(a); const fx=Math.abs(lx)/(dragItem.w0/2), fy=Math.abs(ly)/(dragItem.h0/2); let f=Math.max(0.15,Math.min(8,Math.max(fx,fy))); it.w=Math.max(16,dragItem.w0*f); if(it.type!=="unit") it.h=Math.max(12,dragItem.h0*f); draw(); } }
   else if(dragItem.mode==="leadbow"){ const it=findItem(dragItem.id); if(it){ const near=nearestChargerToPark(it); if(near){ const g=leadGeom(it,near.item,view); if(g){ if(!dragItem.pushed){pushHist();dragItem.pushed=true;} const chordMid=[(g.a[0]+g.b[0])/2,(g.a[1]+g.b[1])/2]; const dPerp=(sx-chordMid[0])*g.nx + (sy-chordMid[1])*g.ny; it.leadBow=(dPerp/g.apexGain)/view.zoom; draw(); } } } }
@@ -8405,7 +8421,10 @@ function handleTap(sx,sy){
   if(tool==="stamp"){ pushHist(); p.items.push({id:uid(),type:"stamp",x,y,scale:1,text:STAMP_PRESETS[0].t,tone:"action"}); sel=lastId(); setTool("select"); sideTab="props"; setSideTab(); draw(); return; }
   if(tool==="park"){ pushHist(); p.items.push({id:uid(),type:"park",x,y,w:(p.scale&&p.scale.pxPerM)?Math.max(24,2.4*p.scale.pxPerM):p.imgW*0.16,h:(p.scale&&p.scale.pxPerM)?Math.max(48,4.8*p.scale.pxPerM):p.imgW*0.26,rot:0,label:"Parking",showCar:true,carModel:"car",autoLead:true}); sel=lastId(); setTool("select"); draw(); return; }
   if(tool.startsWith("mark:")){ pushHist(); const k=tool.split(":")[1];
-    if(k==="snag"){ p.items.push({id:uid(),type:"mark",kind:"snag",x,y,label:"",scale:1,sev:"minor",st:"open",n:nextSnagN(),who:"",fixedOn:""}); sel=lastId(); syncSnagSign(); setTool("select"); sideTab="props"; setSideTab(); draw(); return; }
+    if(k==="snag"){ p.items.push({id:uid(),type:"mark",kind:"snag",x,y,label:"",scale:1,sev:"minor",st:"open",n:nextSnagN(),who:"",fixedOn:""}); sel=lastId(); syncSnagSign(); setTool("select"); sideTab="props"; setSideTab(); draw();
+      // Describing the snag is the next step, so the description field takes focus once the panel has opened (placement only, not on reselection).
+      const placed=sel; setTimeout(()=>{ const f=document.getElementById("sglabel"); if(f && sel===placed && f.getClientRects().length){ f.focus({preventScroll:true}); f.scrollIntoView({block:"nearest"}); } },0);
+      return; }
     p.items.push({id:uid(),type:"mark",kind:k,x,y,label:"",scale:1}); sel=lastId(); setTool("select"); draw(); return; }
   if(tool==="label"){ const lx=x, ly=y, targetPid=p.id; askInput({title:"Add text", label:"Type text to place on the photo", value:"", placeholder:"e.g. Drill through wall here", okText:"Add text"}).then(t=>{ if(t!=null){ const tp=photoById(targetPid); if(tp){ pushHist(); const nid=uid(); tp.items.push({id:nid,type:"label",x:lx,y:ly,text:t||"Text",scale:1}); if(pack.active===targetPid) sel=nid; } } setTool("select"); draw(); renderSide(); }); return; }
   if(tool==="arrow"){ pushHist(); p.items.push({id:uid(),type:"arrow",x,y,len:p.imgW*0.16,rot:0,color:"#FFB950",weight:1,dbl:false,text:""}); sel=lastId(); setTool("select"); draw(); return; }
@@ -8544,7 +8563,7 @@ function autosaveNow(){
     else if(pack.projId) refreshProjIndexMeta();
   }catch(_){ }
 }
-function autosave(){ try{ evalMarkDirty(); }catch(_){ } clearTimeout(saveT); saveT=setTimeout(()=>{ saveT=null; autosaveNow(); try{ syncStageBar(); }catch(_){ } }, 700); }
+function autosave(){ try{ evalMarkDirty(); }catch(_){ } clearTimeout(saveT); saveT=setTimeout(()=>{ saveT=null; autosaveNow(); }, 700); }
 function clearAutosave(){ try{ localStorage.removeItem(LS_KEY); }catch(_){} idbDel("autosave").catch(()=>{}); }
 /* flush a pending autosave the moment the tab is backgrounded or closed */
 function flushAutosave(){ if(saveT){ clearTimeout(saveT); saveT=null; autosaveNow(); } }
@@ -8944,7 +8963,6 @@ function renderSide(){
   else el.innerHTML=propsPanel();
   wireSide();
   syncPdfGate();
-  syncStageBar();
 }
 function packPanel(){
   let photos = pack.photos.map((p,i)=>{
@@ -9216,23 +9234,23 @@ function packPanel(){
   <div class="card">
     <h3><span class="dot"></span>Display</h3>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
-      <button class="ptog ${pack.showLabels!==false?'on':''}" data-disp="showLabels">Labels</button>
+      <button class="ptog ${pack.showLabels!==false?'on':''}" data-disp="showLabels" title="Show or hide equipment and markup labels on the plan">Labels on plan</button>
       <button class="ptog ${pack.showRouteLen!==false?'on':''}" data-disp="showRouteLen">Run lengths</button>
-      <button class="ptog ${pack.showLegend!==false?'on':''}" data-disp="showLegend">Legend</button>
+      <button class="ptog ${pack.showLegend!==false?'on':''}" data-disp="showLegend">Plan key</button>
       <button class="ptog ${pack.showChargerNos!==false?'on':''}" data-disp="showChargerNos">Charger no.</button>
       <button class="ptog ${pack.showTitleBlock!==false?'on':''}" data-disp="showTitleBlock">Title block</button>
     </div>
     <label style="font-size:11px;color:var(--dim);font-weight:550;display:block;margin:2px 0 6px">Equipment view <em style="font-style:normal;color:var(--faint)">\u00b7 pack-wide default; items set to Auto follow it</em></label>
     <div class="seg" style="margin-bottom:8px">${[["side","Side-on"],["plan","Overhead"],["iso","3D side"],["isotop","3D top"]].map(([v,t])=>`<button data-eqvdef="${v}" class="${(pack.eqView||'side')===v?'on':''}">${t}</button>`).join("")}</div>
     ${(()=>{ const opts=[...new Set(pack.photos.flatMap(p=>p.items.filter(i=>i.option).map(i=>i.option)))].sort(); if(!opts.length&&(pack.optionView||'all')==='all') return ''; return `<label style="font-size:11px;color:var(--dim);font-weight:550;display:block;margin:2px 0 6px">Design option view <em style="font-style:normal;color:var(--faint)">\u00b7 applies to the canvas &amp; all exports</em></label><div class="seg" style="margin-bottom:8px"><button data-optview="all" class="${(pack.optionView||'all')==='all'?'on':''}">All</button>${["A","B","C"].map(o=>`<button data-optview="${o}" class="${pack.optionView===o?'on':''}" ${opts.includes(o)?'':'style="opacity:.4"'}>${o}</button>`).join("")}</div>`; })()}
-    ${pack.showLegend!==false?`<label style="font-size:11px;color:var(--dim);font-weight:550;display:block;margin:2px 0 6px">Legend position</label>
+    ${pack.showLegend!==false?`<label style="font-size:11px;color:var(--dim);font-weight:550;display:block;margin:2px 0 6px">Plan key position</label>
     <div class="seg" style="margin-bottom:8px">${[["bl","Btm L"],["br","Btm R"],["tl","Top L"],["tr","Top R"]].map(([v,t])=>`<button data-legpos="${v}" class="${(pack.legendPos||'bl')===v?'on':''}">${t}</button>`).join("")}</div>`:''}
-    <div class="sub" style="color:var(--faint);font-size:11px">Legend &amp; plan title print onto PNG/PDF exports. Toggle off for a cleaner client view.</div>
+    <div class="sub" style="color:var(--faint);font-size:11px">The plan key and title block print onto PNG and PDF exports. Turn them off for a cleaner client view.</div>
   </div>`;
   const cardLegend=`
   <div class="card">
     <h3 data-legtoggle="1" title="${legendOpen?'Hide':'Show'} the symbol key" style="cursor:pointer;user-select:none;margin-bottom:${legendOpen?'10px':'0'}">
-      <span class="dot"></span>Legend
+      <span class="dot"></span>Plan key
       <span style="margin-left:auto;display:flex;align-items:center;gap:7px;letter-spacing:0;text-transform:none;font-size:11px;font-weight:600;color:var(--faint)">${legendOpen?'':((n=>n?n+' items placed':'symbol key')(pack.photos.reduce((s,p)=>s+p.items.length,0)))}<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex:none;transition:transform .16s;transform:rotate(${legendOpen?'180deg':'0deg'})"><path d="M6 9l6 6 6-6"/></svg></span>
     </h3>
     ${!legendOpen?'':(()=>{
@@ -9322,11 +9340,10 @@ function packPanel(){
   const sections=[
     ["capture","Plans",secCapture],
     ["job","Site",cardSite+cardJob],
-    ["status","Technical",cardTotals+cardLoad+cardCables],
-    ["checks","Checks",cardCdm+cardCompliance+cardReadiness+cardPunch+cardSnags+cardCommissioning+cardDocs],
+    ["checks","Checks",cardTotals+cardLoad+cardCables+cardCdm+cardCompliance+cardReadiness+cardPunch+cardSnags+cardCommissioning+cardDocs],
     ["output","Appearance",cardAppearance+cardDisplay+cardLegend+cardBranding]
   ];
-  const legacy={overview:"capture",survey:"capture",design:"output",verify:"status",plan:"checks",install:"checks",handover:"checks",price:"output"};
+  const legacy={overview:"capture",survey:"capture",design:"output",verify:"checks",status:"checks",plan:"checks",install:"checks",handover:"checks",price:"output"};
   packSec=legacy[packSec]||packSec;
   if(!sections.some(s=>s[0]===packSec)) packSec="capture";
   return '<div class="snav">'+sections.map(([key,label])=>'<button type="button" data-psec="'+key+'" class="'+(packSec===key?'on':'')+'">'+label+'</button>').join('')+'</div>'+sections.find(s=>s[0]===packSec)[2];
@@ -9556,7 +9573,7 @@ function overviewBody(ev){
     ${(pack.revHistory&&pack.revHistory.length)?`<div style="margin-top:9px;border-top:1px dashed var(--line);padding-top:7px"><div style="font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:3px">Recent activity</div>${pack.revHistory.slice(-3).reverse().map(r=>`<div style="font-size:11px;color:var(--dim);line-height:1.5"><b style="color:var(--ink)">Rev ${esc(r.rev)}</b> · ${esc(r.at||"")}${r.by?" · "+esc(r.by):""}${r.note?" · "+esc(r.note):""}</div>`).join("")}</div>`:""}
   </div>`;
 }
-/* stage bar (top navigation) */
+/* next step on the Markup page: drives the header's primary button */
 function markupNextAction(){
   const p=activePhoto();
   if(!p) return {title:"Add a plan",detail:"Start with photos, a PDF or a scaled layout",act:"fn:addphotos"};
@@ -9566,39 +9583,9 @@ function markupNextAction(){
     units=pack.photos.flatMap(ph=>ph.items.filter(i=>i.type==="unit"));
     routes=pack.photos.flatMap(ph=>ph.items.filter(i=>i.type==="route"&&["run","swa","hituff","tails","duct","trench"].includes(i.kind)));
   }catch(_){ }
-  if(!units.length) return {title:"Add the first charger",detail:"Open the Chargers palette and place it on the plan",act:"fn:chargers"};
-  if(!routes.length) return {title:"Draw the supply route",detail:"Open Cabling and map the route to the charger",act:"fn:cabling"};
-  return {title:"Review and export",detail:"Check the plan, resolve gaps and choose an output",act:"stage:overview"};
-}
-function buildStageBar(){
-  const bar=document.getElementById("stagebar"); if(!bar) return;
-  const chev='<svg class="stgsep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-  const stages=(arr,numbered)=>arr.map((k,i)=>(i?chev:"")+'<button type="button" class="stgbtn" data-stage="'+k+'" title="'+STAGE_META[k].tip+'">'+(numbered?'<span class="stgstep">'+(i+1)+'</span>':'<span class="stgdot"></span>')+STAGE_META[k].label+'<span class="stgn" style="display:none"></span></button>').join("");
-  bar.innerHTML='<button type="button" class="stgbtn" data-stage="overview" title="'+STAGE_META.overview.tip+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Overview</button>'
-    +'<span class="catdiv" style="margin:-5px 5px"></span><span class="stagegroup">Workflow</span>'+stages(PLANNING_STAGE_ORDER,true)
-    +'<button type="button" class="stgnext" id="stageNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Next</span></button>';
-  bar.querySelectorAll("[data-stage]").forEach(b=>b.onclick=()=>setStage(b.dataset.stage));
-  syncStageBar();
-}
-function syncStageBar(){
-  const bar=document.getElementById("stagebar"); if(!bar||!bar.firstChild) return;
-  let e=null; try{ e=evalProject(); }catch(_){ return; }
-  bar.querySelectorAll("[data-stage]").forEach(b=>{
-    const k=b.dataset.stage;
-    const on=(sideTab==="pack"&&packSec===k);
-    b.classList.toggle("on",on);
-    if(on) b.setAttribute("aria-current","true"); else b.removeAttribute("aria-current");
-    if(k==="overview") return;
-    const d=(e.stages||{})[k]||{st:"none",why:[],count:0};
-    const m=STAGE_STATES[d.st]||STAGE_STATES.none;
-    const dot=b.querySelector(".stgdot"); if(dot) dot.className="stgdot"+(d.st!=="none"?" "+d.st:"");
-    const step=b.querySelector(".stgstep"); if(step){ step.classList.toggle("done",d.st==="ready"||d.st==="done"); step.classList.toggle("block",d.st==="block"); }
-    const nn=b.querySelector(".stgn"); if(nn){ nn.style.display=d.count?"":"none"; nn.textContent=d.count; }
-    b.classList.toggle("blk",d.st==="block");
-    b.title=STAGE_META[k].tip+" · "+m.label+((d.why||[]).length?" · "+d.why.join(" · ").replace(/<[^>]*>/g,""):"");
-  });
-  const nx=document.getElementById("stageNext");
-  if(nx){ const n=markupNextAction(); nx.setAttribute("data-ovact",n.act); nx.title=n.detail; const s=nx.querySelector("span"); if(s) s.textContent="Next · "+n.title; }
+  if(!units.length) return {title:"Place the first charger",detail:"Open Chargers & bays and tap the plan to place it",act:"fn:chargers"};
+  if(!routes.length) return {title:"Draw the supply route",detail:"Open Cabling and draw the route to the charger",act:"fn:cabling"};
+  return {title:"Issue plans",detail:"Review the marked-up plans and download the PDF",act:"stage:overview"};
 }
 /* stage switching: only the side panel changes; the canvas, tools and selection stay put */
 function setStage(k){
@@ -9779,7 +9766,7 @@ function propsPanel(){
       <label>Max output <em style="font-style:normal;color:var(--faint)">· manual cap</em></label>
       <div style="display:flex;gap:6px;align-items:center"><input id="umaxa" type="number" min="6" max="32" step="1" value="${it.maxA||''}" placeholder="${it.kw==='11'?'16':'32'} · full rate" style="flex:1;min-width:0"><span style="color:var(--faint);font-size:11px;flex:none">A${(it.kw==='11'||it.kw==='22')?' / phase':''}</span>${it.maxA?`<button class="pbtn" id="umaxclear" style="flex:none">Full</button>`:''}</div>
       <div class="sub" style="color:var(--faint);font-size:11px">Cap this unit's output at commissioning (~6 A minimum, where the brand supports it) - e.g. hold one unit at 16 A on a tight supply. Usually adjustable later.</div>`:it.variant==='lamp_fsm'?`<div class="sub" style="color:var(--faint);font-size:11px">Runs standalone at the column fuse - DLM and manual output caps don't apply.</div>`:`<div class="sub" style="color:var(--faint);font-size:11px">DC rapid: fed from its own dedicated supply - AC load management doesn't apply.</div>`}
-      <label>Label (optional)</label><input id="ulabel" value="${esc(it.label)}" placeholder="e.g. CP-01">
+      <label>Description <em style="font-style:normal;color:var(--faint)">· optional</em></label><input id="ulabel" value="${esc(it.label)}" placeholder="e.g. Visitor bay, north wall">
       <div class="seg" style="margin-top:6px">${["A","B","C"].map(o=>`<button data-uopt="${o}" class="${(it.label||'')===('Option '+o)?'on':''}">Option ${o}</button>`).join("")}</div>
       <div class="sub" style="color:var(--faint);font-size:11px">Duplicate the unit and tag each position to show proposed location / mounting options in situ.</div>
     </div>`;
@@ -9941,7 +9928,7 @@ function propsPanel(){
       <label>Rotate</label>${stepper("fsrot",it.rot||0,"°")}
       <label>Clamp position</label><div class="seg"><button data-fs="Meter" class="${((it.fsTag||'Meter')==='Meter'||it.fsTag==='Upstream')?'on':''}">Meter</button><button data-fs="Garage board" class="${it.fsTag==='Garage board'?'on':''}">Garage board</button></div>
       <div class="sub" style="color:var(--faint);font-size:11px">Clamp around the meter tail/incoming line conductor. Use “Garage board” only if that is the furthest reachable point.</div>
-      <label>Load limiter setting (optional)</label><input id="fsamp" type="number" min="10" max="100" step="5" value="${it.fsSet!=null?esc(String(it.fsSet)):''}" placeholder="10A to 100A">
+      <label>Load limiter setting <em style="font-style:normal;color:var(--faint)">· optional</em></label><input id="fsamp" type="number" min="10" max="100" step="5" value="${it.fsSet!=null?esc(String(it.fsSet)):''}" placeholder="10A to 100A">
       <div class="sub" style="color:var(--faint);font-size:11px">Leave blank if the setting is not confirmed.</div>
       <label>Label</label><input id="fslabel" value="${esc(it.label||'Load limiter')}" placeholder="Load limiter">
     </div>`;
@@ -9966,7 +9953,7 @@ function propsPanel(){
       <label>Width</label>${stepper("dnw",Math.round(it.w||dd.defW))}
       <label>Height</label>${stepper("dnh",Math.round(it.h||64))}
       <label>Rotate</label>${stepper("dnrot",it.rot||0,"°")}
-      <label>Brand (optional)</label><input id="dnbrand" list="devBrandList" value="${esc(it.brand||'')}" placeholder="e.g. ${it.kind==='openpen'?'matt:e':'Hager'}">
+      <label>Brand <em style="font-style:normal;color:var(--faint)">· optional</em></label><input id="dnbrand" list="devBrandList" value="${esc(it.brand||'')}" placeholder="e.g. ${it.kind==='openpen'?'matt:e':'Hager'}">
       <datalist id="devBrandList">${DEVICE_BRANDS.map(b=>`<option value="${b}"></option>`).join("")}</datalist>
       <label>Label</label><input id="dnlabel" value="${esc(it.label||dd.name)}" placeholder="${dd.name}">
     </div>`;
@@ -9982,7 +9969,7 @@ function propsPanel(){
       <label>Rating</label><input id="imcbrating" type="number" min="6" max="63" step="1" value="${it.rating??40}" placeholder="40">
       <div class="seg"><button data-imcbr="20" class="${it.rating===20?'on':''}">20A</button><button data-imcbr="32" class="${it.rating===32?'on':''}">32A</button><button data-imcbr="40" class="${(it.rating??40)===40?'on':''}">40A</button><button data-imcbr="50" class="${it.rating===50?'on':''}">50A</button></div>
       <div class="sub" style="color:var(--faint);font-size:11px">Place at the connection to the existing fuse board. Set the device brand in Project details and check compatibility with the board and upstream protection.</div>
-      <label>Brand (optional)</label><input id="mbbrand" list="devBrandList" value="${esc(it.brand||'')}" placeholder="e.g. Hager">
+      <label>Brand <em style="font-style:normal;color:var(--faint)">· optional</em></label><input id="mbbrand" list="devBrandList" value="${esc(it.brand||'')}" placeholder="e.g. Hager">
       <datalist id="devBrandList">${DEVICE_BRANDS.map(b=>`<option value="${b}"></option>`).join("")}</datalist>
       <label>Label</label><input id="mblabel" value="${esc(it.label||'MCB')}" placeholder="MCB">
     </div>`;
@@ -10132,7 +10119,7 @@ function propsPanel(){
       ${it.bayMarking==='ev_car'?`<label>Symbol colour</label><select id="evBayPaint"><option value="green" ${it.bayPaintColour!=='white'?'selected':''}>Green</option><option value="white" ${it.bayPaintColour==='white'?'selected':''}>White</option></select>`:''}
       ${it.bayMarking==='custom'?`<label>Painted text (up to 3 lines)</label><textarea id="evBayText" maxlength="80" rows="3">${esc(it.bayText||'')}</textarea>`:''}
       <label>Green band</label><div class="seg"><button data-gband="1" class="${it.greenBand!==false?'on':''}">Show</button><button data-gband="0" class="${it.greenBand===false?'on':''}">Hide</button></div>
-      <label>Label (optional)</label><input id="bylabel" value="${esc(it.label||'')}" placeholder="e.g. Bay 12">
+      <label>Label <em style="font-style:normal;color:var(--faint)">· optional</em></label><input id="bylabel" value="${esc(it.label||'')}" placeholder="e.g. Bay 12">
       <div class="sub" style="color:var(--faint);font-size:11px">Standard bay 2.4 × 4.8 m. Accessible adds the hatched access zone and painted disabled symbol. <b>Snap to other bays</b> butts this bay against its neighbours into a run. Drag or rotate any bay in a run and the whole row turns together. Drop a <b>Guide line</b> and set the snap point below to line the run's top or bottom edge along it.</div>
     </div>`;
   } else if(it.type==="connpoint"){
@@ -10215,7 +10202,7 @@ function propsPanel(){
       <label>Measured area</label>
       <div style="font-weight:700;font-size:14px">${(()=>{const a=areaSqm(it,activePhoto());return a!=null?a+" m\u00b2":"-";})()}</div>
       ${areaSqm(it,activePhoto())==null?`<div class="sub" style="color:var(--faint);font-size:11px">Set the photo scale (Set scale tool) to measure this area.</div>`:''}
-      <label>Label (optional)</label><input id="arealabel" value="${esc(it.label||'')}" placeholder="${esc((AREA_SURFACES[it.surface||'tarmac']||{}).label||'Area')}">
+      <label>Label <em style="font-style:normal;color:var(--faint)">· optional</em></label><input id="arealabel" value="${esc(it.label||'')}" placeholder="${esc((AREA_SURFACES[it.surface||'tarmac']||{}).label||'Area')}">
     </div>`;
   } else if(it.type==="route"){
     body=`<div class="prop">
@@ -10242,7 +10229,7 @@ function propsPanel(){
       <div class="seg ${it.kind==="tails"?'grid4':'grid5'}">${(it.kind==="tails"?[0.5,1,1.5,2,2.5,3,4,5]:[1,2,3,5,7,10,15,20,25,30]).map(d=>`<button data-est="${d}" class="${it.manualLen===d?'on':''}">${d}m</button>`).join("")}</div>
       <input id="mlen" aria-describedby="mlenError" inputmode="decimal" value="${it.manualLen!=null?it.manualLen:''}" placeholder="or type exact, e.g. 12.5" style="margin-top:6px"><div id="mlenError" class="sub" role="alert"></div>
       ${(it.manualLen==null&&routeLen(it,activePhoto())!=null)?`<div class="sub" style="color:var(--ok);font-size:11px;font-weight:600;margin-top:4px">Measured from the photo scale: ${routeLen(it,activePhoto())} m. Tap a preset or type to override.</div>`:''}
-      ${routeLen(it,activePhoto())==null?`<div style="background:#FFF4DC;border:1px solid #FFB950;border-radius:8px;padding:7px 10px;font-size:11.5px;color:#7A4E00;font-weight:600;margin-top:4px">⚠ No length set. Tap an estimate, type a distance, or use the <b>Set scale</b> tool so runs measure themselves.</div>`:''}      <div class="sub" style="color:var(--faint);font-size:11px">Tap an estimate or type the wheeled/paced length. Shown on the plan label and in the PDF runs table.</div>
+      ${routeLen(it,activePhoto())==null?`<div class="route-nolen" style="background:#FFF4DC;border:1px solid #FFB950;border-radius:8px;padding:7px 10px;font-size:11.5px;color:#7A4E00;font-weight:600;margin-top:4px">⚠ No length set. Tap an estimate, type a distance, or set the plan scale so runs measure themselves.<span class="route-nolen-actions" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:7px">${(activePhoto().scale&&activePhoto().scale.pxPerM)?'':`<button type="button" class="pbtn" data-route-setscale style="flex:none;width:auto;padding:7px 12px">Set scale</button>`}<button type="button" class="pbtn" data-route-typelen style="flex:none;width:auto;padding:7px 12px">Type a length</button></span></div>`:''}      <div class="sub" style="color:var(--faint);font-size:11px">Tap an estimate or type the wheeled/paced length. Shown on the plan label and in the PDF runs table.</div>
       <label>Line style</label>
       <div class="seg"><button data-rsm="0" class="${!it.smooth?'on':''}">Segmented</button><button data-rsm="1" class="${it.smooth?'on':''}">Smooth curve</button></div>
       <label>Line thickness</label>
@@ -10368,16 +10355,21 @@ function propsPanel(){
   return `<div class="card"><h3><span class="dot"></span>${typeName(it)}</h3>${body}${(LABELABLE.includes(it.type)||it.type==="park")?`<div class="prop"><label>Label size</label>${stepper("lsc",Math.round((it.labelScale||1)*100),"%")}<div class="sub" style="color:var(--faint);font-size:11px">Scales just the label; the ${it.type==="park"?"parking bay":"item graphic"} stays the same size.</div></div>`:''}${del}</div>`;
 }
 function typeName(it){ return it.type==="site"?((SITE_DEFS[it.kind]||{}).name||"Site feature"):it.type==="stamp"?"Callout stamp":it.type==="guide"?"Guide line":it.type==="unit"?"Charger":it.type==="evdb"?"EVDB":it.type==="ipevdb"?"IP rated EVDB":it.type==="ipbox"?"IP adaptable box":it.type==="henley"?"Henley blocks":it.type==="meter"?"Meter":it.type==="metercab"?"Meter cabinet":it.type==="gascab"?"Gas meter cabinet":it.type==="earthterm"?"Earth terminal":it.type==="cutout"?"Main fuse / cut-out":it.type==="isolator"?"Isolator":it.type==="consumerunit"?"Distribution board":it.type==="panelboard"?"Panel board":it.type==="garagesplit"?"Garage splitter":it.type==="connpoint"?"Connection point":it.type==="fusesaver"?"Load limiter":it.type==="mcb"?"MCB":it.type==="rcd"?"RCD":it.type==="din"?((DIN_DEFS[it.kind]||{}).name||"Protection device"):it.type==="customer"?"Onwards to fuse board":it.type==="feeder"?"Feeder pillar":it.type==="arrayboard"?"Load management board":it.type==="bay"?"Bay marking":it.type==="park"?"Parking":it.type==="route"?((ROUTE_DEFS[it.kind]||{}).name||"Route"):it.type==="mark"?(it.kind==="snag"?"Snag"+(it.n?" #"+it.n:""):"Marker"):it.type==="label"?"Label":it.type==="arrow"?"Arrow":"Box"; }
+function wireRouteLengthActions(){
+  const ss=document.querySelector("[data-route-setscale]"); if(ss) ss.onclick=()=>setTool("scale");
+  const tl=document.querySelector("[data-route-typelen]"); if(tl) tl.onclick=()=>{ const f=document.getElementById("mlen"); if(f){ f.scrollIntoView({block:"nearest"}); f.focus(); } };
+}
 function stepper(id,val,suf){ return `<div class="stepper"><button data-step="${esc(id)}" data-dir="-1">−</button><div class="val" id="${esc(id)}_v">${val}${suf||''}</div><button data-step="${esc(id)}" data-dir="1">+</button></div>`; }
 
 function wireSide(){
+  wireRouteLengthActions();
   // pack
   const ap=document.getElementById("addPhoto"); if(ap) ap.onclick=()=>{ pendingShotKey=null; document.getElementById("filePhoto").click(); };
   document.querySelectorAll("[data-photo]").forEach(t=>t.onclick=e=>{
     if(e.target.closest("[data-del]")||e.target.closest("[data-rename]")||e.target.closest("[data-edit]"))return;
     if(pack.active===t.dataset.photo) return; // already active - no-op
     finishDrawingContext();pack.active=t.dataset.photo;
-    fitView(); draw(); });
+    fitView(); draw(); updateHint(); });
   document.querySelectorAll("[data-dupplan]").forEach(b=>b.onclick=e=>{
     e.stopPropagation(); const p=photoById(b.dataset.dupplan); if(!p) return;
     finishDrawingContext();pushHist();
@@ -10693,6 +10685,11 @@ function trackFileImport(task){
   return task;
 }
 function addPhotos(files){
+  const before=new Set(pack.photos.map(p=>p.id)), task=addPhotoFiles(files);
+  task.then(()=>nudgeScale(before),()=>{});
+  return task;
+}
+function addPhotoFiles(files){
   const arr=[...files],jobs=[];
   const isZip=f=> f && (/\.zip$/i.test(f.name||"") || /zip/i.test(f.type||""));
   const isPdf=f=> f && (/\.pdf$/i.test(f.name||"") || /pdf/i.test(f.type||""));
@@ -14954,6 +14951,7 @@ function quoteDrift(){
     {t:"Projects on this device",s:"Every saved job with live status",g:"Jobs",k:"dashboard jobs list status switch recent",run:()=>openProjects()},
     {t:"Switch mode · domestic / commercial",s:"Change what this pack plans for",g:"Setup",k:"mode home workplace fleet destination",run:()=>openWelcome()},
     {t:"Project overview",s:"Status, next action and open issues",g:"Stages",k:"overview dashboard summary next action issues stage status",run:()=>setStage("overview")},
+    {t:"Keyboard shortcuts",s:"V select · H or Space pan · Esc finish · Del · Ctrl+D · ? opens this guide",g:"Help",k:"keys keyboard shortcuts hotkeys select pan space escape enter delete duplicate nudge undo redo",run:()=>{ if(window.EVHelp) EVHelp.open("planner-markup-tools"); }},
     ...STAGE_ORDER.map(k=>({t:"Stage: "+STAGE_META[k].label,s:STAGE_META[k].tip,g:"Stages",k:"stage journey "+k+" "+STAGE_META[k].tip.toLowerCase(),run:()=>setStage(k)}))
   ];
   function buildIndex(){
@@ -14961,7 +14959,7 @@ function quoteDrift(){
     const push=(t,s,g,k,run)=>{ if(!t) return; const key=(t+"|"+g).toLowerCase(); if(seen.has(key)) return; seen.add(key); items.push({t,s:s||"",g,k:String(k||"").toLowerCase(),run}); };
     MANUAL.forEach(m=>push(m.t,m.s,m.g,m.k+" "+m.t+" "+m.s,m.run));
     document.querySelectorAll("#catbar .ptool[data-tool]").forEach(el=>{
-      const t=el.title||""; if(!t) return;
+      const t=el.getAttribute("aria-label")||el.title||""; if(!t) return;
       push(t,"Canvas tool","Edit",t+" edit tool",()=>el.click());
     });
     let grp="Tools";
@@ -15017,6 +15015,8 @@ function quoteDrift(){
     const typing=tag==="input"||tag==="textarea"||(e.target&&e.target.isContentEditable);
     if(((e.metaKey||e.ctrlKey)&&String(e.key).toLowerCase()==="k")||(e.key==="/"&&!typing)){ e.preventDefault(); if(bd.classList.contains("show")) close(); else open(); }
     else if(e.key==="Escape"&&bd.classList.contains("show")) close();
+    // ? opens the guide for the current page (on Markup, the tools and keyboard shortcuts) in the help drawer
+    else if(e.key==="?"&&!typing&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&window.EVHelp&&!bd.classList.contains("show")&&!document.getElementById("evApp")?.inert){ e.preventDefault(); const r=window.EVWorkspace?EVWorkspace.route():"markup"; EVHelp.open(r==="markup"?"planner-markup-tools":r); }
   });
 })();
 /* ---------- welcome (project type) ---------- */
@@ -16069,7 +16069,7 @@ syncSiteChip();
 applyMode(false); syncBrand();
 /* a project with content opens on the overview; a fresh pack starts at the survey stage */
 if(hasMeaningfulPackContent(pack)) packSec="overview";
-loadUnits(); buildRail(); resize(); buildStageBar(); setSideTab(); updateUndo();
+loadUnits(); buildRail(); resize(); setSideTab(); updateUndo();
 const __showroomDeepLink=/^#(?:showroom|3d-showroom)$/i.test(location.hash);
 try{ if(!__showroomDeepLink&&!localStorage.getItem("evsp_welcomed")) openWelcome(); }catch(_){}
 window.addEventListener("hashchange",()=>{ if(/^#(?:showroom|3d-showroom)$/i.test(location.hash)){ try{ if(window.openCharger3D) window.openCharger3D(); }catch(_){ } } });
@@ -16100,9 +16100,9 @@ try{ window.__evRestorePromise=idbGet("autosave").then(d=>{
 <script src="home.js?v=750aedf37741"></script>
 <script src="report-viewer.js?v=0a0b193d5ad0"></script>
 <script src="project-store.js?v=7f9dd89cd711"></script>
-<script src="workspace.js?v=2c7ec2fd7690"></script>
+<script src="workspace.js?v=12e86c916f1c"></script>
 <script src="delivery.js?v=115b5c5390fb"></script>
-<script src="workbench.js?v=d3281c81a9ee"></script>
+<script src="workbench.js?v=ea0bd7fd3d1d"></script>
 <script src="planning.js?v=b69b087b4f8e"></script>
 <script src="audit.js?v=2d211c617363"></script>
 </body>
