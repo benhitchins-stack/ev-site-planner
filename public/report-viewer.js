@@ -116,7 +116,7 @@ function enhanceLegacy(){
  const openNote=document.createElement('p');openNote.className='ev-open-pdf-note';openNote.textContent='Check the full document in the PDF viewer before sending.';bd.querySelector('.rx-foot').prepend(status);oldPreview.remove();body.classList.add('ev-document-layout');options.classList.add('ev-document-options');body.prepend(viewerRoot);
  let viewer=null,currentDoc=null,focus=null,saving=false;
  // Before downloading and Document details sit at the top of the options column for both packs.
- const docBox=document.createElement('div');docBox.id='rxDocDetails';docBox.className='rx-sec rx-doc-details';refresh.after(openNote,docBox);
+ const docBox=document.createElement('div');docBox.id='rxDocDetails';docBox.className='rx-sec rx-doc-details';options.prepend(openNote,docBox);
  openBtn.onclick=()=>{if(currentDoc)openInViewer(currentDoc);};
  const renderDocBox=()=>{docBox.innerHTML='<div id="rxChecks">'+checksHtml(gaps())+'</div>'+detailsBlock(pack,{name:rxMode!=='customer'});};
  bindDetails(docBox,key=>{const c=document.getElementById('rxChecks');if(c)c.innerHTML=checksHtml(gaps());if(key==='surveyedBy'||key==='brandName'){const pm=document.getElementById('rxPmName');if(pm&&key==='surveyedBy'&&pm!==document.activeElement)pm.value=pack.surveyedBy||'';}rxQueuePreview();});
