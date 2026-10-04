@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Training courses · EV Site Planner</title>
-<link rel="stylesheet" href="resources.css?v=f3542b3b948c">
+<link rel="stylesheet" href="resources.css?v=9e535433d25f">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#122B3E">
 <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg">
@@ -105,7 +105,7 @@
             <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F5F7FA;border:1px solid #E0E7ED;border-radius:20px;padding:3px 10px">8-question check</span>
           </div>
           <sc-if value="{{domBadge}}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:8px;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:650;color:#1F7A33">Knowledge check passed - best score {{domBest}}/8</div>
+            <div style="display:flex;align-items:center;gap:8px;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:650;color:#1F7A33">Knowledge check: best score {{domBest}} of 8</div>
           </sc-if>
           <button onClick="{{openDom}}" style="margin-top:auto;background:#2563EB;color:#FBF8F2;border:none;border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="background:#1556E0">{{domCta}}</button>
         </div>
@@ -127,7 +127,7 @@
             <span style="font-size:11px;font-weight:650;color:#5B6770;background:#F5F7FA;border:1px solid #E0E7ED;border-radius:20px;padding:3px 10px">8-question check</span>
           </div>
           <sc-if value="{{comBadge}}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:8px;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:650;color:#1F7A33">Knowledge check passed - best score {{comBest}}/8</div>
+            <div style="display:flex;align-items:center;gap:8px;background:#EAF6EC;border:1px solid #CBE3CE;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:650;color:#1F7A33">Knowledge check: best score {{comBest}} of 8</div>
           </sc-if>
           <button onClick="{{openCom}}" style="margin-top:auto;background:#183043;color:#FBF8F2;border:none;border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="background:#0E1820">{{comCta}}</button>
         </div>
@@ -137,6 +137,7 @@
         <div style="background:#FFFFFF;border:1px solid #E0E7ED;border-radius:12px;padding:14px 16px"><b style="font-size:13px">Lessons</b><p style="margin:4px 0 0;font-size:12px;line-height:1.55;color:#5B6770">Read the lessons and worked examples.</p></div>
         <div style="background:#FFFFFF;border:1px solid #E0E7ED;border-radius:12px;padding:14px 16px"><b style="font-size:13px">Calculators</b><p style="margin:4px 0 0;font-size:12px;line-height:1.55;color:#5B6770">Interactive calculators inside the lessons - headroom, DLM sizing, de-rating.</p></div>
         <div style="background:#FFFFFF;border:1px solid #E0E7ED;border-radius:12px;padding:14px 16px"><b style="font-size:13px">Practice questions</b><p style="margin:4px 0 0;font-size:12px;line-height:1.55;color:#5B6770">Answer practice questions and the course knowledge check. Progress saves in this browser.</p></div>
+        <a href="Guide Library.dc.html" style="display:block;background:#FFFFFF;border:1px solid #E0E7ED;border-radius:12px;padding:14px 16px;color:#183043;text-decoration:none"><b style="font-size:13px">Guide library ›</b><p style="margin:4px 0 0;font-size:12px;line-height:1.55;color:#5B6770">{{guidesRead}}</p></a>
       </div>
     </div>
   </sc-if>
@@ -473,9 +474,8 @@
         <!-- ─── RESULT ─── -->
         <sc-if value="{{qzDone}}" hint-placeholder-val="{{ false }}">
           <div style="background:#FFFFFF;border:1px solid #E0E7ED;border-radius:16px;padding:34px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:lhpop .3s ease">
-            <div style="font-size:44px">{{resEmoji}}</div>
-            <h2 style="margin:0;font-family:'Hanken Grotesk',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.015em">{{resTitle}}</h2>
-            <div style="font-family:'Hanken Grotesk',monospace;font-size:34px;font-weight:700;color:#2563EB">{{resScore}}<span style="font-size:18px;color:#64798A"> / 8</span></div>
+            <div style="font-family:'Hanken Grotesk',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64798A">Knowledge check result</div>
+            <h2 style="margin:0;font-family:'Hanken Grotesk',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.015em;line-height:1.3;max-width:30ch">{{resTitle}}</h2>
             <p style="margin:0;font-size:13.5px;line-height:1.6;color:#5B6770;max-width:44ch">{{resMsg}}</p>
             <div style="display:flex;gap:10px;margin-top:6px">
               <button onClick="{{qzRetry}}" style="background:#FFFFFF;color:#183043;border:1px solid #C8D4DF;border-radius:10px;padding:10px 18px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer" style-hover="border-color:#2563EB">Retry</button>
@@ -549,24 +549,24 @@ class Component extends DCLogic {
   }
   quiz(c){
     if (c === "dom") return [
-      { q:"Maximum demand of a standard 7 kW home charger?", o:["13 A","32 A","63 A"], a:1 },
-      { q:"Which RCD type is never acceptable on an EV circuit?", o:["Type A","Type B","Type AC"], a:2 },
-      { q:"60 A main fuse, electric shower, 7 kW charger wanted. The compliant fix?", o:["Install and hope","Load limiter or DNO fuse/supply upgrade","Downrate the shower breaker"], a:1 },
-      { q:"PME home, charger has built-in O-PEN detection. You must…", o:["Drive an earth rod anyway","Fit nothing extra - verify and record the built-in device","Add a second O-PEN device upstream"], a:1 },
-      { q:"Connect-and-notify deadline after install?", o:["7 days","28 days","1 year"], a:1 },
-      { q:"Part P means the new charger circuit is…", o:["Not notifiable","Notifiable - competent-person scheme or building control","Only notifiable over 10 kW"], a:1 },
-      { q:"The Smart Charge Points Regulations require home chargers to ship with…", o:["A default off-peak charging schedule","Free electricity","A 5-year service plan"], a:0 },
-      { q:"Cable to a detached garage across the garden should be…", o:["Twin & Earth clipped to the fence","SWA / EV-grade, buried in duct at depth with warning tape","An extension lead"], a:1 }
+      { q:"Maximum demand of a standard 7 kW home charger?", o:["13 A","32 A","63 A"], a:1, l:1 },
+      { q:"Which RCD type is never acceptable on an EV circuit?", o:["Type A","Type B","Type AC"], a:2, l:3 },
+      { q:"60 A main fuse, electric shower, 7 kW charger wanted. The compliant fix?", o:["Install and hope","Load limiter or DNO fuse/supply upgrade","Downrate the shower breaker"], a:1, l:1 },
+      { q:"PME home, charger has built-in O-PEN detection. You must…", o:["Drive an earth rod anyway","Fit nothing extra - verify and record the built-in device","Add a second O-PEN device upstream"], a:1, l:2 },
+      { q:"Connect-and-notify deadline after install?", o:["7 days","28 days","1 year"], a:1, l:4 },
+      { q:"Part P means the new charger circuit is…", o:["Not notifiable","Notifiable - competent-person scheme or building control","Only notifiable over 10 kW"], a:1, l:4 },
+      { q:"The Smart Charge Points Regulations require home chargers to ship with…", o:["A default off-peak charging schedule","Free electricity","A 5-year service plan"], a:0, l:5 },
+      { q:"Cable to a detached garage across the garden should be…", o:["Twin & Earth clipped to the fence","SWA / EV-grade, buried in duct at depth with warning tape","An extension lead"], a:1, l:3 }
     ];
     return [
-      { q:"Diversity factors on EV charging circuits are…", o:["Fine up to 50%","Not permitted - design at full load","Required by BS 7671"], a:1 },
-      { q:"Upstream protection for a 22 kW three-phase single-socket charger?", o:["40 A 4-pole Type A RCBO","63 A Type AC RCD","Two 20 A MCBs"], a:0 },
-      { q:"Wired vs cloud DLM - what does cloud remove?", o:["The need for RCBOs","The board and the data cable to every charger - balancing happens over the internet","The 6 A minimum"], a:1 },
-      { q:"Typically, DLM won't de-rate a charging vehicle below…", o:["~6 A - below that, chargers usually queue","10 A","16 A"], a:0 },
-      { q:"Max earth-electrode resistance on a TT charger installation?", o:["200 Ω","2000 Ω","20 Ω"], a:0 },
-      { q:"The standard charger base is…", o:["400×400×200 mm, any mix","600×600×400 mm C20, cured & photographed before surfacing","A paving slab"], a:1 },
-      { q:"Duct depth where the run crosses an access road?", o:["≥300 mm","≥450 mm","≥600 mm"], a:2 },
-      { q:"Which connectivity setup reliably passes commissioning?", o:["5 GHz guest Wi-Fi with a portal","A private 2.4 GHz SSID (or another interface the unit supports) shared ahead of install","No connection - set it up later"], a:1 }
+      { q:"Diversity factors on EV charging circuits are…", o:["Fine up to 50%","Not permitted - design at full load","Required by BS 7671"], a:1, l:1 },
+      { q:"Upstream protection for a 22 kW three-phase single-socket charger?", o:["40 A 4-pole Type A RCBO","63 A Type AC RCD","Two 20 A MCBs"], a:0, l:1 },
+      { q:"Wired vs cloud DLM - what does cloud remove?", o:["The need for RCBOs","The board and the data cable to every charger - balancing happens over the internet","The 6 A minimum"], a:1, l:2 },
+      { q:"Typically, DLM won't de-rate a charging vehicle below…", o:["~6 A - below that, chargers usually queue","10 A","16 A"], a:0, l:2 },
+      { q:"Max earth-electrode resistance on a TT charger installation?", o:["200 Ω","2000 Ω","20 Ω"], a:0, l:3 },
+      { q:"The standard charger base is…", o:["400×400×200 mm, any mix","600×600×400 mm C20, cured & photographed before surfacing","A paving slab"], a:1, l:4 },
+      { q:"Duct depth where the run crosses an access road?", o:["≥300 mm","≥450 mm","≥600 mm"], a:2, l:4 },
+      { q:"Which connectivity setup reliably passes commissioning?", o:["5 GHz guest Wi-Fi with a portal","A private 2.4 GHz SSID (or another interface the unit supports) shared ahead of install","No connection - set it up later"], a:1, l:5 }
     ];
   }
 
@@ -599,6 +599,11 @@ class Component extends DCLogic {
     v.hHome = S.view === "home";
     v.hCourse = S.view === "course";
     v.goHome = () => this.setState({ view:"home", quiz:null });
+    v.qzRetry = () => this.setState({ quiz:{ idx:0, score:0, picked:null, missed:[] } });
+    /* Guide library reading progress lives in its own store; read it so the hub shows the whole picture. */
+    let guidesRead = 0;
+    try { const g = JSON.parse(localStorage.getItem("evsp_guides_v1") || "null"); guidesRead = g && g.read ? Object.keys(g.read).length : 0; } catch(_){}
+    v.guidesRead = "Guides read: " + Math.min(guidesRead, 45) + " of 45. Open the guide library for diagrams, calculators and the glossary.";
 
     /* home cards */
     const pct = c => { const d = S.done[c]; const n = d.filter(Boolean).length; return Math.round(n / d.length * 100); };
@@ -715,7 +720,7 @@ class Component extends DCLogic {
         st: this.optBtn(S.quiz.picked, item.a, i),
         pick: () => {
           const qz = this.state.quiz; if (!qz || qz.picked != null) return;
-          this.setState({ quiz: Object.assign({}, qz, { picked:i, score: qz.score + (i === item.a ? 1 : 0) }) });
+          this.setState({ quiz: Object.assign({}, qz, { picked:i, score: qz.score + (i === item.a ? 1 : 0), missed: i === item.a ? (qz.missed || []) : (qz.missed || []).concat(item.l) }) });
         }
       }));
       v.qzAnswered = S.quiz.picked != null;
@@ -730,19 +735,20 @@ class Component extends DCLogic {
           const best = { dom:this.state.best.dom, com:this.state.best.com };
           const c = this.state.course;
           if (best[c] == null || qz.score > best[c]) best[c] = qz.score;
-          this.setState({ quiz:{ done:true, score:qz.score }, best });
+          this.setState({ quiz:{ done:true, score:qz.score, missed:qz.missed || [] }, best });
           this.persist({ best });
         } else this.setState({ quiz: Object.assign({}, qz, { idx: qz.idx + 1, picked:null }) });
       };
     }
     if (quizDone) {
       const s = S.quiz.score, pass = s >= passMark;
-      v.resScore = s;
-      v.resEmoji = pass ? (s === 8 ? "🏆" : "🏅") : "📚";
-      v.resTitle = pass ? (s === 8 ? "Perfect score" : "Passed") : "Not yet";
-      v.resMsg = pass
-        ? "You passed this knowledge check. Your score is saved in this browser."
-        : "You need " + passMark + "/8 to pass. Review the lessons, then try again.";
+      const review = [...new Set(S.quiz.missed || [])].sort((a, b) => a - b).map(n => n + 1);
+      const list = review.length > 1 ? review.slice(0, -1).join(", ") + " and " + review[review.length - 1] : String(review[0] || "");
+      v.resTitle = s + " of 8. " + (pass ? "Revision target met." : (review.length ? "Review " + (review.length > 1 ? "lessons " : "lesson ") + list + ", then try again." : "Review the lessons, then try again."));
+      v.resMsg = (pass
+        ? (review.length ? "To close the gaps, look again at " + (review.length > 1 ? "lessons " : "lesson ") + list + ". " : "")
+        : "The revision target is " + passMark + " of 8. ")
+        + "Your best score is saved in this browser. The check is for revision and practice; it is not a qualification.";
     }
 
     /* fuse widget */

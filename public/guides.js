@@ -431,7 +431,7 @@ const GUIDES=[
  title:'The Markup page: tools, panels and the Technical menu',
  summary:'What each part of the drawing page does and where the technical helpers live.',
  kw:'markup page tools equipment picker bay tool label stamp technical menu single line diagram cable calculations charging simulator materials list display options focus',
- readFirst:['planner-first-project'],related:['scale','routes','arrtool'],
+ readFirst:['planner-first-project'],related:['scale','routes','arrtool','cable','earthsys','dno','cdm'],
  body:'<ul><li><b>Tool strip:</b> undo and redo, Select, the route tools, the Bay tool and the equipment categories. The active tool is marked in lime.</li>'
  +'<li><b>Equipment picker:</b> chargers, boards, meters, site and safety kit, with search, favourites and recently placed items. Place another like this keeps the chosen configuration.</li>'
  +'<li><b>Panel:</b> Plans &amp; settings for the project and its photos; Selected item for the thing you have tapped (label, model, rating, DLM group, mounting, appearance).</li>'
@@ -851,7 +851,7 @@ const chip=(id,cls)=>{const g=byId[id];return g?'<a class="g-chip '+(cls||'')+'"
 function artHTML(key){const art=window.EVGuideArt&&window.EVGuideArt[key];return art||'';}
 function guideHTML(id,opts){
  opts=opts||{};const g=byId[id];if(!g)return '';const lv=levelOf(g.level);
- let body=g.body.replace(/<figure class="g-art" data-art="([^"]+)"><\/figure>/g,(m,k)=>{const a=artHTML(k);return a?'<figure class="g-art">'+a+'</figure>':'';});
+ let body=g.body.replace(/<figure class="g-art" data-art="([^"]+)"><\/figure>/g,(m,k)=>{const a=artHTML(k);return a?'<figure class="g-art"><div class="g-art-scroll">'+a+'</div><figcaption class="g-art-hint">Scroll sideways to see the whole diagram.</figcaption></figure>':'';});
  body=body.replace(/<div class="g-calc" data-calc="([^"]+)"><\/div>/g,(m,k)=>{const c=CALCS[k];if(!c)return '';return '<div class="g-calc" data-calc="'+k+'"><div class="g-calc-head">'+c.title+'</div><div class="g-calc-fields">'+c.html+'</div><div class="g-calc-out" aria-live="polite"></div></div>';});
  const read=progress.isRead(id),saved=progress.isSaved(id);
  const tools=(opts.compact?'':'')+(g.readFirst&&g.readFirst.length?'<div class="g-rel"><span>Read first</span>'+g.readFirst.map(r=>chip(r)).join('')+'</div>':'');
@@ -877,7 +877,7 @@ function enhance(root,opts){
  const closePop=()=>{root.querySelectorAll('.g-pop').forEach(p=>p.remove());root.querySelectorAll('dfn[aria-expanded]').forEach(d=>d.removeAttribute('aria-expanded'));};
  root.addEventListener('click',e=>{
   const dfn=e.target.closest&&e.target.closest('dfn[data-term]');
-  if(dfn){e.preventDefault();const open=dfn.getAttribute('aria-expanded')==='true';closePop();if(open)return;const t=GLOSSARY[dfn.dataset.term];if(!t)return;const pop=document.createElement('span');pop.className='g-pop';pop.setAttribute('role','note');pop.innerHTML='<b>'+esc(t.t)+'</b>'+esc(t.d)+(opts.glossaryHref?'<a href="'+opts.glossaryHref+'">Glossary</a>':'');dfn.setAttribute('aria-expanded','true');dfn.insertAdjacentElement('afterend',pop);return;}
+  if(dfn){e.preventDefault();const open=dfn.getAttribute('aria-expanded')==='true';closePop();if(open)return;const t=GLOSSARY[dfn.dataset.term];if(!t)return;const pop=document.createElement('span');pop.className='g-pop';pop.setAttribute('role','note');pop.innerHTML='<b>'+esc(t.t)+'</b>'+esc(t.d)+(opts.glossaryHref?'<a href="'+opts.glossaryHref+'='+encodeURIComponent(dfn.dataset.term)+'"'+(opts.glossaryHref[0]==='#'?'':' target="_blank" rel="noopener"')+'>See '+esc(t.t)+' in the glossary'+(opts.glossaryHref[0]==='#'?'':' ↗')+'</a>':'');dfn.setAttribute('aria-expanded','true');dfn.insertAdjacentElement('afterend',pop);return;}
   if(!e.target.closest('.g-pop'))closePop();
   const read=e.target.closest&&e.target.closest('[data-guide-read]');
   if(read){const on=progress.markRead(read.dataset.guideRead,read.getAttribute('aria-pressed')!=='true');read.classList.toggle('on',on);read.setAttribute('aria-pressed',String(on));read.textContent=on?'✓ Read':'Mark as read';if(opts.onProgress)opts.onProgress();return;}

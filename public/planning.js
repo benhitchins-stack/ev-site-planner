@@ -285,6 +285,7 @@ document.addEventListener('click',async e=>{
  else if(action==='export-simulation'){if(!simulation)throw Error('Run the scenario first.');download(csv([['Vehicle','Required kWh','Delivered kWh','Shortfall kWh','Grid kWh','Queue minutes','Cost GBP'],...simulation.sessions.map(r=>[r.name,r.required,r.delivered,r.shortfall,r.gridKwh,r.queuedMinutes,r.cost]),[],['Hour','Charging kW','Available kW','Queued','Tariff GBP/kWh'],...simulation.series.map(r=>[r.hour,r.gridKw,r.availableKw,r.queued,r.tariff])]),'charging-scenario.csv','text/csv');}
  else if(action==='review-handoff')reviewerHandoff();
  else if(action==='repair-index'){await EVProjectStore.repair(recoveryRows);EVWorkspace.go('projects');toast('Recovered projects added to the list.');}
+ if(action==='simulate'&&matchMedia('(max-width:700px)').matches){const r=$('evpSimulationResult'),t=r?.querySelector('h2');r?.scrollIntoView({block:'start'});if(t){t.tabIndex=-1;t.focus({preventScroll:true});}}
  }catch(err){error(err.message);}finally{busy=false;}
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopReplay();});

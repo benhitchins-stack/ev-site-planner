@@ -210,7 +210,7 @@ The first-party scripts and styles use content-versioned URLs. All fonts and
 runtime libraries are served locally from `public/vendor/`, including PDF import,
 HEIC conversion, 3D rendering and the resource-page runtime. The HEIC converter
 loads only when a photo cannot be decoded natively; ordinary visits do not load
-its 1.35 MB script. The 1.9 MB report fonts likewise download the first time a PDF
+its 1.35 MB script. The 180 KB report fonts likewise download the first time a PDF
 is prepared, or in the background on the Issue page. PDF imports and previews disable font-code evaluation. This is a static site,
 not an offline PWA; the separately distributed portable build is a
 different deliverable. `public/manifest.webmanifest` lets phones and tablets add
@@ -231,7 +231,7 @@ move projects between them.
 | `public/delivery.js` | Programme, snag records and PDF review |
 | `public/audit-core.js`, `audit.js`, `audit.css` | Site audit checks, page, photos and evidence pack |
 | `public/bay-markings.js` | Bay symbols and lettering |
-| `public/report-fonts.js` | Embedded DejaVu fonts for new reports, loaded when a PDF is prepared |
+| `public/report-fonts.js` | Embedded report face (Hanken Grotesk), loaded when a PDF is prepared |
 | `public/manifest.webmanifest` | Home Screen name, colours and icons |
 | `public/cdm-controls.js`, `cdm-controls.css` | Existing commercial CDM tools |
 | `public/Guide Library.dc.html`, `guide-library.js`, `guides.js`, `guide-art.js`, `guides.css` | Guide library: content, diagrams and the library page |

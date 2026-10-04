@@ -275,7 +275,6 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
 #evScreen{padding:28px 32px 40px}
 .ev-overview-heading{margin-bottom:22px;align-items:flex-start}
 .ev-overview-heading h1{font-size:30px;line-height:1.2;max-width:900px}
-.ev-overview-heading .ev-eyebrow{font-size:12px;text-transform:none;letter-spacing:.3px;margin-bottom:8px}
 #evWorkbench.ev-toolbar-mode{min-height:52px}
 .ev-toolstrip{padding:6px 12px;gap:8px;min-height:52px}
 #evWorkbench .cattab{font-size:13px;height:38px;padding:8px}
@@ -402,3 +401,29 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,
  #evApp.ev-sheet-peek #root .side>.tab,#evApp.ev-sheet-peek #sideScroll{display:none}
 }
 @media(pointer:coarse),(max-width:700px){#evApp #evInspectorBack{width:44px;height:44px}}
+/* Portrait tablets and phones: the page first at its natural fit-width height, the page thumbnails as a strip under the
+   page controls, then the checks and document details directly under the page. Desktop and landscape are unchanged. */
+@media (max-width:1100px) and (orientation:portrait){
+ .ev-review-dialog,.ed-report-dialog,#rxBackdrop .rx{height:auto!important;max-height:92dvh}
+ .ed-report-dialog #edBody{overflow:auto}
+ .ev-document-layout{display:flex;flex-direction:column;overflow:auto;flex:1 1 auto;min-height:0}
+ .ev-document-layout>div:first-child{flex:none;min-height:0}
+ .ev-document-viewer{display:flex;flex-direction:column;height:auto}
+ .ev-document-stage{display:contents}
+ .ev-document-nav{order:1}
+ .ev-document-pages{order:2;border-right:0;border-bottom:1px solid #d3dfe8;padding:8px 12px;overflow-x:auto;overflow-y:hidden;min-height:0}
+ .ev-document-pages>b{display:none}
+ .ev-document-thumbnails{display:flex;gap:8px}
+ .ev-document-thumbnails button{flex:0 0 58px;width:58px;min-height:0}
+ .ev-document-canvas{order:3;flex:none;overflow:auto}
+ .ev-document-options{border-left:0;border-top:1px solid #d3dfe8;overflow:visible;flex:none;column-count:2;column-gap:28px}
+ .ev-document-options>*{break-inside:avoid}
+}
+@media (max-width:700px) and (orientation:portrait){
+ .ev-review-dialog,.ed-report-dialog,#rxBackdrop .rx{height:100dvh!important;max-height:100dvh}
+ .ev-document-options{column-count:1}
+ .ev-document-canvas{padding:8px}
+}
+/* On a phone, Open PDF hands the document to the system viewer for proofing with pinch zoom. */
+.ev-open-pdf,.ev-open-pdf-note{display:none!important}
+@media(max-width:700px){.ev-open-pdf{display:inline-flex!important}.ev-open-pdf-note{display:block!important;font-size:12px;color:#586e80;margin:0 0 12px}}

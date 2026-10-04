@@ -4,14 +4,15 @@
 .g-guide.compact{font-size:14px;}
 .g-meta{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:0 0 10px;font-size:11.5px;font-weight:650;}
 .g-level,.g-kind,.g-topic,.g-mins{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 9px;line-height:1.3;}
-.g-level{background:#122b3e;color:#fff;}
-.g-level.l-start{background:#d4e99b;color:#163322;}
-.g-level.l-plan{background:#2563eb;color:#fff;}
-.g-level.l-install{background:#284459;color:#fff;}
-.g-level.l-advanced{background:#122b3e;color:#d4e99b;}
+/* One level ramp for every level marker (article badge, related chips, library headings, Quick picks, help drawer):
+   1 lime, 2 blue, 3 teal, 4 navy with lime. Kind pills stay neutral grey, except Cheat sheet in amber. */
+.l-start{--lvl-bg:#d4e99b;--lvl-fg:#163322;--lvl-edge:#d4e99b;}
+.l-plan{--lvl-bg:#2563eb;--lvl-fg:#fff;--lvl-edge:#2563eb;}
+.l-install{--lvl-bg:#0f766e;--lvl-fg:#fff;--lvl-edge:#0f766e;}
+.l-advanced{--lvl-bg:#122b3e;--lvl-fg:#d4e99b;--lvl-edge:#d4e99b;}
+.g-level,.g-chip-lvl,.gl-level-num,.gl-featured-lvl{background:var(--lvl-bg,#122b3e);color:var(--lvl-fg,#fff);}
 .g-kind{background:#eef3f7;color:#2b4a63;}
 .g-kind.k-sheet{background:#fff3d6;color:#6b4a00;}
-.g-kind.k-planner{background:#e4ecf9;color:#1d4fb8;}
 .g-topic,.g-mins{color:#586e80;padding-left:0;padding-right:0;}
 .g-title{margin:0 0 8px;font-size:24px;line-height:1.2;letter-spacing:-.02em;font-weight:750;}
 .g-guide.compact .g-title{font-size:20px;}
@@ -43,6 +44,8 @@
 .g-warn{background:#fff7e6;border:1px solid #ffcf73;border-radius:10px;padding:10px 13px;margin:4px 0 14px;font-size:13.5px;line-height:1.55;}
 .g-art{margin:6px 0 16px;background:#fff;border:1px solid #e0e7ed;border-radius:12px;padding:10px;}
 .g-art svg{display:block;width:100%;height:auto;margin:0 auto;}
+/* Narrow screens keep diagram labels readable (about 10 to 11 px) by letting the drawing scroll sideways instead of shrinking. */
+.g-art-hint{display:none;margin:6px 2px 0;font-size:12px;color:#586e80;}
 .g-shot{margin:6px 0 16px;}
 .g-shot img{display:block;width:100%;height:auto;border:1px solid #c8d4df;border-radius:12px;box-shadow:0 8px 24px rgba(18,43,62,.12);}
 .g-shot figcaption{font-size:12.5px;color:#586e80;margin-top:7px;}
@@ -67,16 +70,15 @@
 .g-rel>span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#586e80;font-weight:700;margin-right:2px;}
 .g-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #c8d4df;border-radius:999px;padding:4px 10px 4px 4px;font-size:12.5px;font-weight:600;color:#183043;text-decoration:none;line-height:1.3;}
 .g-chip:hover{border-color:#2563eb;color:#1d4fb8;}
-.g-chip-lvl{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:750;background:#122b3e;color:#fff;flex:none;}
-.g-chip-lvl.l-start{background:#d4e99b;color:#163322;}
-.g-chip-lvl.l-plan{background:#2563eb;}
-.g-chip-lvl.l-install{background:#284459;}
-.g-chip-lvl.l-advanced{background:#122b3e;color:#d4e99b;}
+.g-chip-lvl{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:750;flex:none;}
 .g-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
 .g-btn{font:inherit;font-size:12.5px;font-weight:650;color:#183043;background:#fff;border:1px solid #c8d4df;border-radius:8px;padding:8px 12px;min-height:38px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
 .g-btn:hover{border-color:#2563eb;color:#1d4fb8;}
 .g-btn.on{background:#122b3e;border-color:#122b3e;color:#d4e99b;}
 .g-btn:focus-visible,.g-body dfn:focus-visible{outline:3px solid #2563eb;outline-offset:2px;}
 @media (prefers-reduced-motion:reduce){.ga-anim,.ga-anim *{animation:none!important;transition:none!important;}}
-@media (max-width:600px){.g-title{font-size:21px;}.g-guide{font-size:14.5px;}.g-table{display:block;overflow-x:auto;}.g-calc-fields{grid-template-columns:1fr 1fr;}}
-@media print{.g-actions,.g-rel,.g-course,.g-calc,.g-pop{display:none!important;}.g-art,.g-shot img{border:none;box-shadow:none;break-inside:avoid;}.g-guide{font-size:12pt;}.g-table{font-size:10.5pt;}}
+@media (max-width:600px){.g-title{font-size:21px;}.g-guide{font-size:14.5px;}.g-table{display:block;overflow-x:auto;}.g-calc-fields{grid-template-columns:1fr 1fr;}
+  .g-art-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
+  .g-art-scroll svg{min-width:620px;}
+  .g-art-hint{display:block;}}
+@media print{.g-actions,.g-rel,.g-course,.g-calc,.g-pop,.g-art-hint{display:none!important;}.g-art-scroll{overflow:visible!important;}.g-art-scroll svg{min-width:0!important;}.g-art,.g-shot img{border:none;box-shadow:none;break-inside:avoid;}.g-guide{font-size:12pt;}.g-table{font-size:10.5pt;}}

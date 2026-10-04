@@ -9,7 +9,7 @@ const btn=(t,a,style='',ic='')=>'<button type="button" class="ev-btn '+style+'" 
 const count=(n,t)=>n+' '+t+(n===1?'':'s');
 const meter=(pct,label='')=>'<span class="ev-meter"'+(label?' role="img" aria-label="'+h(label)+'"':' aria-hidden="true"')+'><i style="width:'+Math.max(0,Math.min(100,Number(pct)||0))+'%"></i></span>';
 const DAY=/^\d{4}-\d{2}-\d{2}$/;
-const niceDate=d=>{if(!d)return '';const x=DAY.test(d)?new Date(d+'T12:00:00Z'):new Date(d);return Number.isNaN(+x)?'':x.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',...(DAY.test(d)?{timeZone:'UTC'}:{})});};
+const niceDate=d=>d&&window.EVReportBranding?EVReportBranding.date(d):'';
 const PHOTO_LIMIT=4,PHOTO_MAX=1600,STANDARDS='PAS 1899:2022 and the Public Charge Point Regulations 2023';
 const pillClass={pass:'green',action:'amber',fail:'red',na:'',todo:'quiet'};
 const sevClass={critical:'red',high:'amber',medium:''};
@@ -90,7 +90,7 @@ function packCard(a){
  const gaps=C.gaps(a,{name:siteName()});
  return '<section class="ev-card eva-pack" id="evaPack"><div class="ev-card-head"><h2>Evidence pack</h2>'+icon('file')+'</div><div class="ev-card-body"><p class="eva-help">The pack lists the site details, a summary, every fail and action with its photos, the full checklist and the checks that do not apply.</p>'+(gaps.length?'<ul class="eva-gaps">'+gaps.map(g=>'<li>'+h(g)+'</li>').join('')+'</ul>':'<p class="eva-ready">Every applicable check is answered with the evidence the pack needs.</p>')+btn('Review evidence pack','audit-pack','primary','file')+'</div></section>';
 }
-const disclaimer='<p class="eva-disclaimer">The planner records your audit against '+STANDARDS+'. Check wording is draft v0.9 pending specialist review. The pack supports a council or funder submission and does not certify compliance; clauses marked for confirmation need checking against your copy of the standard, and electrical matters need a qualified person.</p>';
+const disclaimer='<p class="eva-disclaimer">The planner records your audit against PAS 1899:2022 and the Public Charge Point Regulations 2023. The check wording is the planner\'s summary of those standards, not their text. The pack supports a council or funder submission and does not certify compliance; checks marked Confirm need checking against your copy of PAS 1899:2022, and electrical matters need a qualified person.</p>';
 function render(){
  if(!C)return '<div class="ev-notice">The site audit tools did not load. Reload the page and try again.</div>';
  const a=current(),P=parts();
@@ -266,11 +266,11 @@ async function buildPack(options={}){
  const a=current();if(!a)throw Error('Start the site audit before making its pack.');
  const D=window.EVDelivery;if(!D?.pdfKit)throw Error('The report tools have not loaded. Reload the page and try again.');
  await D.reportFonts();
- const s=C.summary(a),rows=C.slots(a),findings=C.findings(a),units=C.units(a),k=D.pdfKit('Site audit evidence pack');
+ const s=C.summary(a),rows=C.slots(a),findings=C.findings(a),units=C.units(a),k=D.pdfKit('Site audit evidence pack',false,'audit');
  const where=r=>r.unit?unitLabel(r.unit):'Site',outcomeName=ans=>{const st=C.state(ans);return st==='todo'?'Not answered':C.outcome(st).label;};
  const measure=(check,ans)=>check.measure&&ans?.measure?.trim()?check.measure.label+': '+ans.measure.trim()+' '+check.measure.unit+' (limit '+check.measure.limit+')':'';
- const recorded=(check,ans)=>{const st=C.state(ans);if(st==='todo')return ' ';const bits=[];if(st==='na')bits.push(ans.reason?.trim()||'No reason recorded');else if(ans.note?.trim())bits.push(ans.note.trim());const m=measure(check,ans);if(m)bits.push(m);if(st!=='na'&&ans.photos?.length)bits.push(count(ans.photos.length,'photo'));return bits.join('\n')||' ';};
- k.details([['Site type',C.siteType(a.siteType)?.name||'Not recorded'],['Public access',a.isPublic===true?'Open to the public':a.isPublic===false?'Not open to the public':'Not recorded'],['Operator (CPO)',a.operator],['Chargepoints',units.map(u=>unitLabel(u)+(unitMeta(u)?' ('+unitMeta(u)+')':'')).join('\n')],['Auditor',a.auditor],['Audit date',niceDate(a.date)||'Not recorded'],['Standards',STANDARDS]]);
+ const recorded=(check,ans)=>{const st=C.state(ans);if(st==='todo')return '';const bits=[];if(st==='na')bits.push(ans.reason?.trim()||'No reason recorded');else if(ans.note?.trim())bits.push(ans.note.trim());const m=measure(check,ans);if(m)bits.push(m);if(st!=='na'&&ans.photos?.length)bits.push(count(ans.photos.length,'photo'));return bits.join('\n');};
+ k.details([['Site type',C.siteType(a.siteType)?.name||''],['Public access',a.isPublic===true?'Open to the public':a.isPublic===false?'Not open to the public':''],['Operator (CPO)',a.operator],['Chargepoints',units.map(u=>unitLabel(u)+(unitMeta(u)?' ('+unitMeta(u)+')':'')).join('\n')],['Auditor',a.auditor],['Audit date',niceDate(a.date)],['Standards',STANDARDS]],['Site type','Public access','Auditor','Audit date']);
  k.paragraph('This pack records a site audit of an existing EV charging site against PAS 1899:2022 (accessible public chargepoints) and the Public Charge Point Regulations 2023. It sets out what was checked, what was found and the evidence recorded, to support a council or funder submission. It is not a certificate of compliance.',9,false,k.C.dim);
  if(a.notes){k.section('Audit notes');k.paragraph(a.notes);}
  k.section('Summary');k.paragraph(summaryLine(s),10,true);
@@ -297,25 +297,26 @@ async function buildPack(options={}){
   }
  }
  if(options.scope!=='findings'){
-  k.newPage('Full checklist');
+  // Only start the checklist on a new page when the page before it is well used.
+  k.breakOrSection('Full checklist',{ifUsed:.25});
   let starred=false;
   for(const sec of C.SECTIONS){
    const mine=rows.filter(r=>r.check.section===sec.id);if(!mine.length)continue;
    k.section(sec.name+' · '+sec.reg);k.paragraph(sec.scope,8.5,false,k.C.dim);
    k.table(['Ref','Check','Where','Outcome','Note, reason or measurement'],mine.map(r=>{const ans=C.answer(a,r.key);if(r.check.verify&&C.state(ans)!=='todo')starred=true;return [r.check.id+(r.check.verify?' *':''),r.check.title,where(r),outcomeName(ans),recorded(r.check,ans)];}),[18,62,26,24,52]);
   }
-  if(starred)k.paragraph('* The threshold values for this check come from the draft check library and need confirming against your copy of PAS 1899:2022.',8,false,k.C.dim);
+  if(starred)k.paragraph('* The threshold values for this check are the planner\'s summary of PAS 1899:2022 and need confirming against your copy of PAS 1899:2022.',8,false,k.C.dim);
   const ex=C.excluded(a);
   if(ex.length){k.section('Checks that do not apply to this site');k.table(['Ref','Check','Reason recorded'],ex.map(({check,reason})=>[check.id,check.title,reason]),[18,74,90]);}
  }
  if(options.plans&&pack.photos.length){
   for(const p of pack.photos.filter(x=>x.includeInPdf!==false)){
-   await D.preparePlan(p);const cn=renderPhotoToCanvas(p,2000);k.newPage('Site plan');k.paragraph(p.name||'Site plan',11,true);
+   await D.preparePlan(p);const cn=renderPhotoToCanvas(p,2000,{compact:true});k.newPage('Site plan');k.paragraph(p.name||'Site plan',11,true);
    const available=k.B-k.y-3,r=Math.min(k.width/cn.width,available/cn.height);k.doc.addImage(cn,'PNG',k.M+(k.width-cn.width*r)/2,k.y,cn.width*r,cn.height*r,undefined,'FAST');
   }
  }
  k.ensure(60);k.section('About this pack');
- k.paragraph('The check wording is draft v0.9 and pending specialist review. Clauses marked for confirmation should be checked against the purchased text of PAS 1899:2022; the Public Charge Point Regulations 2023 are enforced by the Office for Product Safety and Standards and the duties fall on the chargepoint operator. This pack supports a submission and does not certify compliance with either standard. Electrical matters need a qualified person.',8.5,false,k.C.dim);
+ k.paragraph('This pack records what was checked and found. It supports a council or funder submission and is not a certificate of compliance. The check wording summarises PAS 1899:2022 and the Public Charge Point Regulations 2023 rather than quoting them; clauses marked * should be checked against the current text of PAS 1899:2022. The 2023 Regulations are enforced by the Office for Product Safety and Standards and the duties fall on the chargepoint operator. Electrical matters need a qualified person.',8.5,false,k.C.dim);
  return k.footer();
 }
 function gaps(){const a=current();return a?C.gaps(a,{name:siteName()}):['Start the site audit first.'];}

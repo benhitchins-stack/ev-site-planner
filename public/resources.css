@@ -72,7 +72,8 @@
 .gl-learn a.on{background:#122b3e;border-color:#122b3e;color:#fff;}
 .gl-page .er-guide-intro{padding-top:24px;}
 .gl-layout{display:flex;gap:30px;max-width:1180px;margin:0 auto;padding:22px 18px 80px;align-items:flex-start;}
-.gl-rail{width:248px;flex:none;position:sticky;top:76px;display:flex;flex-direction:column;gap:12px;}
+.gl-rail{width:248px;flex:none;position:sticky;top:76px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 92px);overflow:auto;overscroll-behavior:contain;padding:4px;margin:-4px;scrollbar-width:thin;}
+.gl-rail-top{display:flex;flex-direction:column;gap:12px;}
 .gl-main{flex:1;min-width:0;}
 .gl-search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #c8d4df;border-radius:10px;padding:0 12px;min-height:44px;color:#586e80;}
 .gl-search svg{width:16px;height:16px;flex:none;}
@@ -90,10 +91,14 @@
 .gl-progress-row{display:grid;grid-template-columns:72px 1fr 32px;gap:8px;align-items:center;margin-bottom:6px;}
 .gl-progress-row em{font-style:normal;color:#b8c9d6;text-align:right;}
 .gl-progress small{display:block;color:#8fa9bd;margin-top:6px;font-size:11px;}
+.gl-progress-sub{display:block;margin:10px 0 6px;padding-top:9px;border-top:1px solid #ffffff1f;color:#fff;font-weight:700;font-size:12.5px;text-decoration:none;}
+.gl-progress-sub:hover{color:#d4e99b;}
+.gl-progress-sub::after{content:" ›";color:#d4e99b;}
 .gl-bar{display:block;height:6px;border-radius:3px;background:#ffffff22;overflow:hidden;}
 .gl-level-progress .gl-bar{background:#e0e7ed;}
 .gl-bar i{display:block;height:100%;background:#d4e99b;border-radius:3px;}
 .gl-note{background:#fff;border:1px solid #e0e7ed;border-radius:12px;padding:11px 13px;font-size:12px;line-height:1.6;color:#586e80;}
+.gl-foot{max-width:1180px;margin:-48px auto 0;padding:0 18px 64px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
 .gl-note b{color:#183043;}
 .gl-continue{display:flex;align-items:center;gap:14px;background:#122b3e;color:#fff;border-radius:14px;padding:16px 20px;text-decoration:none;margin-bottom:16px;}
 .gl-continue span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#d4e99b;font-weight:700;}
@@ -106,16 +111,10 @@
 .gl-featured-grid a:hover{background:#ffffff1f;border-color:#d4e99b;}
 .gl-featured-grid b{font-size:13.5px;line-height:1.3;}
 .gl-featured-grid span:last-child{font-size:11.5px;color:#b8c9d6;}
-.gl-featured-lvl{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:750;background:#fff;color:#122b3e;margin-bottom:2px;}
-.gl-featured-lvl.l-start{background:#d4e99b;color:#163322;}
-.gl-featured-lvl.l-plan{background:#2563eb;color:#fff;}
+.gl-featured-lvl{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:750;margin-bottom:2px;box-shadow:0 0 0 1.5px var(--lvl-edge,#fff);}
 .gl-level{margin-bottom:34px;}
 .gl-level-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:14px;}
-.gl-level-num{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;font-weight:800;background:#122b3e;color:#fff;flex:none;}
-.gl-level-num.l-start{background:#d4e99b;color:#163322;}
-.gl-level-num.l-plan{background:#2563eb;}
-.gl-level-num.l-install{background:#284459;}
-.gl-level-num.l-advanced{color:#d4e99b;}
+.gl-level-num{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;font-weight:800;flex:none;}
 .gl-level-copy{flex:1;min-width:0;}
 .gl-level-copy h2{margin:0 0 3px;font-size:22px;letter-spacing:-.02em;line-height:1.2;}
 .gl-level-copy p{margin:0;font-size:13.5px;color:#586e80;line-height:1.5;}
@@ -152,6 +151,17 @@
 .gl-q-opt.right{border-color:#4ba069;background:#eef8f0;}
 .gl-q-opt.wrong{border-color:#d42626;background:#fdf1f1;}
 .gl-q-why{font-size:12.5px;color:#586e80;margin:4px 0 0 4px;}
+.gl-q.missing legend{color:#8a5a00;}
+.gl-q.missing .gl-q-opt{border-color:#e7b85a;}
+.gl-quiz-msg{margin:10px 0 0;padding:9px 12px;border-radius:9px;background:#fff7e6;border:1px solid #ffcf73;color:#5c3d00;font-size:13px;font-weight:600;}
+.gl-clear-end{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:-10px 0 20px;padding:14px 18px;background:#fff;border:1px dashed #c8d4df;border-radius:14px;font-size:13px;color:#586e80;}
+.gl-az{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 14px;padding:8px;background:#fff;border:1px solid #e0e7ed;border-radius:12px;position:sticky;top:var(--gl-top,0px);z-index:5;box-shadow:0 6px 14px #1230440d;}
+.gl-az a,.gl-az span{display:grid;place-items:center;flex:1 1 0;min-width:0;height:32px;border-radius:7px;font-size:13px;font-weight:700;text-decoration:none;}
+.gl-az a{color:#1d4fb8;background:#f5f7fa;}
+.gl-az a:hover{background:#e4ecf9;}
+.gl-az span{color:#c3ced8;}
+.gl-gloss>div.is-target{border-color:#2563eb;box-shadow:0 0 0 3px #d6e2fb;}
+.gl-gloss>div:focus{outline:none;}
 .gl-focus .gl-back{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:650;color:#1d4fb8;background:transparent;border:0;padding:6px 0;margin-bottom:10px;cursor:pointer;}
 .gl-focus .gl-back svg{width:16px;height:16px;}
 .gl-focus .g-guide{background:#fff;border:1px solid #e0e7ed;border-radius:16px;padding:28px 30px;}
@@ -171,20 +181,40 @@
 .gl-links span{font-size:12px;line-height:1.5;color:#586e80;}
 .gl-links small{font-size:10.5px;color:#64798a;}
 @media (max-width:900px){
-  .gl-layout{flex-direction:column;gap:20px;}
-  .gl-rail{position:static;width:100%;}
+  .gl-layout{flex-direction:column;align-items:stretch;gap:20px;}
+  .gl-rail{position:static;width:100%;max-height:none;overflow:visible;padding:0;margin:0;}
   .gl-topics{flex-direction:row;flex-wrap:wrap;}
   .gl-topic{width:auto;min-height:34px;padding:6px 10px;}
-  .gl-progress,.gl-note{display:none;}
+  .gl-progress{display:none;}
   .gl-featured-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
   .gl-level-progress{display:none;}
+  .gl-foot{margin-top:-28px;grid-template-columns:minmax(0,1fr);}
+  /* An opened guide or the glossary shows only the search above it: the level, topic and saved filters belong to the guide list. */
+  .is-focus .gl-levels,.is-focus .gl-topics,.is-focus .gl-only,
+  .is-glossary .gl-levels,.is-glossary .gl-topics,.is-glossary .gl-only{display:none;}
+  .is-focus,.is-glossary{gap:14px;}
+  /* In the guide list, search and levels stay in a strip under the header so a reader deep in the list can switch level or search. */
+  .is-guides{gap:14px;}
+  .is-guides .gl-rail{display:contents;}
+  .is-guides .gl-rail-top{position:sticky;top:var(--gl-top,0px);z-index:30;gap:8px;margin:-6px -18px 0;padding:10px 18px;background:#fff;border-bottom:1px solid #e0e7ed;box-shadow:0 6px 14px #1230440d;}
 }
 @media (max-width:600px){
   .gl-learn{padding:12px 16px 0;}
   .gl-layout{padding:18px 16px 48px;}
+  .gl-foot{padding:0 16px 40px;}
+  .is-guides .gl-rail-top{margin:-6px -16px 0;padding:8px 16px;}
+  .gl-levels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;}
+  .gl-levels .gl-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:44px;padding:4px 2px;border-radius:10px;font-size:11.5px;line-height:1.15;text-align:center;}
+  .gl-pill-sep{display:none;}
+  .gl-pill-n{font-size:13px;font-weight:800;}
   .gl-grid,.gl-gloss,.gl-links{grid-template-columns:minmax(0,1fr);}
-  .gl-featured-grid{grid-template-columns:1fr;}
-  .gl-featured-grid a{min-height:0;}
+  .gl-continue{flex-wrap:wrap;gap:6px 12px;padding:14px 16px;}
+  .gl-continue span{flex:1 1 100%;}
+  .gl-continue b{flex:1;min-width:0;font-size:15px;}
+  .gl-featured-grid a{padding:10px 11px;min-height:0;}
+  .gl-featured-grid b{font-size:13px;}
+  .gl-az{gap:3px;padding:6px;}
+  .gl-az a,.gl-az span{min-width:0;flex:1 0 calc(100% / 9 - 3px);height:32px;}
   .gl-focus .g-guide{padding:20px 18px;}
   .gl-prevnext{flex-direction:column;}
   .gl-prevnext a,.gl-prevnext a.next{max-width:none;margin-left:0;text-align:left;}
@@ -193,7 +223,7 @@
   .gl-level-copy h2{font-size:19px;}
 }
 @media print{
-  .er-header,.gl-learn,.gl-rail,.er-guide-intro,.gl-back,.gl-prevnext,.gl-featured,.gl-continue,.gl-quiz,.gl-quiz-cta{display:none!important;}
+  .er-header,.gl-learn,.gl-rail,.er-guide-intro,.gl-back,.gl-prevnext,.gl-featured,.gl-continue,.gl-quiz,.gl-quiz-cta,.gl-foot,.gl-clear-end,.gl-az{display:none!important;}
   .gl-layout{padding:0;display:block;}
   .gl-focus .g-guide{border:0;padding:0;}
   body{background:#fff;}

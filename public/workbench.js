@@ -286,32 +286,41 @@ function renderArtwork(p,maxW){
  pack.showLegend=false;pack.showTitleBlock=false;
  try{return originalExportCanvas(p,maxW);}finally{pack.showLegend=legend;pack.showTitleBlock=title;pack.active=active;}
 }
-renderPhotoToCanvas=function(p,maxW){
- const legend=pack.showLegend,title=pack.showTitleBlock,active=pack.active;let artwork;
+// opts.compact is for PDF pages that already carry the branded header: the title block keeps the plan name, who prepared it
+// and the scale wording, and its text prints at 8 pt or more. The PNG export keeps the full title block.
+renderPhotoToCanvas=function(p,maxW,opts={}){
+ const legend=pack.showLegend,title=pack.showTitleBlock,active=pack.active,compactBlock=opts.compact===true;let artwork;
  pack.showLegend=false;pack.showTitleBlock=false;
  try{artwork=originalExportCanvas(p,maxW);}finally{pack.showLegend=legend;pack.showTitleBlock=title;pack.active=active;}
  if(legend===false&&title===false)return artwork;
- const W=artwork.width,k=Math.max(.8,W/1100),pad=18*k,fs=12*k,gap=18*k,colCount=W>=900?3:2,colW=(W-pad*2-gap*(colCount-1))/colCount;
+ const W=artwork.width,k0=Math.max(.8,W/1100),fs=compactBlock?Math.max(12*k0,W*.0155):12*k0,k=fs/12,pad=18*k,gap=18*k,colCount=W/k>=900?3:2,colW=(W-pad*2-gap*(colCount-1))/colCount;
  const probe=document.createElement('canvas').getContext('2d');probe.font='500 '+fs+'px Hanken Grotesk, sans-serif';
  function wrap(value,width){const lines=[];let line='';for(const word of String(value||'').split(/\s+/)){if(line&&probe.measureText(line+' '+word).width>width){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return lines;}
- const rows=legend===false?[]:originalLegend(probe,{zoom:1,ox:0,oy:0},p,1,true,true)||[];
- const heights=Array(colCount).fill(0),entries=rows.map((r,i)=>{const col=i%colCount,lines=wrap(r.name,colW-34*k),y=heights[col];heights[col]+=Math.max(25*k,lines.length*17*k+10*k);return{r,col,y,lines};});
+ // Site items are existing features shown for reference; say so in plain words on the export key.
+ const rows=(legend===false?[]:originalLegend(probe,{zoom:1,ox:0,oy:0},p,1,true,true)||[]).map(r=>({...r,name:String(r.name).replace(/ · site context$/,' · existing · for reference')}));
+ const heights=Array(colCount).fill(0),entries=rows.map((r,i)=>{const col=i%colCount,lines=wrap(r.name,colW-36*k),y=heights[col];heights[col]+=Math.max(25*k,lines.length*17*k+10*k);return{r,col,y,lines};});
  const leftW=(W-pad*2)*.62,rightX=pad+leftW+gap,rightW=W-pad-rightX;
- const titleLines=title===false?[]:wrap(pack.name||'Untitled project',leftW);
+ const B=window.EVReportBranding;
+ const titleLines=title===false||compactBlock?[]:wrap(pack.name||'Untitled project',leftW);
  const planLines=title===false?[]:wrap(p.name||'Plan',leftW);
  const detailLines=title===false?[]:wrap([pack.brandName,pack.surveyedBy?'Prepared by '+pack.surveyedBy:''].filter(Boolean).join(' · '),leftW);
- const metaLines=title===false?[]:wrap([pack.jobRef?'Ref '+pack.jobRef:'Reference not recorded','Revision '+(pack.rev||'A'),new Date().toLocaleDateString('en-GB'),p.scale?.pxPerM?'Scale calibrated · not to printed scale':'Not to scale'].join(' · '),rightW);
- const titleH=title===false?0:Math.max((titleLines.length+planLines.length+detailLines.length)*18*k+pad*2,metaLines.length*18*k+pad*2+16*k),legendH=rows.length?Math.max(...heights)+pad+22*k:0;
+ const scaleText=p.scale?.pxPerM?'Scale calibrated · not to printed scale':'Not to scale';
+ const metaLines=title===false?[]:wrap(compactBlock?scaleText:[pack.jobRef?'Ref '+pack.jobRef:'','Rev '+(pack.rev||'A'),B?B.issueDate(pack):new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),scaleText].filter(Boolean).join(' · '),rightW);
+ const titleH=title===false?0:Math.max((titleLines.length+planLines.length+detailLines.length)*18*k+pad*2,metaLines.length*18*k+pad*2+16*k),legendH=rows.length?Math.max(...heights)+pad+24*k:0;
  const cn=document.createElement('canvas');cn.width=W;cn.height=Math.ceil(artwork.height+titleH+legendH+pad);const c=cn.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,W,cn.height);c.drawImage(artwork,0,0);c.strokeStyle='#b8c9d7';c.lineWidth=k;c.beginPath();c.moveTo(pad,artwork.height+pad/2);c.lineTo(W-pad,artwork.height+pad/2);c.stroke();
  c.textAlign='left';c.textBaseline='top';let ty=artwork.height+pad;
- for(const [lines,weight,colour] of [[titleLines,700,'#183043'],[planLines,500,'#334f63'],[detailLines,500,'#4f6576']]){c.font=weight+' '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle=colour;for(const line of lines){c.fillText(line,pad,ty);ty+=18*k;}}
+ for(const [lines,weight,colour] of [[titleLines,700,'#183043'],[planLines,compactBlock?650:500,compactBlock?'#183043':'#334f63'],[detailLines,500,'#4f6576']]){c.font=weight+' '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle=colour;for(const line of lines){c.fillText(line,pad,ty);ty+=18*k;}}
  if(title!==false){c.font='650 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#183043';c.fillText('Drawing details',rightX,artwork.height+pad);c.font='500 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#4f6576';metaLines.forEach((line,i)=>c.fillText(line,rightX,artwork.height+pad+18*k*(i+1)));}
  const base=artwork.height+titleH+pad;
  if(rows.length){c.font='650 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#244157';c.fillText('Plan key',pad,base);}
- for(const {r,col,y,lines}of entries){const x=pad+col*(colW+gap),yy=base+22*k+y;
-  if(r.route){paintRoute(c,[[x,yy+7*k],[x+23*k,yy+7*k]],r.kind,Math.max(4,ROUTE_DEFS[r.kind].width*.6*k),Math.max(.7,.8*k));}
-  else{c.fillStyle=r.color||'#dfe8f0';rrect(c,x,yy,22*k,17*k,3*k);c.fill();c.fillStyle=r.color?labelInk(r.color):'#34566f';c.font='700 '+8*k+'px Hanken Grotesk, sans-serif';c.textAlign='center';c.fillText(r.letter||(r.unitrow?'EV':r.evdb||r.ipevdb||r.cunit?'DB':r.feederrow?'FP':'•'),x+11*k,yy+4*k);c.textAlign='left';}
-  c.font='500 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#334f63';lines.forEach((line,i)=>c.fillText(line,x+32*k,yy+i*17*k));
+ for(const {r,col,y,lines}of entries){const x=pad+col*(colW+gap),yy=base+24*k+y,mid=yy+7*k;
+  if(r.route){paintRoute(c,[[x+1*k,mid],[x+25*k,mid]],r.kind,Math.max(4,ROUTE_DEFS[r.kind].width*.6*k),Math.max(.7,.8*k));}
+  else{
+   // Swatches sit on a small tile in the car-park surface colour, so white bay lines and charger bodies read as they do on the plan.
+   c.fillStyle='#3f474f';rrect(c,x,mid-10*k,26*k,20*k,4*k);c.fill();
+   c.save();try{if(typeof paintKeySwatch==='function')paintKeySwatch(c,r,x+1*k,mid,k*.92);}finally{c.restore();}
+  }
+  c.textAlign='left';c.textBaseline='top';c.font='500 '+fs+'px Hanken Grotesk, sans-serif';c.fillStyle='#334f63';lines.forEach((line,i)=>c.fillText(line,x+34*k,yy+i*17*k));
  }
  return cn;
 };

@@ -220,6 +220,17 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    waiting=p.waitForEvent('download');await p.locator('.ev-backup-card [data-ev-action="backup"]').click();await waiting;
    await p.waitForFunction(()=>!document.getElementById('evBackupTop').classList.contains('ev-backup-due'));
   });
+  await check('An empty project carries no storage warnings until there is work to lose',async p=>{
+   await p.goto('about:blank');await p.goto(base+'/#new',{waitUntil:'networkidle'});
+   await p.waitForFunction(()=>window.EVWorkspace&&EVWorkspace.route()==='overview');
+   await p.keyboard.press('Escape');await p.evaluate(()=>EVWorkspace.go('overview'));
+   const card=p.locator('.ev-backup-card');await card.waitFor();
+   assert.match(await card.textContent(),/Nothing to back up yet/);
+   assert.doesNotMatch(await card.textContent(),/saved only in this browser|clear saved data/);
+   assert.equal(await p.locator('#evStorageNote').count(),0);
+   assert.equal(await p.locator('.ev-backup-nudge').count(),0);
+   assert.equal(await p.locator('#evBackupTop').evaluate(el=>el.classList.contains('ev-backup-due')),false);
+  });
   await check('Saved projects ask the browser once to keep them and say when it agrees',async p=>{
    await p.evaluate(async()=>{await EVWorkspace.persist();await EVWorkspace.persist();});
    assert.equal(await p.evaluate(()=>window.persistRequests),1);
@@ -326,6 +337,8 @@ if(!['chromium','firefox','webkit'].includes(engineName))throw Error('Unsupporte
    assert.match(await p.locator('#edReportChecks').textContent(),/not answered/);
    assert.match(await p.locator('#edTitle').textContent(),/Review evidence pack/);
    const waiting=p.waitForEvent('download');await p.locator('[data-ed-action="download-report"]').click();
+   // Unanswered checks are a warning: the confirm lists them and Download anyway continues.
+   await p.waitForSelector('#sheetBackdrop.show');assert.equal(await p.locator('#sheetTitle').textContent(),'Download with gaps?');assert.match(await p.locator('#sheetLabel').textContent(),/not answered/);await p.locator('#sheetOk').click();
    const download=await waiting;assert.match(download.suggestedFilename(),/High_Street_lamppost_chargers_evidence-pack_rev-A\.pdf/);
    await p.waitForFunction(()=>pack.workspace.issues.some(i=>i.label==='Evidence pack'));
    await p.locator('.ev-dialog-foot [data-ed-action="close"]').click();

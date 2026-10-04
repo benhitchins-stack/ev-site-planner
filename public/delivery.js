@@ -8,7 +8,8 @@ const dayMs=86400000;
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
 const parse=v=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(v||''))return null;const d=new Date(v+'T12:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?d:null;};
 const iso=d=>d?d.toISOString().slice(0,10):'';
-const date=v=>{const d=v instanceof Date?v:parse(v);return d?d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}):'Not set';};
+// One date style across the documents: 3 Oct 2026 (EVReportBranding.date also reads legacy dd/mm/yyyy snag dates).
+const date=v=>{const d=v instanceof Date?v:parse(v);return d?window.EVReportBranding.date(iso(d)):'Not set';};
 const dateShort=d=>d?d.toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'}):'Not set';
 const legacyDate=v=>{if(parse(v))return v;const m=String(v||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);return m&&parse(m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'))?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):'';};
 const fixedDate=v=>parse(v)?v.split('-').reverse().join('/'):'';
@@ -136,7 +137,7 @@ async function uploadPhoto(input){
  finally{URL.revokeObjectURL(url);busy=false;modal.removeAttribute('aria-busy');modal.querySelectorAll('button,input,textarea,select').forEach(x=>x.disabled=false);}
 }
 
-// The 1.9 MB report fonts load the first time a PDF is prepared, not on every visit.
+// The 180 KB report fonts load the first time a PDF is prepared, not on every visit.
 let reportFontsLoading=null;
 function reportFonts(){
  if(window.EVReportFonts)return Promise.resolve(window.EVReportFonts);
@@ -159,7 +160,7 @@ function installFonts(doc){
  doc.addFileToVFS('EVSans-Bold.ttf',fonts.bold);doc.addFont('EVSans-Bold.ttf','EVSans','bold');
  return doc;
 }
-function pdfKit(title,landscape=false){
+function pdfKit(title,landscape=false,kind=''){
  const doc=new window.jspdf.jsPDF({orientation:landscape?'landscape':'portrait',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true});
  installFonts(doc);
  const W=landscape?297:210,H=landscape?210:297,M=14,B=H-17,C={navy:[23,43,59],blue:[30,107,255],dim:[95,112,128],line:[218,226,234],soft:[244,247,250],green:[97,138,65]},width=W-2*M;
@@ -172,29 +173,40 @@ function pdfKit(title,landscape=false){
  function newPage(section=title){sectionTitle=section.replace(/ · continued$/,'');if(page++)doc.addPage();EVReportBranding.header(doc,{title:section,W,M});y=43;}
  const ensure=h=>{if(y+h>B)newPage(sectionTitle+' · continued');};
  function paragraph(text,size=9,bold=false,col=C.navy){const ll=lines(text,width,size,bold),lineH=size*.47;for(const l of ll){ensure(lineH+2);write(l,M,y,size,bold,col);y+=lineH;}y+=3;}
- function section(text){ensure(13);y+=2;write(text,M,y,11,true);y+=8;}
+ // Keep a section heading with at least the first lines of what follows it.
+ function section(text,reserve=12){ensure(13+reserve);y+=2;write(text,M,y,11,true);y+=8;}
+ // Start a new major section on a fresh page only when the current page is well used; otherwise continue below.
+ function breakOrSection(text,{ifUsed=.25}={}){const used=(y-43)/(B-43);if(!page||used>=ifUsed){newPage(text);return;}ensure(40);sectionTitle=text;y+=4;write(text,M,y,13,true);y+=9;}
  function table(headers,rows,widths){
   const xs=widths.map((_,i)=>M+widths.slice(0,i).reduce((a,b)=>a+b,0));
   const head=()=>{ensure(11);doc.setFillColor(...C.soft);doc.rect(M,y,width,8,'F');headers.forEach((t,i)=>write(t,xs[i]+2,y+5.3,7.4,true,C.dim));y+=8;};
   head();
-  for(const row of rows){const wrapped=row.map((v,i)=>lines(v||'Not recorded',widths[i]-4,8.3)),n=Math.max(...wrapped.map(a=>a.length));let offset=0;
+  // A cell is text, or {t,dim} for a dim value such as 'To be confirmed'. Empty cells print empty.
+  const cell=v=>v&&typeof v==='object'?v:{t:v==null?'':String(v)};
+  for(const row of rows){const cells=row.map(cell),wrapped=cells.map((v,i)=>lines(v.t,widths[i]-4,8.3)),n=Math.max(...wrapped.map(a=>a.length));let offset=0;
+   // Keep a short row together on one page; only long rows continue across pages.
+   if(y+Math.min(n,6)*4.1+5>B){newPage(sectionTitle+' · continued');head();}
    while(offset<n){if(y+10>B){newPage(sectionTitle+' · continued');head();}const room=Math.max(1,Math.floor((B-y-5)/4.1)),count=Math.min(n-offset,room),height=count*4.1+5;
-    wrapped.forEach((ll,i)=>ll.slice(offset,offset+count).forEach((l,j)=>write(l,xs[i]+2,y+4.5+j*4.1,8.3,i===0)));
+    wrapped.forEach((ll,i)=>ll.slice(offset,offset+count).forEach((l,j)=>write(l,xs[i]+2,y+4.5+j*4.1,8.3,i===0,cells[i].dim?C.dim:C.navy)));
     doc.setDrawColor(...C.line);doc.setLineWidth(.2);doc.line(M,y+height,W-M,y+height);y+=height;offset+=count;
    }
   }y+=5;
  }
- function details(extra=[]){table(['Project details','Recorded information'],[['Reference',pack.jobRef],['Client',pack.custName],['Site address',[pack.address,pack.postcode].filter(Boolean).join(', ')],['Project lead',pack.surveyedBy],['Site contact',[pack.workspace?.contactName,pack.workspace?.contactPhone,pack.workspace?.contactEmail].filter(Boolean).join(' · ')],['Revision / prepared',String(pack.rev||'A')+' / '+date(today())],...(window.EVProfile?.reportRows(pack)||[]),...extra],[43,width-43]);}
- function footer(){return EVReportBranding.footer(doc,{M});}
- newPage();return{doc,W,H,M,B,C,width,lines,write,fit,newPage,ensure,paragraph,section,table,details,footer,get y(){return y;},set y(v){y=v;}};
+ // Optional rows with no value are left out; required rows print a dim 'To be confirmed' instead of a gap.
+ function details(extra=[],required=[]){
+  const rows=[['Reference',pack.jobRef],['Client',pack.custName],['Site address',[pack.address,pack.postcode].filter(Boolean).join(', ')],['Project lead',pack.surveyedBy],['Site contact',[pack.workspace?.contactName,pack.workspace?.contactPhone,pack.workspace?.contactEmail].filter(Boolean).join(' · ')],['Revision / issued',String(pack.rev||'A')+' / '+EVReportBranding.issueDate(pack)],...(window.EVProfile?.reportRows(pack)||[]),...extra];
+  table(['Project details','Recorded information'],rows.filter(([label,value])=>String(value??'').trim()||required.includes(label)).map(([label,value])=>[label,String(value??'').trim()?value:{t:'To be confirmed',dim:true}]),[43,width-43]);
+ }
+ function footer(){return EVReportBranding.footer(doc,{M,kind});}
+ newPage();return{doc,W,H,M,B,C,width,lines,write,fit,newPage,breakOrSection,ensure,paragraph,section,table,details,footer,get y(){return y;},set y(v){y=v;}};
 }
 async function buildProgramme(){
  const p=programme(),s=programmeSummary();if(!s.active.length)throw Error('Add or include an activity before creating the programme.');
  await reportFonts();
- const k=pdfKit('Programme of works',true);k.details([['Programme dates',s.b?date(s.b.from)+' to '+date(s.b.to):'Not set'],['Progress',s.complete+' of '+s.active.length+' activities complete']]);
+ const k=pdfKit('Programme of works',true,'programme');k.details([['Programme dates',s.b?date(s.b.from)+' to '+date(s.b.to):'Not set'],['Progress',s.complete+' of '+s.active.length+' activities complete']],['Reference','Client','Site address','Revision / issued']);
  if(p.notes){k.section('Programme notes');k.paragraph(p.notes);}
  k.section('Activities & responsibilities');
- k.table(['Activity','Responsibility','Start / finish','Days','Progress'],s.active.map(r=>[r.name,r.owner,r.from?date(r.from)+'\n'+date(r.to):'Not set',String(r.days),statusNames[r.status]||'Planned']),[95,54,57,17,46]);
+ k.table(['Activity','Responsibility','Start / finish','Days','Progress'],s.active.map(r=>[r.name,r.owner||'Not assigned',r.from?date(r.from)+'\n'+date(r.to):'Not set',String(r.days),statusNames[r.status]||'Planned']),[95,54,57,17,46]);
  const notes=s.active.filter(r=>r.note);if(notes.length){k.section('Activity notes');for(const r of notes){k.paragraph(r.name||'Untitled activity',9,true);k.paragraph(r.note);}}
  if(s.b){const dated=s.active.filter(r=>r.from);for(let offset=0;offset<dated.length;offset+=12){k.newPage('Programme timeline');const bx=110,bw=k.W-k.M-bx,b=s.b,chunk=dated.slice(offset,offset+12);k.write('Activity / responsibility',k.M,43,8,true,k.C.dim);for(let t=0;t<5;t++){const x=bx+t*bw/4;k.write(dateShort(new Date(+b.from+Math.round((b.span-1)*t/4)*dayMs)),x-(t===4?15:0),43,7,false,k.C.dim);}k.y=51;
    for(const r of chunk){const yy=k.y;k.write(k.fit(r.name||'Untitled activity',91,8,true),k.M,yy+3,8,true);k.write(k.fit(r.owner||'Not assigned',91,7),k.M,yy+7,7,false,k.C.dim);k.doc.setFillColor(...k.C.soft);k.doc.rect(bx,yy,bw,7,'F');k.doc.setFillColor(...(r.status==='complete'?k.C.green:r.status==='inprogress'?[193,145,41]:k.C.blue));k.doc.rect(bx+(r.from-b.from)/dayMs/b.span*bw,yy,Math.max(.6,((r.to-r.from)/dayMs+1)/b.span*bw),7,'F');k.y+=11;}
@@ -206,29 +218,33 @@ async function buildProgramme(){
 async function buildSnags(options){
  const all=snagList(),rows=all.filter(({it})=>options.scope==='all'||(it.st==='fixed'?'fixed':'open')===options.scope);if(!rows.length)throw Error('There are no snags in this selection.');
  await reportFonts();
- const settings=reportSettings(),k=pdfKit('Snag report');
- k.details([['Inspection date',parse(settings.date)?date(settings.date):'Not recorded'],['Prepared by',settings.preparedBy||pack.surveyedBy],['Report selection',options.scope==='all'?'All findings':options.scope==='open'?'Open findings only':'Fixed findings only']]);
+ const settings=reportSettings(),k=pdfKit('Snag report',false,'snags');
+ k.details([['Inspection date',parse(settings.date)?date(settings.date):''],['Prepared by',settings.preparedBy||pack.surveyedBy],['Report selection',options.scope==='all'?'All findings':options.scope==='open'?'Open findings only':'Fixed findings only']],['Reference','Client','Site address','Revision / issued','Inspection date','Prepared by']);
  k.paragraph(rows.length+(rows.length===1?' finding included: ':' findings included: ')+rows.filter(x=>x.it.st!=='fixed').length+' open, '+rows.filter(x=>x.it.st==='fixed').length+' fixed.',10,true);
  if(settings.notes){k.section('Report notes');k.paragraph(settings.notes);}
  k.section('Register summary');k.table(['Ref / finding','Owner / target','Severity','Status'],rows.map(({it})=>['SN-'+String(it.n||0).padStart(2,'0')+'\n'+(it.label||'Untitled finding'),(it.who||'Unassigned')+'\n'+(parse(it.targetDate)?date(it.targetDate):'No target date'),severityNames[it.sev]||'Minor',it.st==='fixed'?'Fixed':'Open']),[82,45,27,28]);
  for(const {it,photo} of rows){
-  k.newPage('Snag '+String(it.n||0).padStart(2,'0')+' · '+(it.st==='fixed'?'Fixed':'Open'));k.paragraph(it.label||'Finding not recorded',13,true);
-  k.table(['Finding details','Recorded information'],[['Location plan',photo.name],['Severity',severityNames[it.sev]||'Minor'],['Assigned to',it.who],['Target date',parse(it.targetDate)?date(it.targetDate):'Not recorded'],['Required action',it.action],['Date fixed',it.st==='fixed'?(legacyDate(it.fixedOn)?date(legacyDate(it.fixedOn)):it.fixedOn||'Not recorded'):'Open'],['Checked by',it.checkedBy],['Resolution / check notes',it.resolution]],[43,139]);
-  if(options.photos){k.ensure(98);k.section('Photo evidence');const start=k.y,iw=(k.width-6)/2,ih=77;
+  const fixed=it.st==='fixed',tbc={t:'To be confirmed',dim:true};
+  k.newPage('Snag '+String(it.n||0).padStart(2,'0')+' · '+(fixed?'Fixed':'Open'));
+  if(it.label?.trim())k.paragraph(it.label,13,true);else k.paragraph('No description recorded · '+(photo.name||'Site plan'),9,false,k.C.dim);
+  // Close-out rows appear once the snag is fixed; an open snag shows what is still to do.
+  k.table(['Finding details','Recorded information'],[['Location plan',photo.name],['Severity',severityNames[it.sev]||'Minor'],['Assigned to',it.who?.trim()?it.who:'Unassigned'],['Target date',parse(it.targetDate)?date(it.targetDate):'No target date'],...(it.action?.trim()?[['Required action',it.action]]:[]),['Date fixed',fixed?(legacyDate(it.fixedOn)?date(legacyDate(it.fixedOn)):it.fixedOn||tbc):'Open'],...(fixed?[['Checked by',it.checkedBy?.trim()?it.checkedBy:tbc]]:[]),...(fixed&&it.resolution?.trim()?[['Resolution / check notes',it.resolution]]:[])],[43,139]);
+  if(options.photos&&!it.ph1&&!it.ph2){k.section('Photo evidence',4);k.paragraph('No photos recorded',9,false,k.C.dim);}
+  else if(options.photos){k.ensure(98);k.section('Photo evidence');const start=k.y,iw=(k.width-6)/2,ih=77;
    for(let j=0;j<2;j++){const slot=j?'ph2':'ph1',x=k.M+j*(iw+6);k.write(j?'AFTER · COMPLETED WORK':'BEFORE · AS FOUND',x,start,8,true,k.C.dim);k.doc.setFillColor(...k.C.soft);k.doc.rect(x,start+4,iw,ih,'F');
     if(it[slot]){let im;try{im=await imageFrom(it[slot]);}catch{throw Error('The '+(j?'after':'before')+' photo for snag '+it.n+' could not be loaded. Replace it or exclude photos.');}const cn=document.createElement('canvas');cn.width=im.width;cn.height=im.height;const c=cn.getContext('2d');c.fillStyle='white';c.fillRect(0,0,cn.width,cn.height);c.drawImage(im,0,0);const ratio=Math.min(iw/im.width,ih/im.height),w=im.width*ratio,h=im.height*ratio;k.doc.addImage(cn.toDataURL('image/jpeg',.88),'JPEG',x+(iw-w)/2,start+4+(ih-h)/2,w,h,undefined,'FAST');}
     else k.write('No photo recorded',x+4,start+43,9,false,k.C.dim);
    }k.y=start+87;
   }
  }
- if(options.plans){const photos=[...new Map(rows.map(x=>[x.photo.id,x.photo])).values()];for(const p of photos){await preparePlan(p);const cn=renderPhotoToCanvas(p,2000);k.newPage('Plan locations');k.paragraph(p.name,11,true);const available=k.B-k.y-3,ratio=Math.min(k.width/cn.width,available/cn.height);k.doc.addImage(cn,'PNG',k.M+(k.width-cn.width*ratio)/2,k.y,cn.width*ratio,cn.height*ratio,undefined,'FAST');}}
+ if(options.plans){const photos=[...new Map(rows.map(x=>[x.photo.id,x.photo])).values()];for(const p of photos){await preparePlan(p);const cn=renderPhotoToCanvas(p,2000,{compact:true});k.newPage('Plan locations');k.paragraph(p.name,11,true);const available=k.B-k.y-3,ratio=Math.min(k.width/cn.width,available/cn.height);k.doc.addImage(cn,'PNG',k.M+(k.width-cn.width*ratio)/2,k.y,cn.width*ratio,cn.height*ratio,undefined,'FAST');}}
  return k.footer();
 }
 function reportChecks(type,options){
- if(type==='audit')return window.EVAudit?.gaps(options)||[];
+ if(type==='audit')return [...(window.EVAudit?.gaps(options)||[]),...EVReportBranding.gaps(pack)];
  const gaps=[];if(!pack.name)gaps.push('Project name is missing.');if(!pack.jobRef)gaps.push('Project reference is missing.');
- if(type==='programme'){const s=programmeSummary();if(s.undated)gaps.push(s.undated+' activities have no dates.');const n=s.active.filter(r=>!r.owner?.trim()).length;if(n)gaps.push(n+' activities have no owner.');}
- else{const r=reportSettings(),rows=snagList().filter(x=>options.scope==='all'||(x.it.st==='fixed'?'fixed':'open')===options.scope);if(!r.date)gaps.push('Inspection date is missing.');if(!r.preparedBy&&!pack.surveyedBy)gaps.push('Prepared by is missing.');const n=rows.filter(x=>!x.it.who?.trim()).length;if(n)gaps.push(n+' findings have no assigned owner.');const evidence=rows.filter(x=>x.it.st==='fixed'&&(!x.it.checkedBy||!x.it.ph2)).length;if(evidence)gaps.push(evidence+' fixed findings have no checker or after photo.');const safety=rows.filter(x=>x.it.sev==='safety'&&x.it.st!=='fixed').length;if(safety)gaps.unshift(safety+' safety findings remain open.');}
+ if(type==='programme'){const s=programmeSummary();if(s.undated)gaps.push(s.undated+' activities have no dates.');const n=s.active.filter(r=>!r.owner?.trim()).length;if(n)gaps.push(n+' activities have no owner.');gaps.push(...EVReportBranding.gaps(pack));}
+ else{const r=reportSettings(),rows=snagList().filter(x=>options.scope==='all'||(x.it.st==='fixed'?'fixed':'open')===options.scope);if(!r.date)gaps.push('Inspection date is missing.');if(!r.preparedBy&&!pack.surveyedBy)gaps.push('Prepared by is missing.');if(!pack.brandName?.trim())gaps.push('Company is not recorded.');const plural=(n,one,many)=>n+' '+(n===1?one:many);const untitled=rows.filter(x=>!x.it.label?.trim()).length;if(untitled)gaps.push(plural(untitled,'finding has no description.','findings have no description.'));const noBefore=rows.filter(x=>!x.it.ph1).length;if(noBefore)gaps.push(plural(noBefore,'finding has no before photo.','findings have no before photo.'));const n=rows.filter(x=>!x.it.who?.trim()).length;if(n)gaps.push(n+' findings have no assigned owner.');const evidence=rows.filter(x=>x.it.st==='fixed'&&(!x.it.checkedBy||!x.it.ph2)).length;if(evidence)gaps.push(evidence+' fixed findings have no checker or after photo.');const safety=rows.filter(x=>x.it.sev==='safety'&&x.it.st!=='fixed').length;if(safety)gaps.unshift(safety+' safety findings remain open.');}
  return gaps;
 }
 async function openReport(type){
@@ -237,25 +253,30 @@ async function openReport(type){
  if(type==='programme'&&!programmeSummary().active.length){EVWorkspace.go('programme');toast('Add an activity before creating the programme.');return;}
  if(type==='audit'&&!(pack.audit&&window.EVAudit)){EVWorkspace.go('audit');toast('Start the site audit before making its pack.');return;}
  openDialog('report',type==='programme'?'Review programme':type==='audit'?'Review evidence pack':'Review snag report',(pack.name||'Untitled project')+' · Rev '+(pack.rev||'A'),
-  '<div class="ev-document-layout"><div id="edReportViewer"></div><aside class="ev-document-options ed-report-controls"><h3>Report contents</h3>'+(type==='snags'?'<label class="ev-field">Findings<select id="edReportScope"><option value="all">All findings</option><option value="open">Open findings only</option><option value="fixed">Fixed findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include before / after photos</label><label class="ed-check"><input id="edReportPlans" type="checkbox"> Include location plans</label>':type==='audit'?'<label class="ev-field">Contents<select id="edReportScope"><option value="all">Full pack: findings and the full checklist</option><option value="findings">Findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include evidence photos</label>'+(pack.photos.length?'<label class="ed-check"><input id="edReportPlans" type="checkbox"> Include the site plans</label>':'')+'<p>Site details, a summary, every fail and action with its photos, the full checklist and the checks that do not apply. The pack supports a submission and does not certify compliance.</p>':'<p>Activities, responsibilities, dates, progress and the programme timeline.</p>')+'<h3>Document details</h3><dl class="ev-document-meta"><dt>Prepared by</dt><dd>'+esc(pack.surveyedBy||'Not recorded')+'</dd><dt>Company</dt><dd>'+esc(pack.brandName||'Not recorded')+'</dd><dt>Revision</dt><dd>'+esc(pack.rev||'A')+'</dd></dl><div id="edReportChecks"></div><p>Close this review to edit project details or report records.</p></aside></div>',button(type==='programme'?'Download programme':type==='audit'?'Download evidence pack':'Download snag report','download-report','primary'),true);
+  '<div class="ev-document-layout"><div id="edReportViewer"></div><aside class="ev-document-options ed-report-controls"><p class="ev-open-pdf-note">Check the full document in the PDF viewer before sending.</p><h3>Report contents</h3>'+(type==='snags'?'<label class="ev-field">Findings<select id="edReportScope"><option value="all">All findings</option><option value="open">Open findings only</option><option value="fixed">Fixed findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include before / after photos</label><label class="ed-check"><input id="edReportPlans" type="checkbox"> Include location plans</label>':type==='audit'?'<label class="ev-field">Contents<select id="edReportScope"><option value="all">Full pack: findings and the full checklist</option><option value="findings">Findings only</option></select></label><label class="ed-check"><input id="edReportPhotos" type="checkbox" checked> Include evidence photos</label>'+(pack.photos.length?'<label class="ed-check"><input id="edReportPlans" type="checkbox"> Include the site plans</label>':'')+'<p>Site details, a summary, every fail and action with its photos, the full checklist and the checks that do not apply. The pack supports a submission and does not certify compliance.</p>':'<p>Activities, responsibilities, dates, progress and the programme timeline.</p>')+'<div id="edReportDetails">'+EVReportBranding.detailsBlock(pack)+'</div><div id="edReportChecks"></div><p>Close this review to edit the report records.</p></aside></div>',button('Open PDF','open-report','ev-open-pdf')+button(type==='programme'?'Download programme':type==='audit'?'Download evidence pack':'Download snag report','download-report','primary'),true);
  session.reportType=type;session.page=1;session.doc=null;reportViewer=EVReportViewer.mount($('edReportViewer'),{canvasId:'edPdfCanvas'});$('edMessage').textContent='The preview matches the PDF download.';
+ // Prepared by, company and status are edited in place; the preview follows after a short pause.
+ let detailsTimer=null;EVReportBranding.bindDetails($('edReportDetails'),()=>{clearTimeout(detailsTimer);detailsTimer=setTimeout(()=>{if(session?.type==='report')prepareReport();},450);});
+ modal.querySelector('.ev-dialog-foot [data-ed-action="close"]').classList.remove('primary');
  for(const id of ['edReportScope','edReportPhotos','edReportPlans'])if($(id))$(id).onchange=()=>prepareReport();
  await prepareReport();
 }
 
 async function prepareReport(){
- if(!session||session.type!=='report'||busy)return;busy=true;session.doc=null;modal.setAttribute('aria-busy','true');modal.querySelectorAll('button,input,select').forEach(x=>x.disabled=true);$('edPdfCanvas').textContent='Preparing PDF…';
+ if(!session||session.type!=='report')return;if(busy){session.again=true;return;}busy=true;session.doc=null;modal.setAttribute('aria-busy','true');modal.querySelectorAll('button,input:not([data-doc-field]):not([data-doc-profile]),select:not([data-doc-field])').forEach(x=>x.disabled=true);$('edPdfCanvas').textContent='Preparing PDF…';
  const options={scope:$('edReportScope')?.value||'all',photos:$('edReportPhotos')?.checked!==false,plans:$('edReportPlans')?.checked===true};
- const gaps=reportChecks(session.reportType,options);$('edReportChecks').innerHTML='<h3>Before downloading</h3>'+(gaps.length?'<ul>'+gaps.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'<p class="ed-help">Project details and responsibilities are recorded.</p>');
+ const gaps=reportChecks(session.reportType,options);session.gaps=gaps;$('edReportChecks').innerHTML=EVReportBranding.checksHtml(gaps);
+ // On a phone the list sits below the preview, so the footer carries a count that scrolls to it.
+ $('edMessage').innerHTML='<span class="ed-message-text">The preview matches the PDF download.</span>'+(gaps.length?'<button type="button" class="ed-gaps-chip" data-ed-action="show-gaps">'+gaps.length+(gaps.length===1?' thing':' things')+' to check before downloading</button>':'');
  try{
   const doc=session.reportType==='programme'?await buildProgramme():session.reportType==='audit'?await window.EVAudit.buildPack(options):await buildSnags(options);doc.__evIssueLabel=session.reportType==='programme'?'Programme':session.reportType==='audit'?'Evidence pack':'Snag report';
   await reportViewer.set(doc);
   session.doc=doc;session.page=1;session.filename=(pack.name||'EV-project').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,90)+'_'+(session.reportType==='programme'?'programme':session.reportType==='audit'?'evidence-pack':'snag-report')+'_rev-'+String(pack.rev||'A').replace(/[^a-zA-Z0-9_-]/g,'_')+'.pdf';
 
  }catch(err){session.doc=null;$('edPdfCanvas').innerHTML='<div class="ev-empty"><b>PDF could not be prepared</b>'+esc(err.message)+'</div>';}
- finally{busy=false;modal.removeAttribute('aria-busy');modal.querySelectorAll('button,input,select').forEach(x=>x.disabled=false);reportButtons();}
+ finally{busy=false;modal.removeAttribute('aria-busy');modal.querySelectorAll('button,input,select').forEach(x=>x.disabled=false);reportButtons();if(session?.again){session.again=false;prepareReport();}}
 }
-function reportButtons(){if(session?.type!=='report')return;modal.querySelector('[data-ed-action="download-report"]').disabled=busy||!session.doc;reportViewer?.sync();}
+function reportButtons(){if(session?.type!=='report')return;modal.querySelector('[data-ed-action="download-report"]').disabled=busy||!session.doc;const open=modal.querySelector('[data-ed-action="open-report"]');if(open)open.disabled=busy||!session.doc;reportViewer?.sync();}
 
 
 modal.addEventListener('input',e=>{
@@ -281,7 +302,12 @@ document.addEventListener('click',async e=>{
  if(a==='programme-report'||a==='snag-report'){await openReport(a==='programme-report'?'programme':'snags');return;}
  if(a==='activity-up'||a==='activity-down'){const p=programme(),idx=p.activities.findIndex(r=>r.id===session.id),to=idx+(a==='activity-up'?-1:1);if(p.activities[to]){saveOnce();[p.activities[idx],p.activities[to]]=[p.activities[to],p.activities[idx]];changed();modal.querySelector('[data-ed-action="activity-up"]').disabled=to===0;modal.querySelector('[data-ed-action="activity-down"]').disabled=to===p.activities.length-1;$('edMessage').textContent='Activity moved to position '+(to+1)+'.';}return;}
  if(a==='show-snag'){const {id,photoId}=session;closeDialog();EVWorkspace.openPlan(photoId);sel=id;sideTab='props';setSideTab();$('side').classList.add('open');draw();return;}
- if(a==='download-report'&&session.doc){busy=true;reportButtons();$('edMessage').textContent='Downloading PDF…';try{await session.doc.save(session.filename,{returnPromise:true});$('edMessage').textContent='PDF downloaded. The download is listed in the document history.';}catch(err){$('edMessage').textContent='Download failed: '+err.message;}finally{busy=false;reportButtons();}return;}
+ if(a==='open-report'){if(session?.doc)EVReportViewer.openInViewer(session.doc);return;}
+ if(a==='show-gaps'){$('edReportChecks')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
+ if(a==='download-report'&&session.doc){
+  // Gaps are a warning, not a block: the same confirm as the client pack.
+  const gaps=session.gaps||[];if(gaps.length&&!await askConfirm({title:'Download with gaps?',label:gaps.slice(0,2).join(' ')+(gaps.length>2?' And '+(gaps.length-2)+' more.':''),okText:'Download anyway'}))return;
+  if(!session?.doc)return;busy=true;reportButtons();$('edMessage').textContent='Downloading PDF…';try{await session.doc.save(session.filename,{returnPromise:true});$('edMessage').textContent='PDF downloaded. The download is listed in the document history.';}catch(err){$('edMessage').textContent='Download failed: '+err.message;}finally{busy=false;reportButtons();}return;}
 });
 // A full record is also reachable from a selected canvas pin.
 const baseRenderSide=renderSide;

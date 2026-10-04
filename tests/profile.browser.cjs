@@ -107,8 +107,11 @@ const {chromium} = require('playwright');
       await page.locator(`[data-ev-route="${type}"]`).click();
       await page.locator(type==='programme'?'[data-ed-action="programme-report"]':'[data-ev-action="snag-report"]').click();
       await page.waitForSelector('#edPdfCanvas canvas',{timeout:60000});
-      download=page.waitForEvent('download');await page.locator('[data-ed-action="download-report"]').click();await (await download).saveAs(path.join(artifacts,`profile-${type}.pdf`));
-      assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('.ed-report-dialog .ev-dialog-foot .ev-actions button')].map(b=>b.textContent.trim())),['Close',type==='programme'?'Download programme':'Download snag report']);
+      download=page.waitForEvent('download');await page.locator('[data-ed-action="download-report"]').click();
+      // Gaps in the report are a warning: the confirm names them and Download anyway continues.
+      if(await page.locator('#edReportChecks li').count()){await page.waitForSelector('#sheetBackdrop.show');assert.equal(await page.locator('#sheetTitle').textContent(),'Download with gaps?');await page.locator('#sheetOk').click();}
+      await (await download).saveAs(path.join(artifacts,`profile-${type}.pdf`));
+      assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('.ed-report-dialog .ev-dialog-foot .ev-actions button')].map(b=>b.textContent.trim()).filter(t=>t!=='Open PDF')),['Close',type==='programme'?'Download programme':'Download snag report']);
       await page.getByRole('button',{name:'Close',exact:true}).click();
     }
     for(const kind of ['plans','programme','snags'])assert(fs.statSync(path.join(artifacts,`profile-${kind}.pdf`)).size>10000);
